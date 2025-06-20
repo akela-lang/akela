@@ -189,6 +189,136 @@ void AkeUnit_TypeDefMatchRealFalse(Zinc_test* test)
 	Ake_TypeDefDestroy(td0);
 }
 
+void AkeUnit_TypeDefMatchBoolean(Zinc_test* test)
+{
+	if (test->dry_run) {
+		Zinc_string_add_str(&test->name, __func__);
+		test->mute = false;
+		test->solo = false;
+		return;
+	}
+
+	Ake_TypeDef* td0 = NULL;
+	Ake_TypeDefCreate(&td0);
+	Ake_TypeDefSet(td0, AKE_TYPE_DEF_BOOLEAN);
+
+	Ake_TypeDef* td1 = NULL;
+	Ake_TypeDefCreate(&td1);
+	Ake_TypeDefSet(td1, AKE_TYPE_DEF_BOOLEAN);
+
+	Zinc_expect_true(test, Ake_TypeDefMatch(td0, td1), "true");
+
+	Ake_TypeDefDestroy(td0);
+}
+
+void AkeUnit_TypeDefMatchStructTrue(Zinc_test* test)
+{
+	if (test->dry_run) {
+		Zinc_string_add_str(&test->name, __func__);
+		test->mute = false;
+		test->solo = false;
+		return;
+	}
+
+	Ake_TypeDef* td0 = NULL;
+	Ake_TypeDefCreate(&td0);
+	Ake_TypeDefSet(td0, AKE_TYPE_DEF_STRUCT);
+
+	Ake_TypeField* tf00 = NULL;
+	Ake_TypeFieldCreate(&tf00);
+
+	Ake_TypeDef* td00 = NULL;
+	Ake_TypeDefCreate(&td00);
+	Ake_TypeDefSet(td00, AKE_TYPE_DEF_INTEGER);
+	td00->data.integer.bit_count = 32;
+
+	Ake_TypeUse* tu00 = NULL;
+	Ake_TypeUseCreate(&tu00);
+	Ake_TypeUseSet(tu00, AKE_TYPE_USE_SCALAR);
+	tu00->data.scalar.td = td00;
+	tf00->tu = tu00;
+
+	Ake_TypeDefStructAdd(td0, tf00);
+
+	Ake_TypeDef* td1 = NULL;
+	Ake_TypeDefCreate(&td1);
+	Ake_TypeDefSet(td1, AKE_TYPE_DEF_STRUCT);
+
+	Ake_TypeField* tf10 = NULL;
+	Ake_TypeFieldCreate(&tf10);
+
+	Ake_TypeDef* td10 = NULL;
+	Ake_TypeDefCreate(&td10);
+	Ake_TypeDefSet(td10, AKE_TYPE_DEF_INTEGER);
+	td10->data.integer.bit_count = 32;
+
+	Ake_TypeUse* tu10 = NULL;
+	Ake_TypeUseCreate(&tu10);
+	Ake_TypeUseSet(tu10, AKE_TYPE_USE_SCALAR);
+	tu10->data.scalar.td = td10;
+	tf10->tu = tu10;
+
+	Ake_TypeDefStructAdd(td1, tf10);
+
+	Zinc_expect_true(test, Ake_TypeDefMatch(td0, td1), "true");
+
+	Ake_TypeDefDestroy(td0);
+}
+
+void AkeUnit_TypeDefMatchStructFalse(Zinc_test* test)
+{
+	if (test->dry_run) {
+		Zinc_string_add_str(&test->name, __func__);
+		test->mute = false;
+		test->solo = false;
+		return;
+	}
+
+	Ake_TypeDef* td0 = NULL;
+	Ake_TypeDefCreate(&td0);
+	Ake_TypeDefSet(td0, AKE_TYPE_DEF_STRUCT);
+
+	Ake_TypeField* tf00 = NULL;
+	Ake_TypeFieldCreate(&tf00);
+
+	Ake_TypeDef* td00 = NULL;
+	Ake_TypeDefCreate(&td00);
+	Ake_TypeDefSet(td00, AKE_TYPE_DEF_INTEGER);
+	td00->data.integer.bit_count = 32;
+
+	Ake_TypeUse* tu00 = NULL;
+	Ake_TypeUseCreate(&tu00);
+	Ake_TypeUseSet(tu00, AKE_TYPE_USE_SCALAR);
+	tu00->data.scalar.td = td00;
+	tf00->tu = tu00;
+
+	Ake_TypeDefStructAdd(td0, tf00);
+
+	Ake_TypeDef* td1 = NULL;
+	Ake_TypeDefCreate(&td1);
+	Ake_TypeDefSet(td1, AKE_TYPE_DEF_STRUCT);
+
+	Ake_TypeField* tf10 = NULL;
+	Ake_TypeFieldCreate(&tf10);
+
+	Ake_TypeDef* td10 = NULL;
+	Ake_TypeDefCreate(&td10);
+	Ake_TypeDefSet(td10, AKE_TYPE_DEF_INTEGER);
+	td10->data.integer.bit_count = 64;
+
+	Ake_TypeUse* tu10 = NULL;
+	Ake_TypeUseCreate(&tu10);
+	Ake_TypeUseSet(tu10, AKE_TYPE_USE_SCALAR);
+	tu10->data.scalar.td = td10;
+	tf10->tu = tu10;
+
+	Ake_TypeDefStructAdd(td1, tf10);
+
+	Zinc_expect_false(test, Ake_TypeDefMatch(td0, td1), "false");
+
+	Ake_TypeDefDestroy(td0);
+}
+
 void AkeUnit_type(Zinc_test* test)
 {
 	if (test->dry_run) {
@@ -203,6 +333,9 @@ void AkeUnit_type(Zinc_test* test)
 		Zinc_test_register(test, AkeUnit_TypeDefMatchNaturalFalse);
 		Zinc_test_register(test, AkeUnit_TypeDefMatchRealTrue);
 		Zinc_test_register(test, AkeUnit_TypeDefMatchRealFalse);
+		Zinc_test_register(test, AkeUnit_TypeDefMatchBoolean);
+		Zinc_test_register(test, AkeUnit_TypeDefMatchStructTrue);
+		Zinc_test_register(test, AkeUnit_TypeDefMatchStructFalse);
 
 		return;
 	}
