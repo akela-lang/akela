@@ -182,8 +182,14 @@ bool Ake_TypeDefMatch(Ake_TypeDef* a, Ake_TypeDef* b)
                 b_tp = b_tp->next;
             }
 
-            if (!Ake_TypeDefMatch(a->data.function.output, b->data.function.output)) {
-                return false;
+            if (a->data.function.output || b->data.function.output) {
+                if (!a->data.function.output || !b->data.function.output) {
+                    return false;
+                }
+
+                if (!Ake_TypeDefMatch(a->data.function.output, b->data.function.output)) {
+                    return false;
+                }
             }
             break;
         default:
@@ -204,6 +210,20 @@ void Ake_TypeDefStructAdd(Ake_TypeDef* td, Ake_TypeField* tf)
     } else {
         td->data.fields.head = tf;
         td->data.fields.tail = tf;
+    }
+}
+
+void Ake_TypeDefInputAdd(Ake_TypeDef* td, Ake_TypeParam* tp)
+{
+    assert(td->kind == AKE_TYPE_DEF_FUNCTION);
+
+    if (td->data.function.input_head && td->data.function.input_tail) {
+        td->data.function.input_tail->next = tp;
+        tp->prev = td->data.function.input_tail;
+        td->data.function.input_tail = tp;
+    } else {
+        td->data.function.input_head = tp;
+        td->data.function.input_tail = tp;
     }
 }
 

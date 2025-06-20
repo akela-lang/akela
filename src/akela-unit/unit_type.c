@@ -571,6 +571,114 @@ void AkeUnit_TypeDefMatchPointerFalse(Zinc_test* test)
 	Ake_TypeDefDestroy(td0);
 }
 
+void AkeUnit_TypeDefMatchFunctionTrue(Zinc_test* test)
+{
+	if (test->dry_run) {
+		Zinc_string_add_str(&test->name, __func__);
+		test->mute = false;
+		test->solo = false;
+		return;
+	}
+
+	Ake_TypeDef* f0 = NULL;
+	Ake_TypeDefCreate(&f0);
+	Ake_TypeDefSet(f0, AKE_TYPE_DEF_FUNCTION);
+
+	Ake_TypeDef* arg00 = NULL;
+	Ake_TypeDefCreate(&arg00);
+	Ake_TypeDefSet(arg00, AKE_TYPE_DEF_INTEGER);
+	arg00->data.integer.bit_count = 32;
+
+	Ake_TypeParam* tp00 = NULL;
+	Ake_TypeParamCreate(&tp00);
+	tp00->td = arg00;
+	Ake_TypeDefInputAdd(f0, tp00);
+
+	Ake_TypeDef* out0 = NULL;
+	Ake_TypeDefCreate(&out0);
+	Ake_TypeDefSet(out0, AKE_TYPE_DEF_INTEGER);
+	out0->data.integer.bit_count = 32;
+	f0->data.function.output = out0;
+
+	Ake_TypeDef* f1 = NULL;
+	Ake_TypeDefCreate(&f1);
+	Ake_TypeDefSet(f1, AKE_TYPE_DEF_FUNCTION);
+
+	Ake_TypeDef* td10 = NULL;
+	Ake_TypeDefCreate(&td10);
+	Ake_TypeDefSet(td10, AKE_TYPE_DEF_INTEGER);
+	td10->data.integer.bit_count = 32;
+
+	Ake_TypeParam* tp10 = NULL;
+	Ake_TypeParamCreate(&tp10);
+	tp10->td = td10;
+	Ake_TypeDefInputAdd(f1, tp10);
+
+	Ake_TypeDef* out1 = NULL;
+	Ake_TypeDefCreate(&out1);
+	Ake_TypeDefSet(out1, AKE_TYPE_DEF_INTEGER);
+	out1->data.integer.bit_count = 32;
+	f1->data.function.output = out1;
+
+	Zinc_expect_true(test, Ake_TypeDefMatch(f0, f1), "match");
+
+	Ake_TypeDefDestroy(f0);
+}
+
+void AkeUnit_TypeDefMatchFunctionFalse(Zinc_test* test)
+{
+	if (test->dry_run) {
+		Zinc_string_add_str(&test->name, __func__);
+		test->mute = false;
+		test->solo = false;
+		return;
+	}
+
+	Ake_TypeDef* f0 = NULL;
+	Ake_TypeDefCreate(&f0);
+	Ake_TypeDefSet(f0, AKE_TYPE_DEF_FUNCTION);
+
+	Ake_TypeDef* arg00 = NULL;
+	Ake_TypeDefCreate(&arg00);
+	Ake_TypeDefSet(arg00, AKE_TYPE_DEF_INTEGER);
+	arg00->data.integer.bit_count = 32;
+
+	Ake_TypeParam* tp00 = NULL;
+	Ake_TypeParamCreate(&tp00);
+	tp00->td = arg00;
+	Ake_TypeDefInputAdd(f0, tp00);
+
+	Ake_TypeDef* out0 = NULL;
+	Ake_TypeDefCreate(&out0);
+	Ake_TypeDefSet(out0, AKE_TYPE_DEF_INTEGER);
+	out0->data.integer.bit_count = 32;
+	f0->data.function.output = out0;
+
+	Ake_TypeDef* f1 = NULL;
+	Ake_TypeDefCreate(&f1);
+	Ake_TypeDefSet(f1, AKE_TYPE_DEF_FUNCTION);
+
+	Ake_TypeDef* td10 = NULL;
+	Ake_TypeDefCreate(&td10);
+	Ake_TypeDefSet(td10, AKE_TYPE_DEF_INTEGER);
+	td10->data.integer.bit_count = 64;
+
+	Ake_TypeParam* tp10 = NULL;
+	Ake_TypeParamCreate(&tp10);
+	tp10->td = td10;
+	Ake_TypeDefInputAdd(f1, tp10);
+
+	Ake_TypeDef* out1 = NULL;
+	Ake_TypeDefCreate(&out1);
+	Ake_TypeDefSet(out1, AKE_TYPE_DEF_INTEGER);
+	out1->data.integer.bit_count = 32;
+	f1->data.function.output = out1;
+
+	Zinc_expect_false(test, Ake_TypeDefMatch(f0, f1), "match");
+
+	Ake_TypeDefDestroy(f0);
+}
+
 void AkeUnit_type(Zinc_test* test)
 {
 	if (test->dry_run) {
@@ -596,6 +704,8 @@ void AkeUnit_type(Zinc_test* test)
 		Zinc_test_register(test, AkeUnit_TypeDefMatchSliceFalse);
 		Zinc_test_register(test, AkeUnit_TypeDefMatchPointerTrue);
 		Zinc_test_register(test, AkeUnit_TypeDefMatchPointerFalse);
+		Zinc_test_register(test, AkeUnit_TypeDefMatchFunctionTrue);
+		Zinc_test_register(test, AkeUnit_TypeDefMatchFunctionFalse);
 
 		return;
 	}
