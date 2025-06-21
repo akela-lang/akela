@@ -845,6 +845,17 @@ void AkeUnit_TypeCloneReal(Zinc_test* test)
 	Zinc_expect_true(test, Ake_TypeDefMatch(td0, td1, NULL), "clone");
 }
 
+void AkeUnit_TypeCloneBoolean(Zinc_test* test)
+{
+	Ake_TypeDef* td0 = NULL;
+	Ake_TypeDefCreate(&td0);
+	Ake_TypeDefSet(td0, AKE_TYPE_DEF_BOOLEAN);
+
+	Ake_TypeDef* td1 = Ake_TypeDefClone(td0);
+
+	Zinc_expect_true(test, Ake_TypeDefMatch(td0, td1, NULL), "clone");
+}
+
 void AkeUnit_type(Zinc_test* test)
 {
 	if (test->dry_run) {
@@ -880,6 +891,7 @@ void AkeUnit_type(Zinc_test* test)
 		Zinc_test_register(test, AkeUnit_TypeCloneInteger);
 		Zinc_test_register(test, AkeUnit_TypeCloneNatural);
 		Zinc_test_register(test, AkeUnit_TypeCloneReal);
+		Zinc_test_register(test, AkeUnit_TypeCloneBoolean);
 
 		return;
 	}
