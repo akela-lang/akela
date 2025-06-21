@@ -1020,6 +1020,50 @@ void AkeUnit_TypeClonePointer(Zinc_test* test)
 	Zinc_expect_true(test, Ake_TypeDefMatch(td0, td1, NULL), "clone");
 }
 
+void AkeUnit_TypeCloneFunction(Zinc_test* test)
+{
+	if (test->dry_run) {
+		Zinc_string_add_str(&test->name, __func__);
+		test->mute = false;
+		test->solo = false;
+		return;
+	}
+
+	Ake_TypeDef* td0 = NULL;
+	Ake_TypeDefCreate(&td0);
+	Ake_TypeDefSet(td0, AKE_TYPE_DEF_FUNCTION);
+
+	Ake_TypeDef* td00 = NULL;
+	Ake_TypeDefCreate(&td00);
+	Ake_TypeDefSet(td00, AKE_TYPE_DEF_INTEGER);
+	td00->data.integer.bit_count = 32;
+
+	Ake_TypeParam* arg0 = NULL;
+	Ake_TypeParamCreate(&arg0);
+	arg0->td = td00;
+	Ake_TypeDefInputAdd(td0, arg0);
+
+	Ake_TypeDef* td01 = NULL;
+	Ake_TypeDefCreate(&td01);
+	Ake_TypeDefSet(td01, AKE_TYPE_DEF_NATURAL);
+	td01->data.natural.bit_count = 32;
+
+	Ake_TypeParam* arg1 = NULL;
+	Ake_TypeParamCreate(&arg1);
+	arg1->td = td01;
+	Ake_TypeDefInputAdd(td0, arg1);
+
+	Ake_TypeDef* out = NULL;
+	Ake_TypeDefCreate(&out);
+	Ake_TypeDefSet(out, AKE_TYPE_DEF_INTEGER);
+	out->data.integer.bit_count = 32;
+	td0->data.function.output = out;
+
+	Ake_TypeDef* td1 = Ake_TypeDefClone(td0);
+
+	Zinc_expect_true(test, Ake_TypeDefMatch(td0, td1, NULL), "clone");
+}
+
 void AkeUnit_type(Zinc_test* test)
 {
 	if (test->dry_run) {
@@ -1061,6 +1105,7 @@ void AkeUnit_type(Zinc_test* test)
 		Zinc_test_register(test, AkeUnit_TypeCloneArrayConst);
 		Zinc_test_register(test, AkeUnit_TypeCloneSlice);
 		Zinc_test_register(test, AkeUnit_TypeClonePointer);
+		Zinc_test_register(test, AkeUnit_TypeCloneFunction);
 
 		return;
 	}

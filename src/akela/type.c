@@ -278,6 +278,7 @@ Ake_TypeDef* Ake_TypeDefClone(Ake_TypeDef* td)
                     Ake_TypeParamCreate(&new_tp);
                     Zinc_string_add_string(&new_td->name, &td->name);
                     new_tp->td = Ake_TypeDefClone(tp->td);
+                    Ake_TypeDefInputAdd(new_td, new_tp);
                     tp = tp->next;
                 }
                 new_td->data.function.output = Ake_TypeDefClone(td->data.function.output);
