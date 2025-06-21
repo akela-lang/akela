@@ -947,6 +947,31 @@ void AkeUnit_TypeCloneArray(Zinc_test* test)
 	Zinc_expect_true(test, Ake_TypeDefMatch(td0, td1, NULL), "clone");
 }
 
+void AkeUnit_TypeCloneArrayConst(Zinc_test* test)
+{
+	if (test->dry_run) {
+		Zinc_string_add_str(&test->name, __func__);
+		test->mute = false;
+		test->solo = false;
+		return;
+	}
+
+	Ake_TypeDef* td0 = NULL;
+	Ake_TypeDefCreate(&td0);
+	Ake_TypeDefSet(td0, AKE_TYPE_DEF_ARRAY_CONST);
+	td0->data.array_const.dim = 10;
+
+	Ake_TypeDef* td00 = NULL;
+	Ake_TypeDefCreate(&td00);
+	Ake_TypeDefSet(td00, AKE_TYPE_DEF_INTEGER);
+	td00->data.integer.bit_count = 32;
+	td0->data.array.td = td00;
+
+	Ake_TypeDef* td1 = Ake_TypeDefClone(td0);
+
+	Zinc_expect_true(test, Ake_TypeDefMatch(td0, td1, NULL), "clone");
+}
+
 void AkeUnit_type(Zinc_test* test)
 {
 	if (test->dry_run) {
@@ -985,6 +1010,7 @@ void AkeUnit_type(Zinc_test* test)
 		Zinc_test_register(test, AkeUnit_TypeCloneBoolean);
 		Zinc_test_register(test, AkeUnit_TypeCloneStruct);
 		Zinc_test_register(test, AkeUnit_TypeCloneArray);
+		Zinc_test_register(test, AkeUnit_TypeCloneArrayConst);
 
 		return;
 	}
