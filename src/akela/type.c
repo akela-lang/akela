@@ -237,6 +237,7 @@ Ake_TypeDef* Ake_TypeDefClone(Ake_TypeDef* td)
     Ake_TypeDef* new_td = NULL;
     if (td) {
         Ake_TypeDefCreate(&new_td);
+        Ake_TypeDefSet(new_td, td->kind);
         Zinc_string_add_string(&new_td->name, &td->name);
         switch (td->kind) {
             case AKE_TYPE_DEF_INTEGER:

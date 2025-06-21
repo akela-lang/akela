@@ -811,6 +811,13 @@ void AkeUnit_TypeDefMatchCastTrue5(Zinc_test* test)
 
 void AkeUnit_TypeCloneInteger(Zinc_test* test)
 {
+	if (test->dry_run) {
+		Zinc_string_add_str(&test->name, __func__);
+		test->mute = false;
+		test->solo = false;
+		return;
+	}
+
 	Ake_TypeDef* td0 = NULL;
 	Ake_TypeDefCreate(&td0);
 	Ake_TypeDefSet(td0, AKE_TYPE_DEF_INTEGER);
@@ -823,6 +830,13 @@ void AkeUnit_TypeCloneInteger(Zinc_test* test)
 
 void AkeUnit_TypeCloneNatural(Zinc_test* test)
 {
+	if (test->dry_run) {
+		Zinc_string_add_str(&test->name, __func__);
+		test->mute = false;
+		test->solo = false;
+		return;
+	}
+
 	Ake_TypeDef* td0 = NULL;
 	Ake_TypeDefCreate(&td0);
 	Ake_TypeDefSet(td0, AKE_TYPE_DEF_NATURAL);
@@ -835,6 +849,13 @@ void AkeUnit_TypeCloneNatural(Zinc_test* test)
 
 void AkeUnit_TypeCloneReal(Zinc_test* test)
 {
+	if (test->dry_run) {
+		Zinc_string_add_str(&test->name, __func__);
+		test->mute = false;
+		test->solo = false;
+		return;
+	}
+
 	Ake_TypeDef* td0 = NULL;
 	Ake_TypeDefCreate(&td0);
 	Ake_TypeDefSet(td0, AKE_TYPE_DEF_REAL);
@@ -847,9 +868,54 @@ void AkeUnit_TypeCloneReal(Zinc_test* test)
 
 void AkeUnit_TypeCloneBoolean(Zinc_test* test)
 {
+	if (test->dry_run) {
+		Zinc_string_add_str(&test->name, __func__);
+		test->mute = false;
+		test->solo = false;
+		return;
+	}
+
 	Ake_TypeDef* td0 = NULL;
 	Ake_TypeDefCreate(&td0);
 	Ake_TypeDefSet(td0, AKE_TYPE_DEF_BOOLEAN);
+
+	Ake_TypeDef* td1 = Ake_TypeDefClone(td0);
+
+	Zinc_expect_true(test, Ake_TypeDefMatch(td0, td1, NULL), "clone");
+}
+
+void AkeUnit_TypeCloneStruct(Zinc_test* test)
+{
+	if (test->dry_run) {
+		Zinc_string_add_str(&test->name, __func__);
+		test->mute = false;
+		test->solo = false;
+		return;
+	}
+
+	Ake_TypeDef* td0 = NULL;
+	Ake_TypeDefCreate(&td0);
+	Ake_TypeDefSet(td0, AKE_TYPE_DEF_STRUCT);
+
+	Ake_TypeField* tf0 = NULL;
+	Ake_TypeFieldCreate(&tf0);
+
+	Ake_TypeDef* td00 = NULL;
+	Ake_TypeDefCreate(&td00);
+	Ake_TypeDefSet(td00, AKE_TYPE_DEF_INTEGER);
+	td00->data.integer.bit_count = 32;
+	tf0->td = td00;
+	Ake_TypeDefStructAdd(td0, tf0);
+
+	Ake_TypeField* tf1 = NULL;
+	Ake_TypeFieldCreate(&tf1);
+
+	Ake_TypeDef* td01 = NULL;
+	Ake_TypeDefCreate(&td01);
+	Ake_TypeDefSet(td01, AKE_TYPE_DEF_NATURAL);
+	td01->data.integer.bit_count = 32;
+	tf1->td = td01;
+	Ake_TypeDefStructAdd(td0, tf1);
 
 	Ake_TypeDef* td1 = Ake_TypeDefClone(td0);
 
@@ -892,6 +958,7 @@ void AkeUnit_type(Zinc_test* test)
 		Zinc_test_register(test, AkeUnit_TypeCloneNatural);
 		Zinc_test_register(test, AkeUnit_TypeCloneReal);
 		Zinc_test_register(test, AkeUnit_TypeCloneBoolean);
+		Zinc_test_register(test, AkeUnit_TypeCloneStruct);
 
 		return;
 	}
