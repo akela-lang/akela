@@ -1064,6 +1064,28 @@ void AkeUnit_TypeCloneFunction(Zinc_test* test)
 	Zinc_expect_true(test, Ake_TypeDefMatch(td0, td1, NULL), "clone");
 }
 
+void AkeUnit_TypeName(Zinc_test* test)
+{
+	if (test->dry_run) {
+		Zinc_string_add_str(&test->name, __func__);
+		test->mute = false;
+		test->solo = false;
+		return;
+	}
+
+	Zinc_expect_strcmp(test, Ake_TypeName(AKE_TYPE_DEF_NONE), "none", "none");
+	Zinc_expect_strcmp(test, Ake_TypeName(AKE_TYPE_DEF_INTEGER), "integer", "integer");
+	Zinc_expect_strcmp(test, Ake_TypeName(AKE_TYPE_DEF_NATURAL), "natural", "natural");
+	Zinc_expect_strcmp(test, Ake_TypeName(AKE_TYPE_DEF_REAL), "real", "real");
+	Zinc_expect_strcmp(test, Ake_TypeName(AKE_TYPE_DEF_BOOLEAN), "boolean", "boolean");
+	Zinc_expect_strcmp(test, Ake_TypeName(AKE_TYPE_DEF_STRUCT), "struct", "struct");
+	Zinc_expect_strcmp(test, Ake_TypeName(AKE_TYPE_DEF_ARRAY), "array", "array");
+	Zinc_expect_strcmp(test, Ake_TypeName(AKE_TYPE_DEF_ARRAY_CONST), "array-const", "array-const");
+	Zinc_expect_strcmp(test, Ake_TypeName(AKE_TYPE_DEF_SLICE), "slice", "slice");
+	Zinc_expect_strcmp(test, Ake_TypeName(AKE_TYPE_DEF_POINTER), "pointer", "pointer");
+	Zinc_expect_strcmp(test, Ake_TypeName(AKE_TYPE_DEF_FUNCTION), "function", "function");
+}
+
 void AkeUnit_type(Zinc_test* test)
 {
 	if (test->dry_run) {
@@ -1106,6 +1128,7 @@ void AkeUnit_type(Zinc_test* test)
 		Zinc_test_register(test, AkeUnit_TypeCloneSlice);
 		Zinc_test_register(test, AkeUnit_TypeClonePointer);
 		Zinc_test_register(test, AkeUnit_TypeCloneFunction);
+		Zinc_test_register(test, AkeUnit_TypeName);
 
 		return;
 	}

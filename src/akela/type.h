@@ -7,6 +7,7 @@
 #include <inttypes.h>
 #include "type.h"
 #include "type_use.h"
+#include <assert.h>
 
 typedef enum Ake_TypeDefKind {
     AKE_TYPE_DEF_NONE,
@@ -21,7 +22,29 @@ typedef enum Ake_TypeDefKind {
     AKE_TYPE_DEF_SLICE,
     AKE_TYPE_DEF_POINTER,
     AKE_TYPE_DEF_FUNCTION,
+    AKE_TYPE_DEF_COUNT,     // keep at end
 } Ake_TypeDefKind;
+
+static const char* Ake_TypeName(Ake_TypeDefKind kind)
+{
+    assert(kind < AKE_TYPE_DEF_COUNT);
+
+    const char* name[AKE_TYPE_DEF_COUNT] = {
+        "none",
+        "old",
+        "integer",
+        "natural",
+        "real",
+        "boolean",
+        "struct",
+        "array",
+        "array-const",
+        "slice",
+        "pointer",
+        "function",
+    };
+    return name[kind];
+}
 
 struct Ake_TypeDef {
     Ake_TypeDefKind kind;
