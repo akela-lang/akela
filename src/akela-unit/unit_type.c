@@ -821,6 +821,30 @@ void AkeUnit_TypeCloneInteger(Zinc_test* test)
 	Zinc_expect_true(test, Ake_TypeDefMatch(td0, td1, NULL), "clone");
 }
 
+void AkeUnit_TypeCloneNatural(Zinc_test* test)
+{
+	Ake_TypeDef* td0 = NULL;
+	Ake_TypeDefCreate(&td0);
+	Ake_TypeDefSet(td0, AKE_TYPE_DEF_NATURAL);
+	td0->data.natural.bit_count = 32;
+
+	Ake_TypeDef* td1 = Ake_TypeDefClone(td0);
+
+	Zinc_expect_true(test, Ake_TypeDefMatch(td0, td1, NULL), "clone");
+}
+
+void AkeUnit_TypeCloneReal(Zinc_test* test)
+{
+	Ake_TypeDef* td0 = NULL;
+	Ake_TypeDefCreate(&td0);
+	Ake_TypeDefSet(td0, AKE_TYPE_DEF_REAL);
+	td0->data.real.bit_count = 32;
+
+	Ake_TypeDef* td1 = Ake_TypeDefClone(td0);
+
+	Zinc_expect_true(test, Ake_TypeDefMatch(td0, td1, NULL), "clone");
+}
+
 void AkeUnit_type(Zinc_test* test)
 {
 	if (test->dry_run) {
@@ -854,6 +878,8 @@ void AkeUnit_type(Zinc_test* test)
 		Zinc_test_register(test, AkeUnit_TypeDefMatchCastTrue4);
 		Zinc_test_register(test, AkeUnit_TypeDefMatchCastTrue5);
 		Zinc_test_register(test, AkeUnit_TypeCloneInteger);
+		Zinc_test_register(test, AkeUnit_TypeCloneNatural);
+		Zinc_test_register(test, AkeUnit_TypeCloneReal);
 
 		return;
 	}
