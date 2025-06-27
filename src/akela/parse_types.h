@@ -29,9 +29,10 @@ AKELA_API Ake_ast* Ake_parse_declaration(
     struct Ake_parse_state* ps,
     bool add_symbol,
     bool is_method,
-    bool require_param_name);
+    bool require_param_name,
+    bool is_const);
 AKELA_API Ake_ast* Ake_parse_type(Ake_parse_state* ps);
-AKELA_API void Ake_declare_type(Ake_parse_state* ps, Ake_ast* n, Ake_ast* id_node);
+AKELA_API void Ake_declare_type(Ake_parse_state* ps, Ake_ast* n, Ake_ast* id_node, bool is_const);
 AKELA_API bool Ake_check_return_type(Ake_parse_state* ps, Ake_ast* proto, Ake_ast* stmts_node, Zinc_location* loc);
 AKELA_API Ake_TypeDef* Ake_proto2type_use(Ake_parse_state* ps, Ake_ast* proto, Ake_TypeDef* struct_type);
 AKELA_API Ake_TypeParam* Ake_get_function_input_type(Ake_TypeDef* func, int index);

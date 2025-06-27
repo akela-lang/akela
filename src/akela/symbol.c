@@ -15,6 +15,7 @@ void Ake_symbol_init(struct Ake_symbol* sym)
     sym->assign_count = 0;
     sym->is_copy = false;
     sym->struct_type = NULL;
+    sym->is_const = false;
 }
 
 /* NOLINTNEXTLINE(misc-no-recursion) */

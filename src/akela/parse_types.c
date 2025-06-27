@@ -168,7 +168,7 @@ void Ake_declare_params(Ake_parse_state* ps, Ake_ast* proto, Ake_TypeDef* struct
             }
         }
         if (dec->type != Ake_ast_type_error && type_node->type != Ake_ast_type_error) {
-            Ake_declare_type(ps, type_node, id_node);
+            Ake_declare_type(ps, type_node, id_node, true);
         }
         dec = dec->next;
     }
@@ -194,7 +194,7 @@ Ake_ast* Ake_parse_dseq(
 	n->type = Ake_ast_type_dseq;
 
 	Ake_ast* dec = NULL;
-	dec = Ake_parse_declaration(ps, false, is_method, require_param_name);
+	dec = Ake_parse_declaration(ps, false, is_method, require_param_name, true);
     if (dec && dec->type == Ake_ast_type_error) {
         n->type = Ake_ast_type_error;
     }
@@ -245,7 +245,7 @@ Ake_ast* Ake_parse_dseq(
             }
         }
 
-		dec = Ake_parse_declaration(ps, false, is_method, require_param_name);
+		dec = Ake_parse_declaration(ps, false, is_method, require_param_name, true);
         if (dec && dec->type == Ake_ast_type_error) {
             n->type = Ake_ast_type_error;
         }
@@ -308,7 +308,8 @@ Ake_ast* Ake_parse_declaration(
         struct Ake_parse_state* ps,
         bool add_symbol,
         bool is_method,
-        bool require_param_name)
+        bool require_param_name,
+        bool is_const)
 {
 	Ake_ast* n = NULL;
 
@@ -397,7 +398,7 @@ Ake_ast* Ake_parse_declaration(
             }
             if (add_symbol) {
                 if (n->type != Ake_ast_type_error) {
-                    Ake_declare_type(ps, type_use, id_node);
+                    Ake_declare_type(ps, type_use, id_node, is_const);
                 }
             }
 
@@ -644,25 +645,26 @@ Ake_TypeDef* Ake_parse_type_id(Ake_parse_state* ps, Ake_ast* n)
  * @param n type node
  * @param id_node ID node
  */
-void Ake_create_variable_symbol(Ake_parse_state* ps, Zinc_string* name, Ake_TypeDef* tu, size_t seq)
+void Ake_create_variable_symbol(Ake_parse_state* ps, Zinc_string* name, Ake_TypeDef* tu, size_t seq, bool is_const)
 {
     Ake_symbol* new_sym = NULL;
     Ake_symbol_create(&new_sym);
     new_sym->type = Ake_symbol_type_variable;
     new_sym->tu = Ake_TypeDefClone(tu);
+    new_sym->is_const = is_const;
     Ake_EnvironmentAdd(ps->st->top, name, new_sym, seq);
 }
 
-void Ake_declare_type(struct Ake_parse_state* ps, Ake_ast* type_node, Ake_ast* id_node)
+void Ake_declare_type(struct Ake_parse_state* ps, Ake_ast* type_node, Ake_ast* id_node, bool is_const)
 {
     if (type_node && type_node->type != Ake_ast_type_error) {
         if (id_node) {
             if (id_node->type == Ake_ast_type_id) {
-                Ake_create_variable_symbol(ps, &id_node->value, type_node->tu, type_node->loc.start);
+                Ake_create_variable_symbol(ps, &id_node->value, type_node->tu, type_node->loc.start, is_const);
             } else if (id_node->type == Ake_ast_type_let_lseq) {
                 Ake_ast* p = id_node->head;
                 while (p) {
-                    Ake_create_variable_symbol(ps, &p->value, type_node->tu, type_node->loc.start);
+                    Ake_create_variable_symbol(ps, &p->value, type_node->tu, type_node->loc.start, is_const);
                     p = p->next;
                 }
             } else {
@@ -867,6 +869,10 @@ bool Ake_check_lvalue(Ake_parse_state* ps, Ake_ast* n, Zinc_location* loc)
             Ake_get_lookahead(ps);
             size_t seq = ps->lookahead->loc.start;
             sym = Ake_EnvironmentGet(ps->st->top, &p->value, seq);
+            if (sym->is_const) {
+                Zinc_error_list_set(ps->el, loc, "immutable variable changed in assignment");
+                n->type = Ake_ast_type_error;
+            }
             first = p;
         }
         p = p->head;
