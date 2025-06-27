@@ -642,7 +642,7 @@ void AkeLlvmUnit_array_assign_subscript(Zinc_test* test)
     Ake_code_gen_result result;
 
     Ake_code_gen_result_init(&result);
-    AkeLlvmUnit_cg_setup("const mut a: [4][4]Int32 = [[1,2,3,4],\n"
+    AkeLlvmUnit_cg_setup("var a: [4][4]Int32 = [[1,2,3,4],\n"
              "  [5,6,7,8],\n"
              "  [9,10,11,12],\n"
              "  [13,14,15,16]\n"
