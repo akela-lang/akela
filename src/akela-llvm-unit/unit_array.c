@@ -406,7 +406,7 @@ void AkeLlvmUnit_code_gen_assign_array_subscript2(Zinc_test* test)
     Ake_code_gen_result result;
 
     Ake_code_gen_result_init(&result);
-    AkeLlvmUnit_cg_setup("const mut a: [2][3]Int32 = [[1, 2, 3], [4, 5, 6]]\n"
+    AkeLlvmUnit_cg_setup("var a: [2][3]Int32 = [[1, 2, 3], [4, 5, 6]]\n"
              "a[1][2] = 60\n"
              "a[0][0]\n",
              &result);
@@ -415,7 +415,7 @@ void AkeLlvmUnit_code_gen_assign_array_subscript2(Zinc_test* test)
     Ake_code_gen_result_destroy(&result);
 
     Ake_code_gen_result_init(&result);
-    AkeLlvmUnit_cg_setup("const mut a: [2][3]Int32 = [[1, 2, 3], [4, 5, 6]]\n"
+    AkeLlvmUnit_cg_setup("var a: [2][3]Int32 = [[1, 2, 3], [4, 5, 6]]\n"
              "a[1][2] = 60\n"
              "a[0][1]\n",
              &result);
@@ -424,7 +424,7 @@ void AkeLlvmUnit_code_gen_assign_array_subscript2(Zinc_test* test)
     Ake_code_gen_result_destroy(&result);
 
     Ake_code_gen_result_init(&result);
-    AkeLlvmUnit_cg_setup("const mut a: [2][3]Int32 = [[1, 2, 3], [4, 5, 6]]\n"
+    AkeLlvmUnit_cg_setup("var a: [2][3]Int32 = [[1, 2, 3], [4, 5, 6]]\n"
              "a[1][2] = 60\n"
              "a[0][2]\n",
              &result);
@@ -433,7 +433,7 @@ void AkeLlvmUnit_code_gen_assign_array_subscript2(Zinc_test* test)
     Ake_code_gen_result_destroy(&result);
 
     Ake_code_gen_result_init(&result);
-    AkeLlvmUnit_cg_setup("const mut a: [2][3]Int32 = [[1, 2, 3], [4, 5, 6]]\n"
+    AkeLlvmUnit_cg_setup("var a: [2][3]Int32 = [[1, 2, 3], [4, 5, 6]]\n"
              "a[1][2] = 60\n"
              "a[1][0]\n",
              &result);
@@ -442,7 +442,7 @@ void AkeLlvmUnit_code_gen_assign_array_subscript2(Zinc_test* test)
     Ake_code_gen_result_destroy(&result);
 
     Ake_code_gen_result_init(&result);
-    AkeLlvmUnit_cg_setup("const mut a: [2][3]Int32 = [[1, 2, 3], [4, 5, 6]]\n"
+    AkeLlvmUnit_cg_setup("var a: [2][3]Int32 = [[1, 2, 3], [4, 5, 6]]\n"
              "a[1][2] = 60\n"
              "a[1][1]\n",
              &result);
@@ -451,7 +451,7 @@ void AkeLlvmUnit_code_gen_assign_array_subscript2(Zinc_test* test)
     Ake_code_gen_result_destroy(&result);
 
     Ake_code_gen_result_init(&result);
-    AkeLlvmUnit_cg_setup("const mut a: [2][3]Int32 = [[1, 2, 3], [4, 5, 6]]\n"
+    AkeLlvmUnit_cg_setup("var a: [2][3]Int32 = [[1, 2, 3], [4, 5, 6]]\n"
              "a[1][2] = 60\n"
              "a[1][2]\n",
              &result);
