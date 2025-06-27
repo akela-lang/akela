@@ -18,6 +18,7 @@ void AkeLlvmUnit_function_declare(Zinc_test* test)
     AkeLlvmUnit_cg_setup("fn foo(a: Int32, b: Int32, c: Int32)\n"
              "end\n",
              &result);
+    Zinc_expect_no_errors(test, &result.cu->errors);
     Zinc_expect_string(test, &result.value, "Function", "value");
     Ake_code_gen_result_destroy(&result);
 }
@@ -37,6 +38,7 @@ void AkeLlvmUnit_function_declare_ret(Zinc_test* test)
              "  a + b + c\n"
              "end\n",
              &result);
+    Zinc_expect_no_errors(test, &result.cu->errors);
     Zinc_expect_string(test, &result.value, "Function", "value");
     Ake_code_gen_result_destroy(&result);
 }
@@ -57,6 +59,7 @@ void AkeLlvmUnit_function_call(Zinc_test* test)
              "end\n"
              "foo(1, 2, 3)\n",
              &result);
+    Zinc_expect_no_errors(test, &result.cu->errors);
     Zinc_expect_string(test, &result.value, "6", "value");
     Ake_code_gen_result_destroy(&result);
 }
@@ -77,6 +80,7 @@ void AkeLlvmUnit_function_anonymous_call(Zinc_test* test)
              "end\n"
              "foo(1, 2, 3)\n",
              &result);
+    Zinc_expect_no_errors(test, &result.cu->errors);
     Zinc_expect_string(test, &result.value, "6", "value");
     Ake_code_gen_result_destroy(&result);
 }
@@ -97,6 +101,7 @@ void AkeLlvmUnit_function_ret_boolean(Zinc_test* test)
              "end\n"
              "foo(1, 2, 3)\n",
              &result);
+    Zinc_expect_no_errors(test, &result.cu->errors);
     Zinc_expect_string(test, &result.value, "true", "value");
     Ake_code_gen_result_destroy(&result);
 }
@@ -117,6 +122,7 @@ void AkeLlvmUnit_function_ret_array(Zinc_test* test)
              "end\n"
              "foo(1, 2, 3)\n",
              &result);
+    Zinc_expect_no_errors(test, &result.cu->errors);
     Zinc_expect_string(test, &result.value, "hello", "value");
     Ake_code_gen_result_destroy(&result);
 }
@@ -135,6 +141,7 @@ void AkeLlvmUnit_function_extern(Zinc_test* test)
     AkeLlvmUnit_cg_setup("extern pow(x: Real64, y: Real64)->Real64\n"
              "pow(5.0, 2.0)\n",
              &result);
+    Zinc_expect_no_errors(test, &result.cu->errors);
     Zinc_expect_string(test, &result.value, "25.000000", "value");
     Ake_code_gen_result_destroy(&result);
 }
@@ -151,10 +158,11 @@ void AkeLlvmUnit_function_assign(Zinc_test* test)
 
     Ake_code_gen_result_init(&result);
     AkeLlvmUnit_cg_setup("fn foo()->Int32 1 end\n"
-             "const bar: fn ()->Int32\n"
+             "var bar: fn ()->Int32\n"
              "bar = foo\n"
              "bar()\n",
              &result);
+    Zinc_expect_no_errors(test, &result.cu->errors);
     Zinc_expect_string(test, &result.value, "1", "value");
     Ake_code_gen_result_destroy(&result);
 }
@@ -175,6 +183,7 @@ void AkeLlvmUnit_function_assign2(Zinc_test* test)
              "foo = bar\n"
              "foo()\n",
              &result);
+    Zinc_expect_no_errors(test, &result.cu->errors);
     Zinc_expect_string(test, &result.value, "2", "value");
     Ake_code_gen_result_destroy(&result);
 }
@@ -196,6 +205,7 @@ void AkeLlvmUnit_function_const_assign(Zinc_test* test)
              "const a: fn (Int32)->Int32 = foo\n"
              "a(1)\n",
              &result);
+    Zinc_expect_no_errors(test, &result.cu->errors);
     Zinc_expect_string(test, &result.value, "2", "value");
     Ake_code_gen_result_destroy(&result);
 }
@@ -215,6 +225,7 @@ void AkeLlvmUnit_function_expression(Zinc_test* test)
              "  a + 1\n"
              "end(1)\n",
              &result);
+    Zinc_expect_no_errors(test, &result.cu->errors);
     Zinc_expect_string(test, &result.value, "2", "value");
     Ake_code_gen_result_destroy(&result);
 }
@@ -234,6 +245,7 @@ void AkeLlvmUnit_function_anonymous_expression(Zinc_test* test)
              "  a + 1\n"
              "end(1)\n",
              &result);
+    Zinc_expect_no_errors(test, &result.cu->errors);
     Zinc_expect_string(test, &result.value, "2", "value");
     Ake_code_gen_result_destroy(&result);
 }
@@ -255,6 +267,7 @@ void AkeLlvmUnit_function_array_param(Zinc_test* test)
              "const a: [10]Int32 = [100,200,300,400,500,600,700,800,900,1000]\n"
              "add_ten(a, 0)\n",
              &result);
+    Zinc_expect_no_errors(test, &result.cu->errors);
     Zinc_expect_string(test, &result.value, "110", "value");
     Ake_code_gen_result_destroy(&result);
 
@@ -265,6 +278,7 @@ void AkeLlvmUnit_function_array_param(Zinc_test* test)
              "const a: [10]Int32 = [100,200,300,400,500,600,700,800,900,1000]\n"
              "add_ten(a, 1)\n",
              &result);
+    Zinc_expect_no_errors(test, &result.cu->errors);
     Zinc_expect_string(test, &result.value, "210", "value");
     Ake_code_gen_result_destroy(&result);
 
@@ -275,6 +289,7 @@ void AkeLlvmUnit_function_array_param(Zinc_test* test)
              "const a: [10]Int32 = [100,200,300,400,500,600,700,800,900,1000]\n"
              "add_ten(a, 2)\n",
              &result);
+    Zinc_expect_no_errors(test, &result.cu->errors);
     Zinc_expect_string(test, &result.value, "310", "value");
     Ake_code_gen_result_destroy(&result);
 }
@@ -304,6 +319,7 @@ void AkeLlvmUnit_function_struct_param(Zinc_test* test)
              "end\n"
              "add_ten(p)",
              &result);
+    Zinc_expect_no_errors(test, &result.cu->errors);
     Zinc_expect_string(test, &result.value, "12.500000", "value");
     Ake_code_gen_result_destroy(&result);
 
@@ -322,6 +338,7 @@ void AkeLlvmUnit_function_struct_param(Zinc_test* test)
             "end\n"
             "add_ten(p)",
             &result);
+    Zinc_expect_no_errors(test, &result.cu->errors);
     Zinc_expect_string(test, &result.value, "13.500000", "value");
     Ake_code_gen_result_destroy(&result);
 }
@@ -349,6 +366,7 @@ void AkeLlvmUnit_function_function_param(Zinc_test* test)
             "end\n"
             "compute(add_one, 15)\n",
             &result);
+    Zinc_expect_no_errors(test, &result.cu->errors);
     Zinc_expect_string(test, &result.value, "16", "value");
     Ake_code_gen_result_destroy(&result);
 
@@ -365,6 +383,7 @@ void AkeLlvmUnit_function_function_param(Zinc_test* test)
             "end\n"
             "compute(add_two, 15)\n",
             &result);
+    Zinc_expect_no_errors(test, &result.cu->errors);
     Zinc_expect_string(test, &result.value, "17", "value");
     Ake_code_gen_result_destroy(&result);
 }
@@ -385,6 +404,7 @@ void AkeLlvmUnit_function_in_array(Zinc_test* test)
             "func_array[0] = fn (x: Int32)->Int32 x*2 end\n"
             "func_array[0](10)",
             &result);
+    Zinc_expect_no_errors(test, &result.cu->errors);
     Zinc_expect_string(test, &result.value, "20", "value");
     Ake_code_gen_result_destroy(&result);
 }
