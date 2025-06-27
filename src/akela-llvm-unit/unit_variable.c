@@ -269,7 +269,7 @@ void AkeLlvmUnit_variable_assign_eseq(Zinc_test* test)
     Ake_code_gen_result result;
 
     Ake_code_gen_result_init(&result);
-    AkeLlvmUnit_cg_setup("const a, b, c, d: Int32\n"
+    AkeLlvmUnit_cg_setup("var a, b, c, d: Int32\n"
              "a, b, c, d = 1, 2, 3, 4\n"
              "a",
              &result);
@@ -278,7 +278,7 @@ void AkeLlvmUnit_variable_assign_eseq(Zinc_test* test)
     Ake_code_gen_result_destroy(&result);
 
     Ake_code_gen_result_init(&result);
-    AkeLlvmUnit_cg_setup("const a, b, c, d: Int32\n"
+    AkeLlvmUnit_cg_setup("var a, b, c, d: Int32\n"
              "a, b, c, d = 1, 2, 3, 4\n"
              "b",
              &result);
@@ -287,7 +287,7 @@ void AkeLlvmUnit_variable_assign_eseq(Zinc_test* test)
     Ake_code_gen_result_destroy(&result);
 
     Ake_code_gen_result_init(&result);
-    AkeLlvmUnit_cg_setup("const a, b, c, d: Int32\n"
+    AkeLlvmUnit_cg_setup("var a, b, c, d: Int32\n"
              "a, b, c, d = 1, 2, 3, 4\n"
              "c",
              &result);
@@ -296,7 +296,7 @@ void AkeLlvmUnit_variable_assign_eseq(Zinc_test* test)
     Ake_code_gen_result_destroy(&result);
 
     Ake_code_gen_result_init(&result);
-    AkeLlvmUnit_cg_setup("const a, b, c, d: Int32\n"
+    AkeLlvmUnit_cg_setup("var a, b, c, d: Int32\n"
              "a, b, c, d = 1, 2, 3, 4\n"
              "d",
              &result);
