@@ -400,7 +400,7 @@ void AkeLlvmUnit_function_in_array(Zinc_test* test)
 
     Ake_code_gen_result_init(&result);
     AkeLlvmUnit_cg_setup(
-            "const func_array: [5]fn(Int32)->Int32\n"
+            "var func_array: [5]fn(Int32)->Int32\n"
             "func_array[0] = fn (x: Int32)->Int32 x*2 end\n"
             "func_array[0](10)",
             &result);
