@@ -12,7 +12,7 @@ namespace Akela_llvm {
         Ake_ast* b = Ast_node_get(n, 1);
         Value* rhs = Dispatch(jd, b);
 
-        if (a->tu->td->kind == AKE_TYPE_DEF_REAL || b->tu->td->kind == AKE_TYPE_DEF_REAL) {
+        if (a->tu->kind == AKE_TYPE_DEF_REAL || b->tu->kind == AKE_TYPE_DEF_REAL) {
             return jd->Builder->CreateFMul(lhs, rhs, "multmp");
         } else {
             return jd->Builder->CreateMul(lhs, rhs, "multmp");
@@ -28,7 +28,7 @@ namespace Akela_llvm {
         Ake_ast* b = Ast_node_get(n, 1);
         Value* rhs = Dispatch(jd, b);
 
-        if (a->tu->td->kind == AKE_TYPE_DEF_REAL || b->tu->td->kind == AKE_TYPE_DEF_REAL) {
+        if (a->tu->kind == AKE_TYPE_DEF_REAL || b->tu->kind == AKE_TYPE_DEF_REAL) {
             return jd->Builder->CreateFAdd(lhs, rhs, "addtmp");
         } else {
             return jd->Builder->CreateAdd(lhs, rhs, "addtmp");
@@ -63,19 +63,19 @@ namespace Akela_llvm {
         Type* number_type = Get_type(jd, number->tu);
 
         Value* zero_value;
-        if (n->tu->td->kind == AKE_TYPE_DEF_INTEGER) {
+        if (n->tu->kind == AKE_TYPE_DEF_INTEGER) {
             zero_value = ConstantInt::get(
                 number_type,
-                APInt(number->tu->td->data.integer.bit_count,
+                APInt(number->tu->data.integer.bit_count,
                     0,
                     true));
-        } else if (n->tu->td->kind == AKE_TYPE_DEF_NATURAL) {
+        } else if (n->tu->kind == AKE_TYPE_DEF_NATURAL) {
             zero_value = ConstantInt::get(
                 number_type,
-                APInt(number->tu->td->data.integer.bit_count,
+                APInt(number->tu->data.natural.bit_count,
                     0,
                     false));
-        } else if (n->tu->td->kind == AKE_TYPE_DEF_REAL) {
+        } else if (n->tu->kind == AKE_TYPE_DEF_REAL) {
             zero_value = ConstantFP::get(number_type, APFloat(0.0));
         } else {
             assert(false);

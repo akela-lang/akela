@@ -36,7 +36,7 @@ element Error {
 element Ast(AstType) {
   properties {
     value: String
-    tu: TypeUse
+    tu: TypeDef
   }
   children {
     Ast
@@ -101,31 +101,8 @@ enum AstType {
   Var
 }
 
-element TypeUse(TypeUseType) {
-  properties {
-    td: TypeDef
-    dim: Integer        # array dimension if td is type Array
-  }
-}
-
-enum TypeUseType {
-    TypeDef
-    FunctionInputs
-    FunctionOutputs
-    FunctionEllipsis
-}
-
-element TypeDef(TypeDefType) {
-  properties {
-    name: String `required`
-    bit_count: Integer
-    is_signed: Bool
-  }
-}
-
 enum TypeDefType {
   None
-  Old
   Integer
   Natural
   Real
@@ -136,4 +113,87 @@ enum TypeDefType {
   Slice
   Pointer
   Function
+}
+
+element TypeDef(TypeDefType) {
+  properties {
+    name: String `required`
+  }
+}
+
+variant TypeDef::Integer {
+    properties {
+        bit_count: Natural
+    }
+}
+
+variant TypeDef::Natural {
+    properties {
+        bit_count: Natural
+    }
+}
+
+variant TypeDef::Real {
+    properties {
+        bit_count: Natural
+    }
+}
+
+variant TypeDef::Struct {
+    children {
+        TypeField
+    }
+}
+
+element TypeField {
+    properties {
+        name: String
+        tu: TypeDef
+    }
+}
+
+variant TypeDef::Array {
+    properties {
+        dim: Natural
+        td: TypeDef
+    }
+}
+
+variant TypeDef::ArrayConst {
+    properties {
+        dim: Natural
+        td: TypeDef
+    }
+}
+
+variant TypeDef::Slice {
+    properties {
+        td: TypeDef
+    }
+}
+
+variant TypeDef::Pointer {
+    properties {
+        td: TypeDef
+    }
+}
+
+variant TypeDef::Function {
+    properties {
+        input: Input
+        output: TypeDef
+    }
+}
+
+element Input {
+    children {
+        TypeParam
+    }
+}
+
+element TypeParam {
+    properties {
+        name: String
+        tu: TypeDef
+    }
 }

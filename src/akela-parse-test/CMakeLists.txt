@@ -2,7 +2,8 @@ set(files
         test.c
         data.c
         parse.c
-        compare.c
+        compare_tree.c
+        compare_errors.c
         parse_tools.c
 )
 add_library(akela-parse-test STATIC ${files})

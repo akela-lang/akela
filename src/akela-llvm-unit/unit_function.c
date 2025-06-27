@@ -242,7 +242,7 @@ void AkeLlvmUnit_function_array_param(Zinc_test* test)
 {
     if (test->dry_run) {
         Zinc_string_add_str(&test->name, __func__);
-        test->mute = false;
+        test->mute = true;
         test->solo = false;
         return;
     }

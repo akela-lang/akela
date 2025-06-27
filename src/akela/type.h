@@ -5,13 +5,25 @@
 #include <stddef.h>
 #include "zinc/zstring.h"
 #include <inttypes.h>
-#include "type.h"
-#include "type_use.h"
 #include <assert.h>
+
+typedef enum Ake_array_element_option {
+    Ake_array_element_default,
+    Ake_array_element_const,
+} Ake_array_element_option;
+
+typedef struct Ake_type_dimension {
+    size_t size;
+    Ake_array_element_option option;
+} Ake_type_dimension;
+
+typedef enum Ake_type_context {
+    Ake_type_context_value,
+    Ake_type_context_ptr,
+} Ake_type_context;
 
 typedef enum Ake_TypeDefKind {
     AKE_TYPE_DEF_NONE,
-    AKE_TYPE_DEF_OLD,
     AKE_TYPE_DEF_INTEGER,
     AKE_TYPE_DEF_NATURAL,
     AKE_TYPE_DEF_REAL,
@@ -31,7 +43,6 @@ static const char* Ake_TypeName(Ake_TypeDefKind kind)
 
     const char* name[AKE_TYPE_DEF_COUNT] = {
         "none",
-        "old",
         "integer",
         "natural",
         "real",
@@ -50,7 +61,6 @@ struct Ake_TypeDef {
     Ake_TypeDefKind kind;
     Zinc_string name;
     union {
-        Ake_type_use* old;
         struct { uint8_t bit_count; } integer;
         struct { uint8_t bit_count; } natural;
         struct { uint8_t bit_count; } real;
@@ -65,9 +75,18 @@ struct Ake_TypeDef {
             Ake_TypeDef* output;
         } function;
     } data;
+    Ake_type_context context;
+    void* lhs_allocation;
 };
 
+typedef enum Ake_TypeParamKind {
+    AKE_TYPE_PARAM_REGULAR,
+    AKE_TYPE_PARAM_SELF,
+    AKE_TYPE_PARAM_ELLIPSIS,
+} Ake_TypeParamKind;
+
 struct Ake_TypeParam {
+    Ake_TypeParamKind kind;
     Zinc_string name;
     Ake_TypeDef* td;
     Ake_TypeParam* next;
@@ -89,6 +108,7 @@ void Ake_TypeDefStructAdd(Ake_TypeDef* td, Ake_TypeField* tf);
 void Ake_TypeDefInputAdd(Ake_TypeDef* td, Ake_TypeParam* tp);
 bool Ake_TypeDefMatch(Ake_TypeDef* a, Ake_TypeDef* b, bool* cast);
 Ake_TypeDef* Ake_TypeDefClone(Ake_TypeDef* td);
+void Ake_TypeDefCopy(Ake_TypeDef* a, Ake_TypeDef* b);
 
 void Ake_TypeParamInit(Ake_TypeParam* tp);
 void Ake_TypeParamCreate(Ake_TypeParam** tp);

@@ -30,12 +30,9 @@ a
 ```cent
 use lib::base::*
 Ast::Stmts {
-  .tu = TypeUse::TypeDef {
-    .td = TypeDef::Integer {
-      .name = "Int32"
-      .bit_count = 32
-      .is_signed = true
-    }
+  .tu = TypeDef::Integer {
+    .name = "Int32"
+    .bit_count = 32
   }
   Ast::Const {
     Ast::LetLseq {
@@ -44,35 +41,26 @@ Ast::Stmts {
       }
     }
     Ast::Type {
-      .tu = TypeUse::TypeDef {
-        .td = TypeDef::Integer {
-          .name = "Int32"
-          .bit_count = 32
-          .is_signed = true
-        }
+      .tu = TypeDef::Integer {
+        .name = "Int32"
+        .bit_count = 32
       }
     }
     Ast::LetRseq {
       Ast::Number {
         .value = "105"
-        .tu = TypeUse::TypeDef {
-          .td = TypeDef::Integer {
-            .name = "Int32"
-            .bit_count = 32
-            .is_signed = true
-          }
+        .tu = TypeDef::Integer {
+          .name = "Int32"
+          .bit_count = 32
         }
       }
     }
   }
   Ast::Id {
     .value = "a"
-    .tu = TypeUse::TypeDef {
-      .td = TypeDef::Integer {
-        .name = "Int32"
-        .bit_count = 32
-        .is_signed = true
-      }
+    .tu = TypeDef::Integer {
+      .name = "Int32"
+      .bit_count = 32
     }
   }
 }
@@ -99,12 +87,9 @@ a
 ```cent
 use lib::base::*
 Ast::Stmts {
-  .tu = TypeUse::TypeDef {
-    .td = TypeDef::Real {
-      .name = "Real64"
-      .bit_count = 64
-      .is_signed = false
-    }
+  .tu = TypeDef::Real {
+    .name = "Real64"
+    .bit_count = 64
   }
   Ast::Const {
     Ast::LetLseq {
@@ -113,35 +98,26 @@ Ast::Stmts {
       }
     }
     Ast::Type {
-      .tu = TypeUse::TypeDef {
-        .td = TypeDef::Real {
-          .name = "Real64"
-          .bit_count = 64
-          .is_signed = false
-        }
+      .tu = TypeDef::Real {
+        .name = "Real64"
+        .bit_count = 64
       }
     }
     Ast::LetRseq {
       Ast::Number {
         .value = "1.5"
-        .tu = TypeUse::TypeDef {
-          .td = TypeDef::Real {
-            .name = "Real64"
-            .bit_count = 64
-            .is_signed = false
-          }
+        .tu = TypeDef::Real {
+          .name = "Real64"
+          .bit_count = 64
         }
       }
     }
   }
   Ast::Id {
     .value = "a"
-    .tu = TypeUse::TypeDef {
-      .td = TypeDef::Real {
-        .name = "Real64"
-        .bit_count = 64
-        .is_signed = false
-      }
+    .tu = TypeDef::Real {
+      .name = "Real64"
+      .bit_count = 64
     }
   }
 }

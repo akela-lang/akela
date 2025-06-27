@@ -1,14 +1,12 @@
 #include "ast.h"
-#include "type_use.h"
 #include "type.h"
 #include <assert.h>
 
 void Ake_indent_print(size_t level);
 char* Ake_ast_cent_name(Ake_ast_type type);
-void Ake_type_use_cent_print(Ake_type_use* tu, size_t level, bool is_property);
-char* Ake_type_use_cent_name(Ake_type_use_type type);
 void Ake_type_def_cent_print(Ake_TypeDef* td, size_t level, bool is_property);
-char* Ake_type_def_cent_name(Ake_TypeDefKind type);
+char* Ake_type_def_cent_name(Ake_TypeDefKind kind);
+char* Ake_type_param_cent_name(Ake_TypeParamKind kind);
 
 /* NOLINTNEXTLINE(misc-no-recursion) */
 void Ake_ast_cent_print(Ake_ast* n, size_t level)
@@ -27,7 +25,7 @@ void Ake_ast_cent_print(Ake_ast* n, size_t level)
         if (n->tu) {
             Ake_indent_print(level);
             printf(".tu = ");
-            Ake_type_use_cent_print(n->tu, level, true);
+            Ake_type_def_cent_print(n->tu, level, true);
         }
 
         Ake_ast* p = n->head;
@@ -274,63 +272,6 @@ char* Ake_ast_cent_name(Ake_ast_type type)
 }
 
 /* NOLINTNEXTLINE(misc-no-recursion) */
-void Ake_type_use_cent_print(Ake_type_use* tu, size_t level, bool is_property)
-{
-    if (!is_property) {
-        Ake_indent_print(level);
-    }
-    printf("%s {\n", Ake_type_use_cent_name(tu->type));
-
-    level++;
-
-    if (tu->name.size > 0) {
-        Ake_indent_print(level);
-        printf(".name = \"%s\"\n", Zinc_string_c_str(&tu->name));
-    }
-
-    if (tu->dim.count > 0) {
-        Ake_indent_print(level);
-        printf("dim ");
-        for (size_t i = 0; i < tu->dim.count; i++) {
-            printf("%zu ", *(size_t*)ZINC_VECTOR_PTR(&tu->dim, i));
-        }
-        printf("\n");
-    }
-
-    if (tu->td) {
-        Ake_indent_print(level);
-        printf(".td = ");
-        Ake_type_def_cent_print(tu->td, level, true);
-    }
-
-    level--;
-
-    Ake_indent_print(level);
-    printf("}\n");
-}
-
-char* Ake_type_use_cent_name(Ake_type_use_type type)
-{
-    if (type == Ake_type_use_type_def) {
-        return "TypeUse::TypeDef";
-    }
-
-    if (type == Ake_type_use_function_inputs) {
-        return "TypeUse::FunctionInputs";
-    }
-
-    if (type == Ake_type_use_function_outputs) {
-        return "TypeUse::FunctionOutputs";
-    }
-
-    if (type == Ake_type_use_function_ellipsis) {
-        return "TypeUse::FunctionEllipsis";
-    }
-
-    assert(false && "unknown type");
-}
-
-/* NOLINTNEXTLINE(misc-no-recursion) */
 void Ake_type_def_cent_print(Ake_TypeDef* td, size_t level, bool is_property)
 {
     if (!is_property) {
@@ -364,12 +305,57 @@ void Ake_type_def_cent_print(Ake_TypeDef* td, size_t level, bool is_property)
             Ake_TypeField* field = td->data.fields.head;
             while (field) {
                 Ake_indent_print(level);
+                printf("TypeField {\n");
+                level++;
+                Ake_indent_print(level);
                 printf(".name = \"%s\"\n", Zinc_string_c_str(&field->name));
-                printf(".tu = ");
-                assert(field->td->kind == AKE_TYPE_DEF_OLD);
-                Ake_type_use_cent_print(field->td->data.old, level, true);
+                Ake_indent_print(level);
+                printf(".td = ");
+                Ake_type_def_cent_print(field->td, level, true);
+                level--;
+                Ake_indent_print(level);
+                printf("}\n");
             }
             break;
+        case AKE_TYPE_DEF_ARRAY:
+            Ake_indent_print(level);
+            printf(".dim = %zu\n", td->data.array.dim);
+            Ake_indent_print(level);
+            printf(".td = ");
+            Ake_type_def_cent_print(td->data.array.td, level, true);
+            break;
+        case AKE_TYPE_DEF_ARRAY_CONST:
+            Ake_indent_print(level);
+            printf(".dim = %zu\n", td->data.array_const.dim);
+            Ake_indent_print(level);
+            printf(".td = ");
+            Ake_type_def_cent_print(td->data.array_const.td, level, true);
+        case AKE_TYPE_DEF_SLICE:
+            Ake_indent_print(level);
+            printf(".td = ");
+            Ake_type_def_cent_print(td->data.slice.td, level, true);
+        case AKE_TYPE_DEF_POINTER:
+            Ake_indent_print(level);
+            printf(".td = ");
+            Ake_type_def_cent_print(td->data.pointer.td, level, true);
+        case AKE_TYPE_DEF_FUNCTION:
+            Ake_TypeParam* tp = td->data.function.input_head;
+            while (tp) {
+                Ake_indent_print(level);
+                printf("TypeParam {\n");
+                level++;
+                Ake_indent_print(level);
+                printf(".kind = %s\n", Ake_type_param_cent_name(tp->kind));
+                Ake_indent_print(level);
+                printf(".name = \"%s\"\n", Zinc_string_c_str(&tp->name));
+                Ake_indent_print(level);
+                printf(".td = ");
+                Ake_type_def_cent_print(tp->td, level, true);
+                level--;
+                Ake_indent_print(level);
+                printf("}\n");
+                tp = tp->next;
+            }
         default:
             assert(false && "invalid kind");
     }
@@ -380,31 +366,68 @@ void Ake_type_def_cent_print(Ake_TypeDef* td, size_t level, bool is_property)
     printf("}\n");
 }
 
-char* Ake_type_def_cent_name(Ake_TypeDefKind type)
+char* Ake_type_def_cent_name(Ake_TypeDefKind kind)
 {
-    if (type == AKE_TYPE_DEF_NONE) {
+    if (kind == AKE_TYPE_DEF_NONE) {
         return "TypeDef::None";
     }
 
-    if (type == AKE_TYPE_DEF_INTEGER) {
+    if (kind == AKE_TYPE_DEF_INTEGER) {
         return "TypeDef::Integer";
     }
 
-    if (type == AKE_TYPE_DEF_NATURAL) {
+    if (kind == AKE_TYPE_DEF_NATURAL) {
         return "TypeDef::Natural";
     }
 
-    if (type == AKE_TYPE_DEF_REAL) {
+    if (kind == AKE_TYPE_DEF_REAL) {
         return "TypeDef::Real";
     }
 
-    if (type == AKE_TYPE_DEF_BOOLEAN) {
+    if (kind == AKE_TYPE_DEF_BOOLEAN) {
         return "TypeDef::Boolean";
     }
 
-    if (type == AKE_TYPE_DEF_STRUCT) {
+    if (kind == AKE_TYPE_DEF_STRUCT) {
         return "TypeDef::Struct";
     }
 
-    assert(false && "unknown type");
+    if (kind == AKE_TYPE_DEF_ARRAY) {
+        return "TypeDef::Array";
+    }
+
+    if (kind == AKE_TYPE_DEF_ARRAY_CONST) {
+        return "TypeDef::ArrayConst";
+    }
+
+    if (kind == AKE_TYPE_DEF_SLICE) {
+        return "TypeDef::Slice";
+    }
+
+    if (kind == AKE_TYPE_DEF_POINTER) {
+        return "TypeDef::Pointer";
+    }
+
+    if (kind == AKE_TYPE_DEF_FUNCTION) {
+        return "TypeDef::Function";
+    }
+
+    assert(false && "unknown kind");
+}
+
+char* Ake_type_param_cent_name(Ake_TypeParamKind kind)
+{
+    if (kind == AKE_TYPE_PARAM_REGULAR) {
+        return "Param::Regular";
+    }
+
+    if (kind == AKE_TYPE_PARAM_SELF) {
+        return "Param::Self";
+    }
+
+    if (kind == AKE_TYPE_PARAM_ELLIPSIS) {
+        return "Param::Ellipsis";
+    }
+
+    assert(false && "unknown kind");
 }

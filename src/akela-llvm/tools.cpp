@@ -9,7 +9,7 @@
 #include "struct.h"
 #include <stdfloat>
 #include <float.h>
-#include <stdint.h>
+#include <cstdint>
 
 
 using namespace llvm;
@@ -31,31 +31,23 @@ namespace Akela_llvm {
     }
 
     /* NOLINTNEXTLINE(misc-no-recursion) */
-    FunctionType *Get_function_type(Jit_data *jd, Ake_type_use *tu) {
-        Ake_type_use *inputs = nullptr;
-        Ake_type_use *outputs = nullptr;
-        Ake_get_function_children(tu, &inputs, &outputs);
+    FunctionType *Get_function_type(Jit_data *jd, Ake_TypeDef *tu) {
         bool is_variadic = false;
-
         std::vector<Type *> param_types = std::vector<Type *>();
-        if (inputs) {
-            Ake_type_use* p = inputs->head;
-            while (p) {
-                if (p->type == Ake_type_use_function_ellipsis) {
-                    is_variadic = true;
-                    p = p->next;
-                    continue;
-                }
-                Type *dec_type = Get_type_pointer(jd, p);
+        Ake_TypeParam* tp = tu->data.function.input_head;
+        while (tp) {
+            if (tp->kind == AKE_TYPE_PARAM_ELLIPSIS) {
+                is_variadic = true;
+            } else {
+                Type *dec_type = Get_type_pointer(jd, tp->td);
                 param_types.push_back(dec_type);
-                p = p->next;
             }
+            tp = tp->next;
         }
 
         Type *ret_type;
-        if (outputs) {
-            Ake_type_use *ret = outputs->head;
-            ret_type = Get_type_pointer(jd, ret);
+        if (tu->data.function.output) {
+            ret_type = Get_type_pointer(jd, tu->data.function.output);
         } else {
             ret_type = Type::getVoidTy(*jd->TheContext);
         }
@@ -64,79 +56,98 @@ namespace Akela_llvm {
     }
 
     /* NOLINTNEXTLINE(misc-no-recursion) */
-    Type *Get_scalar_type(Jit_data *jd, Ake_type_use *tu) {
+    Type *Get_scalar_type(Jit_data *jd, Ake_TypeDef *tu) {
         if (!tu) {
             return Type::getVoidTy(*jd->TheContext);
         }
 
-        if (tu->type == Ake_type_use_function) {
+        if (tu->kind == AKE_TYPE_DEF_FUNCTION) {
             return Get_function_type(jd, tu);
         }
 
-        Ake_TypeDef *td = tu->td;
-
-        if (td->kind == AKE_TYPE_DEF_INTEGER) {
+        if (tu->kind == AKE_TYPE_DEF_INTEGER) {
             Type *t;
-            if (td->data.integer.bit_count == 64) {
+            if (tu->data.integer.bit_count == 64) {
                 t = Type::getInt64Ty(*jd->TheContext);
-            } else if (td->data.integer.bit_count == 32) {
+            } else if (tu->data.integer.bit_count == 32) {
                 t = Type::getInt32Ty(*jd->TheContext);
-            } else if (td->data.integer.bit_count == 16) {
+            } else if (tu->data.integer.bit_count == 16) {
                 t = Type::getInt16Ty(*jd->TheContext);
-            } else if (td->data.integer.bit_count == 8) {
+            } else if (tu->data.integer.bit_count == 8) {
                 t = Type::getInt8Ty(*jd->TheContext);
             } else {
-                assert(false);
+                assert(false && "unsupported bit count");
             }
             return t;
         }
 
-        if (td->kind == AKE_TYPE_DEF_NATURAL) {
+        if (tu->kind == AKE_TYPE_DEF_NATURAL) {
             Type *t;
-            if (td->data.natural.bit_count == 64) {
+            if (tu->data.natural.bit_count == 64) {
                 t = Type::getInt64Ty(*jd->TheContext);
-            } else if (td->data.natural.bit_count == 32) {
+            } else if (tu->data.natural.bit_count == 32) {
                 t = Type::getInt32Ty(*jd->TheContext);
-            } else if (td->data.natural.bit_count == 16) {
+            } else if (tu->data.natural.bit_count == 16) {
                 t = Type::getInt16Ty(*jd->TheContext);
-            } else if (td->data.natural.bit_count == 8) {
+            } else if (tu->data.natural.bit_count == 8) {
                 t = Type::getInt8Ty(*jd->TheContext);
             } else {
-                assert(false);
+                assert(false && "unsupported bit count");
             }
             return t;
         }
 
-        if (td->kind == AKE_TYPE_DEF_REAL) {
-            if (td->data.real.bit_count == 64) {
+        if (tu->kind == AKE_TYPE_DEF_REAL) {
+            if (tu->data.real.bit_count == 64) {
                 return Type::getDoubleTy(*jd->TheContext);
-            } else if (td->data.real.bit_count == 32) {
+            } else if (tu->data.real.bit_count == 32) {
                 return Type::getFloatTy(*jd->TheContext);
-            } else if (td->data.real.bit_count == 16) {
+            } else if (tu->data.real.bit_count == 16) {
                 return Type::getHalfTy(*jd->TheContext);
             } else {
-                assert(false && "unsupported real bit count");
+                assert(false && "unsupported bit count");
             }
         }
 
-        if (td->kind == AKE_TYPE_DEF_BOOLEAN) {
+        if (tu->kind == AKE_TYPE_DEF_BOOLEAN) {
             return Type::getInt1Ty(*jd->TheContext);
         }
 
-        if (td->kind == AKE_TYPE_DEF_STRUCT) {
-            return GetStructTypeFromType(jd, td);
+        if (tu->kind == AKE_TYPE_DEF_STRUCT) {
+            return GetStructTypeFromType(jd, tu);
         }
 
         assert(false);
         return nullptr;
     }
 
+    bool NeedPointer(Ake_TypeDefKind kind)
+    {
+        if (kind == AKE_TYPE_DEF_ARRAY) {
+            return true;
+        }
+
+        if (kind == AKE_TYPE_DEF_ARRAY_CONST) {
+            return true;
+        }
+
+        if (kind == AKE_TYPE_DEF_FUNCTION) {
+            return true;
+        }
+
+        if (kind == AKE_TYPE_DEF_STRUCT) {
+            return true;
+        }
+
+        return false;
+    }
+
     /* NOLINTNEXTLINE(misc-no-recursion) */
-    Type* Get_type_pointer(Jit_data *jd, Ake_type_use *tu)
+    Type* Get_type_pointer(Jit_data *jd, Ake_TypeDef *tu)
     {
         Type* t = Get_type(jd, tu);
         if (tu) {
-            if (tu->is_array || tu->type == Ake_type_use_function || tu->td->kind == AKE_TYPE_DEF_STRUCT) {
+            if (NeedPointer(tu->kind)) {
                 //t = t->getPointerTo();
                 t = PointerType::get(t, 0);
             }
@@ -144,23 +155,42 @@ namespace Akela_llvm {
         return t;
     }
 
-    /* NOLINTNEXTLINE(misc-no-recursion) */
-    Type* Get_type(Jit_data* jd, Ake_type_use* tu)
+    bool IsArray(Ake_TypeDefKind kind)
     {
-        Type *t = Get_scalar_type(jd, tu);
+        if (kind == AKE_TYPE_DEF_ARRAY) {
+            return true;
+        }
 
-        if (tu && tu->is_array) {
-            size_t i = tu->dim.count - 1;
-            while (true) {
-                auto dim = (Ake_type_dimension*)ZINC_VECTOR_PTR(&tu->dim, i);
-                if (tu->type == Ake_type_use_function) {
-                    //t = t->getPointerTo();
+        if (kind == AKE_TYPE_DEF_ARRAY_CONST) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /* NOLINTNEXTLINE(misc-no-recursion) */
+    Type* Get_type(Jit_data* jd, Ake_TypeDef* tu)
+    {
+        Type *t;
+        if (tu && IsArray(tu->kind)) {
+            size_t dim = 0;
+            if (tu->kind == AKE_TYPE_DEF_ARRAY) {
+                dim = tu->data.array.dim;
+                //t = ArrayType::get(Get_type(jd, tu->data.array.td), dim);
+                Ake_TypeDef* tu2 = tu->data.array.td;
+                t = Get_type(jd, tu2);
+                if (tu2->kind == AKE_TYPE_DEF_FUNCTION) {
                     t = PointerType::get(t, 0);
                 }
-                t = ArrayType::get(t, dim->size);
-                if (i == 0) break;
-                i--;
+                t = ArrayType::get(t, dim);
+            } else if (tu->kind == AKE_TYPE_DEF_ARRAY_CONST) {
+                dim = tu->data.array_const.dim;
+                t = ArrayType::get(Get_type(jd, tu->data.array_const.td), dim);
+            } else {
+                assert(false && "unsupported array type");
             }
+        } else {
+            return Get_scalar_type(jd, tu);
         }
 
         return t;
@@ -181,203 +211,119 @@ namespace Akela_llvm {
         Zinc_string* value = &result->value;
         auto ExprSymbol = jd->ExitOnErr(jd->TheJIT->lookup(TOP_LEVEL_NAME));
         if (n->tu) {
-            Ake_TypeDefKind type = AKE_TYPE_DEF_NONE;
-            if (n->tu->td) {
-                type = n->tu->td->kind;
-            }
-            bool is_array = n->tu->is_array;
-            if (type == AKE_TYPE_DEF_INTEGER) {
-                int bit_count = n->tu->td->data.integer.bit_count;
-                if (is_array) {
-                    if (bit_count == 64) {
-                        long* (*fp)() = ExprSymbol.getAddress().toPtr<long*(*)()>();
-                        long* p = fp();
-                        Zinc_vector* dim_vector = &n->tu->dim;
-                        size_t count = 1;
-                        for (int i = 0; i < dim_vector->count; i++) {
-                            auto dim = (Ake_type_dimension*)ZINC_VECTOR_PTR(dim_vector, i);
-                            count *= dim->size;
-                        }
-                        Zinc_string_add_char(value, '[');
-                        for (int i = 0; i < count; i++) {
-                            if (i >= 1) {
-                                Zinc_string_add_char(value, ',');
-                            }
-                            Zinc_string_add_format(value, "%ld", *p++);
-                        }
-                        Zinc_string_add_char(value, ']');
-                        Zinc_string_add_char(value, '\n');
-                    } else if (bit_count == 32) {
-                        int* (*fp)() = ExprSymbol.getAddress().toPtr<int*(*)()>();
-                        int* p = fp();
-                        Zinc_vector* dim_vector = &n->tu->dim;
-                        size_t count = 1;
-                        for (int i = 0; i < dim_vector->count; i++) {
-                            auto dim = (Ake_type_dimension*)ZINC_VECTOR_PTR(dim_vector, i);
-                            count *= dim->size;
-                        }
-                        Zinc_string_add_char(value, '[');
-                        for (int i = 0; i < count; i++) {
-                            if (i >= 1) {
-                                Zinc_string_add_char(value, ',');
-                            }
-                            Zinc_string_add_format(value, "%d", *p++);
-                        }
-                        Zinc_string_add_char(value, ']');
-                        Zinc_string_add_char(value, '\n');
-                    } else if (bit_count == 8) {
+            Ake_TypeDefKind type = n->tu->kind;
+
+            if (IsArray(type)) {
+                if (type == AKE_TYPE_DEF_ARRAY_CONST) {
+                    Ake_TypeDef* tu = n->tu->data.array_const.td;
+                    if (tu->kind == AKE_TYPE_DEF_NATURAL && tu->data.natural.bit_count == 8) {
                         char* (*fp)() = ExprSymbol.getAddress().toPtr<char*(*)()>();
-                        char* p = fp();
-                        Zinc_string_add_format(value, "%s", p);
+                        char* v = fp();
+                        Zinc_string_add_str(&result->value, v);
+                        if (result->return_address) {
+                            *(char**)result->return_address = v;
+                        }
                     } else {
-                        assert(false);
+                        assert(false && "return of arrays not supported");
                     }
                 } else {
-                    if (bit_count == 64) {
-                        int64_t (*fp)() = ExprSymbol.getAddress().toPtr<int64_t(*)()>();
-                        int64_t v = fp();
-                        Zinc_string_add_format(value, "%ld", v);
-                        if (result->return_address) {
-                            *(int64_t*)result->return_address = v;
-                        }
-                    } else if (bit_count == 32) {
-                        int32_t (*fp)() = ExprSymbol.getAddress().toPtr<int32_t(*)()>();
-                        int32_t v = fp();
-                        Zinc_string_add_format(value, "%d", v);
-                        if (result->return_address) {
-                            *(int32_t*)result->return_address = v;
-                        }
-                    } else if (bit_count == 16) {
-                        int16_t (*fp)() = ExprSymbol.getAddress().toPtr<int16_t(*)()>();
-                        int16_t v = fp();
-                        Zinc_string_add_format(value, "%hd", v);
-                        if (result->return_address) {
-                            *(int16_t*)result->return_address = v;
-                        }
-                    } else if (bit_count == 8) {
-                        int8_t (*fp)() = ExprSymbol.getAddress().toPtr<int8_t(*)()> ();
-                        int8_t v = fp();
-                        Zinc_string_add_format(value, "%hhd", v);
-                        if (result->return_address) {
-                            *(int8_t*)result->return_address = v;
-                        }
-                    } else {
-                        assert(false);
+                    assert(false && "return of arrays not supported");
+                }
+            } else if (type == AKE_TYPE_DEF_INTEGER) {
+                size_t bit_count = n->tu->data.integer.bit_count;
+                if (bit_count == 64) {
+                    int64_t (*fp)() = ExprSymbol.getAddress().toPtr<int64_t(*)()>();
+                    int64_t v = fp();
+                    Zinc_string_add_format(value, "%ld", v);
+                    if (result->return_address) {
+                        *(int64_t*)result->return_address = v;
                     }
+                } else if (bit_count == 32) {
+                    int32_t (*fp)() = ExprSymbol.getAddress().toPtr<int32_t(*)()>();
+                    int32_t v = fp();
+                    Zinc_string_add_format(value, "%d", v);
+                    if (result->return_address) {
+                        *(int32_t*)result->return_address = v;
+                    }
+                } else if (bit_count == 16) {
+                    int16_t (*fp)() = ExprSymbol.getAddress().toPtr<int16_t(*)()>();
+                    int16_t v = fp();
+                    Zinc_string_add_format(value, "%hd", v);
+                    if (result->return_address) {
+                        *(int16_t*)result->return_address = v;
+                    }
+                } else if (bit_count == 8) {
+                    int8_t (*fp)() = ExprSymbol.getAddress().toPtr<int8_t(*)()> ();
+                    int8_t v = fp();
+                    Zinc_string_add_format(value, "%hhd", v);
+                    if (result->return_address) {
+                        *(int8_t*)result->return_address = v;
+                    }
+                } else {
+                    assert(false);
                 }
             } else if (type == AKE_TYPE_DEF_NATURAL) {
-                int bit_count = n->tu->td->data.natural.bit_count;
-                if (is_array) {
-                    if (bit_count == 64) {
-                        long* (*fp)() = ExprSymbol.getAddress().toPtr<long*(*)()>();
-                        long* p = fp();
-                        Zinc_vector* dim_vector = &n->tu->dim;
-                        size_t count = 1;
-                        for (int i = 0; i < dim_vector->count; i++) {
-                            auto dim = (Ake_type_dimension*)ZINC_VECTOR_PTR(dim_vector, i);
-                            count *= dim->size;
-                        }
-                        Zinc_string_add_char(value, '[');
-                        for (int i = 0; i < count; i++) {
-                            if (i >= 1) {
-                                Zinc_string_add_char(value, ',');
-                            }
-                            Zinc_string_add_format(value, "%ld", *p++);
-                        }
-                        Zinc_string_add_char(value, ']');
-                        Zinc_string_add_char(value, '\n');
-                    } else if (bit_count == 32) {
-                        int* (*fp)() = ExprSymbol.getAddress().toPtr<int*(*)()>();
-                        int* p = fp();
-                        Zinc_vector* dim_vector = &n->tu->dim;
-                        size_t count = 1;
-                        for (int i = 0; i < dim_vector->count; i++) {
-                            auto dim = (Ake_type_dimension*)ZINC_VECTOR_PTR(dim_vector, i);
-                            count *= dim->size;
-                        }
-                        Zinc_string_add_char(value, '[');
-                        for (int i = 0; i < count; i++) {
-                            if (i >= 1) {
-                                Zinc_string_add_char(value, ',');
-                            }
-                            Zinc_string_add_format(value, "%d", *p++);
-                        }
-                        Zinc_string_add_char(value, ']');
-                        Zinc_string_add_char(value, '\n');
-                    } else if (bit_count == 8) {
-                        char* (*fp)() = ExprSymbol.getAddress().toPtr<char*(*)()>();
-                        char* p = fp();
-                        Zinc_string_add_format(value, "%s", p);
-                    } else {
-                        assert(false);
+                size_t bit_count = n->tu->data.natural.bit_count;
+                if (bit_count == 64) {
+                    uint64_t (*fp)() = ExprSymbol.getAddress().toPtr<uint64_t(*)()>();
+                    uint64_t v = fp();
+                    Zinc_string_add_format(value, "%lu", v);
+                    if (result->return_address) {
+                        *(uint64_t*)result->return_address = v;
+                    }
+                } else if (bit_count == 32) {
+                    uint32_t (*fp)() = ExprSymbol.getAddress().toPtr<uint32_t(*)()>();
+                    uint32_t v = fp();
+                    Zinc_string_add_format(value, "%u", v);
+                    if (result->return_address) {
+                        *(uint32_t*)result->return_address = v;
+                    }
+                } else if (bit_count == 16) {
+                    uint16_t (*fp)() = ExprSymbol.getAddress().toPtr<uint16_t(*)()>();
+                    uint16_t v = fp();
+                    Zinc_string_add_format(value, "%hu", v);
+                    if (result->return_address) {
+                        *(uint16_t*)result->return_address = v;
+                    }
+                } else if (bit_count == 8) {
+                    uint8_t (*fp)() = ExprSymbol.getAddress().toPtr<uint8_t(*)()>();
+                    uint8_t v = fp();
+                    Zinc_string_add_format(value, "%hhu", v);
+                    if (result->return_address) {
+                        *(uint8_t*)result->return_address = v;
                     }
                 } else {
-                    if (bit_count == 64) {
-                        uint64_t (*fp)() = ExprSymbol.getAddress().toPtr<uint64_t(*)()>();
-                        uint64_t v = fp();
-                        Zinc_string_add_format(value, "%lu", v);
-                        if (result->return_address) {
-                            *(uint64_t*)result->return_address = v;
-                        }
-                    } else if (bit_count == 32) {
-                        uint32_t (*fp)() = ExprSymbol.getAddress().toPtr<uint32_t(*)()>();
-                        uint32_t v = fp();
-                        Zinc_string_add_format(value, "%u", v);
-                        if (result->return_address) {
-                            *(uint32_t*)result->return_address = v;
-                        }
-                    } else if (bit_count == 16) {
-                        uint16_t (*fp)() = ExprSymbol.getAddress().toPtr<uint16_t(*)()>();
-                        uint16_t v = fp();
-                        Zinc_string_add_format(value, "%hu", v);
-                        if (result->return_address) {
-                            *(uint16_t*)result->return_address = v;
-                        }
-                    } else if (bit_count == 8) {
-                        uint8_t (*fp)() = ExprSymbol.getAddress().toPtr<uint8_t(*)()>();
-                        uint8_t v = fp();
-                        Zinc_string_add_format(value, "%hhu", v);
-                        if (result->return_address) {
-                            *(uint8_t*)result->return_address = v;
-                        }
-                    } else {
-                        assert(false);
-                    }
+                    assert(false);
                 }
             } else if (type == AKE_TYPE_DEF_REAL) {
-                if (is_array) {
-                    double* (*fp)() = ExprSymbol.getAddress().toPtr <double*(*)()>();
-                    double* p = fp();
-                    Zinc_string_add_format(value, "%lf", *p);
-                } else {
-                    if (n->tu->td->data.real.bit_count == 64) {
-                        double (*fp)() = ExprSymbol.getAddress().toPtr <double(*)()>();
-                        double v = fp();
-                        Zinc_string_add_format(value, "%lf", v);
-                        if (result->return_address) {
-                            *(double*)result->return_address = v;
-                        }
-                    } else if (n->tu->td->data.real.bit_count == 32) {
-                        float (*fp)() = ExprSymbol.getAddress().toPtr <float(*)()>();
-                        float v = fp();
-                        Zinc_string_add_format(value, "%f", v);
-                        if (result->return_address) {
-                            *(float*)result->return_address = v;
-                        }
-                    } else if (n->tu->td->data.real.bit_count == 16) {
-#if IS_UNIX
-                        _Float16 (*fp)() = ExprSymbol.getAddress().toPtr <_Float16(*)()>();
-                        _Float16 v = fp();
-                        Zinc_string_add_format(value, "%f", (float)v);
-                        if (result->return_address) {
-                            *(_Float16*)result->return_address = v;
-                        }
-#elif IS_WIN
-						assert(false && "16-bit float not supported");
-#endif
-                    } else {
-                        assert(false);
+                size_t bit_count = n->tu->data.real.bit_count;
+                if (bit_count == 64) {
+                    double (*fp)() = ExprSymbol.getAddress().toPtr <double(*)()>();
+                    double v = fp();
+                    Zinc_string_add_format(value, "%lf", v);
+                    if (result->return_address) {
+                        *(double*)result->return_address = v;
                     }
+                } else if (bit_count == 32) {
+                    float (*fp)() = ExprSymbol.getAddress().toPtr <float(*)()>();
+                    float v = fp();
+                    Zinc_string_add_format(value, "%f", v);
+                    if (result->return_address) {
+                        *(float*)result->return_address = v;
+                    }
+                } else if (bit_count == 16) {
+#if IS_UNIX
+                    _Float16 (*fp)() = ExprSymbol.getAddress().toPtr <_Float16(*)()>();
+                    _Float16 v = fp();
+                    Zinc_string_add_format(value, "%f", (float)v);
+                    if (result->return_address) {
+                        *(_Float16*)result->return_address = v;
+                    }
+#elif IS_WIN
+					assert(false && "16-bit float not supported");
+#endif
+                } else {
+                    assert(false);
                 }
             } else if (type == AKE_TYPE_DEF_BOOLEAN) {
                 bool (*fp)() = ExprSymbol.getAddress().toPtr <bool(*)()>();
@@ -390,7 +336,7 @@ namespace Akela_llvm {
                 if (result->return_address) {
                     *(bool*)result->return_address = v;
                 }
-            } else if (n->tu->type == Ake_type_use_function) {
+            } else if (type == AKE_TYPE_DEF_FUNCTION) {
                 void* (*fp)() = ExprSymbol.getAddress().toPtr<void*(*)()>();
                 void* v = fp();
                 Zinc_string_add_format(value, "Function");
@@ -457,18 +403,25 @@ namespace Akela_llvm {
     /* NOLINTNEXTLINE(misc-no-recursion) */
     void Array_copy(
             Jit_data* jd,
-            Ake_type_use* lhs_tu,
-            Ake_type_use* rhs_tu,
+            Ake_TypeDef* lhs_tu,
+            Ake_TypeDef* rhs_tu,
             Value* lhs_ptr,
             Value* rhs_ptr)
     {
-        size_t size = *(size_t*)ZINC_VECTOR_PTR(&lhs_tu->dim, 0);
-
-        Ake_type_use* lhs_tu2 = Ake_type_use_clone(lhs_tu);
-        Ake_type_use_reduce_dimension(lhs_tu2);
-
-        Ake_type_use* rhs_tu2 = Ake_type_use_clone(rhs_tu);
-        Ake_type_use_reduce_dimension(rhs_tu2);
+        size_t size = 0;
+        Ake_TypeDef* lhs_tu2 = NULL;
+        Ake_TypeDef* rhs_tu2 = NULL;
+        if (lhs_tu->kind == AKE_TYPE_DEF_ARRAY) {
+            size = lhs_tu->data.array.dim;
+            lhs_tu2 = lhs_tu->data.array.td;
+            rhs_tu2 = rhs_tu->data.array.td;
+        } else if (lhs_tu->kind == AKE_TYPE_DEF_ARRAY_CONST) {
+            size = lhs_tu->data.array_const.dim;
+            lhs_tu2 = lhs_tu->data.array_const.td;
+            rhs_tu2 = rhs_tu->data.array_const.td;
+        } else {
+            assert(false && "invalid type");
+        }
 
         for (size_t i = 0; i < size; i++) {
             Type* t = Get_type(jd, lhs_tu2);
@@ -478,16 +431,12 @@ namespace Akela_llvm {
             Value* lhs_ptr2 = jd->Builder->CreateInBoundsGEP(t, lhs_ptr, list, "lhstmp");
             Value* rhs_ptr2 = jd->Builder->CreateInBoundsGEP(t, rhs_ptr, list, "rhstmp");
 
-            if (lhs_tu2->is_array) {
+            if (IsArray(lhs_tu2->kind)) {
                 Array_copy(jd, lhs_tu2, rhs_tu2, lhs_ptr2, rhs_ptr2);
             } else {
                 Value* value = jd->Builder->CreateLoad(t, rhs_ptr2, "rhs");
                 jd->Builder->CreateStore(value, lhs_ptr2);
             }
         }
-
-        Ake_type_use_destroy(lhs_tu2);
-        Ake_type_use_destroy(rhs_tu2);
     }
-
 }

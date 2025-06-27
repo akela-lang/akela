@@ -12,7 +12,7 @@ extern "C" {
 #include <stdlib.h>
 #include "ast.h"
 #include "environment.h"
-#include "type_use.h"
+#include "type.h"
 #include "zinc/list.h"
 
 typedef struct Ake_type_use Ake_type_use;
@@ -31,9 +31,6 @@ AKELA_API void Ake_symbol_table_init(struct Ake_symbol_table* st);
 AKELA_API void Ake_symbol_table_create(struct Ake_symbol_table** st);
 AKELA_API void Ake_symbol_table_destroy(struct Ake_symbol_table* st);
 AKELA_API bool Ake_is_numeric(Ake_TypeDef* td);
-AKELA_API bool Ake_type_find_whole(struct Ake_symbol_table* st, Ake_type_use* a, Ake_type_use* b);
-AKELA_API bool Ake_type_def_can_cast(Ake_TypeDef* a, Ake_TypeDef* b);
-AKELA_API bool Ake_type_use_can_cast(Ake_type_use* a, Ake_type_use* b);
 AKELA_API void Ake_set_current_function(Ake_symbol_table* st, Ake_ast* fd);
 AKELA_API Ake_ast* Ake_get_current_function(Ake_symbol_table* st);
 AKELA_API size_t Ake_symbol_table_generate_id(struct Ake_symbol_table* st);

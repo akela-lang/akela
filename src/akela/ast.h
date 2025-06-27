@@ -9,7 +9,7 @@
 #include "zinc/result.h"
 #include "token.h"
 #include "zinc/vector.h"
-#include "type_use.h"
+#include "type.h"
 #include "zinc/list.h"
 #include "environment.h"
 
@@ -141,7 +141,7 @@ static char const* Ast_type_name(Ake_ast_type type)
 typedef struct Ake_ast {
 	Ake_ast_type type;
 	Zinc_string value;
-	Ake_type_use* tu;
+	Ake_TypeDef* tu;
     bool is_mut;
     Zinc_location loc;
 	Ake_Environment* env;

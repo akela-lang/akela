@@ -8,11 +8,14 @@
 
 void Zinc_assert();
 
-bool Zinc_expect_error(Zinc_test* test, Zinc_result r, const char* message);
+void Zinc_expect_check(Zinc_test* test);
+void Zinc_expect_passed(Zinc_test* test);
+void Zinc_expect_failed(Zinc_test* test);
+bool Zinc_expect_result(Zinc_test* test, Zinc_result r, const char* message);
 bool Zinc_expect_null(Zinc_test* test, void* p, const char* message);
 bool Zinc_expect_size_t_equal(Zinc_test* test, size_t a, size_t b, const char* message);
 bool Zinc_expect_string(Zinc_test* test, Zinc_string* a, const char* b, const char* message);
-bool Zinc_expect_true(Zinc_test* test, int value, const char* fmt, ...);
+bool Zinc_expect_true(Zinc_test* test, bool value, const char* fmt, ...);
 bool Zinc_expect_false(Zinc_test* test, int value, const char* message);
 bool Zinc_expect_strcmp(Zinc_test* test, const char* a, const char* b, const char* message);
 bool Zinc_expect_int_equal(Zinc_test* test, int a, int b, const char* message);

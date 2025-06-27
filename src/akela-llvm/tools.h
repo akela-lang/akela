@@ -64,19 +64,20 @@ namespace Akela_llvm {
         std::vector<llvm::Function*> current_function;
     } Jit_data;
 
+    bool IsArray(Ake_TypeDefKind kind);
     void Jit_data_init(Jit_data* jd, Zinc_error_list* el);
-    llvm::FunctionType* Get_function_type(Jit_data* jd, Ake_type_use* tu);
-    llvm::Type* Get_scalar_type(Jit_data * jd, Ake_type_use* tu);
-    llvm::Type* Get_type(Jit_data * jd, Ake_type_use* tu);
-    llvm::Type* Get_type_pointer(Jit_data *jd, Ake_type_use *tu);
-    llvm::Type* Get_return_type(Jit_data * jd, Ake_type_use * tu);
+    llvm::FunctionType* Get_function_type(Jit_data* jd, Ake_TypeDef* tu);
+    llvm::Type* Get_scalar_type(Jit_data * jd, Ake_TypeDef* tu);
+    llvm::Type* Get_type(Jit_data * jd, Ake_TypeDef* tu);
+    llvm::Type* Get_type_pointer(Jit_data *jd, Ake_TypeDef *tu);
+    llvm::Type* Get_return_type(Jit_data * jd, Ake_TypeDef * tu);
     void Run(Jit_data* jd, Ake_ast* n, Ake_code_gen_result* result);
     llvm::BasicBlock* Get_last_block(Jit_data * jd, llvm::Function * f);
     llvm::Value* Dispatch(Jit_data* jd, Ake_ast* n);
     void Array_copy(
             Jit_data* jd,
-            Ake_type_use* lhs_tu,
-            Ake_type_use* rhs_tu,
+            Ake_TypeDef* lhs_tu,
+            Ake_TypeDef* rhs_tu,
             llvm::Value* lhs_ptr,
             llvm::Value* rhs_ptr);
 }

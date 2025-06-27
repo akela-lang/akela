@@ -72,15 +72,23 @@ ninja -C cmake-build-debug
 ```
 
 ## Run Tests
-    cmake-build-debug/bin/test
+```
+cmake-build-debug/bin/test
+```
 
 ## Run JIT on file
-    cmake-build-debug/bin/akela examples/addition.ake
+```
+cmake-build-debug/bin/akela examples/addition.ake
+```
 
 ## Valgrind
-    valgrind --leak-check=full --num-callers=60 cmake-build-debug/bin/test
-    valgrind --leak-check=full --num-callers=60 cmake-build-debug/bin/akela examples/addition.ake
+```
+valgrind --leak-check=full --num-callers=60 cmake-build-debug/bin/test
+valgrind --leak-check=full --num-callers=60 cmake-build-debug/bin/akela examples/addition.ake
+```
 
 ## Code Coverage
-    ./generate-coverage.sh
-    cmake-build-coverage/bin/coverage data/coverage
+```
+./generate-coverage.sh
+cmake-build-coverage/bin/coverage data/coverage
+```

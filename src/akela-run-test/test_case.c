@@ -11,6 +11,7 @@
 #include <akela/comp_table.h>
 #include "zinc/os.h"
 #include "zinc/expect.h"
+#include "zinc/memory.h"
 
 Art_pair Art_diff(Zinc_test* case_test, Cob_re regex_re, Zinc_string* actual, Zinc_string* expected);
 bool Art_diff_value(Cob_re regex_re, Zinc_string* actual, Zinc_string* expected);
@@ -64,7 +65,10 @@ void Art_run_test(Zinc_test* case_test)
     Ake_comp_unit_parse(ct->primary);
 
     bool passed = true;
-    valid = Zinc_expect_true(case_test, ct->primary->valid, "parsing failed");
+    valid = Zinc_expect_true(
+        case_test,
+        ct->primary->valid && !ct->primary->errors.head,
+        "parsing failed");
     if (!valid) {
         /* is parsing valid */
         Zinc_error* e = ct->primary->errors.head;

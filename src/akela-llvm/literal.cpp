@@ -7,36 +7,35 @@ using namespace llvm::orc;
 namespace Akela_llvm {
     Value* Handle_number(Jit_data* jd, Ake_ast* n)
     {
-        Ake_type_use* tu = n->tu;
-        Ake_TypeDef *td = tu->td;
-        if (td->kind == AKE_TYPE_DEF_INTEGER) {
+        Ake_TypeDef* tu = n->tu;
+        if (tu->kind == AKE_TYPE_DEF_INTEGER) {
             Type* t = Get_type(jd, n->tu);
             Zinc_string_finish(&n->value);
             long v = strtol(n->value.buf, nullptr, 10);
-            return ConstantInt::get(t, APInt(td->data.integer.bit_count, v, true));
+            return ConstantInt::get(t, APInt(tu->data.integer.bit_count, v, true));
         }
 
-        if (td->kind == AKE_TYPE_DEF_NATURAL) {
+        if (tu->kind == AKE_TYPE_DEF_NATURAL) {
             Type* t = Get_type(jd, n->tu);
             Zinc_string_finish(&n->value);
             long v = strtol(n->value.buf, nullptr, 10);
-            return ConstantInt::get(t, APInt(td->data.natural.bit_count, v, false));
+            return ConstantInt::get(t, APInt(tu->data.natural.bit_count, v, false));
         }
 
-        if (td->kind == AKE_TYPE_DEF_REAL) {
+        if (tu->kind == AKE_TYPE_DEF_REAL) {
             Zinc_string_finish(&n->value);
-            if (td->data.real.bit_count == 64) {
+            if (tu->data.real.bit_count == 64) {
                 double v = strtod(n->value.buf, nullptr);
                 Type* t = Get_type(jd, n->tu);
                 return ConstantFP::get(*jd->TheContext, APFloat(v));
             }
 
-            if (td->data.real.bit_count == 32) {
+            if (tu->data.real.bit_count == 32) {
                 float v = strtof(n->value.buf, nullptr);
                 return ConstantFP::get(*jd->TheContext, APFloat(v));
             }
 
-            if (td->data.real.bit_count == 16) {
+            if (tu->data.real.bit_count == 16) {
 #if IS_UNIX
                 _Float16 v = (_Float16)strtof(n->value.buf, nullptr);
                 Type* t = Type::getHalfTy(*jd->TheContext);

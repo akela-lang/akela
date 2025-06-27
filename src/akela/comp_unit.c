@@ -33,7 +33,7 @@ void Ake_comp_unit_create(Ake_comp_unit** cu)
 void Ake_comp_unit_destroy(Ake_comp_unit* cu)
 {
     if (cu) {
-        Ake_ast_destroy(cu->root);
+        //Ake_ast_destroy(cu->root);
         Zinc_error_list_destroy(&cu->errors);
         Zinc_string_destroy(&cu->path);
         Ake_symbol_table_destroy(&cu->st);

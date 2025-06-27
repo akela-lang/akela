@@ -13,7 +13,7 @@ namespace Akela_llvm {
         Ake_ast* lseq = Ast_node_get(n, 0);
         Ake_ast* type_node = Ast_node_get(n, 1);
         Ake_ast* rseq = Ast_node_get(n, 2);
-        Ake_type_use* tu = type_node->tu;
+        Ake_TypeDef* tu = type_node->tu;
 
         Ake_ast *lhs = Ast_node_get(lseq, 0);
         Ake_ast *rhs = nullptr;
@@ -24,7 +24,7 @@ namespace Akela_llvm {
             Ake_Environment* env = Ake_get_current_env(type_node);
             Ake_symbol* sym = Ake_EnvironmentGet(env, &lhs->value, type_node->loc.start);
             assert(sym);
-            if (tu->type == Ake_type_use_function) {
+            if (tu->kind == AKE_TYPE_DEF_FUNCTION) {
                 if (rhs) {
                     FunctionType *func_type = Get_function_type(jd, tu);
                     //PointerType *pt = func_type->getPointerTo();
@@ -35,7 +35,7 @@ namespace Akela_llvm {
                     Value* rhs_value = Dispatch(jd, rhs);
                     jd->Builder->CreateStore(rhs_value, lhs_value);
                 } else {
-                    if (tu->is_array) {
+                    if (IsArray(tu->kind)) {
                         Type *t = Get_type(jd, tu);
                         Zinc_string_finish(&lhs->value);
                         AllocaInst* lhs_value = jd->Builder->CreateAlloca(t, nullptr, lhs->value.buf);
@@ -47,7 +47,7 @@ namespace Akela_llvm {
                         sym->reference = lhs_value;
                     }
                 }
-            } else if (tu->is_array) {
+            } else if (IsArray(tu->kind)) {
                 if (rhs) {
                     Type *t = Get_type(jd, tu);
                     Zinc_string_finish(&lhs->value);
@@ -66,7 +66,7 @@ namespace Akela_llvm {
                     AllocaInst *lhs_value = jd->Builder->CreateAlloca(t, nullptr, lhs->value.buf);
                     sym->value = lhs_value;
                 }
-            } else if (tu->td->kind == AKE_TYPE_DEF_STRUCT) {
+            } else if (tu->kind == AKE_TYPE_DEF_STRUCT) {
                 if (rhs) {
                     Type *t = Get_type(jd, tu);
                     Zinc_string_finish(&lhs->value);
@@ -138,7 +138,7 @@ namespace Akela_llvm {
     {
         Ake_Environment* env = Ake_get_current_env(lhs);
         Ake_symbol* sym = Ake_EnvironmentGet(env, &lhs->value, lhs->loc.end);
-        if (lhs->tu->type == Ake_type_use_function) {
+        if (lhs->tu->kind == AKE_TYPE_DEF_FUNCTION) {
             if (lhs->type == Ake_ast_type_id) {
                 AllocaInst *lhs_value;
                 if (sym->reference) {
@@ -160,7 +160,7 @@ namespace Akela_llvm {
             } else {
                 assert(false);
             }
-        } else if (lhs->tu->is_array) {
+        } else if (IsArray(lhs->tu->kind)) {
             lhs->tu->context = Ake_type_context_ptr;
             Value* lhs_value = Dispatch(jd, lhs);
             Array_copy(jd, lhs->tu, rhs->tu, lhs_value, rhs_value);
@@ -198,7 +198,7 @@ namespace Akela_llvm {
     /* NOLINTNEXTLINE(misc-no-recursion) */
     Value* Handle_array_literal(Jit_data* jd, Ake_ast* n)
     {
-        assert(n->tu->is_array);
+        assert(IsArray(n->tu->kind));
         std::vector<size_t> index;
         Type *t = Get_type(jd, n->tu);
         Value* ptr;
@@ -214,7 +214,7 @@ namespace Akela_llvm {
         /* NOLINTNEXTLINE(misc-no-recursion) */
     void Array_literal_element(Jit_data* jd, Ake_ast* n, Value* ptr)
     {
-        if (n->tu->is_array) {
+        if (IsArray(n->tu->kind)) {
             Type* t = Get_type(jd, n->tu);
             size_t i = 0;
             std::vector<Value*> list;
@@ -251,24 +251,30 @@ namespace Akela_llvm {
     Value* Handle_subscript(Jit_data* jd, Ake_ast* n)
     {
         Type* element_type = Get_type(jd, n->tu);
-        if (n->tu->type == Ake_type_use_function) {
+        if (n->tu->kind == AKE_TYPE_DEF_FUNCTION) {
             //element_type = element_type->getPointerTo();
             element_type = PointerType::get(element_type, 0);
         }
 
         Ake_ast* array = n->head;
-        assert(array->tu->is_array);
+        assert(IsArray(array->tu->kind));
         array->tu->context = Ake_type_context_ptr;
         Value* array_value = Dispatch(jd, array);
         assert(array_value);
 
         Ake_ast* subscript = array->next;
         Value* subscript_value = Dispatch(jd, subscript);
+        size_t dim = 0;
+        if (array->tu->kind == AKE_TYPE_DEF_ARRAY) {
+            dim = array->tu->data.array.dim;
+        } else if (array->tu->kind == AKE_TYPE_DEF_ARRAY_CONST) {
+            dim = array->tu->data.array_const.dim;
+        } else {
+            assert(false && "expected an array");
+        }
 
-        assert(array->tu->dim.count >= 1);
-        size_t size = *(size_t*)ZINC_VECTOR_PTR(&array->tu->dim, 0);
         Type* size_type = Type::getInt64Ty(*jd->TheContext);
-        Value* size_value = ConstantInt::get(size_type, APInt(64, size, false));
+        Value* size_value = ConstantInt::get(size_type, APInt(64, dim, false));
 
         Value* cond = jd->Builder->CreateICmpULT(subscript_value, size_value);
 
@@ -297,7 +303,7 @@ namespace Akela_llvm {
         list.push_back(subscript_value);
         Value* element_ptr = jd->Builder->CreateInBoundsGEP(element_type, array_value, list, "subscripttmp");
 
-        if (n->tu->is_array) {
+        if (IsArray(n->tu->kind)) {
             return element_ptr;
         } else {
             if (n->tu->context == Ake_type_context_ptr) {

@@ -87,32 +87,29 @@ namespace Akela_llvm {
         Ake_ast* callee = Ast_node_get(n, 0);
         Ake_ast* cseq = Ast_node_get(n, 1);
 
-        assert(callee && callee->tu && callee->tu->type == Ake_type_use_function);
+        assert(callee && callee->tu && callee->tu->kind == AKE_TYPE_DEF_FUNCTION);
         Value* callee_value = Dispatch(jd, callee);
 
         std::vector<Value*> arg_list;
         Ake_ast* arg = cseq->head;
-        Ake_type_use* func_type = callee->tu;
-        Ake_type_use* inputs = NULL;
-        Ake_type_use* outputs = NULL;
-        Ake_get_function_children(func_type, &inputs, &outputs);
-        Ake_type_use* param_tu = NULL;
-        if (inputs) {
-            param_tu = inputs->head;
-        }
-        while (arg) {
-            Ake_type_use* arg_tu = arg->tu;
+        Ake_TypeDef* func_type = callee->tu;
+
+        Ake_TypeParam* tp = func_type->data.function.input_head;
+        while (tp) {
+            Ake_TypeDef* param_tu = tp->td;
+            Ake_TypeDef* arg_tu = arg->tu;
             if (arg->type == Ake_ast_type_number) {
-                if ((arg_tu->td->kind == AKE_TYPE_DEF_INTEGER && arg_tu->td->data.integer.bit_count == 32)
-                    && (param_tu->td->kind == AKE_TYPE_DEF_NATURAL && param_tu->td->data.natural.bit_count == 64)) {
-                        arg_tu->td = param_tu->td;
+                if ((arg_tu->kind == AKE_TYPE_DEF_INTEGER && arg_tu->data.integer.bit_count == 32)
+                    && (param_tu->kind == AKE_TYPE_DEF_NATURAL && param_tu->data.natural.bit_count == 64)) {
+                    arg_tu->kind = AKE_TYPE_DEF_NATURAL;
+                    arg_tu->data.natural.bit_count = 64;
                 }
             }
 
             Value* value = Dispatch(jd, arg);
             arg_list.push_back(value);
             arg = arg->next;
-            param_tu = param_tu->next;
+            tp = tp->next;
         }
 
         FunctionType *t = Get_function_type(jd, callee->tu);

@@ -46,60 +46,42 @@ Test {
 ```cent
 use lib::base::*
 Ast::Stmts {
-  .tu = TypeUse::TypeDef {
-    .td = TypeDef::Integer {
-      .name = "Int32"
-      .bit_count = 32
-      .is_signed = true
-    }
+  .tu = TypeDef::Integer {
+    .name = "Int32"
+    .bit_count = 32
   }
   Ast::Plus {
-    .tu = TypeUse::TypeDef {
-      .td = TypeDef::Integer {
-        .name = "Int32"
-        .bit_count = 32
-        .is_signed = true
-      }
+    .tu = TypeDef::Integer {
+      .name = "Int32"
+      .bit_count = 32
     }
     Ast::Sign {
-      .tu = TypeUse::TypeDef {
-        .td = TypeDef::Integer {
-          .name = "Int32"
-          .bit_count = 32
-          .is_signed = true
-        }
+      .tu = TypeDef::Integer {
+        .name = "Int32"
+        .bit_count = 32
       }
       Ast::Minus {
       }
       Ast::Number {
         .value = "5"
-        .tu = TypeUse::TypeDef {
-          .td = TypeDef::Integer {
-            .name = "Int32"
-            .bit_count = 32
-            .is_signed = true
-          }
+        .tu = TypeDef::Integer {
+          .name = "Int32"
+          .bit_count = 32
         }
       }
     }
     Ast::Sign {
-      .tu = TypeUse::TypeDef {
-        .td = TypeDef::Integer {
-          .name = "Int32"
-          .bit_count = 32
-          .is_signed = true
-        }
+      .tu = TypeDef::Integer {
+        .name = "Int32"
+        .bit_count = 32
       }
       Ast::Minus {
       }
       Ast::Number {
         .value = "20"
-        .tu = TypeUse::TypeDef {
-          .td = TypeDef::Integer {
-            .name = "Int32"
-            .bit_count = 32
-            .is_signed = true
-          }
+        .tu = TypeDef::Integer {
+          .name = "Int32"
+          .bit_count = 32
         }
       }
     }

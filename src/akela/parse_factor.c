@@ -69,14 +69,14 @@ Ake_ast* Ake_parse_factor(struct Ake_parse_state* ps)
 	return n;
 }
 
-Ake_ast* Ake_parse_function(struct Ake_parse_state* ps, bool is_method, Ake_ast* struct_type)
+Ake_ast* Ake_parse_function(struct Ake_parse_state* ps, bool is_method, Ake_TypeDef* struct_type)
 {
     Ake_ast* n = NULL;
 
     Ake_ast_create(&n);
     n->type = Ake_ast_type_function;
 
-    struct Ake_token* f = NULL;
+    Ake_token* f = NULL;
     Ake_match(ps, Ake_token_fn, "expected fn", &f, n);
     Ake_consume_newline(ps, n);
     Ake_token_destroy(f);
@@ -94,7 +94,7 @@ Ake_ast* Ake_parse_function(struct Ake_parse_state* ps, bool is_method, Ake_ast*
     Ake_begin_environment(ps->st, n);
     Ake_declare_params(ps, proto, struct_type);
     Ake_set_current_function(ps->st, n);
-    Ake_type_use* tu = Ake_proto2type_use(ps, proto, struct_type);
+    Ake_TypeDef* tu = Ake_proto2type_use(ps, proto, struct_type);
     n->tu = tu;
 
     Ake_ast* stmts_node = NULL;
@@ -150,12 +150,7 @@ Ake_ast* Ake_parse_function(struct Ake_parse_state* ps, bool is_method, Ake_ast*
                     Zinc_malloc_safe((void**)&new_sym, sizeof(struct Ake_symbol));
                     Ake_symbol_init(new_sym);
                     new_sym->type = Ake_symbol_type_variable;
-                    Ake_type_use* old = Ake_type_use_clone(tu);
-                    Ake_TypeDef* tu2 = NULL;
-                    Ake_TypeDefCreate(&tu2);
-                    Ake_TypeDefSet(tu2, AKE_TYPE_DEF_OLD);
-                    tu2->data.old = old;
-                    new_sym->tu = tu2;
+                    new_sym->tu = Ake_TypeDefClone(tu);
                     Ake_EnvironmentAdd(ps->st->top, &id_node->value, new_sym, n->loc.start);
                 }
             }
@@ -211,7 +206,7 @@ Ake_ast* Ake_parse_if(struct Ake_parse_state* ps)
     }
 
     if (body) {
-        cb->tu = Ake_type_use_clone(body->tu);
+        cb->tu = Ake_TypeDefClone(body->tu);
         Ake_ast_add(cb, body);
     }
 
@@ -240,13 +235,13 @@ Ake_ast* Ake_parse_if(struct Ake_parse_state* ps)
         if (b) {
             /* only return a value if else exists */
             Ake_ast* p = n->head;
-            Ake_type_use* tu = NULL;
+            Ake_TypeDef* tu = NULL;
             if (p) {
-                tu = Ake_type_use_clone(p->tu);
+                tu = Ake_TypeDefClone(p->tu);
                 p = p->next;
             }
             while (p) {
-                if (!Ake_type_find_whole(ps->st, tu, p->tu)) {
+                if (!Ake_TypeDefMatch(tu, p->tu, NULL)) {
                     Zinc_error_list_set(ps->el, &p->loc,
                                    "branch type does not match type of previous branch");
                     n->type = Ake_ast_type_error;
@@ -310,7 +305,7 @@ void Ake_parse_elseif(struct Ake_parse_state* ps, Ake_ast* parent)
 
         if (body) {
             Ake_ast_add(cb, body);
-            cb->tu = Ake_type_use_clone(body->tu);
+            cb->tu = Ake_TypeDefClone(body->tu);
         }
 
         Ake_ast_add(parent, cb);
@@ -345,7 +340,7 @@ Ake_ast* Ake_parse_else(struct Ake_parse_state* ps)
         }
 
         if (body) {
-            n->tu = Ake_type_use_clone(body->tu);
+            n->tu = Ake_TypeDefClone(body->tu);
         }
 
         if (body) {
@@ -393,19 +388,18 @@ Ake_ast* Ake_parse_not(struct Ake_parse_state* ps)
 
 	if (n->type != Ake_ast_type_error) {
 		assert(a);
-		Ake_type_use* tu = a->tu;
+		Ake_TypeDef* tu = a->tu;
 		if (!tu) {
 			Zinc_error_list_set(ps->el, &not->loc, "! operator used on parse_factor with no value");
 			/* test case: test_parse_not_error_no_value */
             n->type = Ake_ast_type_error;
 		} else {
-			assert(tu->td);
-			if (tu->td->kind != AKE_TYPE_DEF_BOOLEAN) {
+			if (tu->kind != AKE_TYPE_DEF_BOOLEAN) {
 				Zinc_error_list_set(ps->el, &not->loc, "not operator used on non-boolean");
 				/* test case: test_parse_not_error_not_boolean */
                 n->type = Ake_ast_type_error;
 			} else {
-				n->tu = Ake_type_use_clone(tu);
+				n->tu = Ake_TypeDefClone(tu);
 			}
 		}
 	}
@@ -465,19 +459,20 @@ Ake_ast* Ake_parse_literal(struct Ake_parse_state* ps)
 	    size_t seq = Ake_get_current_seq(ps);
         Ake_symbol* sym = Ake_EnvironmentGet(ps->st->top, &bf, seq);
         assert(sym);
-        assert(sym->td);
-        Ake_type_use* tu = NULL;
-        Ake_type_use_create(&tu);
-        tu->td = sym->td;
-        n->tu = tu;
+        if (sym->type != Ake_symbol_type_type) {
+            Zinc_error_list_set(ps->el, &n->loc, "expected a type");
+            n->type = Ake_ast_type_error;
+        }
+        n->tu = Ake_TypeDefClone(sym->td);
         Zinc_string_destroy(&bf);
 
         if (is_string) {
-            tu->is_array = true;
-            Ake_type_dimension dim;
-            dim.size = n->value.size + 1;
-            dim.option = Ake_array_element_const;
-            Zinc_vector_add(&tu->dim, &dim, 1);
+            Ake_TypeDef* tu = NULL;
+            Ake_TypeDefCreate(&tu);
+            tu->kind = AKE_TYPE_DEF_ARRAY_CONST;
+            tu->data.array_const.dim = n->value.size + 1;
+            tu->data.array_const.td = n->tu;
+            n->tu = tu;
         }
 	}
 
@@ -516,11 +511,7 @@ Ake_ast* Ake_parse_id(Ake_parse_state* ps)
         Ake_consume_newline(ps, n);
 
         n->type = Ake_ast_type_struct_literal;
-
-        Ake_type_use* tu = NULL;
-        Ake_type_use_create(&tu);
-        tu->td = sym->td;
-        n->tu = tu;
+        n->tu = Ake_TypeDefClone(sym->td);
 
         Ake_parse_struct_literal_elements(ps, n, sym->td);
 
@@ -554,9 +545,7 @@ Ake_ast* Ake_parse_id(Ake_parse_state* ps)
             /* test case: test_parse_types_missing_declaration */
             n->type = Ake_ast_type_error;
         } else {
-            assert(sym->tu->kind == AKE_TYPE_DEF_OLD);
-            Ake_type_use* old = Ake_type_use_clone(sym->tu->data.old);
-            n->tu = old;
+            n->tu = Ake_TypeDefClone(sym->tu);
         }
 
         Ake_token_destroy(id);
@@ -656,8 +645,7 @@ void Ake_parse_struct_literal_elements(
             Ake_ast_add(field, expr);
 
             if (parent->type != Ake_ast_type_error) {
-                assert(sfr.td->kind == AKE_TYPE_DEF_OLD);
-                if (!Ake_type_use_can_cast(sfr.td->data.old, expr->tu)) {
+                if (!Ake_TypeDefMatch(sfr.td, expr->tu, NULL)) {
                     Zinc_error_list_set(ps->el, &expr->loc, "invalid type for field");
                     parent->type = Ake_ast_type_error;
                 }
@@ -742,13 +730,13 @@ Ake_ast* Ake_parse_sign(struct Ake_parse_state* ps)
 
 	if (n->type != Ake_ast_type_error) {
 		assert(right);
-		Ake_type_use* tu = right->tu;
+		Ake_TypeDef* tu = right->tu;
 		if (!tu) {
 			Zinc_error_list_set(ps->el, &sign->loc, "negative operator was used on expression with no value");
 			/* test case: test_parse_sign_error */
             n->type = Ake_ast_type_error;
 		} else {
-			n->tu = Ake_type_use_clone(tu);
+			n->tu = Ake_TypeDefClone(tu);
 		}
 	}
 
@@ -799,13 +787,14 @@ Ake_ast* Ake_parse_array_literal(struct Ake_parse_state* ps)
             /* test case: test_parse_array_literal_empty_error */
             n->type = Ake_ast_type_error;
         } else {
-            Ake_type_use* tu_first = Ake_type_use_clone(first->tu);
+            Ake_TypeDef* tu_first = Ake_TypeDefClone(first->tu);
             Ake_ast* x = first->next;
-            Ake_type_use* tu_x;
+            Ake_TypeDef* tu_x;
             count++;
             while (x) {
                 tu_x = x->tu;
-                if (!Ake_type_find_whole(ps->st, tu_first, tu_x)) {
+                bool cast = false;
+                if (!Ake_TypeDefMatch(tu_first, tu_x, &cast)) {
                     Zinc_error_list_set(ps->el, &first->loc, "array elements not the same type");
                     /* test case: test_parse_array_literal_mixed_error */
                     n->type = Ake_ast_type_error;
@@ -814,9 +803,12 @@ Ake_ast* Ake_parse_array_literal(struct Ake_parse_state* ps)
                 count++;
                 x = x->next;
             }
-            n->tu = tu_first;
-            n->tu->is_array = true;
-            Zinc_vector_add(&n->tu->dim, &count, 1);
+            Ake_TypeDef* tu = NULL;
+            Ake_TypeDefCreate(&tu);
+            Ake_TypeDefSet(tu, AKE_TYPE_DEF_ARRAY);
+            tu->data.array.dim = count;
+            tu->data.array.td = Ake_TypeDefClone(tu_first);
+            n->tu = tu;
         }
     }
 
@@ -916,20 +908,18 @@ Ake_ast* Ake_parse_parenthesis(struct Ake_parse_state* ps)
 
 	if (n->type != Ake_ast_type_error) {
 		assert(a);
-		Ake_type_use* tu = a->tu;
+		Ake_TypeDef* tu = a->tu;
 		if (!tu) {
 			Zinc_error_list_set(ps->el, &a->loc, "parenthesis on expression that has no value");
             n->type = Ake_ast_type_error;
 		} else {
-			n->tu = Ake_type_use_clone(tu);
+			n->tu = Ake_TypeDefClone(tu);
 		}
 	}
 
-	/* destroy lp lp{} */
 	Ake_token_destroy(lp);
 	free(lp);
 
-	/* destroy rp rp{} */
 	Ake_token_destroy(rp);
 	free(rp);
 

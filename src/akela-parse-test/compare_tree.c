@@ -12,32 +12,35 @@
 #include <errno.h>
 #include <akela/comp_table.h>
 #include <akela/ast_to_cent.h>
+#include "zinc/expect.h"
+#include "compare_errors.h"
 
 bool Apt_compare_ast(Zinc_test* top_test, Zinc_test* case_test, Ake_ast* n, Cent_value* value);
-bool Apt_compare_type_use(
-    Apt_top_data* top_data,
-    Zinc_test* case_test,
-    Zinc_location* loc,
-    Ake_type_use* tu,
-    Ake_ast* parent_n,
-    Cent_value* value,
-    Cent_value* parent_value);
 bool Apt_compare_type_def(
-    Apt_top_data* top_data,
     Zinc_test* case_test,
-    Zinc_location* loc,
-    Ake_TypeDef* td,
+    Ake_ast* n,
+    Ake_TypeDef* tu,
     Cent_value* value);
-bool Apt_check_errors(
-    Zinc_test* top_test,
+bool Apt_compare_type_def_integer(
     Zinc_test* case_test,
-    Zinc_error_list* errors,
-    Cent_value* expected);
-bool Apt_check_error(
-    Zinc_test* top_test,
+    Ake_ast* n,
+    Ake_TypeDef* tu,
+    Cent_value* value);
+bool Apt_compare_type_def_natural(
     Zinc_test* case_test,
-    Zinc_error_list* errors,
-    Cent_value* expected_error);
+    Ake_ast* n,
+    Ake_TypeDef* tu,
+    Cent_value* value);
+bool Apt_compare_type_def_real(
+    Zinc_test* case_test,
+    Ake_ast* n,
+    Ake_TypeDef* tu,
+    Cent_value* value);
+bool Apt_compare_type_def_struct(
+    Zinc_test* case_test,
+    Ake_ast* n,
+    Ake_TypeDef* tu,
+    Cent_value* value);
 
 void Apt_suite_run(Zinc_test* suite_test)
 {
@@ -154,154 +157,6 @@ void Apt_case_run(Zinc_test* case_test)
     }
 }
 
-bool Apt_check_errors(
-    Zinc_test* top_test,
-    Zinc_test* case_test,
-    Zinc_error_list* errors,
-    Cent_value* expected)
-{
-    Apt_top_data* top_data = top_test->data;
-    Apt_case_data* case_data = case_test->data;
-
-    if (!expected) {
-        Zinc_error_list_set(&top_data->errors, NULL, "expected Errors");
-        return false;
-    }
-
-    Cent_ast* n = expected->n;
-
-    if (!Zinc_string_compare_str(&expected->name, "Errors")) {
-        Zinc_spec_error_list_set(
-            &case_data->spec_errors,
-            case_test,
-            NULL,
-            &n->loc,
-            "expected Errors");
-        return false;
-    }
-
-    if (expected->type != Cent_value_type_dag) {
-        Zinc_spec_error_list_set(
-            &case_data->spec_errors,
-            case_test,
-            NULL,
-            &n->loc,
-            "expected Dict");
-        return false;
-    }
-
-    bool pass = true;
-    Cent_value* expected_error = expected->data.dag.head;
-    while (expected_error) {
-        pass = Apt_check_error(top_test, case_test, errors, expected_error) && pass;
-        expected_error = expected_error->next;
-    }
-
-    return pass;
-}
-
-bool Apt_check_error(
-    Zinc_test* top_test,
-    Zinc_test* case_test,
-    Zinc_error_list* errors,
-    Cent_value* expected_error)
-{
-    Apt_top_data* top_data = top_test->data;
-    Apt_case_data* case_data = case_test->data;
-
-    Cent_ast* n = expected_error->n;
-    Cent_value* message = Cent_value_get_str(expected_error, "message");
-    bool valid = true;
-
-    if (!message) {
-        Zinc_error_list_set(&top_data->errors, &n->loc, "expected message");
-        valid = false;
-    }
-
-    if (message && message->type != Cent_value_type_string) {
-        Zinc_error_list_set(&top_data->errors, &n->loc, "message is not a string");
-        valid = false;
-    }
-
-    Cent_value* line = Cent_value_get_str(expected_error, "line");
-    if (!line) {
-        Zinc_error_list_set(&top_data->errors, &n->loc, "expected line");
-        valid = false;
-    }
-
-    if (line && line->type != Cent_value_type_natural) {
-        Zinc_error_list_set(&top_data->errors, &n->loc, "expected line to be a natural");
-        valid = false;
-    }
-
-    Cent_value* col = Cent_value_get_str(expected_error, "col");
-    if (!col) {
-        Zinc_error_list_set(&top_data->errors, &n->loc, "expected col");
-        valid = false;
-    }
-
-    if (col && col->type != Cent_value_type_natural) {
-        Zinc_error_list_set(&top_data->errors, &n->loc, "expected col to be a natural");
-        valid = false;
-    }
-
-    if (!valid) {
-        return valid;
-    }
-
-    Zinc_error* e = errors->head;
-    bool found = false;
-    while (e) {
-        if (Zinc_string_compare(&e->message, &message->data.string)) {
-            found = true;
-            break;
-        }
-        e = e->next;
-    }
-
-    if (found) {
-        if (line->data.natural != e->loc.line) {
-            Zinc_error_list_set(
-                &top_data->errors,
-                &n->loc,
-                "line does not match: (%zu), (%zu)",
-                e->loc.line,
-                line->data.natural);
-        }
-
-        if (col->data.natural != e->loc.col) {
-            Zinc_error_list_set(
-                &top_data->errors,
-                &n->loc,
-                "col does not match: (%zu) (%zu)",
-                e->loc.col,
-                col->data.natural);
-        }
-    } else {
-        Zinc_string s;
-        Zinc_string_init(&s);
-        Zinc_string_add_format(&s, "could not find error: %bf", &message->data.string);
-        Zinc_string_add_format(&s, "\n\tErrors:");
-        Zinc_error* e2 = errors->head;
-        while (e2) {
-            Zinc_string_add_format(
-                &s,
-                "\n\t(%zu,%zu): %bf",
-                e2->loc.line,
-                e2->loc.col,
-                &e2->message);
-            e2 = e2->next;
-        }
-        Zinc_error_list_set(
-            &top_data->errors,
-            &n->loc,
-            Zinc_string_c_str(&s));
-        Zinc_string_destroy(&s);
-    }
-
-    return valid;
-}
-
 /* NOLINTNEXTLINE(misc-no-recursion) */
 bool Apt_compare_ast(Zinc_test* top_test, Zinc_test* case_test, Ake_ast* n, Cent_value* value)
 {
@@ -401,9 +256,9 @@ bool Apt_compare_ast(Zinc_test* top_test, Zinc_test* case_test, Ake_ast* n, Cent
         }
     }
 
-    Ake_type_use* tu = n->tu;
+    Ake_TypeDef* tu = n->tu;
     Cent_value* tu_value = Cent_value_get_str(value, "tu");
-    pass = Apt_compare_type_use(top_data, case_test, &n->loc, tu, n, tu_value, value) && pass;
+    pass = Apt_compare_type_def(case_test, n, tu, tu_value) && pass;
 
     /* children */
     Ake_ast* n2 = NULL;
@@ -428,14 +283,11 @@ bool Apt_compare_ast(Zinc_test* top_test, Zinc_test* case_test, Ake_ast* n, Cent
 }
 
 /* NOLINTNEXTLINE(misc-no-recursion) */
-bool Apt_compare_type_use(
-    Apt_top_data* top_data,
+bool Apt_compare_type_def(
     Zinc_test* case_test,
-    Zinc_location* loc,
-    Ake_type_use* tu,
-    Ake_ast* parent_n,
-    Cent_value* value,
-    Cent_value* parent_value)
+    Ake_ast* n,
+    Ake_TypeDef* tu,
+    Cent_value* value)
 {
     bool pass = true;
 
@@ -449,11 +301,11 @@ bool Apt_compare_type_use(
         Zinc_spec_error_list_set(
             &case_data->spec_errors,
             case_test,
-            loc,
+            &n->loc,
             NULL,
             "type use value is null: (%d-%s)-(NULL)",
-            parent_n->type,
-            Ast_type_name(parent_n->type));
+            n->type,
+            Ast_type_name(n->type));
         return false;
     }
 
@@ -463,89 +315,20 @@ bool Apt_compare_type_use(
         Zinc_spec_error_list_set(
             &case_data->spec_errors,
             case_test,
-            loc,
+            &n->loc,
             &value_n->loc,
             "type use node is null: %d-%s");
         return false;
     }
 
-    if (!Zinc_string_compare_str(&value->name, "TypeUse")) {
-            Zinc_spec_error_list_set(
-            &case_data->spec_errors,
-            case_test,
-            loc,
-            &value_n->loc,
-            "expected type use value: %bf",
-            &value->name);
-        pass = false;
-    }
-
-    /* properties */
-    Ake_TypeDef* td = tu->td;
-    Cent_value* td_value = Cent_value_get_str(value, "td");
-    pass = Apt_compare_type_def(top_data, case_test, loc, td, td_value) && pass;
-
-    /* children */
-    Ake_type_use* tu2 = NULL;
-    Cent_value* value2 = NULL;
-
-    tu2 = tu->head;
-    if (value->type == Cent_value_type_dag) {
-        value2 = value->data.dag.head;
-    }
-
-    while (tu2 || value2) {
-        pass = Apt_compare_type_use(top_data, case_test, loc, tu2, parent_n, value2, parent_value) && pass;
-        if (tu2) {
-            tu2 = tu2->next;
-        }
-        if (value2) {
-            value2 = value2->next;
-        }
-    }
-
-    return pass;
-}
-
-/* NOLINTNEXTLINE(misc-no-recursion) */
-bool Apt_compare_type_def(
-    Apt_top_data* top_data,
-    Zinc_test* case_test,
-    Zinc_location* loc,
-    Ake_TypeDef* td,
-    Cent_value* value)
-{
-    bool pass = true;
-
-    Apt_case_data* case_data = case_test->data;
-
-    if (!td && !value) {
-        return true;
-    }
-
-    if (td && !value) {
-        Zinc_spec_error_list_set(&case_data->spec_errors, case_test, loc, NULL, "type def value is null");
-        return false;
-    }
-
-    Cent_ast* value_n = value->n;
-    if (!td && value) {
-        Zinc_spec_error_list_set(
-            &case_data->spec_errors,
-            case_test,
-            loc,
-            &value_n->loc,
-            "type def node is null");
-        return false;
-    }
-
     if (!Zinc_string_compare_str(&value->name, "TypeDef")) {
         Zinc_spec_error_list_set(
-            &case_data->spec_errors,
-            case_test,
-            loc,
-            &value_n->loc,
-            "expected type def value: %bf", &value->name);
+        &case_data->spec_errors,
+        case_test,
+        &n->loc,
+        &value_n->loc,
+        "expected type use value: %bf",
+        &value->name);
         pass = false;
     }
 
@@ -554,18 +337,18 @@ bool Apt_compare_type_def(
         Zinc_spec_error_list_set(
             &case_data->spec_errors,
             case_test,
-            loc,
+            &n->loc,
             &value_n->loc,
             "name not set");
     } else {
-        if (!Zinc_string_compare(&td->name, &name_value->data.string)) {
+        if (!Zinc_string_compare(&tu->name, &name_value->data.string)) {
             Zinc_spec_error_list_set(
                 &case_data->spec_errors,
                 case_test,
-                loc,
+                &n->loc,
                 &value_n->loc,
                 "type def name does not match (%bf) (%bf)",
-                &td->name,
+                &tu->name,
                 &name_value->data.string);
             pass = false;
         }
@@ -576,46 +359,210 @@ bool Apt_compare_type_def(
         Zinc_spec_error_list_set(
             &case_data->spec_errors,
             case_test,
-            loc,
+            &n->loc,
             &value_n->loc,
             "type not set");
     } else {
         assert(type_value->type == Cent_value_type_enum);
-        if (td->kind != type_value->data.enumeration.enum_value->value) {
+        if (tu->kind != type_value->data.enumeration.enum_value->value) {
             Zinc_spec_error_list_set(
                 &case_data->spec_errors,
                 case_test,
-                loc,
+                &n->loc,
                 &value_n->loc,
                 "type def type does not match (%d) (%d)",
-                td->kind,
+                tu->kind,
                 type_value->data.enumeration.enum_value->value);
             pass = false;
         }
     }
 
+    switch (tu->kind) {
+        case AKE_TYPE_DEF_INTEGER:
+            return Apt_compare_type_def_integer(case_test, n, tu, value);
+        case AKE_TYPE_DEF_NATURAL:
+            return Apt_compare_type_def_natural(case_test, n, tu, value);
+        case AKE_TYPE_DEF_REAL:
+            return Apt_compare_type_def_real(case_test, n, tu, value);
+        case AKE_TYPE_DEF_BOOLEAN:
+            break;
+        case AKE_TYPE_DEF_STRUCT:
+            return Apt_compare_type_def_struct(case_test, n, tu, value);
+        default:
+            assert(false && "invalid kind");
+    }
+
+    return pass;
+}
+
+bool Apt_compare_type_def_integer(
+    Zinc_test* case_test,
+    Ake_ast* n,
+    Ake_TypeDef* tu,
+    Cent_value* value)
+{
+    Apt_case_data* case_data = case_test->data;
+    Ake_ast* value_n = value->n;
+
+    bool pass = true;
+
     Cent_value* bit_count_value = Cent_value_get_str(value, "bit_count");
     if (bit_count_value) {
-        assert(bit_count_value->type == Cent_value_type_integer);
-        if (td->data.integer.bit_count != bit_count_value->data.integer) {
+        assert(bit_count_value->type == Cent_value_type_natural);
+        if (tu->data.integer.bit_count != bit_count_value->data.integer) {
             Zinc_spec_error_list_set(
                 &case_data->spec_errors,
                 case_test,
-                loc,
+                &n->loc,
                 &value_n->loc,
                 "type def bit_count does not match (%d) (%d)",
-                td->data.integer.bit_count,
+                tu->data.integer.bit_count,
                 bit_count_value->data.integer);
             pass = false;
         }
-    } else if (td->data.integer.bit_count > 0) {
+    } else if (tu->data.integer.bit_count > 0) {
         Zinc_spec_error_list_set(
             &case_data->spec_errors,
             case_test,
-            loc,
+            &n->loc,
             &value_n->loc,
             "bit_count not set");
         pass = false;
+    }
+
+    return pass;
+}
+
+bool Apt_compare_type_def_natural(
+    Zinc_test* case_test,
+    Ake_ast* n,
+    Ake_TypeDef* tu,
+    Cent_value* value)
+{
+    Apt_case_data* case_data = case_test->data;
+    Ake_ast* value_n = value->n;
+
+    bool pass = true;
+
+    Cent_value* bit_count_value = Cent_value_get_str(value, "bit_count");
+    if (bit_count_value) {
+        assert(bit_count_value->type == Cent_value_type_natural);
+        if (tu->data.natural.bit_count != bit_count_value->data.natural) {
+            Zinc_spec_error_list_set(
+                &case_data->spec_errors,
+                case_test,
+                &n->loc,
+                &value_n->loc,
+                "type def bit_count does not match (%d) (%d)",
+                tu->data.natural.bit_count,
+                bit_count_value->data.natural);
+            pass = false;
+        }
+    } else if (tu->data.natural.bit_count > 0) {
+        Zinc_spec_error_list_set(
+            &case_data->spec_errors,
+            case_test,
+            &n->loc,
+            &value_n->loc,
+            "bit_count not set");
+        pass = false;
+    }
+
+    return pass;
+}
+
+bool Apt_compare_type_def_real(
+    Zinc_test* case_test,
+    Ake_ast* n,
+    Ake_TypeDef* tu,
+    Cent_value* value)
+{
+    Apt_case_data* case_data = case_test->data;
+    Ake_ast* value_n = value->n;
+
+    bool pass = true;
+
+    Cent_value* bit_count_value = Cent_value_get_str(value, "bit_count");
+    if (bit_count_value) {
+        assert(bit_count_value->type == Cent_value_type_natural);
+        if (tu->data.real.bit_count != bit_count_value->data.real) {
+            Zinc_spec_error_list_set(
+                &case_data->spec_errors,
+                case_test,
+                &n->loc,
+                &value_n->loc,
+                "type def bit_count does not match (%d) (%d)",
+                tu->data.real.bit_count,
+                bit_count_value->data.real);
+            pass = false;
+        }
+    } else if (tu->data.real.bit_count > 0) {
+        Zinc_spec_error_list_set(
+            &case_data->spec_errors,
+            case_test,
+            &n->loc,
+            &value_n->loc,
+            "bit_count not set");
+        pass = false;
+    }
+
+    return pass;
+}
+
+/* NOLINTNEXTLINE(misc-no-recursion) */
+bool Apt_compare_type_def_struct(
+    Zinc_test* case_test,
+    Ake_ast* n,
+    Ake_TypeDef* tu,
+    Cent_value* value)
+{
+    Apt_case_data* case_data = case_test->data;
+    Ake_ast* value_n = value->n;
+
+    bool pass = true;
+
+    Ake_TypeField* tf = tu->data.fields.head;
+    Cent_value* field_value = value->data.dag.head;
+
+    while (tf || field_value) {
+        if (!tf && !field_value) {
+            break;
+        }
+
+        if (!Zinc_expect_true(case_test, tf, "type field null")) {
+            break;
+        }
+
+        if (!Zinc_expect_true(case_test, field_value, "field value null")) {
+            break;
+        }
+
+        assert(tf);
+        assert(field_value);
+
+        Cent_value* name_value = Cent_value_get_str(field_value, "name");
+
+        if (!Zinc_expect_ptr(case_test, name_value, "name not in type field")) {
+            break;
+        }
+
+        if (!Zinc_expect_string(
+            case_test,
+            &name_value->data.string,
+            Zinc_string_c_str(&tf->name),
+            "name match")) {
+            break;
+        }
+
+        Cent_value* td_value = Cent_value_get_str(field_value, "td");
+        if (!Zinc_expect_ptr(case_test, td_value, "td not in type field")) {
+            break;
+        }
+
+        pass = Apt_compare_type_def(case_test, n, tf->td, td_value) && pass;
+
+        tf = tf->next;
+        field_value = field_value->next;
     }
 
     return pass;

@@ -13,7 +13,7 @@ void Zinc_unit_result_set_error(Zinc_test* test)
 
 	Zinc_result r;
 	r = Zinc_set_error("error x");
-	if (!Zinc_expect_error(test, r, "set_error")) {
+	if (!Zinc_expect_result(test, r, "set_error")) {
 		return Zinc_assert();
 	}
 	Zinc_expect_error_message(test, "error x");

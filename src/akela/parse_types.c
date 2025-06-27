@@ -12,11 +12,16 @@
 #include <assert.h>
 
 bool Ake_token_is_type(struct Ake_parse_state* ps, struct Ake_token* t);
-Ake_type_use* Ake_Type_use_add_proto(
+Ake_TypeDef* Ake_Type_use_add_proto(
         Ake_parse_state* ps,
-        Ake_type_use* func,
+        Ake_TypeDef* func,
         Ake_ast* proto,
-        Ake_ast* struct_type);
+        Ake_TypeDef* struct_type);
+Ake_TypeDef* Ake_parse_type_dispatch(Ake_parse_state* ps, Ake_ast* n);
+Ake_TypeDef* Ake_parse_type_array(Ake_parse_state* ps, Ake_ast* n);
+Ake_TypeDef* Ake_parse_type_pointer(Ake_parse_state* ps, Ake_ast* n);
+Ake_TypeDef* Ake_parse_type_function(Ake_parse_state* ps, Ake_ast* n);
+Ake_TypeDef* Ake_parse_type_id(Ake_parse_state* ps, Ake_ast* n);
 
 /**
  * Parse a function prototype
@@ -147,7 +152,7 @@ Ake_ast* Ake_parse_prototype(
  * @param ps
  * @param proto
  */
-void Ake_declare_params(struct Ake_parse_state* ps, Ake_ast* proto, Ake_ast* struct_type)
+void Ake_declare_params(Ake_parse_state* ps, Ake_ast* proto, Ake_TypeDef* struct_type)
 {
     Ake_ast* dseq = Ast_node_get(proto, 1);
     Ake_ast* dec = dseq->head;
@@ -156,7 +161,7 @@ void Ake_declare_params(struct Ake_parse_state* ps, Ake_ast* proto, Ake_ast* str
         Ake_ast* type_node = Ast_node_get(dec, 1);
         if (dec->type == Ake_ast_type_self) {
             if (struct_type) {
-                type_node = struct_type;
+                type_node->tu = Ake_TypeDefClone(struct_type);
             } else {
                 dec = dec->next;
                 continue;
@@ -328,6 +333,11 @@ Ake_ast* Ake_parse_declaration(
             Zinc_string_add_str(&id_node->value, "self");
             Ake_ast_add(n, id_node);
 
+            Ake_ast* type_node = NULL;
+            Ake_ast_create(&type_node);
+            type_node->type = Ake_ast_type_type;
+            Ake_ast_add(n, type_node);
+
             Ake_token_destroy(self);
             free(self);
 
@@ -417,157 +427,215 @@ Ake_ast* Ake_parse_declaration(
  */
 /* type -> id | id { tseq } */
 /* NOLINTNEXTLINE(misc-no-recursion) */
-Ake_ast* Ake_parse_type(struct Ake_parse_state* ps)
+Ake_ast* Ake_parse_type(Ake_parse_state* ps)
 {
 	Ake_ast* n = NULL;
     Ake_ast_create(&n);
     n->type = Ake_ast_type_type;
+    n->tu = Ake_parse_type_dispatch(ps, n);
+	return n;
+}
 
-    Ake_type_use* tu = NULL;
-    Ake_type_use_create(&tu);
-    n->tu = tu;
+/* NOLINTNEXTLINE(misc-no-recursion) */
+Ake_TypeDef* Ake_parse_type_dispatch(Ake_parse_state* ps, Ake_ast* n)
+{
+    Ake_token* t = Ake_get_lookahead(ps);
 
-    /* handle array dimensions */
-	struct Ake_token* t0 = Ake_get_lookahead(ps);
-    while (t0->type == Ake_token_left_square_bracket) {
-        struct Ake_token *lsb = NULL;
-        if (!Ake_match(ps, Ake_token_left_square_bracket, "expected left square bracket", &lsb, n)) {
+    if (t->type == Ake_token_left_square_bracket) {
+        return Ake_parse_type_array(ps, n);
+    }
+
+    if (t->type == Ake_token_mult) {
+        return Ake_parse_type_pointer(ps, n);
+    }
+
+    if (t->type == Ake_token_fn) {
+        return Ake_parse_type_function(ps, n);
+    }
+
+    if (t->type == Ake_token_id) {
+        return Ake_parse_type_id(ps, n);
+    }
+
+    return NULL;
+}
+
+/* NOLINTNEXTLINE(misc-no-recursion) */
+Ake_TypeDef* Ake_parse_type_array(Ake_parse_state* ps, Ake_ast* n)
+{
+    Ake_TypeDef* td = NULL;
+    Ake_TypeDefCreate(&td);
+
+    Ake_token *lsb = NULL;
+    if (!Ake_match(ps, Ake_token_left_square_bracket, "expected left square bracket", &lsb, n)) {
+        assert(false);
+    }
+
+    Ake_token_destroy(lsb);
+    free(lsb);
+
+    bool has_number = false;
+    bool has_const = false;
+    size_t dim_size_number = 0;
+
+    Ake_token* t0 = Ake_get_lookahead(ps);
+    if (t0->type == Ake_token_number) {
+        Ake_token *dim_size = NULL;
+        if (!Ake_match(ps, Ake_token_number, "expected number", &dim_size, n)) {
             /* test case: no test case needed */
             assert(false);
         }
-
-        Ake_token_destroy(lsb);
-        free(lsb);
-
-        bool has_number = false;
-        bool has_const = false;
-        size_t dim_size_number;
-        t0 = Ake_get_lookahead(ps);
-
-        if (t0->type == Ake_token_number) {
-            struct Ake_token *dim_size = NULL;
-            if (!Ake_match(ps, Ake_token_number, "expected number", &dim_size, n)) {
-                /* test case: no test case needed */
-                assert(false);
-            }
-            has_number = true;
-            Zinc_string_finish(&dim_size->value);
-            dim_size_number = (size_t) strtol(dim_size->value.buf, NULL, 10);
-            Ake_token_destroy(dim_size);
-            free(dim_size);
-            t0 = Ake_get_lookahead(ps);
-        }
-
-        if (t0->type == Ake_token_const) {
-            struct Ake_token* const_token = NULL;
-            if (!Ake_match(ps, Ake_token_const, "expected const", &const_token, n)) {
-                /* test case: no test case needed */
-                assert(false);
-            }
-            has_const = true;
-            Ake_token_destroy(const_token);
-            free(const_token);
-        }
-
-        struct Ake_token* rsb = NULL;
-        if (!Ake_match(ps, Ake_token_right_square_bracket, "expected right square bracket", &rsb, n)) {
-            n->type = Ake_ast_type_error;
-        }
-
-        Ake_token_destroy(rsb);
-        free(rsb);
-
-        if (has_number) {
-            n->tu->is_array = true;
-            Ake_type_dimension dim;
-            dim.size =  dim_size_number;
-            if (has_const) {
-                dim.option = Ake_array_element_const;
-            } else {
-                dim.option = Ake_array_element_default;
-            }
-            Zinc_vector_add(&n->tu->dim, &dim, 1);
-        } else {
-            n->tu->is_slice = true;
-            Ake_type_dimension dim;
-            dim.size = 0;
-            if (has_const) {
-                dim.option = Ake_array_element_const;
-            } else {
-                dim.option = Ake_array_element_default;
-            }
-            Zinc_vector_add(&n->tu->dim, &dim, 1);
-        }
-
-        t0 = Ake_get_lookahead(ps);
+        has_number = true;
+        Zinc_string_finish(&dim_size->value);
+        dim_size_number = (size_t) strtol(dim_size->value.buf, NULL, 10);
+        Ake_token_destroy(dim_size);
+        free(dim_size);
     }
 
-    if (t0->type == Ake_token_fn) {
-        struct Ake_token* fn = NULL;
-        if (!Ake_match(ps, Ake_token_fn, "expected fn", &fn, n)) {
+    t0 = Ake_get_lookahead(ps);
+    if (t0->type == Ake_token_const) {
+        Ake_token* const_token = NULL;
+        if (!Ake_match(ps, Ake_token_const, "expected const", &const_token, n)) {
+            /* test case: no test case needed */
             assert(false);
         }
+        has_const = true;
+        Ake_token_destroy(const_token);
+        free(const_token);
+    }
 
-        Ake_token_destroy(fn);
-        free(fn);
+    Ake_token* rsb = NULL;
+    if (!Ake_match(ps, Ake_token_right_square_bracket, "expected right square bracket", &rsb, n)) {
+        n->type = Ake_ast_type_error;
+    }
+    Ake_token_destroy(rsb);
+    free(rsb);
 
-        bool has_id;
-        Ake_ast* proto = Ake_parse_prototype(ps, false, false, false, false, &has_id);
-        if (has_id) {
-            Zinc_error_list_set(ps->el, &proto->loc, "function type has name");
-        }
-        if (proto->type == Ake_ast_type_error) {
-            n->type = Ake_ast_type_error;
-        } else {
-            Ake_Type_use_add_proto(ps, n->tu, proto, NULL);
-        }
-        Ake_ast_destroy(proto);
-
-    } else if (t0->type == Ake_token_id) {
-        /* handle type or array element */
-        struct Ake_token* name = NULL;
-        if (!Ake_match(ps, t0->type, "expected type identifier", &name, n)) {
-            n->type = Ake_ast_type_error;
-        }
-
-        struct Ake_symbol* sym = NULL;
-        if (n->type != Ake_ast_type_error) {
-            Ake_get_lookahead(ps);
-            size_t seq = ps->lookahead->loc.start;
-            sym = Ake_EnvironmentGet(ps->st->top, &name->value, seq);
-            if (!sym) {
-                char* a;
-                Zinc_string_create_str(&name->value, &a);
-                Zinc_error_list_set(ps->el, &name->loc, "type not defined: %s", a);
-                free(a);
-                n->type = Ake_ast_type_error;
-                /* test case: test_parse_error_type_not_defined */
-            } else if (!sym->td) {
-                char *a;
-                Zinc_string_create_str(&name->value, &a);
-                Zinc_error_list_set(ps->el, &name->loc, "identifier is not a type: %s", a);
-                free(a);
-                n->type = Ake_ast_type_error;
-                /* test case: test_parse_error_not_a_type */
+    if (has_number) {
+        if (has_const) {
+            Ake_TypeDefSet(td, AKE_TYPE_DEF_ARRAY_CONST);
+            td->data.array_const.dim = dim_size_number;
+            Ake_TypeDef* td2 = Ake_parse_type_dispatch(ps, n);
+            if (td2) {
+                td->data.array_const.td = td2;
             } else {
-                if (n->type != Ake_ast_type_error) {
-                    n->tu->td = sym->td;
-                }
+                Zinc_error_list_set(ps->el, &n->loc, "expected array const element type");
+                n->type = Ake_ast_type_error;
+            }
+        } else {
+            Ake_TypeDefSet(td, AKE_TYPE_DEF_ARRAY);
+            td->data.array.dim = dim_size_number;
+            Ake_TypeDef* td2 = Ake_parse_type_dispatch(ps, n);
+            if (td2) {
+                td->data.array.td = td2;
+            } else {
+                Zinc_error_list_set(ps->el, &n->loc, "expected array element type");
+                n->type = Ake_ast_type_error;
             }
         }
-
-        Ake_token_destroy(name);
-        free(name);
-
     } else {
-        t0 = Ake_get_lookahead(ps);
-        if (t0->type != Ake_token_fn && t0->type != Ake_token_id) {
-            Zinc_error_list_set(ps->el, &t0->loc, "expected type identifier or fn");
+        Ake_TypeDefSet(td, AKE_TYPE_DEF_SLICE);
+        Ake_TypeDef* td2 = Ake_parse_type_dispatch(ps, n);
+        if (td) {
+            td->data.slice.td = td2;
+        } else {
+            Zinc_error_list_set(ps->el, &n->loc, "expected slice element type");
             n->type = Ake_ast_type_error;
         }
     }
 
-	return n;
+    return td;
+}
+
+Ake_TypeDef* Ake_parse_type_pointer(Ake_parse_state* ps, Ake_ast* n)
+{
+    Ake_TypeDef* td = NULL;
+    Ake_TypeDefCreate(&td);
+    Ake_TypeDefSet(td, AKE_TYPE_DEF_POINTER);
+    Ake_token *ast = NULL;
+    if (!Ake_match(ps, Ake_token_mult, "expected asterisk", &ast, n)) {
+        assert(false && "not possible");
+    }
+    Ake_token_destroy(ast);
+    free(ast);
+    Ake_TypeDef* td2 = Ake_parse_type_dispatch(ps, n);
+    if (td2) {
+        td->data.pointer.td = td2;
+    } else {
+        Zinc_error_list_set(ps->el, &n->loc, "expected pointer type");
+        n->type = Ake_ast_type_error;
+    }
+    return td;
+}
+
+Ake_TypeDef* Ake_parse_type_function(Ake_parse_state* ps, Ake_ast* n)
+{
+    Ake_TypeDef* td = NULL;
+    Ake_TypeDefCreate(&td);
+    Ake_TypeDefSet(td, AKE_TYPE_DEF_FUNCTION);
+
+    Ake_token* fn = NULL;
+    if (!Ake_match(ps, Ake_token_fn, "expected fn", &fn, n)) {
+        assert(false);
+    }
+
+    Ake_token_destroy(fn);
+    free(fn);
+
+    bool has_id;
+    Ake_ast* proto = Ake_parse_prototype(ps, false, false, false, false, &has_id);
+    if (has_id) {
+        Zinc_error_list_set(ps->el, &proto->loc, "function type has name");
+    }
+    if (proto->type == Ake_ast_type_error) {
+        n->type = Ake_ast_type_error;
+    } else {
+        Ake_Type_use_add_proto(ps, td, proto, NULL);
+    }
+    Ake_ast_destroy(proto);
+
+    return td;
+}
+
+Ake_TypeDef* Ake_parse_type_id(Ake_parse_state* ps, Ake_ast* n)
+{
+    Ake_TypeDef* td = NULL;
+
+    struct Ake_token* id = NULL;
+    if (!Ake_match(ps, Ake_token_id, "expected type identifier", &id, n)) {
+        n->type = Ake_ast_type_error;
+    }
+
+    struct Ake_symbol* sym = NULL;
+    if (n->type != Ake_ast_type_error) {
+        Ake_get_lookahead(ps);
+        size_t seq = ps->lookahead->loc.start;
+        sym = Ake_EnvironmentGet(ps->st->top, &id->value, seq);
+        if (!sym) {
+            char* a;
+            Zinc_string_create_str(&id->value, &a);
+            Zinc_error_list_set(ps->el, &id->loc, "type not defined: %s", a);
+            free(a);
+            n->type = Ake_ast_type_error;
+            /* test case: test_parse_error_type_not_defined */
+        } else if (!sym->td) {
+            char *a;
+            Zinc_string_create_str(&id->value, &a);
+            Zinc_error_list_set(ps->el, &id->loc, "identifier is not a type: %s", a);
+            free(a);
+            n->type = Ake_ast_type_error;
+            /* test case: test_parse_error_not_a_type */
+        } else {
+            if (n->type != Ake_ast_type_error) {
+                td = Ake_TypeDefClone(sym->td);
+            }
+        }
+    }
+
+    Ake_token_destroy(id);
+    free(id);
+
+    return td;
 }
 
 /**
@@ -576,43 +644,13 @@ Ake_ast* Ake_parse_type(struct Ake_parse_state* ps)
  * @param n type node
  * @param id_node ID node
  */
-void Ake_create_variable_symbol(Ake_parse_state* ps, Ake_ast* type_node, Ake_ast* id_node)
+void Ake_create_variable_symbol(Ake_parse_state* ps, Zinc_string* name, Ake_TypeDef* tu, size_t seq)
 {
-    size_t seq = type_node->loc.start;
-    Ake_symbol* dup = Ake_EnvironmentGetLocal(ps->st->top, &id_node->value, seq);
-    if (dup) {
-        char* a;
-        Zinc_string_create_str(&id_node->value, &a);
-        Zinc_error_list_set(ps->el, &id_node->loc, "duplicate declaration in same scope: %s", a);
-        free(a);
-        type_node->type = Ake_ast_type_error;
-        /* test case: test_parse_error_duplicate_declarations */
-    } else {
-        Ake_symbol* sym2 = Ake_EnvironmentGet(ps->st->top, &id_node->value, seq);
-        if (sym2 && sym2->td) {
-            char* a;
-            Zinc_string_create_str(&id_node->value, &a);
-            Zinc_error_list_set(ps->el, &id_node->loc, "identifier reserved as a type: %s", a);
-            free(a);
-            type_node->type = Ake_ast_type_error;
-            /* test case: test_parse_types_reserved_type */
-        } else {
-            Ake_symbol* new_sym = NULL;
-            Zinc_malloc_safe((void**)&new_sym, sizeof(struct Ake_symbol));
-            Ake_symbol_init(new_sym);
-            new_sym->type = Ake_symbol_type_variable;
-            Ake_type_use* old = Ake_type_use_clone(type_node->tu);
-            /* copy is_mut from id node to type use node */
-            old->is_mut = id_node->is_mut;
-            old->original_is_mut = id_node->is_mut;
-            Ake_TypeDef* tu = NULL;
-            Ake_TypeDefCreate(&tu);
-            Ake_TypeDefSet(tu, AKE_TYPE_DEF_OLD);
-            tu->data.old = old;
-            new_sym->tu = tu;
-            Ake_EnvironmentAdd(ps->st->top, &id_node->value, new_sym, seq);
-        }
-    }
+    Ake_symbol* new_sym = NULL;
+    Ake_symbol_create(&new_sym);
+    new_sym->type = Ake_symbol_type_variable;
+    new_sym->tu = Ake_TypeDefClone(tu);
+    Ake_EnvironmentAdd(ps->st->top, name, new_sym, seq);
 }
 
 void Ake_declare_type(struct Ake_parse_state* ps, Ake_ast* type_node, Ake_ast* id_node)
@@ -620,11 +658,11 @@ void Ake_declare_type(struct Ake_parse_state* ps, Ake_ast* type_node, Ake_ast* i
     if (type_node && type_node->type != Ake_ast_type_error) {
         if (id_node) {
             if (id_node->type == Ake_ast_type_id) {
-                Ake_create_variable_symbol(ps, type_node, id_node);
+                Ake_create_variable_symbol(ps, &id_node->value, type_node->tu, type_node->loc.start);
             } else if (id_node->type == Ake_ast_type_let_lseq) {
                 Ake_ast* p = id_node->head;
                 while (p) {
-                    Ake_create_variable_symbol(ps, type_node, p);
+                    Ake_create_variable_symbol(ps, &p->value, type_node->tu, type_node->loc.start);
                     p = p->next;
                 }
             } else {
@@ -634,25 +672,25 @@ void Ake_declare_type(struct Ake_parse_state* ps, Ake_ast* type_node, Ake_ast* i
     }
 }
 
-Ake_type_use* Ake_proto2type_use(Ake_parse_state* ps, Ake_ast* proto, Ake_ast* struct_type) {
-    Ake_type_use *func = NULL;
-    Ake_type_use_create(&func);
+Ake_TypeDef* Ake_proto2type_use(Ake_parse_state* ps, Ake_ast* proto, Ake_TypeDef* struct_type) {
+    Ake_TypeDef *func = NULL;
+    Ake_TypeDefCreate(&func);
+    Ake_TypeDefSet(func, AKE_TYPE_DEF_FUNCTION);
     return Ake_Type_use_add_proto(ps, func, proto, struct_type);
 }
 
-Ake_type_use* Ake_Type_use_add_proto(
+Ake_TypeDef* Ake_Type_use_add_proto(
     Ake_parse_state* ps,
-    Ake_type_use* func,
+    Ake_TypeDef* func,
     Ake_ast* proto,
-    Ake_ast* struct_type)
+    Ake_TypeDef* struct_type)
 {
-    struct Zinc_string bf;
+    Zinc_string bf;
     Zinc_string_init(&bf);
     Zinc_string_add_str(&bf, "Function");
     Ake_get_lookahead(ps);
-    size_t seq = ps->lookahead->loc.start;
     Zinc_string_destroy(&bf);
-    func->type = Ake_type_use_function;
+    func->kind = AKE_TYPE_DEF_FUNCTION;
 
     Ake_ast* id = Ast_node_get(proto, 0);
     Ake_ast* dseq = Ast_node_get(proto, 1);
@@ -661,34 +699,24 @@ Ake_type_use* Ake_Type_use_add_proto(
     Zinc_string_copy(&id->value, &func->name);
 
     if (dseq->head) {
-        Ake_type_use* inputs = NULL;
-        Ake_type_use_create(&inputs);
-        inputs->type = Ake_type_use_function_inputs;
-        Ake_type_use_add(func, inputs);
-
         Ake_ast* dec = dseq->head;
         while (dec) {
             Ake_ast* id_node = Ast_node_get(dec, 0);
             Ake_ast* type_node = Ast_node_get(dec, 1);
+
+            Ake_TypeParam* tp = NULL;
+            Ake_TypeParamCreate(&tp);
+
             if (dec->type == Ake_ast_type_self) {
-                if (struct_type) {
-                    type_node = struct_type;
-                } else {
-                    dec = dec->next;
-                    continue;
-                }
-            }
-
-            Ake_type_use* tu2;
-            if (dec->type == Ake_ast_type_ellipsis) {
-                Ake_type_use_create(&tu2);
-                tu2->type = Ake_type_use_function_ellipsis;
+                tp->kind = AKE_TYPE_PARAM_SELF;
+                tp->td = Ake_TypeDefClone(struct_type);
+            } else if (dec->type == Ake_ast_type_ellipsis) {
+                tp->kind = AKE_TYPE_PARAM_ELLIPSIS;
             } else {
-                tu2 = Ake_type_use_clone(type_node->tu);
-                Zinc_string_copy(&id_node->value, &tu2->name);
+                tp->td = Ake_TypeDefClone(type_node->tu);
             }
 
-            Ake_type_use_add(inputs, tu2);
+            Ake_TypeDefInputAdd(func, tp);
 
             dec = dec->next;
         }
@@ -696,18 +724,13 @@ Ake_type_use* Ake_Type_use_add_proto(
 
     Ake_ast* ret_type_node = Ast_node_get(dret, 0);
     if (ret_type_node) {
-        Ake_type_use* outputs = NULL;
-        Ake_type_use_create(&outputs);
-        outputs->type = Ake_type_use_function_outputs;
-        Ake_type_use* tu = Ake_type_use_clone(ret_type_node->tu);
-        Ake_type_use_add(outputs, tu);
-        Ake_type_use_add(func, outputs);
+        func->data.function.output = Ake_TypeDefClone(ret_type_node->tu);
     }
 
     return func;
 }
 
-bool Ake_check_return_type(struct Ake_parse_state* ps, Ake_ast* proto, Ake_ast* stmts_node, struct Zinc_location* loc)
+bool Ake_check_return_type(Ake_parse_state* ps, Ake_ast* proto, Ake_ast* stmts_node, Zinc_location* loc)
 {
     bool valid = true;
 
@@ -715,7 +738,7 @@ bool Ake_check_return_type(struct Ake_parse_state* ps, Ake_ast* proto, Ake_ast* 
         Ake_ast *dret = Ast_node_get(proto, 2);
         Ake_ast *ret_type = Ast_node_get(dret, 0);
         if (ret_type) {
-            if (!Ake_type_use_can_cast(ret_type->tu, stmts_node->tu)) {
+            if (!Ake_TypeDefMatch(ret_type->tu, stmts_node->tu, NULL)) {
                 valid = Zinc_error_list_set(ps->el, loc, "returned type does not match function return type");
             }
         }
@@ -724,31 +747,9 @@ bool Ake_check_return_type(struct Ake_parse_state* ps, Ake_ast* proto, Ake_ast* 
     return valid;
 }
 
-void Ake_get_function_children(Ake_type_use* func, Ake_type_use** inputs, Ake_type_use** outputs)
+Ake_TypeParam* Ake_get_function_input_type(Ake_TypeDef* func, int index)
 {
-    *inputs = NULL;
-    *outputs = NULL;
-
-    Ake_type_use* p = func->head;
-    while (p) {
-        if (p->type == Ake_type_use_function_inputs) {
-            *inputs = p;
-        } else if (p->type == Ake_type_use_function_outputs) {
-            *outputs = p;
-        }
-        p = p->next;
-    }
-}
-
-Ake_type_use* Ake_get_function_input_type(Ake_type_use* func, int index)
-{
-	Ake_type_use* inputs = NULL;
-	Ake_type_use* outputs = NULL;
-	Ake_get_function_children(func, &inputs, &outputs);
-
-	if (!inputs) return NULL;
-
-	Ake_type_use* p = inputs->head;
+	Ake_TypeParam* p = func->data.function.input_head;
 	int i = 0;
 	while (p) {
 		if (i == index) {
@@ -762,19 +763,21 @@ Ake_type_use* Ake_get_function_input_type(Ake_type_use* func, int index)
 }
 
 bool Ake_check_input_type(
-    struct Ake_parse_state* ps,
-    Ake_type_use* func,
+    Ake_parse_state* ps,
+    Ake_TypeDef* func,
     int index,
     Ake_ast* a)
 {
 	bool valid = true;
 
 	if (func) {
-		Ake_type_use* tu0 = Ake_get_function_input_type(func, index);
-		if (tu0) {
-			Ake_type_use* call_tu0 = a->tu;
+		Ake_TypeParam* tp = Ake_get_function_input_type(func, index);
+		if (tp) {
+		    Ake_TypeDef* tu0 = tp->td;
+			Ake_TypeDef* call_tu0 = a->tu;
 			if (call_tu0) {
-				if (!Ake_type_use_can_cast(tu0, call_tu0)) {
+			    bool cast = false;
+				if (!Ake_TypeDefMatch(tu0, call_tu0, &cast)) {
 					valid = Zinc_error_list_set(ps->el, &a->loc, "parameter and aguments types do not match");
 					/* test case: test_parse_types_error_param */
 				}
@@ -789,17 +792,35 @@ bool Ake_check_input_type(
 }
 
 /* NOLINTNEXTLINE(misc-no-recursion) */
-void Ake_Override_rhs(Ake_type_use* tu, Ake_ast* rhs)
+void Ake_Override_rhs(Ake_TypeDef* tu, Ake_ast* rhs)
 {
-    if (tu->td && Ake_is_numeric(tu->td)) {
-        rhs->tu->td = tu->td;
-        if (rhs->type == Ake_ast_type_sign) {
-            Ake_ast* p = Ast_node_get(rhs, 1);
-            Ake_Override_rhs(tu, p);
-        } else if (tu->is_array && rhs->type == Ake_ast_type_array_literal) {
+    if (rhs->type == Ake_ast_type_sign) {
+        Ake_ast* p = Ast_node_get(rhs, 1);
+        if (p->type == Ake_ast_type_number) {
+            Ake_TypeDefCopy(tu, p->tu);
+            Ake_TypeDefCopy(tu, rhs->tu);
+        }
+        return;
+    }
+
+    if (rhs->type == Ake_ast_type_number) {
+        if (Ake_is_numeric(tu)) {
+            Ake_TypeDefCopy(tu, rhs->tu);
+        }
+        return;
+    }
+
+    if (rhs->type == Ake_ast_type_array_literal) {
+        if (tu->kind == AKE_TYPE_DEF_ARRAY) {
             Ake_ast* p = rhs->head;
             while (p) {
-                Ake_Override_rhs(tu, p);
+                Ake_Override_rhs(tu->data.array.td, p);
+                p = p->next;
+            }
+        } else if (tu->kind == AKE_TYPE_DEF_ARRAY_CONST) {
+            Ake_ast* p = rhs->head;
+            while (p) {
+                Ake_Override_rhs(tu->data.array_const.td, p);
                 p = p->next;
             }
         }
@@ -827,10 +848,10 @@ bool Ake_is_lvalue(enum Ake_ast_type type)
     return false;
 }
 
-bool Ake_check_lvalue(struct Ake_parse_state* ps, Ake_ast* n, struct Zinc_location* loc)
+bool Ake_check_lvalue(Ake_parse_state* ps, Ake_ast* n, Zinc_location* loc)
 {
     Ake_ast* p = n;
-    struct Ake_symbol* sym = NULL;
+    Ake_symbol* sym = NULL;
     Ake_ast* first = NULL;
     while (p) {
         if (!Ake_is_lvalue(p->type)) {
@@ -864,18 +885,10 @@ bool Ake_check_lvalue(struct Ake_parse_state* ps, Ake_ast* n, struct Zinc_locati
     if (n->type != Ake_ast_type_error) {
         if (n->type == Ake_ast_type_array_subscript) {
             Ake_ast* left = n->head;
-            if (left->tu->is_array) {
-                Ake_type_dimension* type_dim = (Ake_type_dimension*)ZINC_VECTOR_PTR(&left->tu->dim, 0);
-                if (type_dim->option == Ake_array_element_const) {
-                    Zinc_error_list_set(ps->el, loc, "immutable variable changed in assignment");
-                }
+            if (left->tu->kind == AKE_TYPE_DEF_ARRAY_CONST) {
+                Zinc_error_list_set(ps->el, loc, "immutable variable changed in assignment");
             }
 
-        }
-    }
-    if (n->type != Ake_ast_type_error) {
-        if (!first->tu->is_mut && sym->assign_count >= 1) {
-            Zinc_error_list_set(ps->el, loc, "immutable variable changed in assignment");
         }
     }
 
@@ -919,11 +932,7 @@ Ake_TypeDef* Ake_StructToType(Ake_ast* n)
         Ake_ast* type_node = id_node->next;
         assert(type_node);
 
-        Ake_TypeDef* tu = NULL;
-        Ake_TypeDefCreate(&tu);
-        Ake_TypeDefSet(tu, AKE_TYPE_DEF_OLD);
-        tu->data.old = Ake_type_use_clone(type_node->tu);
-        tf->td = tu;
+        tf->td = Ake_TypeDefClone(type_node->tu);
         Ake_TypeDefStructAdd(td, tf);
 
         dec = dec->next;

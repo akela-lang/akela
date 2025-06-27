@@ -16,7 +16,6 @@ set(lib_files
         code_gen.c
         symbol.c
         struct_element.c
-        type_use.c
         parse_data.c
         ast_to_cent.c
         environment.c

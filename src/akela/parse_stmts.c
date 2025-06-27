@@ -86,7 +86,7 @@ Ake_ast* Ake_parse_stmts(Ake_parse_state* ps, bool suppress_env, bool is_global)
 	if (n->type != Ake_ast_type_error) {
 		if (last) {
 			if (last->tu) {
-                n->tu = Ake_type_use_clone(last->tu);
+                n->tu = Ake_TypeDefClone(last->tu);
 			}
 		}
 	}
@@ -151,7 +151,7 @@ Ake_ast* Ake_parse_extern(struct Ake_parse_state* ps)
         if (proto->type == Ake_ast_type_error) {
             n->type = Ake_ast_type_error;
         }
-        Ake_type_use* tu = Ake_proto2type_use(ps, proto, NULL);
+        Ake_TypeDef* tu = Ake_proto2type_use(ps, proto, NULL);
         n->tu = tu;
     }
 
@@ -194,11 +194,7 @@ Ake_ast* Ake_parse_extern(struct Ake_parse_state* ps)
                 Zinc_malloc_safe((void **) &new_sym, sizeof(struct Ake_symbol));
                 Ake_symbol_init(new_sym);
                 new_sym->type = Ake_symbol_type_variable;
-            	Ake_type_use* old = Ake_type_use_clone(n->tu);
-            	Ake_TypeDef* tu = NULL;
-            	Ake_TypeDefCreate(&tu);
-            	Ake_TypeDefSet(tu, AKE_TYPE_DEF_OLD);
-            	tu->data.old = old;
+            	Ake_TypeDef* tu = Ake_TypeDefClone(n->tu);
                 new_sym->tu = tu;
                 Ake_EnvironmentAdd(ps->st->top, &id_node->value, new_sym, n->loc.start);
             }
@@ -407,8 +403,8 @@ void Ake_parse_for_range(struct Ake_parse_state* ps, Ake_ast* parent)
             parent->type = Ake_ast_type_error;
 			/* test case: test_parse_for_range_error_start_no_value */
 		} else {
-			assert(a->tu->td);
-			if (!Ake_is_numeric(a->tu->td)) {
+			assert(a->tu);
+			if (!Ake_is_numeric(a->tu)) {
 				Zinc_error_list_set(ps->el, &a->loc, "start range expression is not numeric");
                 parent->type = Ake_ast_type_error;
 				/* test case: test_parse_for_range_error_start_not_numeric */
@@ -421,8 +417,7 @@ void Ake_parse_for_range(struct Ake_parse_state* ps, Ake_ast* parent)
             parent->type = Ake_ast_type_error;
 			/* test case: test_parse_for_range_error_end_no_value */
 		} else {
-			assert(b->tu->td);
-			if (!Ake_is_numeric(b->tu->td)) {
+			if (!Ake_is_numeric(b->tu)) {
 				Zinc_error_list_set(ps->el, &b->loc, "end range expression is not numeric");
                 parent->type = Ake_ast_type_error;
 				/* test case: test_parse_for_range_error_end_not_numeric */
@@ -464,25 +459,36 @@ void Ake_parse_for_iteration(struct Ake_parse_state* ps, Ake_ast* parent)
 		Ake_ast* element = Ast_node_get(parent, 0);
 		Ake_ast* element_type_node = Ast_node_get(element, 1);
 
-		Ake_type_use* list_tu = list->tu;
+		Ake_TypeDef* list_tu = list->tu;
 
 		if (!list_tu) {
 			Zinc_error_list_set(ps->el, &list->loc, "iteration expression has no value");
             parent->type = Ake_ast_type_error;
 			/* test case: test_parse_for_iteration_error_no_value */
-		} else if (!list_tu->is_array) {
-			Zinc_error_list_set(ps->el, &list->loc, "iteration expression is not an array");
+		} else if (
+			list_tu->kind != AKE_TYPE_DEF_ARRAY
+			&& list_tu->kind != AKE_TYPE_DEF_ARRAY_CONST
+			&& list_tu->kind != AKE_TYPE_DEF_SLICE) {
+			Zinc_error_list_set(ps->el, &list->loc, "iteration expression is not an array or slice");
             parent->type = Ake_ast_type_error;
 			/* test case: test_parse_for_iteration_error_no_child_element */
 		} else {
-            Ake_type_use* element_tu2 = Ake_type_use_clone(list_tu);
-            Ake_type_use_reduce_dimension(element_tu2);
-			if (!Ake_type_use_can_cast(element_tu2, element_type_node->tu)) {
+            Ake_TypeDef* element_tu2 = NULL;
+			if (list_tu->kind == AKE_TYPE_DEF_ARRAY) {
+				element_tu2 = Ake_TypeDefClone(list_tu->data.array.td);
+			} else if (list_tu->kind == AKE_TYPE_DEF_ARRAY_CONST) {
+				element_tu2 = Ake_TypeDefClone(list_tu->data.array_const.td);
+			} else if (list_tu->kind == AKE_TYPE_DEF_SLICE) {
+				element_tu2 = Ake_TypeDefClone(list_tu->data.slice.td);
+			} else {
+				assert(false && "expected array or slice");
+			}
+			if (!Ake_TypeDefMatch(element_tu2, element_type_node->tu, NULL)) {
                 parent->type = Ake_ast_type_error;
 				Zinc_error_list_set(ps->el, &list->loc, "cannot cast list element");
 				/* test case: test_parse_for_iteration_error_cannot_cast */
 			}
-            Ake_type_use_destroy(element_tu2);
+            Ake_TypeDefDestroy(element_tu2);
 		}
 	}
 
@@ -607,7 +613,7 @@ Ake_ast* Ake_parse_return(struct Ake_parse_state* ps)
 				/* test case: test_parse_return_error_no_value */
                 n->type = Ake_ast_type_error;
 			} else {
-				n->tu = Ake_type_use_clone(a->tu);
+				n->tu = Ake_TypeDefClone(a->tu);
 				Ake_ast* fd = Ake_get_current_function(ps->st);
 				if (!fd) {
 					Zinc_error_list_set(ps->el, &ret->loc, "return statement outside of function");
@@ -736,10 +742,11 @@ Ake_ast* Ake_parse_let(struct Ake_parse_state* ps)
             } else {
                 for (int i = 0; i < a_count; i++) {
                     Ake_ast* y = Ast_node_get(b, i);
+                	bool cast = false;
                     if (!y->tu) {
                         Zinc_error_list_set(ps->el, &b->loc, "cannot assign with operand that has no value");
                         n->type = Ake_ast_type_error;
-                    } else if (!Ake_type_use_can_cast(type_node->tu, y->tu)) {
+                    } else if (!Ake_TypeDefMatch(type_node->tu, y->tu, &cast)) {
                         Zinc_error_list_set(ps->el, &b->loc, "values in assignment are not compatible");
                         n->type = Ake_ast_type_error;
                     }
@@ -925,20 +932,13 @@ Ake_ast* Ake_parse_impl(struct Ake_parse_state* ps)
 
     Ake_consume_newline(ps, n);
 
-    Ake_ast* struct_type = NULL;
+    Ake_TypeDef* struct_type = NULL;
     if (id) {
     	size_t seq = Ake_get_current_seq(ps);
         Ake_symbol* sym = Ake_EnvironmentGet(ps->st->top, &id->value, seq);
         if (sym->type == Ake_symbol_type_type) {
             if (sym->td->kind == AKE_TYPE_DEF_STRUCT) {
-                Ake_ast* type_node = NULL;
-                Ake_ast_create(&type_node);
-                type_node->type = Ake_ast_type_type;
-                Ake_type_use* tu = NULL;
-                Ake_type_use_create(&tu);
-                tu->td = sym->td;
-                type_node->tu = tu;
-                struct_type = type_node;
+                struct_type = sym->td;
             }
         }
     }
@@ -983,8 +983,6 @@ Ake_ast* Ake_parse_impl(struct Ake_parse_state* ps)
             break;
         }
     }
-
-    Ake_ast_destroy(struct_type);
 
     return n;
 }

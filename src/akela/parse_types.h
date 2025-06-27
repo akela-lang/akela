@@ -20,29 +20,28 @@ AKELA_API Ake_ast* Ake_parse_prototype(
         bool require_param_name,
         bool* has_id);
 AKELA_API Ake_ast* Ake_parse_dseq(
-        struct Ake_parse_state* ps,
+        Ake_parse_state* ps,
         bool require_param_name,
         bool is_extern,
         bool is_method);
-AKELA_API void Ake_declare_params(struct Ake_parse_state* ps, Ake_ast* proto, Ake_ast* struct_type);
+AKELA_API void Ake_declare_params(Ake_parse_state* ps, Ake_ast* proto, Ake_TypeDef* struct_type);
 AKELA_API Ake_ast* Ake_parse_declaration(
     struct Ake_parse_state* ps,
     bool add_symbol,
     bool is_method,
     bool require_param_name);
-AKELA_API Ake_ast* Ake_parse_type(struct Ake_parse_state* ps);
-AKELA_API void Ake_declare_type(struct Ake_parse_state* ps, Ake_ast* n, Ake_ast* id_node);
-AKELA_API bool Ake_check_return_type(struct Ake_parse_state* ps, Ake_ast* proto, Ake_ast* stmts_node, struct Zinc_location* loc);
-AKELA_API void Ake_get_function_children(Ake_type_use* func, Ake_type_use** inputs, Ake_type_use** outputs);
-AKELA_API Ake_type_use* Ake_proto2type_use(Ake_parse_state* ps, Ake_ast* proto, Ake_ast* struct_type);
-AKELA_API Ake_type_use* Ake_get_function_input_type(Ake_type_use* func, int index);
+AKELA_API Ake_ast* Ake_parse_type(Ake_parse_state* ps);
+AKELA_API void Ake_declare_type(Ake_parse_state* ps, Ake_ast* n, Ake_ast* id_node);
+AKELA_API bool Ake_check_return_type(Ake_parse_state* ps, Ake_ast* proto, Ake_ast* stmts_node, Zinc_location* loc);
+AKELA_API Ake_TypeDef* Ake_proto2type_use(Ake_parse_state* ps, Ake_ast* proto, Ake_TypeDef* struct_type);
+AKELA_API Ake_TypeParam* Ake_get_function_input_type(Ake_TypeDef* func, int index);
 AKELA_API bool Ake_check_input_type(
-        struct Ake_parse_state* ps,
-        Ake_type_use* func,
+        Ake_parse_state* ps,
+        Ake_TypeDef* func,
         int index,
         Ake_ast* a);
-AKELA_API void Ake_Override_rhs(Ake_type_use* tu, Ake_ast* rhs);
-AKELA_API bool Ake_check_lvalue(struct Ake_parse_state* ps, Ake_ast* n, struct Zinc_location* loc);
+AKELA_API void Ake_Override_rhs(Ake_TypeDef* tu, Ake_ast* rhs);
+AKELA_API bool Ake_check_lvalue(Ake_parse_state* ps, Ake_ast* n, Zinc_location* loc);
 AKELA_API Ake_TypeDef* Ake_StructToType(Ake_ast* n);
 
 #ifdef __cplusplus

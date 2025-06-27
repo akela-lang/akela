@@ -5,6 +5,7 @@
 #include "ast.h"
 #include "zinc/memory.h"
 #include "zinc/list.h"
+#include "type.h"
 
 void Ake_ast_create(Ake_ast** n)
 {
@@ -39,7 +40,7 @@ void Ake_ast_destroy(Ake_ast* n)
         }
 
         Zinc_string_destroy(&n->value);
-        Ake_type_use_destroy(n->tu);
+        Ake_TypeDefDestroy(n->tu);
 
     	Ake_EnvironmentDestroy(n->env);
     	free(n->env);
@@ -85,100 +86,11 @@ Ake_ast* Ast_node_get(Ake_ast* p, size_t pos)
 	return NULL;
 }
 
-void Ake_type_use_print(Ake_type_use* tu);
-
-/* NOLINTNEXTLINE(misc-no-recursion) */
-void Ake_ast_print(Ake_ast* n)
-{
-    if (n == NULL) return;
-
-	printf("<ast ");
-    printf("[%p]", n);
-    printf("%s", Ast_type_name(n->type));
-
-	for (Ake_ast* p = n->head; p; p = p->next) {
-		printf(" <%p>", p);
-	}
-    printf(">");
-
-    Ake_type_use_print(n->tu);
-
-    printf("\n");
-
-    for (Ake_ast* p = n->head; p; p = p->next) {
-        Ake_ast_print(p);
-	}
-}
-
-void Ake_type_use_print(Ake_type_use* tu)
-{
-    if (tu) {
-        char const* names[Ake_type_use_count];
-        Ake_type_use_names(names);
-
-        printf(" <tu ");
-        printf("[%p]", tu);
-        printf(" %s", names[tu->type]);
-        if (tu->td) {
-            Zinc_string_finish(&tu->td->name);
-            printf(" %s", tu->td->name.buf);
-        }
-        printf(">");
-
-        Ake_type_use* p = tu->head;
-        while (p) {
-            Ake_type_use_print(p);
-            p = p->next;
-        }
-    }
-}
-
-void Ake_type_use_print_pointers(Ake_type_use* tu, struct Zinc_list* l);
-
-/* NOLINTNEXTLINE(misc-no-recursion) */
-void Ake_ast_print_pointers(Ake_ast* root, struct Zinc_list* l)
-{
-    bool created = false;
-    if (!l) {
-        Zinc_list_create(&l);
-        created = true;
-    }
-
-    printf("(%p)\n", root);
-//    if (list_has_item(l, root)) abort();
-    Zinc_list_add_item(l, root);
-
-    Ake_type_use_print_pointers(root->tu, l);
-
-    for (Ake_ast* p = root->head; p; p = p->next) {
-        Ake_ast_print_pointers(p, l);
-    }
-
-    if (created) {
-        Zinc_list_destroy(l, NULL);
-    }
-}
-
-/* NOLINTNEXTLINE(misc-no-recursion) */
-void Ake_type_use_print_pointers(Ake_type_use* tu, struct Zinc_list* l)
-{
-    if (tu) {
-        printf("(%p)\n", tu);
-//        if (list_has_item(l, tu)) abort();
-        Zinc_list_add_item(l, tu);
-
-        Ake_type_use* tu2 = tu->head;
-        while (tu2) {
-            Ake_type_use_print_pointers(tu2, l);
-            tu2 = tu2->next;
-        }
-    }
-}
 /* NOLINTNEXTLINE(misc-no-recursion) */
 void Ake_ast_copy(Ake_ast* src, Ake_ast* dest)
 {
     dest->type = src->type;
-    dest->tu = Ake_type_use_clone(src->tu);
+    dest->tu = Ake_TypeDefClone(src->tu);
     dest->loc = src->loc;
     Zinc_string_copy(&src->value, &dest->value);
 }
@@ -216,15 +128,9 @@ bool Ake_ast_match(Ake_ast* a, Ake_ast* b)
 			return false;
 		}
 
-        if (a->tu && b->tu) {
-            if (a->tu->td != b->tu->td) {
-                return false;
-            }
-        } else if (a->tu) {
-            return false;
-        } else if (b->tu) {
-            return false;
-        }
+		if (!Ake_TypeDefMatch(a->tu, b->tu, NULL)) {
+			return false;
+		}
 
 		Ake_ast* c = a->head;
 		Ake_ast* d = b->head;

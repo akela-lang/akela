@@ -5,13 +5,13 @@
 #include <zinc/os_win.h>
 #include "zinc/input_unicode_file.h"
 #include "centipede/comp_table.h"
-#include "compare.h"
+#include "compare_tree.h"
 #include "zinc/fs.h"
 #include "zinc/string_list.h"
 #include "cobble/match.h"
 #include "data.h"
 #include "lava/parse.h"
-#include "compare.h"
+#include "compare_tree.h"
 
 void Apt_parse_suite(
     Zinc_test* top_test,

@@ -14,7 +14,23 @@ void Zinc_assert()
 	fprintf(stderr, "Exiting because of assertion error.\n");
 }
 
-bool Zinc_expect_error(Zinc_test* test, Zinc_result r, const char* message)
+void Zinc_expect_check(Zinc_test* test)
+{
+	test->check_count++;
+}
+
+void Zinc_expect_passed(Zinc_test* test)
+{
+	test->check_passed++;
+}
+
+void Zinc_expect_failed(Zinc_test* test)
+{
+	test->check_failed++;
+	test->pass = false;
+}
+
+bool Zinc_expect_result(Zinc_test* test, Zinc_result r, const char* message)
 {
     test->check_count++;
 
@@ -82,7 +98,7 @@ bool Zinc_expect_string(Zinc_test* test, Zinc_string* a, const char* b, const ch
 	return false;
 }
 
-bool Zinc_expect_true(Zinc_test* test, int value, const char* fmt, ...)
+bool Zinc_expect_true(Zinc_test* test, bool value, const char* fmt, ...)
 {
     test->check_count++;
 

@@ -6,6 +6,8 @@
 
 bool Zinc_test_has_solo(Zinc_test* test);
 void Zinc_test_get_names(Zinc_test* test, Zinc_string_list* list);
+void Zinc_test_print_solo(Zinc_test* test, Zinc_test_stat* stat);
+void Zinc_test_print_muted(Zinc_test* test, Zinc_test_stat* stat);
 
 void Zinc_test_init(Zinc_test* test)
 {
@@ -96,24 +98,55 @@ void Zinc_test_count(Zinc_test* test, Zinc_test_stat* stat)
             stat->check_count += test->check_count;
             stat->check_passed += test->check_passed;
             stat->check_failed += test->check_failed;
-        } else {
-            printf("[");
-            Zinc_string_list list;
-            Zinc_string_list_init(&list);
-            Zinc_test_get_names(test, &list);
-            Zinc_string_node* node = list.tail;
-            while (node) {
-                if (node->next) {
-                    printf("/");
-                }
-                printf("%s", Zinc_string_c_str(&node->value));
-                node = node->prev;
+
+            if (test->solo) {
+                Zinc_test_print_solo(test, stat);
             }
-            printf("] skipped\n");
+        } else if (test->mute) {
             stat->skip++;
-            Zinc_string_list_destroy(&list);
+            Zinc_test_print_muted(test, stat);
+        } else {
+            stat->skip++;
         }
     }
+}
+
+void Zinc_test_print_solo(Zinc_test* test, Zinc_test_stat* stat)
+{
+     if (test->solo) {
+        printf("[");
+        Zinc_string_list list;
+        Zinc_string_list_init(&list);
+        Zinc_test_get_names(test, &list);
+        Zinc_string_node* node = list.tail;
+        while (node) {
+            if (node->next) {
+                printf("/");
+            }
+            printf("%s", Zinc_string_c_str(&node->value));
+            node = node->prev;
+        }
+        printf("] solo\n");
+        Zinc_string_list_destroy(&list);
+    }
+}
+
+void Zinc_test_print_muted(Zinc_test* test, Zinc_test_stat* stat)
+{
+    printf("[");
+    Zinc_string_list list;
+    Zinc_string_list_init(&list);
+    Zinc_test_get_names(test, &list);
+    Zinc_string_node* node = list.tail;
+    while (node) {
+        if (node->next) {
+            printf("/");
+        }
+        printf("%s", Zinc_string_c_str(&node->value));
+        node = node->prev;
+    }
+    printf("] mute\n");
+    Zinc_string_list_destroy(&list);
 }
 
 void Zinc_test_get_names(Zinc_test* test, Zinc_string_list* list)

@@ -6,6 +6,8 @@ void Ake_TypeDefInit(Ake_TypeDef* td)
 {
     td->kind = AKE_TYPE_DEF_NONE;
     Zinc_string_init(&td->name);
+    td->lhs_allocation = NULL;
+    td->context = Ake_type_context_value;
 }
 
 void Ake_TypeDefCreate(Ake_TypeDef** td)
@@ -32,9 +34,6 @@ void Ake_TypeDefSet(Ake_TypeDef* td, Ake_TypeDefKind kind)
         case AKE_TYPE_DEF_STRUCT:
             td->data.fields.head = NULL;
             td->data.fields.tail = NULL;
-            break;
-        case AKE_TYPE_DEF_OLD:
-            td->data.old = NULL;
             break;
         case AKE_TYPE_DEF_ARRAY:
             td->data.array.dim = 0;
@@ -66,9 +65,6 @@ void Ake_TypeDefDestroy(Ake_TypeDef* td)
     if (td) {
         Zinc_string_destroy(&td->name);
         switch (td->kind) {
-            case AKE_TYPE_DEF_OLD:
-                Ake_type_use_destroy(td->data.old);
-                break;
             case AKE_TYPE_DEF_NONE:
             case AKE_TYPE_DEF_INTEGER:
             case AKE_TYPE_DEF_NATURAL:
@@ -133,6 +129,12 @@ bool Ake_TypeIsNumeric(Ake_TypeDefKind kind)
 bool Ake_TypeDefMatch(Ake_TypeDef* a, Ake_TypeDef* b, bool* cast)
 {
     if (a->kind != b->kind) {
+        if (cast && a->kind == AKE_TYPE_DEF_ARRAY_CONST && b->kind == AKE_TYPE_DEF_ARRAY) {
+            if (!*cast) {
+                return true;
+            }
+        }
+
         if (cast && Ake_TypeIsNumeric(a->kind) && Ake_TypeIsNumeric(b->kind)) {
             if (!*cast) {
                 *cast = true;
@@ -191,12 +193,12 @@ bool Ake_TypeDefMatch(Ake_TypeDef* a, Ake_TypeDef* b, bool* cast)
             if (a->data.array.dim != b->data.array.dim) {
                 return false;
             }
-            return Ake_TypeDefMatch(a->data.array.td, b->data.array.td, NULL);
+            return Ake_TypeDefMatch(a->data.array.td, b->data.array.td, cast);
         case AKE_TYPE_DEF_ARRAY_CONST:
             if (a->data.array_const.dim != b->data.array_const.dim) {
                 return false;
             }
-            return Ake_TypeDefMatch(a->data.array_const.td, b->data.array_const.td, NULL);
+            return Ake_TypeDefMatch(a->data.array_const.td, b->data.array_const.td, cast);
         case AKE_TYPE_DEF_SLICE:
             return Ake_TypeDefMatch(a->data.slice.td, b->data.slice.td, NULL);
         case AKE_TYPE_DEF_POINTER:
@@ -243,8 +245,9 @@ Ake_TypeDef* Ake_TypeDefClone(Ake_TypeDef* td)
             case AKE_TYPE_DEF_INTEGER:
             case AKE_TYPE_DEF_NATURAL:
             case AKE_TYPE_DEF_REAL:
+                new_td->data = td->data;
+                break;
             case AKE_TYPE_DEF_BOOLEAN:
-                new_td = td;
                 break;
             case AKE_TYPE_DEF_STRUCT:
                 Ake_TypeField* tf = td->data.fields.head;
@@ -276,7 +279,7 @@ Ake_TypeDef* Ake_TypeDefClone(Ake_TypeDef* td)
                 while (tp) {
                     Ake_TypeParam* new_tp = NULL;
                     Ake_TypeParamCreate(&new_tp);
-                    Zinc_string_add_string(&new_td->name, &td->name);
+                    Zinc_string_add_string(&new_tp->name, &tp->name);
                     new_tp->td = Ake_TypeDefClone(tp->td);
                     Ake_TypeDefInputAdd(new_td, new_tp);
                     tp = tp->next;
@@ -289,6 +292,63 @@ Ake_TypeDef* Ake_TypeDefClone(Ake_TypeDef* td)
     }
 
     return new_td;
+}
+
+void Ake_TypeDefCopy(Ake_TypeDef* a, Ake_TypeDef* b)
+{
+    Ake_TypeDefDestroy(b);
+    Ake_TypeDefInit(b);
+    Ake_TypeDefSet(b, a->kind);
+    Zinc_string_add_string(&b->name, &a->name);
+
+    switch (a->kind) {
+        case AKE_TYPE_DEF_INTEGER:
+        case AKE_TYPE_DEF_NATURAL:
+        case AKE_TYPE_DEF_REAL:
+            b->data = a->data;
+            break;
+        case AKE_TYPE_DEF_BOOLEAN:
+            break;
+        case AKE_TYPE_DEF_STRUCT:
+            Ake_TypeField* tf = a->data.fields.head;
+            while (tf) {
+                Ake_TypeField* new_tf = NULL;
+                Ake_TypeFieldCreate(&new_tf);
+                Zinc_string_add_string(&new_tf->name, &tf->name);
+                new_tf->td = Ake_TypeDefClone(tf->td);
+                Ake_TypeDefStructAdd(b, new_tf);
+                tf = tf->next;
+            }
+            break;
+        case AKE_TYPE_DEF_ARRAY:
+            b->data.array.dim = a->data.array.dim;
+            b->data.array.td = Ake_TypeDefClone(a->data.array.td);
+            break;
+        case AKE_TYPE_DEF_ARRAY_CONST:
+            b->data.array_const.dim = a->data.array_const.dim;
+            b->data.array_const.td = Ake_TypeDefClone(a->data.array_const.td);
+            break;
+        case AKE_TYPE_DEF_SLICE:
+            b->data.slice.td = Ake_TypeDefClone(a->data.slice.td);
+            break;
+        case AKE_TYPE_DEF_POINTER:
+            b->data.pointer.td = Ake_TypeDefClone(a->data.pointer.td);
+            break;
+        case AKE_TYPE_DEF_FUNCTION:
+            Ake_TypeParam* tp = a->data.function.input_head;
+            while (tp) {
+                Ake_TypeParam* new_tp = NULL;
+                Ake_TypeParamCreate(&new_tp);
+                Zinc_string_add_string(&new_tp->name, &tp->name);
+                new_tp->td = Ake_TypeDefClone(tp->td);
+                Ake_TypeDefInputAdd(b, new_tp);
+                tp = tp->next;
+            }
+            b->data.function.output = Ake_TypeDefClone(a->data.function.output);
+            break;
+        default:
+            assert(false && "invalid kind");
+    }
 }
 
 void Ake_TypeDefStructAdd(Ake_TypeDef* td, Ake_TypeField* tf)
@@ -321,6 +381,7 @@ void Ake_TypeDefInputAdd(Ake_TypeDef* td, Ake_TypeParam* tp)
 
 void Ake_TypeParamInit(Ake_TypeParam* tp)
 {
+    tp->kind = AKE_TYPE_PARAM_REGULAR;
     Zinc_string_init(&tp->name);
     tp->td = NULL;
     tp->next = NULL;

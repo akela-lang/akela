@@ -6,7 +6,7 @@
 #include "zinc/expect.h"
 #include "data.h"
 #include "parse.h"
-#include "compare.h"
+#include "compare_tree.h"
 #include "centipede/comp_table.h"
 
 #define NAME "akela-parse-test"

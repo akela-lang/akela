@@ -1,7 +1,7 @@
 #include "symbol.h"
-
 #include <akela/symbol.h>
 #include <assert.h>
+#include "zinc/memory.h"
 
 void Cent_symbol_init(Cent_symbol *sym)
 {
