@@ -557,7 +557,7 @@ void AkeLlvmUnit_array_assign_sub_array(Zinc_test* test)
              "  [9, 10, 11, 12],\n"
              "  [13, 14, 15, 16]\n"
              "]\n"
-             "const b: [4]Int32\n"
+             "var b: [4]Int32\n"
              "b = a[1]\n"
              "b[0]\n",
              &result);
@@ -572,7 +572,7 @@ void AkeLlvmUnit_array_assign_sub_array(Zinc_test* test)
              "  [9, 10, 11, 12],\n"
              "  [13, 14, 15, 16]\n"
              "]\n"
-             "const b: [4]Int32\n"
+             "var b: [4]Int32\n"
              "b = a[1]\n"
              "b[1]\n",
              &result);
@@ -587,7 +587,7 @@ void AkeLlvmUnit_array_assign_sub_array(Zinc_test* test)
              "  [9, 10, 11, 12],\n"
              "  [13, 14, 15, 16]\n"
              "]\n"
-             "const b: [4]Int32\n"
+             "var b: [4]Int32\n"
              "b = a[1]\n"
              "b[2]\n",
              &result);
@@ -602,7 +602,7 @@ void AkeLlvmUnit_array_assign_sub_array(Zinc_test* test)
              "  [9, 10, 11, 12],\n"
              "  [13, 14, 15, 16]\n"
              "]\n"
-             "const b: [4]Int32\n"
+             "var b: [4]Int32\n"
              "b = a[1]\n"
              "b[3]\n",
              &result);
