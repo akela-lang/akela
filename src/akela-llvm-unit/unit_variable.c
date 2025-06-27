@@ -99,7 +99,7 @@ void AkeLlvmUnit_variable_assign(Zinc_test* test)
     Ake_code_gen_result result;
 
     Ake_code_gen_result_init(&result);
-    AkeLlvmUnit_cg_setup("const a: Int32\n"
+    AkeLlvmUnit_cg_setup("var a: Int32\n"
              "a = 44\n",
              &result);
     Zinc_expect_string(test, &result.value, "44", "value");
