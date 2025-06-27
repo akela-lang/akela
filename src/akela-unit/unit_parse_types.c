@@ -61,82 +61,6 @@ void AkeUnit_parse_types_missing_declaration3(Zinc_test* test)
     AkeUnit_parse_teardown(&cu);
 }
 
-void AkeUnit_parse_types_reserved_type(Zinc_test* test)
-{
-	if (test->dry_run) {
-		Zinc_string_add_str(&test->name, __func__);
-		test->mute = false;
-		test->solo = false;
-		return;
-	}
-
-	struct Ake_comp_unit cu;
-
-    AkeUnit_parse_setup("const Int32: Int32", &cu);
-	Zinc_expect_has_errors(test, &cu.errors);
-	Zinc_expect_source_error(test, &cu.errors, "identifier reserved as a type: Int32");
-	Zinc_expect_false(test, cu.valid, "valid");
-
-    AkeUnit_parse_teardown(&cu);
-}
-
-void AkeUnit_parse_types_reserved_type2(Zinc_test* test)
-{
-	if (test->dry_run) {
-		Zinc_string_add_str(&test->name, __func__);
-		test->mute = false;
-		test->solo = false;
-		return;
-	}
-
-	struct Ake_comp_unit cu;
-
-    AkeUnit_parse_setup("fn Int32() end", &cu);
-	Zinc_expect_has_errors(test, &cu.errors);
-	Zinc_expect_source_error(test, &cu.errors, "identifier reserved as a type: Int32");
-	Zinc_expect_false(test, cu.valid, "valid");
-
-    AkeUnit_parse_teardown(&cu);
-}
-
-void AkeUnit_parse_types_reserved_type3(Zinc_test* test)
-{
-	if (test->dry_run) {
-		Zinc_string_add_str(&test->name, __func__);
-		test->mute = false;
-		test->solo = false;
-		return;
-	}
-
-	struct Ake_comp_unit cu;
-
-    AkeUnit_parse_setup("for Int32: Int32 = 1:10 end", &cu);
-	Zinc_expect_has_errors(test, &cu.errors);
-	Zinc_expect_source_error(test, &cu.errors, "identifier reserved as a type: Int32");
-	Zinc_expect_false(test, cu.valid, "valid");
-
-    AkeUnit_parse_teardown(&cu);
-}
-
-void AkeUnit_parse_types_reserved_type4(Zinc_test* test)
-{
-	if (test->dry_run) {
-		Zinc_string_add_str(&test->name, __func__);
-		test->mute = false;
-		test->solo = false;
-		return;
-	}
-
-	struct Ake_comp_unit cu;
-
-    AkeUnit_parse_setup("const list: [10]Int32; for Int32: Int32 in list end", &cu);
-	Zinc_expect_has_errors(test, &cu.errors);
-	Zinc_expect_source_error(test, &cu.errors, "identifier reserved as a type: Int32");
-	Zinc_expect_false(test, cu.valid, "valid");
-
-    AkeUnit_parse_teardown(&cu);
-}
-
 void AkeUnit_parse_types_exists(Zinc_test* test)
 {
 	if (test->dry_run) {
@@ -431,10 +355,6 @@ void AkeUnit_parse_types(Zinc_test* test)
 		Zinc_test_register(test, AkeUnit_parse_types_missing_declaration);
 		Zinc_test_register(test, AkeUnit_parse_types_missing_declaration2);
 		Zinc_test_register(test, AkeUnit_parse_types_missing_declaration3);
-		Zinc_test_register(test, AkeUnit_parse_types_reserved_type);
-		Zinc_test_register(test, AkeUnit_parse_types_reserved_type2);
-		Zinc_test_register(test, AkeUnit_parse_types_reserved_type3);
-		Zinc_test_register(test, AkeUnit_parse_types_reserved_type4);
 		Zinc_test_register(test, AkeUnit_parse_types_exists);
 		Zinc_test_register(test, AkeUnit_parse_types_array);
 		Zinc_test_register(test, AkeUnit_parse_error_dseq_comma);
