@@ -667,6 +667,10 @@ Ake_ast* Ake_parse_let(struct Ake_parse_state* ps)
 
     Ake_ast* type_node = NULL;
     type_node = Ake_parse_type(ps);
+	if (type_node && !type_node->tu) {
+		Zinc_error_list_set(ps->el, &type_node->loc, "expected type identifier or fn");
+		n->type = Ake_ast_type_error;
+	}
     Ake_declare_type(ps, type_node, a, n->type == Ake_ast_type_const);
     if (type_node && type_node->type == Ake_ast_type_error) {
         n->type = Ake_ast_type_error;

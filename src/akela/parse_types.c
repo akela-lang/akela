@@ -393,7 +393,11 @@ Ake_ast* Ake_parse_declaration(
 
             Ake_ast* type_use = NULL;
             type_use = Ake_parse_type(ps);
-            if (type_use && type_use->type == Ake_ast_type_error) {
+            if (!type_use) {
+                Zinc_location loc = Ake_get_location(ps);
+                Zinc_error_list_set(ps->el, &loc, "expected type identifier or fn");
+            }
+            if (!type_use || type_use->type == Ake_ast_type_error) {
                 n->type = Ake_ast_type_error;
             }
             if (add_symbol) {
