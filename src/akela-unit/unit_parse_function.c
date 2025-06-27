@@ -409,7 +409,7 @@ void AkeUnit_parse_function_three_inputs(Zinc_test* test)
 		return Zinc_assert();
 	}
     Zinc_expect_int_equal(test, tp0->kind, AKE_TYPE_PARAM_REGULAR, "kind tp0");
-	Zinc_expect_string(test, &tp0->name, "a", "name tp0");
+	Zinc_expect_string(test, &tp0->name, "x", "name tp0");
 
 	Ake_TypeDef* input0 = tp0->td;
 	if (!Zinc_expect_ptr(test, input0, "ptr input0")) {

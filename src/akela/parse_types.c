@@ -708,6 +708,7 @@ Ake_TypeDef* Ake_Type_use_add_proto(
 
             Ake_TypeParam* tp = NULL;
             Ake_TypeParamCreate(&tp);
+            Zinc_string_add_string(&tp->name, &id_node->value);
 
             if (dec->type == Ake_ast_type_self) {
                 tp->kind = AKE_TYPE_PARAM_SELF;
