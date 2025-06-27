@@ -471,7 +471,7 @@ void AkeLlvmUnit_code_gen_assign_array_allocate(Zinc_test* test)
     Ake_code_gen_result result;
 
     Ake_code_gen_result_init(&result);
-    AkeLlvmUnit_cg_setup("const mut a: [4]Int32\n"
+    AkeLlvmUnit_cg_setup("var a: [4]Int32\n"
              "a[0] = 1\n"
              "a[1] = 2\n"
              "a[2] = 3\n"
@@ -483,7 +483,7 @@ void AkeLlvmUnit_code_gen_assign_array_allocate(Zinc_test* test)
     Ake_code_gen_result_destroy(&result);
 
     Ake_code_gen_result_init(&result);
-    AkeLlvmUnit_cg_setup("const mut a: [4]Int32\n"
+    AkeLlvmUnit_cg_setup("var a: [4]Int32\n"
              "a[0] = 1\n"
              "a[1] = 2\n"
              "a[2] = 3\n"
@@ -495,7 +495,7 @@ void AkeLlvmUnit_code_gen_assign_array_allocate(Zinc_test* test)
     Ake_code_gen_result_destroy(&result);
 
     Ake_code_gen_result_init(&result);
-    AkeLlvmUnit_cg_setup("const mut a: [4]Int32\n"
+    AkeLlvmUnit_cg_setup("var a: [4]Int32\n"
              "a[0] = 1\n"
              "a[1] = 2\n"
              "a[2] = 3\n"
@@ -507,7 +507,7 @@ void AkeLlvmUnit_code_gen_assign_array_allocate(Zinc_test* test)
     Ake_code_gen_result_destroy(&result);
 
     Ake_code_gen_result_init(&result);
-    AkeLlvmUnit_cg_setup("const mut a: [4]Int32\n"
+    AkeLlvmUnit_cg_setup("var a: [4]Int32\n"
              "a[0] = 1\n"
              "a[1] = 2\n"
              "a[2] = 3\n"
