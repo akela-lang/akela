@@ -31,11 +31,10 @@ bool AkeLlvmUnit_cg_setup(const char* text, Ake_code_gen_result* result)
 
     Ake_comp_unit_init(cu);
     valid = Ake_comp_unit_compile(cu, input, input->vtable) && valid;
+    result->cu = cu;
     if (!valid) {
         return valid;
     }
-
-    result->cu = cu;
 
     Akela_llvm_cg* cg = NULL;
     Akela_llvm_cg_create(&cg, &cu->errors, &cu->extern_list);

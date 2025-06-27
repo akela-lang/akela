@@ -5,6 +5,7 @@
 #include "symbol_table.h"
 #include "comp_unit.h"
 #include <stdint.h>
+#include "zinc/test.h"
 
 typedef struct {
     uint8_t init_offset;
@@ -21,6 +22,7 @@ typedef struct {
     long long return_size;
     bool debug;
     bool dry_run;
+    Zinc_test* test;
 } Ake_code_gen_result;
 
 typedef void* (*Ake_code_gen_init_interface)();

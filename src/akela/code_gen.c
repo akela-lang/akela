@@ -10,6 +10,7 @@ void Ake_code_gen_result_init(Ake_code_gen_result* result)
     result->debug = false;
     result->return_address = NULL;
     result->dry_run = false;
+    result->test = NULL;
 }
 
 void Ake_code_gen_result_destroy(Ake_code_gen_result* result)

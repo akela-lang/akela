@@ -898,6 +898,7 @@ bool Ake_check_lvalue(Ake_parse_state* ps, Ake_ast* n, Zinc_location* loc)
             Ake_ast* left = n->head;
             if (left->tu->kind == AKE_TYPE_DEF_ARRAY_CONST) {
                 Zinc_error_list_set(ps->el, loc, "immutable variable changed in assignment");
+                n->type = Ake_ast_type_error;
             }
 
         }
