@@ -428,25 +428,6 @@ void AkeUnit_parse_function_three_inputs(Zinc_test* test)
     AkeUnit_parse_teardown(&cu);
 }
 
-void AkeUnit_parse_function_error_duplicate_variable_declarations(Zinc_test* test)
-{
-    if (test->dry_run) {
-        Zinc_string_add_str(&test->name, __func__);
-        test->mute = false;
-        test->solo = false;
-        return;
-    }
-
-    struct Ake_comp_unit cu;
-
-    AkeUnit_parse_setup("fn foo(x: Int32) const x: Int32 end", &cu);
-    Zinc_expect_has_errors(test, &cu.errors);
-    Zinc_expect_false(test, cu.valid, "parse valid");
-    Zinc_expect_source_error(test, &cu.errors, "duplicate declaration in same scope: x");
-
-    AkeUnit_parse_teardown(&cu);
-}
-
 void AkeUnit_parse_function_return_type_error(Zinc_test* test)
 {
     if (test->dry_run) {
@@ -500,44 +481,6 @@ void AkeUnit_parse_function_error_expected_right_parenthesis(Zinc_test* test)
     Zinc_expect_has_errors(test, &cu.errors);
     Zinc_expect_false(test, cu.valid, "valid");
     Zinc_expect_source_error(test, &cu.errors, "expected right parenthesis");
-
-    AkeUnit_parse_teardown(&cu);
-}
-
-void AkeUnit_parse_function_error_duplicate_declaration(Zinc_test* test)
-{
-    if (test->dry_run) {
-        Zinc_string_add_str(&test->name, __func__);
-        test->mute = false;
-        test->solo = false;
-        return;
-    }
-
-    struct Ake_comp_unit cu;
-
-    AkeUnit_parse_setup("fn foo() end; fn foo() end", &cu);
-    Zinc_expect_has_errors(test, &cu.errors);
-    Zinc_expect_false(test, cu.valid, "valid");
-    Zinc_expect_source_error(test, &cu.errors, "duplicate declaration in same scope: foo");
-
-    AkeUnit_parse_teardown(&cu);
-}
-
-void AkeUnit_parse_function_error_identifier_reserved(Zinc_test* test)
-{
-    if (test->dry_run) {
-        Zinc_string_add_str(&test->name, __func__);
-        test->mute = false;
-        test->solo = false;
-        return;
-    }
-
-    struct Ake_comp_unit cu;
-
-    AkeUnit_parse_setup("fn Int32() end", &cu);
-    Zinc_expect_has_errors(test, &cu.errors);
-    Zinc_expect_false(test, cu.valid, "valid");
-    Zinc_expect_source_error(test, &cu.errors, "identifier reserved as a type: Int32");
 
     AkeUnit_parse_teardown(&cu);
 }
@@ -968,25 +911,6 @@ void AkeUnit_parse_anonymous_function2(Zinc_test* test)
     AkeUnit_parse_teardown(&cu);
 }
 
-void AkeUnit_parse_anonymous_function3(Zinc_test* test)
-{
-    if (test->dry_run) {
-        Zinc_string_add_str(&test->name, __func__);
-        test->mute = false;
-        test->solo = false;
-        return;
-    }
-
-    struct Ake_comp_unit cu;
-
-    AkeUnit_parse_setup("const a: Function; a = fn(x: Int32) const x: Int32 = 1 end", &cu);
-    Zinc_expect_has_errors(test, &cu.errors);
-    Zinc_expect_false(test, cu.valid, "parse valid");
-    Zinc_expect_source_error(test, &cu.errors, "duplicate declaration in same scope: x");
-
-    AkeUnit_parse_teardown(&cu);
-}
-
 void AkeUnit_parse_anonymous_function_assignment_error(Zinc_test* test)
 {
     if (test->dry_run) {
@@ -1075,7 +999,7 @@ void AkeUnit_parse_function_proto(Zinc_test* test)
     }
 
     struct Ake_comp_unit cu;
-    AkeUnit_parse_setup("const foo: fn (a: Int32)->Int32\n"
+    AkeUnit_parse_setup("var foo: fn (a: Int32)->Int32\n"
                 "foo = fn (a: Int32)->Int32\n"
                 "  a + 1\n"
                 "end\n",
@@ -1084,19 +1008,19 @@ void AkeUnit_parse_function_proto(Zinc_test* test)
     Zinc_expect_no_errors(test, &cu.errors);
 
     /* const */
-    Ake_ast* const_ = Ast_node_get(cu.root, 0);
-    if (!Zinc_expect_ptr(test, const_, "ptr const_")) {
+    Ake_ast* _const_ = Ast_node_get(cu.root, 0);
+    if (!Zinc_expect_ptr(test, _const_, "ptr const_")) {
 		return Zinc_assert();
 	}
-    Zinc_expect_int_equal(test, const_->type, Ake_ast_type_const, "type const_");
+    Zinc_expect_int_equal(test, _const_->type, Ake_ast_type_var, "type const_");
 
-    Ake_ast* const_lseq = Ast_node_get(const_, 0);
+    Ake_ast* const_lseq = Ast_node_get(_const_, 0);
     if (!Zinc_expect_ptr(test, const_lseq, "ptr let_lseq")) {
 		return Zinc_assert();
 	}
     Zinc_expect_int_equal(test, const_lseq->type, Ake_ast_type_let_lseq, "type let_lseq");
 
-    Ake_ast* let_type = Ast_node_get(const_, 1);
+    Ake_ast* let_type = Ast_node_get(_const_, 1);
     if (!Zinc_expect_ptr(test, let_type, "ptr let_type")) {
 		return Zinc_assert();
 	}
@@ -2041,12 +1965,9 @@ void AkeUnit_parse_function(Zinc_test* test)
         Zinc_test_register(test, AkeUnit_parse_function_input);
         Zinc_test_register(test, AkeUnit_parse_function_multiple_inputs);
         Zinc_test_register(test, AkeUnit_parse_function_three_inputs);
-        Zinc_test_register(test, AkeUnit_parse_function_error_duplicate_variable_declarations);
         Zinc_test_register(test, AkeUnit_parse_function_return_type_error);
         Zinc_test_register(test, AkeUnit_parse_function_error_expected_left_parenthesis);
         Zinc_test_register(test, AkeUnit_parse_function_error_expected_right_parenthesis);
-        Zinc_test_register(test, AkeUnit_parse_function_error_duplicate_declaration);
-        Zinc_test_register(test, AkeUnit_parse_function_error_identifier_reserved);
         Zinc_test_register(test, AkeUnit_parse_function_error_expected_end);
         Zinc_test_register(test, AkeUnit_parse_return);
         Zinc_test_register(test, AkeUnit_parse_return_error_no_value);
@@ -2055,7 +1976,6 @@ void AkeUnit_parse_function(Zinc_test* test)
         Zinc_test_register(test, AkeUnit_parse_stmts_newline_function);
         Zinc_test_register(test, AkeUnit_parse_anonymous_function);
         Zinc_test_register(test, AkeUnit_parse_anonymous_function2);
-        Zinc_test_register(test, AkeUnit_parse_anonymous_function3);
         Zinc_test_register(test, AkeUnit_parse_anonymous_function_return_error);
         Zinc_test_register(test, AkeUnit_parse_anonymous_function_assignment_error);
         Zinc_test_register(test, AkeUnit_parse_anonymous_function_expected_right_paren);
