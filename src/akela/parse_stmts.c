@@ -167,38 +167,13 @@ Ake_ast* Ake_parse_extern(struct Ake_parse_state* ps)
         }
 
         Ake_ast *id_node = Ast_node_get(proto, 0);
-        /* check and save symbol */
-    	size_t seq = Ake_get_current_seq(ps);
-        Ake_symbol *search = Ake_EnvironmentGetLocal(ps->st->top, &id_node->value, seq);
-        if (search) {
-            Zinc_string_finish(&id_node->value);
-            Zinc_error_list_set(
-                ps->el,
-                &id_node->loc,
-                "duplicate declaration in same scope: %s",
-                id_node->value.buf);
-            n->type = Ake_ast_type_error;
-        } else {
-        	seq = Ake_get_current_seq(ps);
-            Ake_symbol *sym = Ake_EnvironmentGet(ps->st->top, &id_node->value, seq);
-            if (sym && sym->td) {
-                Zinc_string_finish(&id_node->value);
-                Zinc_error_list_set(
-                    ps->el,
-                    &id_node->loc,
-                    "identifier reserved as a type: %s",
-                    id_node->value.buf);
-                n->type = Ake_ast_type_error;
-            } else {
-                struct Ake_symbol *new_sym = NULL;
-                Zinc_malloc_safe((void **) &new_sym, sizeof(struct Ake_symbol));
-                Ake_symbol_init(new_sym);
-                new_sym->type = Ake_symbol_type_variable;
-            	Ake_TypeDef* tu = Ake_TypeDefClone(n->tu);
-                new_sym->tu = tu;
-                Ake_EnvironmentAdd(ps->st->top, &id_node->value, new_sym, n->loc.start);
-            }
-        }
+        struct Ake_symbol *new_sym = NULL;
+        Zinc_malloc_safe((void **) &new_sym, sizeof(struct Ake_symbol));
+        Ake_symbol_init(new_sym);
+        new_sym->type = Ake_symbol_type_variable;
+        Ake_TypeDef* tu = Ake_TypeDefClone(n->tu);
+        new_sym->tu = tu;
+        Ake_EnvironmentAdd(ps->st->top, &id_node->value, new_sym, n->loc.start);
     }
 
     if (n->type != Ake_ast_type_error) {

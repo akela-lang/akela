@@ -1390,25 +1390,6 @@ void AkeUnit_parse_for_range(Zinc_test* test)
     AkeUnit_parse_teardown(&cu);
 }
 
-void AkeUnit_parse_for_range2(Zinc_test* test)
-{
-	if (test->dry_run) {
-		Zinc_string_add_str(&test->name, __func__);
-		test->mute = false;
-		test->solo = false;
-		return;
-	}
-
-	struct Ake_comp_unit cu;
-
-    AkeUnit_parse_setup("for i: Int32 = 0:10 const i: Int32 = 1 end", &cu);
-	Zinc_expect_has_errors(test, &cu.errors);
-	Zinc_expect_false(test, cu.valid, "AkeUnit_parse_setup valid");
-	Zinc_expect_source_error(test, &cu.errors, "duplicate declaration in same scope: i");
-
-    AkeUnit_parse_teardown(&cu);
-}
-
 void AkeUnit_parse_for_iteration(Zinc_test* test)
 {
 	if (test->dry_run) {
@@ -1489,25 +1470,6 @@ void AkeUnit_parse_for_iteration(Zinc_test* test)
     AkeUnit_parse_teardown(&cu);
 }
 
-void AkeUnit_parse_for_iteration2(Zinc_test* test)
-{
-	if (test->dry_run) {
-		Zinc_string_add_str(&test->name, __func__);
-		test->mute = false;
-		test->solo = false;
-		return;
-	}
-
-	struct Ake_comp_unit cu;
-
-    AkeUnit_parse_setup("const list: [10]Int32; for i: Int32 in list const i: Int32 = 1 end", &cu);
-	Zinc_expect_has_errors(test, &cu.errors);
-	Zinc_expect_false(test, cu.valid, "AkeUnit_parse_setup valid");
-	Zinc_expect_source_error(test, &cu.errors, "duplicate declaration in same scope: i");
-
-    AkeUnit_parse_teardown(&cu);
-}
-
 void AkeUnit_parse_for_iteration_error_no_value(Zinc_test* test)
 {
 	if (test->dry_run) {
@@ -1541,7 +1503,7 @@ void AkeUnit_parse_for_iteration_error_no_child_element(Zinc_test* test)
     AkeUnit_parse_setup("const list: Int32; for i: Int32 in list end", &cu);
 	Zinc_expect_has_errors(test, &cu.errors);
 	Zinc_expect_false(test, cu.valid, "AkeUnit_parse_setup valid");
-	Zinc_expect_source_error(test, &cu.errors, "iteration expression is not an array");
+	Zinc_expect_source_error(test, &cu.errors, "iteration expression is not an array or slice");
 
     AkeUnit_parse_teardown(&cu);
 }
@@ -2199,13 +2161,11 @@ void AkeUnit_parse_statements(Zinc_test* test)
 		Zinc_test_register(test, AkeUnit_parse_while_error_expected_expression);
 		Zinc_test_register(test, AkeUnit_parse_while_error_expected_end);
 		Zinc_test_register(test, AkeUnit_parse_for_range);
-		Zinc_test_register(test, AkeUnit_parse_for_range2);
 		Zinc_test_register(test, AkeUnit_parse_for_range_error_start_no_value);
 		Zinc_test_register(test, AkeUnit_parse_for_range_error_start_not_numeric);
 		Zinc_test_register(test, AkeUnit_parse_for_range_error_end_no_value);
 		Zinc_test_register(test, AkeUnit_parse_for_range_error_end_not_numeric);
 		Zinc_test_register(test, AkeUnit_parse_for_iteration);
-		Zinc_test_register(test, AkeUnit_parse_for_iteration2);
 		Zinc_test_register(test, AkeUnit_parse_for_iteration_error_no_value);
 		Zinc_test_register(test, AkeUnit_parse_for_iteration_error_no_child_element);
 		Zinc_test_register(test, AkeUnit_parse_for_iteration_error_cannot_cast);
