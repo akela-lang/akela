@@ -195,7 +195,7 @@ bool Ake_TypeDefMatch(Ake_TypeDef* a, Ake_TypeDef* b, bool* cast)
             }
             return Ake_TypeDefMatch(a->data.array.td, b->data.array.td, cast);
         case AKE_TYPE_DEF_ARRAY_CONST:
-            if (a->data.array_const.dim != b->data.array_const.dim) {
+            if (a->data.array_const.dim < b->data.array_const.dim) {
                 return false;
             }
             return Ake_TypeDefMatch(a->data.array_const.td, b->data.array_const.td, cast);

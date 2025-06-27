@@ -11,7 +11,7 @@ void AkeUnit_parse_struct_field_assign(Zinc_test* test)
     if (test->dry_run) {
         Zinc_string_add_str(&test->name, __func__);
         test->mute = false;
-        test->solo = false;
+        test->solo = true;
         return;
     }
 
@@ -63,8 +63,8 @@ void AkeUnit_parse_struct_field_assign(Zinc_test* test)
     if (!Zinc_expect_ptr(test, tu0, "ptr tu0")) {
         return Zinc_assert();
     }
-    Zinc_expect_int_equal(test, tu0->kind, AKE_TYPE_DEF_NATURAL, "type td0");
-    Zinc_expect_string(test, &tu0->name, "Nat8", "name td0");
+    Zinc_expect_int_equal(test, tu0->kind, AKE_TYPE_DEF_ARRAY_CONST, "type td0");
+    Zinc_expect_size_t_equal(test, tu0->data.array_const.dim, 100, "name td0");
 
     /* lastName */
     Ake_ast* d1 = Ast_node_get(st, 1);
@@ -90,8 +90,8 @@ void AkeUnit_parse_struct_field_assign(Zinc_test* test)
     if (!Zinc_expect_ptr(test, tu1, "ptr tu1")) {
         return Zinc_assert();
     }
-    Zinc_expect_int_equal(test, tu1->kind, AKE_TYPE_DEF_NATURAL, "type td1");
-    Zinc_expect_string(test, &tu1->name, "Nat8", "name td1");
+    Zinc_expect_int_equal(test, tu1->kind, AKE_TYPE_DEF_ARRAY_CONST, "type td1");
+    Zinc_expect_size_t_equal(test, tu1->data.array_const.dim, 100, "dim td1");
 
     /* age */
     Ake_ast* d2 = Ast_node_get(st, 2);
