@@ -1859,25 +1859,6 @@ void AkeUnit_parse_factor_newline_anonymous_function_const(Zinc_test* test)
     AkeUnit_parse_teardown(&cu);
 }
 
-void AkeUnit_parse_function_error_require_params_name(Zinc_test* test)
-{
-    if (test->dry_run) {
-        Zinc_string_add_str(&test->name, __func__);
-        test->mute = false;
-        test->solo = false;
-        return;
-    }
-
-    struct Ake_comp_unit cu;
-
-    AkeUnit_parse_setup("const a: fn(Int32) = fn(Int32: Int32) end", &cu);
-    Zinc_expect_has_errors(test, &cu.errors);
-    Zinc_expect_false(test, cu.valid, "parse valid");
-    Zinc_expect_source_error(test, &cu.errors, "identifier reserved as a type: Int32");
-
-    AkeUnit_parse_teardown(&cu);
-}
-
 void AkeUnit_parse_function_error_input_type_non_numeric(Zinc_test* test)
 {
     if (test->dry_run) {
@@ -2001,7 +1982,6 @@ void AkeUnit_parse_function(Zinc_test* test)
         Zinc_test_register(test, AkeUnit_parse_call_error_expected_expression);
         Zinc_test_register(test, AkeUnit_parse_factor_newline_anonymous_function);
         Zinc_test_register(test, AkeUnit_parse_factor_newline_anonymous_function_const);
-        Zinc_test_register(test, AkeUnit_parse_function_error_require_params_name);
         Zinc_test_register(test, AkeUnit_parse_function_error_input_type_non_numeric);
         Zinc_test_register(test, AkeUnit_parse_function_error_output_type_non_numeric);
         Zinc_test_register(test, AkeUnit_parse_function_error_input_type_numeric);

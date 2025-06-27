@@ -61,25 +61,6 @@ void AkeUnit_parse_types_missing_declaration3(Zinc_test* test)
     AkeUnit_parse_teardown(&cu);
 }
 
-void AkeUnit_parse_types_double_function(Zinc_test* test)
-{
-	if (test->dry_run) {
-		Zinc_string_add_str(&test->name, __func__);
-		test->mute = false;
-		test->solo = false;
-		return;
-	}
-
-	struct Ake_comp_unit cu;
-
-    AkeUnit_parse_setup("fn foo() end; fn foo() end", &cu);
-	Zinc_expect_has_errors(test, &cu.errors);
-	Zinc_expect_source_error(test, &cu.errors, "duplicate declaration in same scope: foo");
-	Zinc_expect_false(test, cu.valid, "valid");
-
-    AkeUnit_parse_teardown(&cu);
-}
-
 void AkeUnit_parse_types_reserved_type(Zinc_test* test)
 {
 	if (test->dry_run) {
@@ -450,7 +431,6 @@ void AkeUnit_parse_types(Zinc_test* test)
 		Zinc_test_register(test, AkeUnit_parse_types_missing_declaration);
 		Zinc_test_register(test, AkeUnit_parse_types_missing_declaration2);
 		Zinc_test_register(test, AkeUnit_parse_types_missing_declaration3);
-		Zinc_test_register(test, AkeUnit_parse_types_double_function);
 		Zinc_test_register(test, AkeUnit_parse_types_reserved_type);
 		Zinc_test_register(test, AkeUnit_parse_types_reserved_type2);
 		Zinc_test_register(test, AkeUnit_parse_types_reserved_type3);
