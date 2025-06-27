@@ -249,7 +249,7 @@ void AkeLlvmUnit_variable_assign_scalar_id(Zinc_test* test)
 
     Ake_code_gen_result_init(&result);
     AkeLlvmUnit_cg_setup("const a: Int32 = 11\n"
-             "const b: Int32\n"
+             "var b: Int32\n"
              "b = a\n"
              "b\n",
              &result);
