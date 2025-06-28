@@ -210,12 +210,12 @@ namespace Akela_llvm {
     {
         Zinc_string* value = &result->value;
         auto ExprSymbol = jd->ExitOnErr(jd->TheJIT->lookup(TOP_LEVEL_NAME));
-        if (n->tu) {
-            Ake_TypeKind type = n->tu->kind;
+        if (n->type) {
+            Ake_TypeKind type = n->type->kind;
 
             if (IsArray(type)) {
                 if (type == AKE_TYPE_ARRAY_CONST) {
-                    Ake_Type* tu = n->tu->data.array_const.td;
+                    Ake_Type* tu = n->type->data.array_const.td;
                     if (tu->kind == AKE_TYPE_NATURAL && tu->data.natural.bit_count == 8) {
                         char* (*fp)() = ExprSymbol.getAddress().toPtr<char*(*)()>();
                         char* v = fp();
@@ -230,7 +230,7 @@ namespace Akela_llvm {
                     assert(false && "return of arrays not supported");
                 }
             } else if (type == AKE_TYPE_INTEGER) {
-                size_t bit_count = n->tu->data.integer.bit_count;
+                size_t bit_count = n->type->data.integer.bit_count;
                 if (bit_count == 64) {
                     int64_t (*fp)() = ExprSymbol.getAddress().toPtr<int64_t(*)()>();
                     int64_t v = fp();
@@ -263,7 +263,7 @@ namespace Akela_llvm {
                     assert(false);
                 }
             } else if (type == AKE_TYPE_NATURAL) {
-                size_t bit_count = n->tu->data.natural.bit_count;
+                size_t bit_count = n->type->data.natural.bit_count;
                 if (bit_count == 64) {
                     uint64_t (*fp)() = ExprSymbol.getAddress().toPtr<uint64_t(*)()>();
                     uint64_t v = fp();
@@ -296,7 +296,7 @@ namespace Akela_llvm {
                     assert(false);
                 }
             } else if (type == AKE_TYPE_REAL) {
-                size_t bit_count = n->tu->data.real.bit_count;
+                size_t bit_count = n->type->data.real.bit_count;
                 if (bit_count == 64) {
                     double (*fp)() = ExprSymbol.getAddress().toPtr <double(*)()>();
                     double v = fp();

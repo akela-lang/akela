@@ -61,13 +61,13 @@ Ake_Ast* Ake_parse_assignment(struct Ake_parse_state* ps)
             if (a->kind == Ake_ast_type_eseq) {
                 Ake_Ast* p = a->head;
                 while (p) {
-                    if (!p->tu) {
+                    if (!p->type) {
                         Zinc_error_list_set(ps->el, &p->loc, "rvalue does not have a type");
                     }
                     p = p->next;
                 }
             } else {
-                if (!a->tu) {
+                if (!a->type) {
                     Zinc_error_list_set(ps->el, &a->loc, "rvalue does not have a type");
                 }
             }
@@ -92,7 +92,7 @@ Ake_Ast* Ake_parse_assignment(struct Ake_parse_state* ps)
                 /* start assign tree */
                 Ake_ast_create(&n);
                 n->kind = Ake_ast_type_assign;
-                n->tu = Ake_TypeClone(a->tu);
+                n->type = Ake_TypeClone(a->type);
             }
 
             Ake_ast_add(n, a);
@@ -106,14 +106,14 @@ Ake_Ast* Ake_parse_assignment(struct Ake_parse_state* ps)
             if (a->kind == Ake_ast_type_eseq) {
                 Ake_Ast* p = a->head;
                 while (p) {
-                    if (!p->tu) {
+                    if (!p->type) {
                         Zinc_error_list_set(ps->el, &p->loc, "lvalue does not have a type");
                         n->kind = Ake_ast_type_error;
                     }
                     p = p->next;
                 }
             } else {
-                if (!a->tu) {
+                if (!a->type) {
                     Zinc_error_list_set(ps->el, &a->loc, "lvalue does not have a type");
                     n->kind = Ake_ast_type_error;
                 }
@@ -138,8 +138,8 @@ Ake_Ast* Ake_parse_assignment(struct Ake_parse_state* ps)
                     if (!Ake_check_lvalue(ps, lhs2, &n->loc)) {
                         n->kind = Ake_ast_type_error;
                     }
-                    Ake_Override_rhs(lhs2->tu, rhs2);
-                    if (!Ake_TypeMatch(lhs2->tu, rhs2->tu, NULL)) {
+                    Ake_Override_rhs(lhs2->type, rhs2);
+                    if (!Ake_TypeMatch(lhs2->type, rhs2->type, NULL)) {
                         Zinc_error_list_set(ps->el, &rhs2->loc, "values in assignment not compatible");
                     }
                     lhs2 = lhs2->next;
@@ -151,13 +151,13 @@ Ake_Ast* Ake_parse_assignment(struct Ake_parse_state* ps)
                 }
 
             	bool cast = false;
-                if (!Ake_TypeMatch(lhs->tu, rhs->tu, &cast)) {
+                if (!Ake_TypeMatch(lhs->type, rhs->type, &cast)) {
                     Zinc_error_list_set(ps->el, &rhs->loc, "values in assignment not compatible");
                     n->kind = Ake_ast_type_error;
                 }
 
                 if (prev_lhs) {
-                    if (!Ake_TypeMatch(lhs->tu, prev_lhs->tu, NULL)) {
+                    if (!Ake_TypeMatch(lhs->type, prev_lhs->type, NULL)) {
                         Zinc_error_list_set(ps->el, &lhs->loc, "lvalues do not match type in assignment");
                         n->kind = Ake_ast_type_error;
                     }
@@ -168,7 +168,7 @@ Ake_Ast* Ake_parse_assignment(struct Ake_parse_state* ps)
         }
 
         if (prev_lhs && prev_lhs->kind != Ake_ast_type_eseq) {
-            Ake_Override_rhs(prev_lhs->tu, rhs);
+            Ake_Override_rhs(prev_lhs->type, rhs);
         }
     }
 
@@ -204,7 +204,7 @@ Ake_Ast* Ake_parse_eseq(struct Ake_parse_state* ps)
             }
 
             if (parent->kind != Ake_ast_type_error) {
-                if (!a->tu) {
+                if (!a->type) {
                     Zinc_error_list_set(ps->el, &a->loc, "operand of eseq has no type");
                     parent->kind = Ake_ast_type_error;
                 }
@@ -232,7 +232,7 @@ Ake_Ast* Ake_parse_eseq(struct Ake_parse_state* ps)
         }
 
         if (b) {
-            if (!b->tu) {
+            if (!b->type) {
                 Zinc_error_list_set(ps->el, &b->loc, "operand of eseq has no type");
                 b->kind = Ake_ast_type_error;
             }
@@ -327,22 +327,22 @@ Ake_Ast* Ake_parse_boolean(struct Ake_parse_state* ps)
 		if (n->kind != Ake_ast_type_error) {
 			assert(b);
             assert(left);
-			if (!left->tu) {
+			if (!left->type) {
 				Zinc_error_list_set(ps->el, &left->loc, "left-side operand of boolean operator has no type");
 				/* test case: test_parse_boolean_error_left_no_value */
                 n->kind = Ake_ast_type_error;
-			} else if (!b->tu) {
+			} else if (!b->type) {
 				Zinc_error_list_set(ps->el, &b->loc, "operand of boolean operator has no type");
 				/* test case: test_parse_boolean_error_right_no_value */
                 n->kind = Ake_ast_type_error;
-			} else if (left->tu->kind != AKE_TYPE_BOOLEAN) {
+			} else if (left->type->kind != AKE_TYPE_BOOLEAN) {
 				Zinc_error_list_set(ps->el, &left->loc, "left-side expression of boolean operator is not boolean");
                 n->kind = Ake_ast_type_error;
-			} else if (b->tu->kind != AKE_TYPE_BOOLEAN) {
+			} else if (b->type->kind != AKE_TYPE_BOOLEAN) {
 				Zinc_error_list_set(ps->el, &b->loc, "expression of boolean operator is not boolean");
                 n->kind = Ake_ast_type_error;
 			} else {
-				n->tu = Ake_TypeClone(left->tu);
+				n->type = Ake_TypeClone(left->type);
 			}
 
 			left = n;
@@ -445,26 +445,26 @@ Ake_Ast* Ake_parse_comparison(struct Ake_parse_state* ps)
 			assert(b);
 			assert(op);
             assert(left);
-			if (!left->tu) {
+			if (!left->type) {
 				Zinc_error_list_set(ps->el, &left->loc, "operand has no value");
 				/* test case: test_parse_comparison_error_left_not_numeric */
                 n->kind = Ake_ast_type_error;
-			} else if (!b->tu) {
+			} else if (!b->type) {
 				Zinc_error_list_set(ps->el, &b->loc, "operand has no value");
 				/* test case: test_parse_comparison_error_right_no_value */
                 n->kind = Ake_ast_type_error;
 			} else {
-				if (!Ake_is_identity_comparison(type) && !Ake_is_numeric(left->tu)) {
+				if (!Ake_is_identity_comparison(type) && !Ake_is_numeric(left->type)) {
 					Zinc_error_list_set(ps->el, &left->loc, "comparison operand is not numeric");
 					/* test case: test_parse_comparison_error_left_not_numeric */
                     n->kind = Ake_ast_type_error;
-				} else if (!Ake_is_identity_comparison(type) && !Ake_is_numeric(b->tu)) {
+				} else if (!Ake_is_identity_comparison(type) && !Ake_is_numeric(b->type)) {
 					Zinc_error_list_set(ps->el, &b->loc, "comparison operand is not numeric");
 					/* test case: test_parse_comparison_error_right_not_numeric */
                     n->kind = Ake_ast_type_error;
 				} else {
-					Ake_Type* tu = Ake_TypeClone(left->tu);
-					n->tu = tu;
+					Ake_Type* tu = Ake_TypeClone(left->type);
+					n->type = tu;
 				}
 			}
 			left = n;
@@ -553,8 +553,8 @@ Ake_Ast* Ake_parse_add(struct Ake_parse_state* ps)
         }
 
 		if (n->kind != Ake_ast_type_error) {
-			Ake_Type* tu_a = a->tu;
-			Ake_Type* tu_b = b->tu;
+			Ake_Type* tu_a = a->type;
+			Ake_Type* tu_b = b->type;
 
 			if (!tu_a) {
 				Zinc_error_list_set(ps->el, &a->loc, "%s operand has no value", op_name);
@@ -584,7 +584,7 @@ Ake_Ast* Ake_parse_add(struct Ake_parse_state* ps)
                     n->kind = Ake_ast_type_error;
                     Ake_TypeDestroy(tu);
 				} else {
-					n->tu = tu;
+					n->type = tu;
 				}
 			}
 
@@ -678,8 +678,8 @@ Ake_Ast* Ake_parse_mult(struct Ake_parse_state* ps)
 		if (n->kind != Ake_ast_type_error) {
 			assert(a);
 			assert(b);
-			Ake_Type* tu_a = a->tu;
-			Ake_Type* tu_b = b->tu;
+			Ake_Type* tu_a = a->type;
+			Ake_Type* tu_b = b->type;
 
 			if (!tu_a) {
 				Zinc_error_list_set(ps->el, &a->loc, "%s operand has no value", op_name);
@@ -710,7 +710,7 @@ Ake_Ast* Ake_parse_mult(struct Ake_parse_state* ps)
                     n->kind = Ake_ast_type_error;
                     Ake_TypeDestroy(tu);
 				} else {
-					n->tu = tu;
+					n->type = tu;
 				}
 			}
 
@@ -790,8 +790,8 @@ Ake_Ast* Ake_parse_power(struct Ake_parse_state* ps)
         if (n->kind != Ake_ast_type_error) {
 			assert(left);
 			assert(b);
-			Ake_Type* tu_left = left->tu;
-			Ake_Type* tu_b = b->tu;
+			Ake_Type* tu_left = left->type;
+			Ake_Type* tu_b = b->type;
 
 			if (!tu_left) {
 				Zinc_error_list_set(ps->el, &left->loc, "power operand has no value");
@@ -822,7 +822,7 @@ Ake_Ast* Ake_parse_power(struct Ake_parse_state* ps)
                     n->kind = Ake_ast_type_error;
                     Ake_TypeDestroy(tu);
 				} else {
-					n->tu = tu;
+					n->type = tu;
 				}
 			}
 
@@ -880,21 +880,21 @@ void Ake_parse_subscript(struct Ake_parse_state* ps, Ake_Ast* left, Ake_Ast* n)
 {
     n->kind = Ake_ast_type_array_subscript;
 
-    if (!left->tu) {
+    if (!left->type) {
         Zinc_error_list_set(ps->el, &left->loc, "expression has subscript but has no value");
         left->kind = Ake_ast_type_error;
     }
 
 	bool is_array_or_slice = false;
     if (left->kind != Ake_ast_type_error) {
-        if (left->tu->kind == AKE_TYPE_ARRAY) {
-	        n->tu = Ake_TypeClone(left->tu->data.array.td);
+        if (left->type->kind == AKE_TYPE_ARRAY) {
+	        n->type = Ake_TypeClone(left->type->data.array.td);
         	is_array_or_slice = true;
-        } else if (left->tu->kind == AKE_TYPE_ARRAY_CONST) {
-	        n->tu = Ake_TypeClone(left->tu->data.array_const.td);
+        } else if (left->type->kind == AKE_TYPE_ARRAY_CONST) {
+	        n->type = Ake_TypeClone(left->type->data.array_const.td);
         	is_array_or_slice = true;
-        } else if (left->tu->kind == AKE_TYPE_SLICE) {
-            n->tu = Ake_TypeClone(left->tu->data.slice.td);
+        } else if (left->type->kind == AKE_TYPE_SLICE) {
+            n->type = Ake_TypeClone(left->type->data.slice.td);
         	is_array_or_slice = true;
         }
     }
@@ -986,7 +986,7 @@ void Ake_parse_call(struct Ake_parse_state* ps, Ake_Ast* left, Ake_Ast* n) {
     }
 
     if (n->kind != Ake_ast_type_error) {
-        Ake_Type *tu = left->tu;
+        Ake_Type *tu = left->type;
         assert(tu);
         if (tu->kind != AKE_TYPE_FUNCTION) {
             Zinc_error_list_set(ps->el, &left->loc, "not a function type");
@@ -1022,7 +1022,7 @@ void Ake_parse_call(struct Ake_parse_state* ps, Ake_Ast* left, Ake_Ast* n) {
 
             /* output */
             if (tu->data.function.output) {
-                n->tu = Ake_TypeClone(tu->data.function.output);
+                n->type = Ake_TypeClone(tu->data.function.output);
             }
         }
 
@@ -1043,7 +1043,7 @@ Ake_Ast* Ake_parse_cseq(Ake_parse_state* ps, Ake_Ast* left)
     Ake_ast_create(&n);
     n->kind = Ake_ast_type_cseq;
 
-    if (!left->tu || left->tu->kind != AKE_TYPE_FUNCTION) {
+    if (!left->type || left->type->kind != AKE_TYPE_FUNCTION) {
         Zinc_error_list_set(ps->el, &left->loc, "not a function type");
         /* test case: no test case needed */
         n->kind = Ake_ast_type_error;
@@ -1060,7 +1060,7 @@ Ake_Ast* Ake_parse_cseq(Ake_parse_state* ps, Ake_Ast* left)
         return n;
     }
     int i = 0;
-    if (!Ake_check_input_type(ps, left->tu, i, a)) {
+    if (!Ake_check_input_type(ps, left->type, i, a)) {
         n->kind = Ake_ast_type_error;
     }
     i++;
@@ -1101,7 +1101,7 @@ Ake_Ast* Ake_parse_cseq(Ake_parse_state* ps, Ake_Ast* left)
             /* transfer a -> parent */
             Ake_ast_add(n, a);
 
-            if (!Ake_check_input_type(ps, left->tu, i, a)) {
+            if (!Ake_check_input_type(ps, left->type, i, a)) {
                 n->kind = Ake_ast_type_error;
             }
         }
@@ -1166,16 +1166,16 @@ Ake_Ast* Ake_parse_dot(struct Ake_parse_state* ps)
         Ake_ast_add(n, b);
 
         if (n->kind != Ake_ast_type_error) {
-            if (!left->tu) {
+            if (!left->type) {
                 Zinc_error_list_set(ps->el, &left->loc, "dot operand has no value");
                 /* test case: no test case necessary */
                 n->kind = Ake_ast_type_error;
-            } else if (left->tu->kind != AKE_TYPE_STRUCT) {
+            } else if (left->type->kind != AKE_TYPE_STRUCT) {
                 Zinc_error_list_set(ps->el, &left->loc, "dot operand is not a struct");
                 /* test case: test_parse_dot_error_left_non_module */
                 n->kind = Ake_ast_type_error;
             } else {
-                Ake_Type* td = left->tu;
+                Ake_Type* td = left->type;
                 assert(td);
             	size_t seq = Ake_get_current_seq(ps);
                 struct Ake_symbol* sym = Ake_EnvironmentGet(ps->st->top, &td->name, seq);
@@ -1201,7 +1201,7 @@ Ake_Ast* Ake_parse_dot(struct Ake_parse_state* ps)
                             "identifier not a field of struct: %bf", &id->value);
                     n->kind = Ake_ast_type_error;
                 } else {
-                    n->tu = Ake_TypeClone(found_tu);
+                    n->type = Ake_TypeClone(found_tu);
                 }
             }
 

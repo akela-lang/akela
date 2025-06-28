@@ -85,8 +85,8 @@ Ake_Ast* Ake_parse_stmts(Ake_parse_state* ps, bool suppress_env, bool is_global)
 
 	if (n->kind != Ake_ast_type_error) {
 		if (last) {
-			if (last->tu) {
-                n->tu = Ake_TypeClone(last->tu);
+			if (last->type) {
+                n->type = Ake_TypeClone(last->type);
 			}
 		}
 	}
@@ -152,7 +152,7 @@ Ake_Ast* Ake_parse_extern(struct Ake_parse_state* ps)
             n->kind = Ake_ast_type_error;
         }
         Ake_Type* tu = Ake_proto2type_use(ps, proto, NULL);
-        n->tu = tu;
+        n->type = tu;
     }
 
     if (!has_id) {
@@ -171,7 +171,7 @@ Ake_Ast* Ake_parse_extern(struct Ake_parse_state* ps)
         Zinc_malloc_safe((void **) &new_sym, sizeof(struct Ake_symbol));
         Ake_symbol_init(new_sym);
         new_sym->type = Ake_symbol_type_variable;
-        Ake_Type* tu = Ake_TypeClone(n->tu);
+        Ake_Type* tu = Ake_TypeClone(n->type);
         new_sym->tu = tu;
         Ake_EnvironmentAdd(ps->st->top, &id_node->value, new_sym, n->loc.start);
     }
@@ -373,13 +373,13 @@ void Ake_parse_for_range(struct Ake_parse_state* ps, Ake_Ast* parent)
 
 	if (parent->kind != Ake_ast_type_error) {
 		assert(a);
-		if (!a->tu) {
+		if (!a->type) {
 			Zinc_error_list_set(ps->el, &a->loc, "start range expression has no value");
             parent->kind = Ake_ast_type_error;
 			/* test case: test_parse_for_range_error_start_no_value */
 		} else {
-			assert(a->tu);
-			if (!Ake_is_numeric(a->tu)) {
+			assert(a->type);
+			if (!Ake_is_numeric(a->type)) {
 				Zinc_error_list_set(ps->el, &a->loc, "start range expression is not numeric");
                 parent->kind = Ake_ast_type_error;
 				/* test case: test_parse_for_range_error_start_not_numeric */
@@ -387,12 +387,12 @@ void Ake_parse_for_range(struct Ake_parse_state* ps, Ake_Ast* parent)
 		}
 
 		assert(b);
-		if (!b->tu) {
+		if (!b->type) {
 			Zinc_error_list_set(ps->el, &b->loc, "end range expression has no value");
             parent->kind = Ake_ast_type_error;
 			/* test case: test_parse_for_range_error_end_no_value */
 		} else {
-			if (!Ake_is_numeric(b->tu)) {
+			if (!Ake_is_numeric(b->type)) {
 				Zinc_error_list_set(ps->el, &b->loc, "end range expression is not numeric");
                 parent->kind = Ake_ast_type_error;
 				/* test case: test_parse_for_range_error_end_not_numeric */
@@ -434,7 +434,7 @@ void Ake_parse_for_iteration(struct Ake_parse_state* ps, Ake_Ast* parent)
 		Ake_Ast* element = Ast_node_get(parent, 0);
 		Ake_Ast* element_type_node = Ast_node_get(element, 1);
 
-		Ake_Type* list_tu = list->tu;
+		Ake_Type* list_tu = list->type;
 
 		if (!list_tu) {
 			Zinc_error_list_set(ps->el, &list->loc, "iteration expression has no value");
@@ -458,7 +458,7 @@ void Ake_parse_for_iteration(struct Ake_parse_state* ps, Ake_Ast* parent)
 			} else {
 				assert(false && "expected array or slice");
 			}
-			if (!Ake_TypeMatch(element_tu2, element_type_node->tu, NULL)) {
+			if (!Ake_TypeMatch(element_tu2, element_type_node->type, NULL)) {
                 parent->kind = Ake_ast_type_error;
 				Zinc_error_list_set(ps->el, &list->loc, "cannot cast list element");
 				/* test case: test_parse_for_iteration_error_cannot_cast */
@@ -583,12 +583,12 @@ Ake_Ast* Ake_parse_return(struct Ake_parse_state* ps)
 
 	if (n->kind != Ake_ast_type_error) {
 		if (a) {
-			if (!a->tu) {
+			if (!a->type) {
 				Zinc_error_list_set(ps->el, &a->loc, "return expression has no value");
 				/* test case: test_parse_return_error_no_value */
                 n->kind = Ake_ast_type_error;
 			} else {
-				n->tu = Ake_TypeClone(a->tu);
+				n->type = Ake_TypeClone(a->type);
 				Ake_Ast* fd = Ake_get_current_function(ps->st);
 				if (!fd) {
 					Zinc_error_list_set(ps->el, &ret->loc, "return statement outside of function");
@@ -667,7 +667,7 @@ Ake_Ast* Ake_parse_let(struct Ake_parse_state* ps)
 
     Ake_Ast* type_node = NULL;
     type_node = Ake_parse_type(ps);
-	if (type_node && !type_node->tu) {
+	if (type_node && !type_node->type) {
 		Zinc_error_list_set(ps->el, &type_node->loc, "expected type identifier or fn");
 		n->kind = Ake_ast_type_error;
 	}
@@ -722,10 +722,10 @@ Ake_Ast* Ake_parse_let(struct Ake_parse_state* ps)
                 for (int i = 0; i < a_count; i++) {
                     Ake_Ast* y = Ast_node_get(b, i);
                 	bool cast = false;
-                    if (!y->tu) {
+                    if (!y->type) {
                         Zinc_error_list_set(ps->el, &b->loc, "cannot assign with operand that has no value");
                         n->kind = Ake_ast_type_error;
-                    } else if (!Ake_TypeMatch(type_node->tu, y->tu, &cast)) {
+                    } else if (!Ake_TypeMatch(type_node->type, y->type, &cast)) {
                         Zinc_error_list_set(ps->el, &b->loc, "values in assignment are not compatible");
                         n->kind = Ake_ast_type_error;
                     }
@@ -738,7 +738,7 @@ Ake_Ast* Ake_parse_let(struct Ake_parse_state* ps)
             if (a && type_node && b) {
                 Ake_Ast* rhs = b->head;
                 while (rhs) {
-                    Ake_Override_rhs(type_node->tu, rhs);
+                    Ake_Override_rhs(type_node->type, rhs);
                     rhs = rhs->next;
                 }
             }

@@ -24,8 +24,8 @@ namespace Akela_llvm {
 
         Type* type = nullptr;
         Value* ptr = nullptr;
-        if (n->tu) {
-            type = Get_type(jd, n->tu);
+        if (n->type) {
+            type = Get_type(jd, n->type);
         }
         if (type) {
             ptr = jd->Builder->CreateAlloca(type, nullptr, "ifresult");

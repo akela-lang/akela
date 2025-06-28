@@ -95,7 +95,7 @@ Ake_Ast* Ake_parse_function(struct Ake_parse_state* ps, bool is_method, Ake_Type
     Ake_declare_params(ps, proto, struct_type);
     Ake_set_current_function(ps->st, n);
     Ake_Type* tu = Ake_proto2type_use(ps, proto, struct_type);
-    n->tu = tu;
+    n->type = tu;
 
     Ake_Ast* stmts_node = NULL;
     stmts_node = Ake_parse_stmts(ps, true, false);
@@ -188,7 +188,7 @@ Ake_Ast* Ake_parse_if(struct Ake_parse_state* ps)
     }
 
     if (body) {
-        cb->tu = Ake_TypeClone(body->tu);
+        cb->type = Ake_TypeClone(body->type);
         Ake_ast_add(cb, body);
     }
 
@@ -219,11 +219,11 @@ Ake_Ast* Ake_parse_if(struct Ake_parse_state* ps)
             Ake_Ast* p = n->head;
             Ake_Type* tu = NULL;
             if (p) {
-                tu = Ake_TypeClone(p->tu);
+                tu = Ake_TypeClone(p->type);
                 p = p->next;
             }
             while (p) {
-                if (!Ake_TypeMatch(tu, p->tu, NULL)) {
+                if (!Ake_TypeMatch(tu, p->type, NULL)) {
                     Zinc_error_list_set(ps->el, &p->loc,
                                    "branch type does not match type of previous branch");
                     n->kind = Ake_ast_type_error;
@@ -231,7 +231,7 @@ Ake_Ast* Ake_parse_if(struct Ake_parse_state* ps)
                 }
                 p = p->next;
             }
-            n->tu = tu;
+            n->type = tu;
         }
     }
 
@@ -287,7 +287,7 @@ void Ake_parse_elseif(struct Ake_parse_state* ps, Ake_Ast* parent)
 
         if (body) {
             Ake_ast_add(cb, body);
-            cb->tu = Ake_TypeClone(body->tu);
+            cb->type = Ake_TypeClone(body->type);
         }
 
         Ake_ast_add(parent, cb);
@@ -322,7 +322,7 @@ Ake_Ast* Ake_parse_else(struct Ake_parse_state* ps)
         }
 
         if (body) {
-            n->tu = Ake_TypeClone(body->tu);
+            n->type = Ake_TypeClone(body->type);
         }
 
         if (body) {
@@ -370,7 +370,7 @@ Ake_Ast* Ake_parse_not(struct Ake_parse_state* ps)
 
 	if (n->kind != Ake_ast_type_error) {
 		assert(a);
-		Ake_Type* tu = a->tu;
+		Ake_Type* tu = a->type;
 		if (!tu) {
 			Zinc_error_list_set(ps->el, &not->loc, "! operator used on parse_factor with no value");
 			/* test case: test_parse_not_error_no_value */
@@ -381,7 +381,7 @@ Ake_Ast* Ake_parse_not(struct Ake_parse_state* ps)
 				/* test case: test_parse_not_error_not_boolean */
                 n->kind = Ake_ast_type_error;
 			} else {
-				n->tu = Ake_TypeClone(tu);
+				n->type = Ake_TypeClone(tu);
 			}
 		}
 	}
@@ -445,7 +445,7 @@ Ake_Ast* Ake_parse_literal(struct Ake_parse_state* ps)
             Zinc_error_list_set(ps->el, &n->loc, "expected a type");
             n->kind = Ake_ast_type_error;
         }
-        n->tu = Ake_TypeClone(sym->td);
+        n->type = Ake_TypeClone(sym->td);
         Zinc_string_destroy(&bf);
 
         if (is_string) {
@@ -453,8 +453,8 @@ Ake_Ast* Ake_parse_literal(struct Ake_parse_state* ps)
             Ake_TypeCreate(&tu);
             tu->kind = AKE_TYPE_ARRAY_CONST;
             tu->data.array_const.dim = n->value.size + 1;
-            tu->data.array_const.td = n->tu;
-            n->tu = tu;
+            tu->data.array_const.td = n->type;
+            n->type = tu;
         }
 	}
 
@@ -493,7 +493,7 @@ Ake_Ast* Ake_parse_id(Ake_parse_state* ps)
         Ake_consume_newline(ps, n);
 
         n->kind = Ake_ast_type_struct_literal;
-        n->tu = Ake_TypeClone(sym->td);
+        n->type = Ake_TypeClone(sym->td);
 
         Ake_parse_struct_literal_elements(ps, n, sym->td);
 
@@ -527,7 +527,7 @@ Ake_Ast* Ake_parse_id(Ake_parse_state* ps)
             /* test case: test_parse_types_missing_declaration */
             n->kind = Ake_ast_type_error;
         } else {
-            n->tu = Ake_TypeClone(sym->tu);
+            n->type = Ake_TypeClone(sym->tu);
         }
 
         Ake_token_destroy(id);
@@ -628,7 +628,7 @@ void Ake_parse_struct_literal_elements(
 
             if (parent->kind != Ake_ast_type_error) {
                 bool cast = false;
-                if (!Ake_TypeMatch(sfr.td, expr->tu, &cast)) {
+                if (!Ake_TypeMatch(sfr.td, expr->type, &cast)) {
                     Zinc_error_list_set(ps->el, &expr->loc, "invalid type for field");
                     parent->kind = Ake_ast_type_error;
                 }
@@ -713,13 +713,13 @@ Ake_Ast* Ake_parse_sign(struct Ake_parse_state* ps)
 
 	if (n->kind != Ake_ast_type_error) {
 		assert(right);
-		Ake_Type* tu = right->tu;
+		Ake_Type* tu = right->type;
 		if (!tu) {
 			Zinc_error_list_set(ps->el, &sign->loc, "negative operator was used on expression with no value");
 			/* test case: test_parse_sign_error */
             n->kind = Ake_ast_type_error;
 		} else {
-			n->tu = Ake_TypeClone(tu);
+			n->type = Ake_TypeClone(tu);
 		}
 	}
 
@@ -770,12 +770,12 @@ Ake_Ast* Ake_parse_array_literal(struct Ake_parse_state* ps)
             /* test case: test_parse_array_literal_empty_error */
             n->kind = Ake_ast_type_error;
         } else {
-            Ake_Type* tu_first = Ake_TypeClone(first->tu);
+            Ake_Type* tu_first = Ake_TypeClone(first->type);
             Ake_Ast* x = first->next;
             Ake_Type* tu_x;
             count++;
             while (x) {
-                tu_x = x->tu;
+                tu_x = x->type;
                 bool cast = false;
                 if (!Ake_TypeMatch(tu_first, tu_x, &cast)) {
                     Zinc_error_list_set(ps->el, &first->loc, "array elements not the same type");
@@ -791,7 +791,7 @@ Ake_Ast* Ake_parse_array_literal(struct Ake_parse_state* ps)
             Ake_TypeSet(tu, AKE_TYPE_ARRAY);
             tu->data.array.dim = count;
             tu->data.array.td = Ake_TypeClone(tu_first);
-            n->tu = tu;
+            n->type = tu;
         }
     }
 
@@ -891,12 +891,12 @@ Ake_Ast* Ake_parse_parenthesis(struct Ake_parse_state* ps)
 
 	if (n->kind != Ake_ast_type_error) {
 		assert(a);
-		Ake_Type* tu = a->tu;
+		Ake_Type* tu = a->type;
 		if (!tu) {
 			Zinc_error_list_set(ps->el, &a->loc, "parenthesis on expression that has no value");
             n->kind = Ake_ast_type_error;
 		} else {
-			n->tu = Ake_TypeClone(tu);
+			n->type = Ake_TypeClone(tu);
 		}
 	}
 

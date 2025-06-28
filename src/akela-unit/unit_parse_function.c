@@ -33,7 +33,7 @@ void AkeUnit_parse_function_no_inputs_no_outputs(Zinc_test* test)
 	}
     Zinc_expect_int_equal(test, f->kind, Ake_ast_type_function, "function");
 
-    Ake_Type* tu = f->tu;
+    Ake_Type* tu = f->type;
     if (!Zinc_expect_ptr(test, tu, "ptr tu")) {
 		return Zinc_assert();
 	}
@@ -178,7 +178,7 @@ void AkeUnit_parse_function_input(Zinc_test* test)
 		return Zinc_assert();
 	}
 
-    Ake_Type* x_tu = x_type_node->tu;
+    Ake_Type* x_tu = x_type_node->type;
     if (!Zinc_expect_ptr(test, x_tu, "ptr x_tu")) {
 		return Zinc_assert();
 	}
@@ -397,7 +397,7 @@ void AkeUnit_parse_function_three_inputs(Zinc_test* test)
 	}
     Zinc_expect_int_equal(test, f->kind, Ake_ast_type_function, "function f");
 
-    Ake_Type* tu = f->tu;
+    Ake_Type* tu = f->type;
     if (!Zinc_expect_ptr(test, tu, "ptr tu")) {
 		return Zinc_assert();
 	}
@@ -1026,7 +1026,7 @@ void AkeUnit_parse_function_proto(Zinc_test* test)
 	}
     Zinc_expect_int_equal(test, let_type->kind, Ake_ast_type_type, "type let_type");
 
-    Ake_Type* let_tu = let_type->tu;
+    Ake_Type* let_tu = let_type->type;
     if (!Zinc_expect_ptr(test, let_tu, "ptr let_tu")) {
 		return Zinc_assert();
 	}
@@ -1195,7 +1195,7 @@ void AkeUnit_parse_call_return_type(Zinc_test* test)
 	}
     Zinc_expect_int_equal(test, add->kind, Ake_ast_type_plus, "plus add");
 
-    Ake_Type* add_tu = add->tu;
+    Ake_Type* add_tu = add->type;
     if (!Zinc_expect_ptr(test, add_tu, "patr add_tu")) {
 		return Zinc_assert();
 	}
@@ -1293,7 +1293,7 @@ void AkeUnit_parse_call2(Zinc_test* test)
 		return Zinc_assert();
 	}
 
-    Ake_Type* tu = type_node->tu;
+    Ake_Type* tu = type_node->type;
     if (!Zinc_expect_ptr(test, tu, "ptr tu")) {
 		return Zinc_assert();
 	}

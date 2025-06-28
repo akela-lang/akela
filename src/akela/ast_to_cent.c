@@ -22,10 +22,10 @@ void Ake_ast_cent_print(Ake_Ast* n, size_t level)
             printf(".value = \"%s\"\n", Zinc_string_c_str(&n->value));
         }
 
-        if (n->tu) {
+        if (n->type) {
             Ake_indent_print(level);
             printf(".tu = ");
-            Ake_type_def_cent_print(n->tu, level, true);
+            Ake_type_def_cent_print(n->type, level, true);
         }
 
         Ake_Ast* p = n->head;

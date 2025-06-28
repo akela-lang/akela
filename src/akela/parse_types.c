@@ -161,7 +161,7 @@ void Ake_declare_params(Ake_parse_state* ps, Ake_Ast* proto, Ake_Type* struct_ty
         Ake_Ast* type_node = Ast_node_get(dec, 1);
         if (dec->kind == Ake_ast_type_self) {
             if (struct_type) {
-                type_node->tu = Ake_TypeClone(struct_type);
+                type_node->type = Ake_TypeClone(struct_type);
             } else {
                 dec = dec->next;
                 continue;
@@ -437,7 +437,7 @@ Ake_Ast* Ake_parse_type(Ake_parse_state* ps)
 	Ake_Ast* n = NULL;
     Ake_ast_create(&n);
     n->kind = Ake_ast_type_type;
-    n->tu = Ake_parse_type_dispatch(ps, n);
+    n->type = Ake_parse_type_dispatch(ps, n);
 	return n;
 }
 
@@ -664,11 +664,11 @@ void Ake_declare_type(struct Ake_parse_state* ps, Ake_Ast* type_node, Ake_Ast* i
     if (type_node && type_node->kind != Ake_ast_type_error) {
         if (id_node) {
             if (id_node->kind == Ake_ast_type_id) {
-                Ake_create_variable_symbol(ps, &id_node->value, type_node->tu, type_node->loc.start, is_const);
+                Ake_create_variable_symbol(ps, &id_node->value, type_node->type, type_node->loc.start, is_const);
             } else if (id_node->kind == Ake_ast_type_let_lseq) {
                 Ake_Ast* p = id_node->head;
                 while (p) {
-                    Ake_create_variable_symbol(ps, &p->value, type_node->tu, type_node->loc.start, is_const);
+                    Ake_create_variable_symbol(ps, &p->value, type_node->type, type_node->loc.start, is_const);
                     p = p->next;
                 }
             } else {
@@ -720,7 +720,7 @@ Ake_Type* Ake_Type_use_add_proto(
             } else if (dec->kind == Ake_ast_type_ellipsis) {
                 tp->kind = AKE_TYPE_PARAM_ELLIPSIS;
             } else {
-                tp->td = Ake_TypeClone(type_node->tu);
+                tp->td = Ake_TypeClone(type_node->type);
             }
 
             Ake_TypeInputAdd(func, tp);
@@ -731,7 +731,7 @@ Ake_Type* Ake_Type_use_add_proto(
 
     Ake_Ast* ret_type_node = Ast_node_get(dret, 0);
     if (ret_type_node) {
-        func->data.function.output = Ake_TypeClone(ret_type_node->tu);
+        func->data.function.output = Ake_TypeClone(ret_type_node->type);
     }
 
     return func;
@@ -745,7 +745,7 @@ bool Ake_check_return_type(Ake_parse_state* ps, Ake_Ast* proto, Ake_Ast* stmts_n
         Ake_Ast *dret = Ast_node_get(proto, 2);
         Ake_Ast *ret_type = Ast_node_get(dret, 0);
         if (ret_type) {
-            if (!Ake_TypeMatch(ret_type->tu, stmts_node->tu, NULL)) {
+            if (!Ake_TypeMatch(ret_type->type, stmts_node->type, NULL)) {
                 valid = Zinc_error_list_set(ps->el, loc, "returned type does not match function return type");
             }
         }
@@ -781,7 +781,7 @@ bool Ake_check_input_type(
 		Ake_TypeParam* tp = Ake_get_function_input_type(func, index);
 		if (tp) {
 		    Ake_Type* tu0 = tp->td;
-			Ake_Type* call_tu0 = a->tu;
+			Ake_Type* call_tu0 = a->type;
 			if (call_tu0) {
 			    bool cast = false;
 				if (!Ake_TypeMatch(tu0, call_tu0, &cast)) {
@@ -804,15 +804,15 @@ void Ake_Override_rhs(Ake_Type* tu, Ake_Ast* rhs)
     if (rhs->kind == Ake_ast_type_sign) {
         Ake_Ast* p = Ast_node_get(rhs, 1);
         if (p->kind == Ake_ast_type_number) {
-            Ake_TypeCopy(tu, p->tu);
-            Ake_TypeCopy(tu, rhs->tu);
+            Ake_TypeCopy(tu, p->type);
+            Ake_TypeCopy(tu, rhs->type);
         }
         return;
     }
 
     if (rhs->kind == Ake_ast_type_number) {
         if (Ake_is_numeric(tu)) {
-            Ake_TypeCopy(tu, rhs->tu);
+            Ake_TypeCopy(tu, rhs->type);
         }
         return;
     }
@@ -866,7 +866,7 @@ bool Ake_check_lvalue(Ake_parse_state* ps, Ake_Ast* n, Zinc_location* loc)
             return false;
         }
         if (!p->head) {
-            assert(p->tu);
+            assert(p->type);
             if (p->kind != Ake_ast_type_id) {
                 Zinc_error_list_set(ps->el, loc, "invalid lvalue");
                 return false;
@@ -883,7 +883,7 @@ bool Ake_check_lvalue(Ake_parse_state* ps, Ake_Ast* n, Zinc_location* loc)
         p = p->head;
     }
 
-    if (!n->tu) {
+    if (!n->type) {
         Zinc_error_list_set(ps->el, loc, "invalid lvalue");
         return false;
     }
@@ -896,7 +896,7 @@ bool Ake_check_lvalue(Ake_parse_state* ps, Ake_Ast* n, Zinc_location* loc)
     if (n->kind != Ake_ast_type_error) {
         if (n->kind == Ake_ast_type_array_subscript) {
             Ake_Ast* left = n->head;
-            if (left->tu->kind == AKE_TYPE_ARRAY_CONST) {
+            if (left->type->kind == AKE_TYPE_ARRAY_CONST) {
                 Zinc_error_list_set(ps->el, loc, "immutable variable changed in assignment");
                 n->kind = Ake_ast_type_error;
             }
@@ -944,7 +944,7 @@ Ake_Type* Ake_StructToType(Ake_Ast* n)
         Ake_Ast* type_node = id_node->next;
         assert(type_node);
 
-        tf->td = Ake_TypeClone(type_node->tu);
+        tf->td = Ake_TypeClone(type_node->type);
         Ake_TypeStructAdd(td, tf);
 
         dec = dec->next;

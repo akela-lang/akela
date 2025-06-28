@@ -47,7 +47,7 @@ namespace Akela_llvm {
         }
 
         std::vector<Type*> param_types = std::vector<Type*>();
-        Type* ret_type = Get_type_pointer(jd, n->tu);
+        Type* ret_type = Get_type_pointer(jd, n->type);
         FunctionType *func_type = FunctionType::get(ret_type, param_types, false);
         Function *toplevel = Function::Create(
                 func_type,
@@ -76,7 +76,7 @@ namespace Akela_llvm {
         }
         jd->Builder->SetInsertPoint(last_block);
 
-        if (n->tu) {
+        if (n->type) {
             jd->Builder->CreateRet(value);
         } else {
             jd->Builder->CreateRetVoid();

@@ -7,16 +7,16 @@ using namespace llvm::orc;
 namespace Akela_llvm {
     Value* Handle_number(Jit_data* jd, Ake_Ast* n)
     {
-        Ake_Type* tu = n->tu;
+        Ake_Type* tu = n->type;
         if (tu->kind == AKE_TYPE_INTEGER) {
-            Type* t = Get_type(jd, n->tu);
+            Type* t = Get_type(jd, n->type);
             Zinc_string_finish(&n->value);
             long v = strtol(n->value.buf, nullptr, 10);
             return ConstantInt::get(t, APInt(tu->data.integer.bit_count, v, true));
         }
 
         if (tu->kind == AKE_TYPE_NATURAL) {
-            Type* t = Get_type(jd, n->tu);
+            Type* t = Get_type(jd, n->type);
             Zinc_string_finish(&n->value);
             long v = strtol(n->value.buf, nullptr, 10);
             return ConstantInt::get(t, APInt(tu->data.natural.bit_count, v, false));
@@ -26,7 +26,7 @@ namespace Akela_llvm {
             Zinc_string_finish(&n->value);
             if (tu->data.real.bit_count == 64) {
                 double v = strtod(n->value.buf, nullptr);
-                Type* t = Get_type(jd, n->tu);
+                Type* t = Get_type(jd, n->type);
                 return ConstantFP::get(*jd->TheContext, APFloat(v));
             }
 

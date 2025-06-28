@@ -203,9 +203,9 @@ bool Apt_compare_ast(Zinc_test* top_test, Zinc_test* case_test, Ake_Ast* n, Cent
     }
 
     /* properties */
-    Cent_value* type = Cent_value_get_str(value, "@tag");
-    assert(type);
-    if (n->kind != type->data.enumeration.enum_value->value) {
+    Cent_value* tag = Cent_value_get_str(value, "@tag");
+    assert(tag);
+    if (n->kind != tag->data.enumeration.enum_value->value) {
         Zinc_spec_error_list_set(
             &case_data->spec_errors,
             case_test,
@@ -214,8 +214,8 @@ bool Apt_compare_ast(Zinc_test* top_test, Zinc_test* case_test, Ake_Ast* n, Cent
             "Ast type does not match (%d-%s) (%d-%bf)",
             n->kind,
             Ast_type_name(n->kind),
-            type->data.enumeration.enum_value->value,
-            &type->data.enumeration.enum_value->display);
+            tag->data.enumeration.enum_value->value,
+            &tag->data.enumeration.enum_value->display);
         pass = false;
     }
 
@@ -256,9 +256,9 @@ bool Apt_compare_ast(Zinc_test* top_test, Zinc_test* case_test, Ake_Ast* n, Cent
         }
     }
 
-    Ake_Type* tu = n->tu;
+    Ake_Type* type = n->type;
     Cent_value* tu_value = Cent_value_get_str(value, "tu");
-    pass = Apt_compare_type_def(case_test, n, tu, tu_value) && pass;
+    pass = Apt_compare_type_def(case_test, n, type, tu_value) && pass;
 
     /* children */
     Ake_Ast* n2 = NULL;
