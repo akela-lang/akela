@@ -293,7 +293,7 @@ void AkeLlvmUnit_struct_array11(Zinc_test* test)
     AkeLlvmUnit_cg_setup("struct Foo\n"
             "  x: [4]Int32\n"
             "end\n"
-            "const foo: Foo\n"
+            "var foo: Foo\n"
             "foo.x[0] = 1\n"
             "foo.x[1] = 2\n"
             "foo.x[2] = 3\n"
@@ -309,7 +309,7 @@ void AkeLlvmUnit_struct_array11(Zinc_test* test)
              "struct Foo\n"
              "  x: [4]Nat8\n"
              "end\n"
-             "const foo: Foo\n"
+             "var foo: Foo\n"
              "foo.x = a\n"
              "foo.x[1]\n",
              &result);
@@ -322,7 +322,7 @@ void AkeLlvmUnit_struct_array11(Zinc_test* test)
              "struct Foo\n"
              "  x: [4]Nat8\n"
              "end\n"
-             "const foo: Foo\n"
+             "var foo: Foo\n"
              "foo.x = a\n"
              "foo.x[2]\n",
              &result);
@@ -335,7 +335,7 @@ void AkeLlvmUnit_struct_array11(Zinc_test* test)
              "struct Foo\n"
              "  x: [4]Nat8\n"
              "end\n"
-             "const foo: Foo\n"
+             "var foo: Foo\n"
              "foo.x = a\n"
              "foo.x[3]\n",
              &result);
