@@ -409,13 +409,13 @@ bool Apt_compare_type_def_integer(
     Cent_value* bit_count_value = Cent_value_get_str(value, "bit_count");
     if (bit_count_value) {
         assert(bit_count_value->type == Cent_value_type_natural);
-        if (tu->data.integer.bit_count != bit_count_value->data.integer) {
+        if (tu->data.integer.bit_count != bit_count_value->data.natural) {
             Zinc_spec_error_list_set(
                 &case_data->spec_errors,
                 case_test,
                 &n->loc,
                 &value_n->loc,
-                "type def bit_count does not match (%d) (%d)",
+                "type def integer bit_count does not match (%d) (%d)",
                 tu->data.integer.bit_count,
                 bit_count_value->data.integer);
             pass = false;
@@ -453,7 +453,7 @@ bool Apt_compare_type_def_natural(
                 case_test,
                 &n->loc,
                 &value_n->loc,
-                "type def bit_count does not match (%d) (%d)",
+                "type def natural bit_count does not match (%d) (%d)",
                 tu->data.natural.bit_count,
                 bit_count_value->data.natural);
             pass = false;
@@ -485,13 +485,13 @@ bool Apt_compare_type_def_real(
     Cent_value* bit_count_value = Cent_value_get_str(value, "bit_count");
     if (bit_count_value) {
         assert(bit_count_value->type == Cent_value_type_natural);
-        if (tu->data.real.bit_count != bit_count_value->data.real) {
+        if (tu->data.real.bit_count != bit_count_value->data.natural) {
             Zinc_spec_error_list_set(
                 &case_data->spec_errors,
                 case_test,
                 &n->loc,
                 &value_n->loc,
-                "type def bit_count does not match (%d) (%d)",
+                "type def real bit_count does not match (%d) (%d)",
                 tu->data.real.bit_count,
                 bit_count_value->data.real);
             pass = false;

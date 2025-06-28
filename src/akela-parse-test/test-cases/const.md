@@ -72,8 +72,8 @@ Double constant
 ```cent
 use lib::base::*
 Test {
-  .solo = false
   .mute = false
+  .solo = true
   .snapshot = false
   .has_error = false
 }
