@@ -532,7 +532,7 @@ void AkeLlvmUnit_struct_struct2(Zinc_test* test)
              "  x: Real64\n"
              "  y: Real64\n"
              "end\n"
-             "const mut p: Point = Point\n"
+             "var mut p: Point = Point\n"
              "  x: 1.5\n"
              "  y: 2.5\n"
              "end\n"
