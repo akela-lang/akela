@@ -563,7 +563,7 @@ void AkeLlvmUnit_struct_struct3(Zinc_test* test)
              "  p0: Point\n"
              "  p1: Point\n"
              "end\n"
-             "const mut line: Line = Line\n"
+             "var line: Line = Line\n"
              "  p0: Point\n"
              "    x: 1.5\n"
              "    y: 2.5\n"
