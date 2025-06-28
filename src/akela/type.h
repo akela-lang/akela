@@ -64,7 +64,7 @@ struct Ake_Type {
         struct { uint8_t bit_count; } integer;
         struct { uint8_t bit_count; } natural;
         struct { uint8_t bit_count; } real;
-        struct { Ake_TypeField* head; Ake_TypeField* tail; void* backend_type; } fields;
+        struct { Ake_TypeField* head; Ake_TypeField* tail; } fields;
         struct { size_t dim; Ake_Type* td; } array;
         struct { size_t dim; Ake_Type* td; } array_const;
         struct { Ake_Type* td; } slice;

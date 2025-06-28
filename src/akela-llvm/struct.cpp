@@ -48,7 +48,6 @@ namespace Akela_llvm {
         StructType* struct_type = GetStructTypeFromNode(jd, n);
         Ake_Environment* env = Ake_get_current_env(n);
         Ake_symbol* sym = Ake_EnvironmentGet(env, &n->value, n->loc.start);
-        sym->td->data.fields.backend_type = struct_type;
         return nullptr;
     }
 
