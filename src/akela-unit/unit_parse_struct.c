@@ -139,12 +139,12 @@ void AkeUnit_parse_struct_field_assign(Zinc_test* test)
     }
     Zinc_expect_int_equal(test, let_type->kind, Ake_ast_type_type, "type let_type");
 
-    Ake_Type* tu = let_type->type;
-    if (!Zinc_expect_ptr(test, tu, "ptr tu")) {
+    Ake_Type* type = let_type->type;
+    if (!Zinc_expect_ptr(test, type, "ptr tu")) {
         return Zinc_assert();
     }
-    Zinc_expect_int_equal(test, tu->kind, AKE_TYPE_STRUCT, "struct td");
-    Zinc_expect_string(test, &tu->name, "Person", "Person td");
+    Zinc_expect_int_equal(test, type->kind, AKE_TYPE_STRUCT, "struct td");
+    Zinc_expect_string(test, &type->name, "Person", "Person td");
 
     Ake_Ast* p = Ast_node_get(let_lseq, 0);
     if (!Zinc_expect_ptr(test, p, "ptr p")) {
