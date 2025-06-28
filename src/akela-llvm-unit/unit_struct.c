@@ -220,7 +220,7 @@ void AkeLlvmUnit_struct_array8(Zinc_test* test)
              "struct Foo\n"
              "  x: Nat8\n"
              "end\n"
-             "const foo: Foo\n"
+             "var foo: Foo\n"
              "foo.x = 5\n"
              "foo.x\n",
              &result);

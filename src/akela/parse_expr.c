@@ -150,7 +150,8 @@ Ake_ast* Ake_parse_assignment(struct Ake_parse_state* ps)
                     n->type = Ake_ast_type_error;
                 }
 
-                if (!Ake_TypeDefMatch(lhs->tu, rhs->tu, NULL)) {
+            	bool cast = false;
+                if (!Ake_TypeDefMatch(lhs->tu, rhs->tu, &cast)) {
                     Zinc_error_list_set(ps->el, &rhs->loc, "values in assignment not compatible");
                     n->type = Ake_ast_type_error;
                 }
