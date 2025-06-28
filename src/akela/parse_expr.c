@@ -335,10 +335,10 @@ Ake_ast* Ake_parse_boolean(struct Ake_parse_state* ps)
 				Zinc_error_list_set(ps->el, &b->loc, "operand of boolean operator has no type");
 				/* test case: test_parse_boolean_error_right_no_value */
                 n->type = Ake_ast_type_error;
-			} else if (left->tu->kind != AKE_TYPE_DEF_BOOLEAN) {
+			} else if (left->tu->kind != AKE_TYPE_BOOLEAN) {
 				Zinc_error_list_set(ps->el, &left->loc, "left-side expression of boolean operator is not boolean");
                 n->type = Ake_ast_type_error;
-			} else if (b->tu->kind != AKE_TYPE_DEF_BOOLEAN) {
+			} else if (b->tu->kind != AKE_TYPE_BOOLEAN) {
 				Zinc_error_list_set(ps->el, &b->loc, "expression of boolean operator is not boolean");
                 n->type = Ake_ast_type_error;
 			} else {
@@ -887,13 +887,13 @@ void Ake_parse_subscript(struct Ake_parse_state* ps, Ake_ast* left, Ake_ast* n)
 
 	bool is_array_or_slice = false;
     if (left->type != Ake_ast_type_error) {
-        if (left->tu->kind == AKE_TYPE_DEF_ARRAY) {
+        if (left->tu->kind == AKE_TYPE_ARRAY) {
 	        n->tu = Ake_TypeDefClone(left->tu->data.array.td);
         	is_array_or_slice = true;
-        } else if (left->tu->kind == AKE_TYPE_DEF_ARRAY_CONST) {
+        } else if (left->tu->kind == AKE_TYPE_ARRAY_CONST) {
 	        n->tu = Ake_TypeDefClone(left->tu->data.array_const.td);
         	is_array_or_slice = true;
-        } else if (left->tu->kind == AKE_TYPE_DEF_SLICE) {
+        } else if (left->tu->kind == AKE_TYPE_SLICE) {
             n->tu = Ake_TypeDefClone(left->tu->data.slice.td);
         	is_array_or_slice = true;
         }
@@ -988,7 +988,7 @@ void Ake_parse_call(struct Ake_parse_state* ps, Ake_ast* left, Ake_ast* n) {
     if (n->type != Ake_ast_type_error) {
         Ake_TypeDef *tu = left->tu;
         assert(tu);
-        if (tu->kind != AKE_TYPE_DEF_FUNCTION) {
+        if (tu->kind != AKE_TYPE_FUNCTION) {
             Zinc_error_list_set(ps->el, &left->loc, "not a function type");
             /* test case: test_parse_call_error_not_function */
             n->type = Ake_ast_type_error;
@@ -1043,7 +1043,7 @@ Ake_ast* Ake_parse_cseq(Ake_parse_state* ps, Ake_ast* left)
     Ake_ast_create(&n);
     n->type = Ake_ast_type_cseq;
 
-    if (!left->tu || left->tu->kind != AKE_TYPE_DEF_FUNCTION) {
+    if (!left->tu || left->tu->kind != AKE_TYPE_FUNCTION) {
         Zinc_error_list_set(ps->el, &left->loc, "not a function type");
         /* test case: no test case needed */
         n->type = Ake_ast_type_error;
@@ -1170,7 +1170,7 @@ Ake_ast* Ake_parse_dot(struct Ake_parse_state* ps)
                 Zinc_error_list_set(ps->el, &left->loc, "dot operand has no value");
                 /* test case: no test case necessary */
                 n->type = Ake_ast_type_error;
-            } else if (left->tu->kind != AKE_TYPE_DEF_STRUCT) {
+            } else if (left->tu->kind != AKE_TYPE_STRUCT) {
                 Zinc_error_list_set(ps->el, &left->loc, "dot operand is not a struct");
                 /* test case: test_parse_dot_error_left_non_module */
                 n->type = Ake_ast_type_error;

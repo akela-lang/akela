@@ -87,7 +87,7 @@ namespace Akela_llvm {
         Ake_ast* callee = Ast_node_get(n, 0);
         Ake_ast* cseq = Ast_node_get(n, 1);
 
-        assert(callee && callee->tu && callee->tu->kind == AKE_TYPE_DEF_FUNCTION);
+        assert(callee && callee->tu && callee->tu->kind == AKE_TYPE_FUNCTION);
         Value* callee_value = Dispatch(jd, callee);
 
         std::vector<Value*> arg_list;
@@ -99,9 +99,9 @@ namespace Akela_llvm {
             Ake_TypeDef* param_tu = tp->td;
             Ake_TypeDef* arg_tu = arg->tu;
             if (arg->type == Ake_ast_type_number) {
-                if ((arg_tu->kind == AKE_TYPE_DEF_INTEGER && arg_tu->data.integer.bit_count == 32)
-                    && (param_tu->kind == AKE_TYPE_DEF_NATURAL && param_tu->data.natural.bit_count == 64)) {
-                    arg_tu->kind = AKE_TYPE_DEF_NATURAL;
+                if ((arg_tu->kind == AKE_TYPE_INTEGER && arg_tu->data.integer.bit_count == 32)
+                    && (param_tu->kind == AKE_TYPE_NATURAL && param_tu->data.natural.bit_count == 64)) {
+                    arg_tu->kind = AKE_TYPE_NATURAL;
                     arg_tu->data.natural.bit_count = 64;
                 }
             }

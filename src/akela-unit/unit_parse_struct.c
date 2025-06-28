@@ -63,7 +63,7 @@ void AkeUnit_parse_struct_field_assign(Zinc_test* test)
     if (!Zinc_expect_ptr(test, tu0, "ptr tu0")) {
         return Zinc_assert();
     }
-    Zinc_expect_int_equal(test, tu0->kind, AKE_TYPE_DEF_ARRAY_CONST, "type td0");
+    Zinc_expect_int_equal(test, tu0->kind, AKE_TYPE_ARRAY_CONST, "type td0");
     Zinc_expect_size_t_equal(test, tu0->data.array_const.dim, 100, "name td0");
 
     /* lastName */
@@ -90,7 +90,7 @@ void AkeUnit_parse_struct_field_assign(Zinc_test* test)
     if (!Zinc_expect_ptr(test, tu1, "ptr tu1")) {
         return Zinc_assert();
     }
-    Zinc_expect_int_equal(test, tu1->kind, AKE_TYPE_DEF_ARRAY_CONST, "type td1");
+    Zinc_expect_int_equal(test, tu1->kind, AKE_TYPE_ARRAY_CONST, "type td1");
     Zinc_expect_size_t_equal(test, tu1->data.array_const.dim, 100, "dim td1");
 
     /* age */
@@ -117,7 +117,7 @@ void AkeUnit_parse_struct_field_assign(Zinc_test* test)
     if (!Zinc_expect_ptr(test, tu2, "ptr tu2")) {
         return Zinc_assert();
     }
-    Zinc_expect_int_equal(test, tu2->kind, AKE_TYPE_DEF_INTEGER, "integer td2");
+    Zinc_expect_int_equal(test, tu2->kind, AKE_TYPE_INTEGER, "integer td2");
     Zinc_expect_string(test, &tu2->name, "Int32", "Int32 td2");
 
     /* let */
@@ -143,7 +143,7 @@ void AkeUnit_parse_struct_field_assign(Zinc_test* test)
     if (!Zinc_expect_ptr(test, tu, "ptr tu")) {
         return Zinc_assert();
     }
-    Zinc_expect_int_equal(test, tu->kind, AKE_TYPE_DEF_STRUCT, "struct td");
+    Zinc_expect_int_equal(test, tu->kind, AKE_TYPE_STRUCT, "struct td");
     Zinc_expect_string(test, &tu->name, "Person", "Person td");
 
     Ake_ast* p = Ast_node_get(let_lseq, 0);

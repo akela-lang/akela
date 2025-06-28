@@ -1,7 +1,5 @@
 # Akela
 * new type:
-  * type use name
-  * use new type
   * change type def to type
 * new syntax tree
 * move checks into their own functions

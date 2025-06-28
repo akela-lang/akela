@@ -22,26 +22,26 @@ typedef enum Ake_type_context {
     Ake_type_context_ptr,
 } Ake_type_context;
 
-typedef enum Ake_TypeDefKind {
-    AKE_TYPE_DEF_NONE,
-    AKE_TYPE_DEF_INTEGER,
-    AKE_TYPE_DEF_NATURAL,
-    AKE_TYPE_DEF_REAL,
-    AKE_TYPE_DEF_BOOLEAN,
-    AKE_TYPE_DEF_STRUCT,
-    AKE_TYPE_DEF_ARRAY,
-    AKE_TYPE_DEF_ARRAY_CONST,
-    AKE_TYPE_DEF_SLICE,
-    AKE_TYPE_DEF_POINTER,
-    AKE_TYPE_DEF_FUNCTION,
-    AKE_TYPE_DEF_COUNT,     // keep at end
-} Ake_TypeDefKind;
+typedef enum Ake_TypeKind {
+    AKE_TYPE_NONE,
+    AKE_TYPE_INTEGER,
+    AKE_TYPE_NATURAL,
+    AKE_TYPE_REAL,
+    AKE_TYPE_BOOLEAN,
+    AKE_TYPE_STRUCT,
+    AKE_TYPE_ARRAY,
+    AKE_TYPE_ARRAY_CONST,
+    AKE_TYPE_SLICE,
+    AKE_TYPE_POINTER,
+    AKE_TYPE_FUNCTION,
+    AKE_TYPE_COUNT,     // keep at end
+} Ake_TypeKind;
 
-static const char* Ake_TypeName(Ake_TypeDefKind kind)
+static const char* Ake_TypeName(Ake_TypeKind kind)
 {
-    assert(kind < AKE_TYPE_DEF_COUNT);
+    assert(kind < AKE_TYPE_COUNT);
 
-    const char* name[AKE_TYPE_DEF_COUNT] = {
+    const char* name[AKE_TYPE_COUNT] = {
         "none",
         "integer",
         "natural",
@@ -58,7 +58,7 @@ static const char* Ake_TypeName(Ake_TypeDefKind kind)
 }
 
 struct Ake_TypeDef {
-    Ake_TypeDefKind kind;
+    Ake_TypeKind kind;
     Zinc_string name;
     union {
         struct { uint8_t bit_count; } integer;
@@ -102,7 +102,7 @@ struct Ake_TypeField {
 
 void Ake_TypeDefInit(Ake_TypeDef* td);
 void Ake_TypeDefCreate(Ake_TypeDef** td);
-void Ake_TypeDefSet(Ake_TypeDef* td, Ake_TypeDefKind kind);
+void Ake_TypeDefSet(Ake_TypeDef* td, Ake_TypeKind kind);
 void Ake_TypeDefDestroy(Ake_TypeDef* td);
 void Ake_TypeDefStructAdd(Ake_TypeDef* td, Ake_TypeField* tf);
 void Ake_TypeDefInputAdd(Ake_TypeDef* td, Ake_TypeParam* tp);

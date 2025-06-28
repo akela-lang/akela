@@ -64,7 +64,7 @@ namespace Akela_llvm {
         std::vector<llvm::Function*> current_function;
     } Jit_data;
 
-    bool IsArray(Ake_TypeDefKind kind);
+    bool IsArray(Ake_TypeKind kind);
     void Jit_data_init(Jit_data* jd, Zinc_error_list* el);
     llvm::FunctionType* Get_function_type(Jit_data* jd, Ake_TypeDef* tu);
     llvm::Type* Get_scalar_type(Jit_data * jd, Ake_TypeDef* tu);

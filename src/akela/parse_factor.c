@@ -376,7 +376,7 @@ Ake_ast* Ake_parse_not(struct Ake_parse_state* ps)
 			/* test case: test_parse_not_error_no_value */
             n->type = Ake_ast_type_error;
 		} else {
-			if (tu->kind != AKE_TYPE_DEF_BOOLEAN) {
+			if (tu->kind != AKE_TYPE_BOOLEAN) {
 				Zinc_error_list_set(ps->el, &not->loc, "not operator used on non-boolean");
 				/* test case: test_parse_not_error_not_boolean */
                 n->type = Ake_ast_type_error;
@@ -451,7 +451,7 @@ Ake_ast* Ake_parse_literal(struct Ake_parse_state* ps)
         if (is_string) {
             Ake_TypeDef* tu = NULL;
             Ake_TypeDefCreate(&tu);
-            tu->kind = AKE_TYPE_DEF_ARRAY_CONST;
+            tu->kind = AKE_TYPE_ARRAY_CONST;
             tu->data.array_const.dim = n->value.size + 1;
             tu->data.array_const.td = n->tu;
             n->tu = tu;
@@ -487,7 +487,7 @@ Ake_ast* Ake_parse_id(Ake_parse_state* ps)
 
     size_t seq = Ake_get_current_seq(ps);
     Ake_symbol* sym = Ake_EnvironmentGet(ps->st->top, &id->value, seq);
-    if (sym && sym->type == Ake_symbol_type_type && sym->td && sym->td->kind == AKE_TYPE_DEF_STRUCT) {
+    if (sym && sym->type == Ake_symbol_type_type && sym->td && sym->td->kind == AKE_TYPE_STRUCT) {
         /* struct literal */
 
         Ake_consume_newline(ps, n);
@@ -544,7 +544,7 @@ typedef struct Ake_struct_field_result {
 } Ake_struct_field_result;
 
 Ake_struct_field_result Ake_get_struct_field(Ake_TypeDef* td, Zinc_string* name) {
-    assert(td->kind == AKE_TYPE_DEF_STRUCT);
+    assert(td->kind == AKE_TYPE_STRUCT);
     size_t index = 0;
     Ake_TypeField* tf = td->data.fields.head;
     while (tf) {
@@ -559,7 +559,7 @@ Ake_struct_field_result Ake_get_struct_field(Ake_TypeDef* td, Zinc_string* name)
 }
 
 void Ake_find_missing_fields(Ake_parse_state* ps, Ake_TypeDef* td, Ake_ast* n) {
-    assert(td->kind == AKE_TYPE_DEF_STRUCT);
+    assert(td->kind == AKE_TYPE_STRUCT);
     Ake_TypeField *tf = td->data.fields.head;
     while (tf) {
         bool found = false;
@@ -788,7 +788,7 @@ Ake_ast* Ake_parse_array_literal(struct Ake_parse_state* ps)
             }
             Ake_TypeDef* tu = NULL;
             Ake_TypeDefCreate(&tu);
-            Ake_TypeDefSet(tu, AKE_TYPE_DEF_ARRAY);
+            Ake_TypeDefSet(tu, AKE_TYPE_ARRAY);
             tu->data.array.dim = count;
             tu->data.array.td = Ake_TypeDefClone(tu_first);
             n->tu = tu;

@@ -518,7 +518,7 @@ Ake_TypeDef* Ake_parse_type_array(Ake_parse_state* ps, Ake_ast* n)
 
     if (has_number) {
         if (has_const) {
-            Ake_TypeDefSet(td, AKE_TYPE_DEF_ARRAY_CONST);
+            Ake_TypeDefSet(td, AKE_TYPE_ARRAY_CONST);
             td->data.array_const.dim = dim_size_number;
             Ake_TypeDef* td2 = Ake_parse_type_dispatch(ps, n);
             if (td2) {
@@ -528,7 +528,7 @@ Ake_TypeDef* Ake_parse_type_array(Ake_parse_state* ps, Ake_ast* n)
                 n->type = Ake_ast_type_error;
             }
         } else {
-            Ake_TypeDefSet(td, AKE_TYPE_DEF_ARRAY);
+            Ake_TypeDefSet(td, AKE_TYPE_ARRAY);
             td->data.array.dim = dim_size_number;
             Ake_TypeDef* td2 = Ake_parse_type_dispatch(ps, n);
             if (td2) {
@@ -539,7 +539,7 @@ Ake_TypeDef* Ake_parse_type_array(Ake_parse_state* ps, Ake_ast* n)
             }
         }
     } else {
-        Ake_TypeDefSet(td, AKE_TYPE_DEF_SLICE);
+        Ake_TypeDefSet(td, AKE_TYPE_SLICE);
         Ake_TypeDef* td2 = Ake_parse_type_dispatch(ps, n);
         if (td) {
             td->data.slice.td = td2;
@@ -556,7 +556,7 @@ Ake_TypeDef* Ake_parse_type_pointer(Ake_parse_state* ps, Ake_ast* n)
 {
     Ake_TypeDef* td = NULL;
     Ake_TypeDefCreate(&td);
-    Ake_TypeDefSet(td, AKE_TYPE_DEF_POINTER);
+    Ake_TypeDefSet(td, AKE_TYPE_POINTER);
     Ake_token *ast = NULL;
     if (!Ake_match(ps, Ake_token_mult, "expected asterisk", &ast, n)) {
         assert(false && "not possible");
@@ -577,7 +577,7 @@ Ake_TypeDef* Ake_parse_type_function(Ake_parse_state* ps, Ake_ast* n)
 {
     Ake_TypeDef* td = NULL;
     Ake_TypeDefCreate(&td);
-    Ake_TypeDefSet(td, AKE_TYPE_DEF_FUNCTION);
+    Ake_TypeDefSet(td, AKE_TYPE_FUNCTION);
 
     Ake_token* fn = NULL;
     if (!Ake_match(ps, Ake_token_fn, "expected fn", &fn, n)) {
@@ -681,7 +681,7 @@ void Ake_declare_type(struct Ake_parse_state* ps, Ake_ast* type_node, Ake_ast* i
 Ake_TypeDef* Ake_proto2type_use(Ake_parse_state* ps, Ake_ast* proto, Ake_TypeDef* struct_type) {
     Ake_TypeDef *func = NULL;
     Ake_TypeDefCreate(&func);
-    Ake_TypeDefSet(func, AKE_TYPE_DEF_FUNCTION);
+    Ake_TypeDefSet(func, AKE_TYPE_FUNCTION);
     return Ake_Type_use_add_proto(ps, func, proto, struct_type);
 }
 
@@ -696,7 +696,7 @@ Ake_TypeDef* Ake_Type_use_add_proto(
     Zinc_string_add_str(&bf, "Function");
     Ake_get_lookahead(ps);
     Zinc_string_destroy(&bf);
-    func->kind = AKE_TYPE_DEF_FUNCTION;
+    func->kind = AKE_TYPE_FUNCTION;
 
     Ake_ast* id = Ast_node_get(proto, 0);
     Ake_ast* dseq = Ast_node_get(proto, 1);
@@ -818,13 +818,13 @@ void Ake_Override_rhs(Ake_TypeDef* tu, Ake_ast* rhs)
     }
 
     if (rhs->type == Ake_ast_type_array_literal) {
-        if (tu->kind == AKE_TYPE_DEF_ARRAY) {
+        if (tu->kind == AKE_TYPE_ARRAY) {
             Ake_ast* p = rhs->head;
             while (p) {
                 Ake_Override_rhs(tu->data.array.td, p);
                 p = p->next;
             }
-        } else if (tu->kind == AKE_TYPE_DEF_ARRAY_CONST) {
+        } else if (tu->kind == AKE_TYPE_ARRAY_CONST) {
             Ake_ast* p = rhs->head;
             while (p) {
                 Ake_Override_rhs(tu->data.array_const.td, p);
@@ -896,7 +896,7 @@ bool Ake_check_lvalue(Ake_parse_state* ps, Ake_ast* n, Zinc_location* loc)
     if (n->type != Ake_ast_type_error) {
         if (n->type == Ake_ast_type_array_subscript) {
             Ake_ast* left = n->head;
-            if (left->tu->kind == AKE_TYPE_DEF_ARRAY_CONST) {
+            if (left->tu->kind == AKE_TYPE_ARRAY_CONST) {
                 Zinc_error_list_set(ps->el, loc, "immutable variable changed in assignment");
                 n->type = Ake_ast_type_error;
             }
@@ -929,7 +929,7 @@ Ake_TypeDef* Ake_StructToType(Ake_ast* n)
 {
     Ake_TypeDef* td = NULL;
     Ake_TypeDefCreate(&td);
-    Ake_TypeDefSet(td, AKE_TYPE_DEF_STRUCT);
+    Ake_TypeDefSet(td, AKE_TYPE_STRUCT);
     Zinc_string_add_string(&td->name, &n->value);
     Ake_ast* dec = n->head;
     while (dec) {

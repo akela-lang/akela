@@ -8,21 +8,21 @@ namespace Akela_llvm {
     Value* Handle_number(Jit_data* jd, Ake_ast* n)
     {
         Ake_TypeDef* tu = n->tu;
-        if (tu->kind == AKE_TYPE_DEF_INTEGER) {
+        if (tu->kind == AKE_TYPE_INTEGER) {
             Type* t = Get_type(jd, n->tu);
             Zinc_string_finish(&n->value);
             long v = strtol(n->value.buf, nullptr, 10);
             return ConstantInt::get(t, APInt(tu->data.integer.bit_count, v, true));
         }
 
-        if (tu->kind == AKE_TYPE_DEF_NATURAL) {
+        if (tu->kind == AKE_TYPE_NATURAL) {
             Type* t = Get_type(jd, n->tu);
             Zinc_string_finish(&n->value);
             long v = strtol(n->value.buf, nullptr, 10);
             return ConstantInt::get(t, APInt(tu->data.natural.bit_count, v, false));
         }
 
-        if (tu->kind == AKE_TYPE_DEF_REAL) {
+        if (tu->kind == AKE_TYPE_REAL) {
             Zinc_string_finish(&n->value);
             if (tu->data.real.bit_count == 64) {
                 double v = strtod(n->value.buf, nullptr);

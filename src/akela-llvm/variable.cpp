@@ -24,7 +24,7 @@ namespace Akela_llvm {
             Ake_Environment* env = Ake_get_current_env(type_node);
             Ake_symbol* sym = Ake_EnvironmentGet(env, &lhs->value, type_node->loc.start);
             assert(sym);
-            if (tu->kind == AKE_TYPE_DEF_FUNCTION) {
+            if (tu->kind == AKE_TYPE_FUNCTION) {
                 if (rhs) {
                     FunctionType *func_type = Get_function_type(jd, tu);
                     //PointerType *pt = func_type->getPointerTo();
@@ -66,7 +66,7 @@ namespace Akela_llvm {
                     AllocaInst *lhs_value = jd->Builder->CreateAlloca(t, nullptr, lhs->value.buf);
                     sym->value = lhs_value;
                 }
-            } else if (tu->kind == AKE_TYPE_DEF_STRUCT) {
+            } else if (tu->kind == AKE_TYPE_STRUCT) {
                 if (rhs) {
                     Type *t = Get_type(jd, tu);
                     Zinc_string_finish(&lhs->value);
@@ -138,7 +138,7 @@ namespace Akela_llvm {
     {
         Ake_Environment* env = Ake_get_current_env(lhs);
         Ake_symbol* sym = Ake_EnvironmentGet(env, &lhs->value, lhs->loc.end);
-        if (lhs->tu->kind == AKE_TYPE_DEF_FUNCTION) {
+        if (lhs->tu->kind == AKE_TYPE_FUNCTION) {
             if (lhs->type == Ake_ast_type_id) {
                 AllocaInst *lhs_value;
                 if (sym->reference) {
@@ -251,7 +251,7 @@ namespace Akela_llvm {
     Value* Handle_subscript(Jit_data* jd, Ake_ast* n)
     {
         Type* element_type = Get_type(jd, n->tu);
-        if (n->tu->kind == AKE_TYPE_DEF_FUNCTION) {
+        if (n->tu->kind == AKE_TYPE_FUNCTION) {
             //element_type = element_type->getPointerTo();
             element_type = PointerType::get(element_type, 0);
         }
@@ -265,9 +265,9 @@ namespace Akela_llvm {
         Ake_ast* subscript = array->next;
         Value* subscript_value = Dispatch(jd, subscript);
         size_t dim = 0;
-        if (array->tu->kind == AKE_TYPE_DEF_ARRAY) {
+        if (array->tu->kind == AKE_TYPE_ARRAY) {
             dim = array->tu->data.array.dim;
-        } else if (array->tu->kind == AKE_TYPE_DEF_ARRAY_CONST) {
+        } else if (array->tu->kind == AKE_TYPE_ARRAY_CONST) {
             dim = array->tu->data.array_const.dim;
         } else {
             assert(false && "expected an array");

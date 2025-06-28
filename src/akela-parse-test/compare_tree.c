@@ -378,15 +378,15 @@ bool Apt_compare_type_def(
     }
 
     switch (tu->kind) {
-        case AKE_TYPE_DEF_INTEGER:
+        case AKE_TYPE_INTEGER:
             return Apt_compare_type_def_integer(case_test, n, tu, value);
-        case AKE_TYPE_DEF_NATURAL:
+        case AKE_TYPE_NATURAL:
             return Apt_compare_type_def_natural(case_test, n, tu, value);
-        case AKE_TYPE_DEF_REAL:
+        case AKE_TYPE_REAL:
             return Apt_compare_type_def_real(case_test, n, tu, value);
-        case AKE_TYPE_DEF_BOOLEAN:
+        case AKE_TYPE_BOOLEAN:
             break;
-        case AKE_TYPE_DEF_STRUCT:
+        case AKE_TYPE_STRUCT:
             return Apt_compare_type_def_struct(case_test, n, tu, value);
         default:
             assert(false && "invalid kind");

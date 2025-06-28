@@ -42,7 +42,7 @@ void AkeUnit_parse_number_integer(Zinc_test* test)
 	if (!Zinc_expect_ptr(test, tu, "ptr tu")) {
 		return Zinc_assert();
 	}
-	Zinc_expect_int_equal(test, tu->kind, AKE_TYPE_DEF_INTEGER, "type td");
+	Zinc_expect_int_equal(test, tu->kind, AKE_TYPE_INTEGER, "type td");
 	Zinc_expect_string(test, &tu->name, "Int32", "str td");
 
     AkeUnit_parse_teardown(&cu);
@@ -84,7 +84,7 @@ void AkeUnit_parse_number_float(Zinc_test* test)
 	if (!Zinc_expect_ptr(test, tu, "ptr tu")) {
 		return Zinc_assert();
 	}
-	Zinc_expect_int_equal(test, tu->kind, AKE_TYPE_DEF_REAL, "integer td");
+	Zinc_expect_int_equal(test, tu->kind, AKE_TYPE_REAL, "integer td");
 	Zinc_expect_string(test, &tu->name, "Real64", "str td");
 
     AkeUnit_parse_teardown(&cu);
@@ -123,14 +123,14 @@ void AkeUnit_parse_string(Zinc_test* test)
 	if (!Zinc_expect_ptr(test, tu, "ptr tu")) {
 		return Zinc_assert();
 	}
-    Zinc_expect_true(test, tu->kind == AKE_TYPE_DEF_ARRAY_CONST, "is_array tu");
+    Zinc_expect_true(test, tu->kind == AKE_TYPE_ARRAY_CONST, "is_array tu");
     Zinc_expect_size_t_equal(test, tu->data.array_const.dim, 6, "dim tu");
 
 	Ake_TypeDef* tu2 = tu->data.array_const.td;
 	if (!Zinc_expect_ptr(test, tu2, "ptr td")) {
 		return Zinc_assert();
 	}
-	Zinc_expect_int_equal(test, tu2->kind, AKE_TYPE_DEF_NATURAL, "type tu2");
+	Zinc_expect_int_equal(test, tu2->kind, AKE_TYPE_NATURAL, "type tu2");
 	Zinc_expect_size_t_equal(test, tu2->data.natural.bit_count, 8, "bit_count tu2");
 	Zinc_expect_string(test, &tu2->name, "Nat8", "name tu2");
 
@@ -170,7 +170,7 @@ void AkeUnit_parse_boolean_true(Zinc_test* test)
 	if (!Zinc_expect_ptr(test, tu, "ptr tu")) {
 		return Zinc_assert();
 	}
-	Zinc_expect_int_equal(test, tu->kind, AKE_TYPE_DEF_BOOLEAN, "boolean td");
+	Zinc_expect_int_equal(test, tu->kind, AKE_TYPE_BOOLEAN, "boolean td");
 	Zinc_expect_string(test, &tu->name, "Bool", "name td");
 
     AkeUnit_parse_teardown(&cu);
@@ -209,7 +209,7 @@ void AkeUnit_parse_boolean_false(Zinc_test* test)
 	if (!Zinc_expect_ptr(test, tu, "ptr tu")) {
 		return Zinc_assert();
 	}
-	Zinc_expect_int_equal(test, tu->kind, AKE_TYPE_DEF_BOOLEAN, "boolean td");
+	Zinc_expect_int_equal(test, tu->kind, AKE_TYPE_BOOLEAN, "boolean td");
 	Zinc_expect_string(test, &tu->name, "Bool", "name td");
 
     AkeUnit_parse_teardown(&cu);
@@ -279,7 +279,7 @@ void AkeUnit_parse_id(Zinc_test* test)
 	if (!Zinc_expect_ptr(test, tu, "ptr tu")) {
 		return Zinc_assert();
 	}
-	Zinc_expect_int_equal(test, tu->kind, AKE_TYPE_DEF_INTEGER, "integer td");
+	Zinc_expect_int_equal(test, tu->kind, AKE_TYPE_INTEGER, "integer td");
 	Zinc_expect_string(test, &tu->name, "Int64", "name td");
 	Zinc_expect_size_t_equal(test, tu->data.integer.bit_count, 64, "bit_count tu");
 
@@ -448,7 +448,7 @@ void AkeUnit_parse_sign_negative(Zinc_test* test)
 	if (!Zinc_expect_ptr(test, tu, "ptr tu")) {
 		return Zinc_assert();
 	}
-	Zinc_expect_int_equal(test, tu->kind, AKE_TYPE_DEF_INTEGER, "integer tu");
+	Zinc_expect_int_equal(test, tu->kind, AKE_TYPE_INTEGER, "integer tu");
 	Zinc_expect_string(test, &tu->name, "Int32", "Int32 tu");
 	Zinc_expect_int_equal(test, tu->data.integer.bit_count, 32, "bit_count tu");
 
@@ -502,7 +502,7 @@ void AkeUnit_parse_sign_positive(Zinc_test* test)
 	if (!Zinc_expect_ptr(test, tu, "ptr tu")) {
 		return Zinc_assert();
 	}
-	Zinc_expect_int_equal(test, tu->kind, AKE_TYPE_DEF_INTEGER, "integer tu");
+	Zinc_expect_int_equal(test, tu->kind, AKE_TYPE_INTEGER, "integer tu");
 	Zinc_expect_string(test, &tu->name, "Int32", "Int32 tu");
 	Zinc_expect_uint8_t_equal(test, tu->data.integer.bit_count, 32, "bit_count tu");
 
@@ -596,7 +596,7 @@ void AkeUnit_parse_not_id(Zinc_test* test)
 	if (!Zinc_expect_ptr(test, tu, "ptr tu")) {
 		return Zinc_assert();
 	}
-	Zinc_expect_int_equal(test, tu->kind, AKE_TYPE_DEF_BOOLEAN, "boolean td");
+	Zinc_expect_int_equal(test, tu->kind, AKE_TYPE_BOOLEAN, "boolean td");
 	Zinc_expect_string(test, &tu->name, "Bool", "name td");
 
 	Ake_ast* id = Ast_node_get(not, 0);
@@ -641,7 +641,7 @@ void AkeUnit_parse_not_literal(Zinc_test* test)
 	if (!Zinc_expect_ptr(test, tu, "ptr tu")) {
 		return Zinc_assert();
 	}
-	Zinc_expect_int_equal(test, tu->kind, AKE_TYPE_DEF_BOOLEAN, "boolean td");
+	Zinc_expect_int_equal(test, tu->kind, AKE_TYPE_BOOLEAN, "boolean td");
 	Zinc_expect_string(test, &tu->name, "Bool", "name td");
 
 	Ake_ast* lit_bool = Ast_node_get(not, 0);
@@ -705,14 +705,14 @@ void AkeUnit_parse_array_literal_integer(Zinc_test* test)
 	if (!Zinc_expect_ptr(test, a_tu, "ptr array_tu")) {
 		return Zinc_assert();
 	}
-    Zinc_expect_true(test, a_tu->kind == AKE_TYPE_DEF_ARRAY, "type a_tu");
+    Zinc_expect_true(test, a_tu->kind == AKE_TYPE_ARRAY, "type a_tu");
     Zinc_expect_uint8_t_equal(test, a_tu->data.array.dim, 3, "dim a_tu");
 
 	Ake_TypeDef* a_tu2 = a_tu->data.array.td;
 	if (!Zinc_expect_ptr(test, a_tu2, "ptr array_td")) {
 		return Zinc_assert();
 	}
-	Zinc_expect_int_equal(test, a_tu2->kind, AKE_TYPE_DEF_INTEGER, "integer a_tu2");
+	Zinc_expect_int_equal(test, a_tu2->kind, AKE_TYPE_INTEGER, "integer a_tu2");
 	Zinc_expect_string(test, &a_tu2->name, "Int32", "Int32 array_td");
 	Zinc_expect_uint8_t_equal(test, a_tu2->data.integer.bit_count, 32, "bit_count a_tu2");
 
@@ -777,7 +777,7 @@ void AkeUnit_parse_array_literal_float(Zinc_test* test)
 	if (!Zinc_expect_ptr(test, array_tu2, "ptr array_td")) {
 		return Zinc_assert();
 	}
-	Zinc_expect_int_equal(test, array_tu2->kind, AKE_TYPE_DEF_REAL, "float array_td");
+	Zinc_expect_int_equal(test, array_tu2->kind, AKE_TYPE_REAL, "float array_td");
 	Zinc_expect_string(test, &array_tu2->name, "Real64", "name array_td");
 	Zinc_expect_uint8_t_equal(test, array_tu2->data.real.bit_count, 64, "bit_count array_td");
 
@@ -839,7 +839,7 @@ void AkeUnit_parse_array_literal_numeric(Zinc_test* test)
 	if (!Zinc_expect_ptr(test, array_tu2, "ptr array_td")) {
 		return Zinc_assert();
 	}
-	Zinc_expect_int_equal(test, array_tu2->kind, AKE_TYPE_DEF_INTEGER, "float array_td");
+	Zinc_expect_int_equal(test, array_tu2->kind, AKE_TYPE_INTEGER, "float array_td");
 	Zinc_expect_string(test, &array_tu2->name, "Int32", "name array_td");
 
 	Ake_ast* a0 = Ast_node_get(a, 0);
@@ -1367,7 +1367,7 @@ void AkeUnit_parse_factor_array_element_const(Zinc_test* test)
 	    return Zinc_assert();
     }
     Zinc_expect_int_equal(test, let_type->type, Ake_ast_type_type, "type type");
-    Zinc_expect_true(test, let_type->tu->kind == AKE_TYPE_DEF_ARRAY_CONST, "is_array type");
+    Zinc_expect_true(test, let_type->tu->kind == AKE_TYPE_ARRAY_CONST, "is_array type");
     Zinc_expect_size_t_equal(test, let_type->tu->data.array_const.dim, 4, "size let_type_dim");
 
     AkeUnit_parse_teardown(&cu);

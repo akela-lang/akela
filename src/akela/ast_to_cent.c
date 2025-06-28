@@ -5,7 +5,7 @@
 void Ake_indent_print(size_t level);
 char* Ake_ast_cent_name(Ake_ast_type type);
 void Ake_type_def_cent_print(Ake_TypeDef* td, size_t level, bool is_property);
-char* Ake_type_def_cent_name(Ake_TypeDefKind kind);
+char* Ake_type_def_cent_name(Ake_TypeKind kind);
 char* Ake_type_param_cent_name(Ake_TypeParamKind kind);
 
 /* NOLINTNEXTLINE(misc-no-recursion) */
@@ -287,21 +287,21 @@ void Ake_type_def_cent_print(Ake_TypeDef* td, size_t level, bool is_property)
     }
 
     switch (td->kind) {
-        case AKE_TYPE_DEF_INTEGER:
+        case AKE_TYPE_INTEGER:
             Ake_indent_print(level);
             printf(".bit_count = %d\n", td->data.integer.bit_count);
             break;
-        case AKE_TYPE_DEF_NATURAL:
+        case AKE_TYPE_NATURAL:
             Ake_indent_print(level);
             printf(".bit_count = %d\n", td->data.natural.bit_count);
             break;
-        case AKE_TYPE_DEF_REAL:
+        case AKE_TYPE_REAL:
             Ake_indent_print(level);
             printf(".bit_count = %d\n", td->data.real.bit_count);
             break;
-        case AKE_TYPE_DEF_BOOLEAN:
+        case AKE_TYPE_BOOLEAN:
             break;
-        case AKE_TYPE_DEF_STRUCT:
+        case AKE_TYPE_STRUCT:
             Ake_TypeField* field = td->data.fields.head;
             while (field) {
                 Ake_indent_print(level);
@@ -317,28 +317,28 @@ void Ake_type_def_cent_print(Ake_TypeDef* td, size_t level, bool is_property)
                 printf("}\n");
             }
             break;
-        case AKE_TYPE_DEF_ARRAY:
+        case AKE_TYPE_ARRAY:
             Ake_indent_print(level);
             printf(".dim = %zu\n", td->data.array.dim);
             Ake_indent_print(level);
             printf(".td = ");
             Ake_type_def_cent_print(td->data.array.td, level, true);
             break;
-        case AKE_TYPE_DEF_ARRAY_CONST:
+        case AKE_TYPE_ARRAY_CONST:
             Ake_indent_print(level);
             printf(".dim = %zu\n", td->data.array_const.dim);
             Ake_indent_print(level);
             printf(".td = ");
             Ake_type_def_cent_print(td->data.array_const.td, level, true);
-        case AKE_TYPE_DEF_SLICE:
+        case AKE_TYPE_SLICE:
             Ake_indent_print(level);
             printf(".td = ");
             Ake_type_def_cent_print(td->data.slice.td, level, true);
-        case AKE_TYPE_DEF_POINTER:
+        case AKE_TYPE_POINTER:
             Ake_indent_print(level);
             printf(".td = ");
             Ake_type_def_cent_print(td->data.pointer.td, level, true);
-        case AKE_TYPE_DEF_FUNCTION:
+        case AKE_TYPE_FUNCTION:
             Ake_TypeParam* tp = td->data.function.input_head;
             while (tp) {
                 Ake_indent_print(level);
@@ -366,49 +366,49 @@ void Ake_type_def_cent_print(Ake_TypeDef* td, size_t level, bool is_property)
     printf("}\n");
 }
 
-char* Ake_type_def_cent_name(Ake_TypeDefKind kind)
+char* Ake_type_def_cent_name(Ake_TypeKind kind)
 {
-    if (kind == AKE_TYPE_DEF_NONE) {
+    if (kind == AKE_TYPE_NONE) {
         return "TypeDef::None";
     }
 
-    if (kind == AKE_TYPE_DEF_INTEGER) {
+    if (kind == AKE_TYPE_INTEGER) {
         return "TypeDef::Integer";
     }
 
-    if (kind == AKE_TYPE_DEF_NATURAL) {
+    if (kind == AKE_TYPE_NATURAL) {
         return "TypeDef::Natural";
     }
 
-    if (kind == AKE_TYPE_DEF_REAL) {
+    if (kind == AKE_TYPE_REAL) {
         return "TypeDef::Real";
     }
 
-    if (kind == AKE_TYPE_DEF_BOOLEAN) {
+    if (kind == AKE_TYPE_BOOLEAN) {
         return "TypeDef::Boolean";
     }
 
-    if (kind == AKE_TYPE_DEF_STRUCT) {
+    if (kind == AKE_TYPE_STRUCT) {
         return "TypeDef::Struct";
     }
 
-    if (kind == AKE_TYPE_DEF_ARRAY) {
+    if (kind == AKE_TYPE_ARRAY) {
         return "TypeDef::Array";
     }
 
-    if (kind == AKE_TYPE_DEF_ARRAY_CONST) {
+    if (kind == AKE_TYPE_ARRAY_CONST) {
         return "TypeDef::ArrayConst";
     }
 
-    if (kind == AKE_TYPE_DEF_SLICE) {
+    if (kind == AKE_TYPE_SLICE) {
         return "TypeDef::Slice";
     }
 
-    if (kind == AKE_TYPE_DEF_POINTER) {
+    if (kind == AKE_TYPE_POINTER) {
         return "TypeDef::Pointer";
     }
 
-    if (kind == AKE_TYPE_DEF_FUNCTION) {
+    if (kind == AKE_TYPE_FUNCTION) {
         return "TypeDef::Function";
     }
 

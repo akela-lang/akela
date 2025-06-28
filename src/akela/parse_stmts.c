@@ -441,19 +441,19 @@ void Ake_parse_for_iteration(struct Ake_parse_state* ps, Ake_ast* parent)
             parent->type = Ake_ast_type_error;
 			/* test case: test_parse_for_iteration_error_no_value */
 		} else if (
-			list_tu->kind != AKE_TYPE_DEF_ARRAY
-			&& list_tu->kind != AKE_TYPE_DEF_ARRAY_CONST
-			&& list_tu->kind != AKE_TYPE_DEF_SLICE) {
+			list_tu->kind != AKE_TYPE_ARRAY
+			&& list_tu->kind != AKE_TYPE_ARRAY_CONST
+			&& list_tu->kind != AKE_TYPE_SLICE) {
 			Zinc_error_list_set(ps->el, &list->loc, "iteration expression is not an array or slice");
             parent->type = Ake_ast_type_error;
 			/* test case: test_parse_for_iteration_error_no_child_element */
 		} else {
             Ake_TypeDef* element_tu2 = NULL;
-			if (list_tu->kind == AKE_TYPE_DEF_ARRAY) {
+			if (list_tu->kind == AKE_TYPE_ARRAY) {
 				element_tu2 = Ake_TypeDefClone(list_tu->data.array.td);
-			} else if (list_tu->kind == AKE_TYPE_DEF_ARRAY_CONST) {
+			} else if (list_tu->kind == AKE_TYPE_ARRAY_CONST) {
 				element_tu2 = Ake_TypeDefClone(list_tu->data.array_const.td);
-			} else if (list_tu->kind == AKE_TYPE_DEF_SLICE) {
+			} else if (list_tu->kind == AKE_TYPE_SLICE) {
 				element_tu2 = Ake_TypeDefClone(list_tu->data.slice.td);
 			} else {
 				assert(false && "expected array or slice");
@@ -916,7 +916,7 @@ Ake_ast* Ake_parse_impl(struct Ake_parse_state* ps)
     	size_t seq = Ake_get_current_seq(ps);
         Ake_symbol* sym = Ake_EnvironmentGet(ps->st->top, &id->value, seq);
         if (sym->type == Ake_symbol_type_type) {
-            if (sym->td->kind == AKE_TYPE_DEF_STRUCT) {
+            if (sym->td->kind == AKE_TYPE_STRUCT) {
                 struct_type = sym->td;
             }
         }

@@ -61,11 +61,11 @@ namespace Akela_llvm {
             return Type::getVoidTy(*jd->TheContext);
         }
 
-        if (tu->kind == AKE_TYPE_DEF_FUNCTION) {
+        if (tu->kind == AKE_TYPE_FUNCTION) {
             return Get_function_type(jd, tu);
         }
 
-        if (tu->kind == AKE_TYPE_DEF_INTEGER) {
+        if (tu->kind == AKE_TYPE_INTEGER) {
             Type *t;
             if (tu->data.integer.bit_count == 64) {
                 t = Type::getInt64Ty(*jd->TheContext);
@@ -81,7 +81,7 @@ namespace Akela_llvm {
             return t;
         }
 
-        if (tu->kind == AKE_TYPE_DEF_NATURAL) {
+        if (tu->kind == AKE_TYPE_NATURAL) {
             Type *t;
             if (tu->data.natural.bit_count == 64) {
                 t = Type::getInt64Ty(*jd->TheContext);
@@ -97,7 +97,7 @@ namespace Akela_llvm {
             return t;
         }
 
-        if (tu->kind == AKE_TYPE_DEF_REAL) {
+        if (tu->kind == AKE_TYPE_REAL) {
             if (tu->data.real.bit_count == 64) {
                 return Type::getDoubleTy(*jd->TheContext);
             } else if (tu->data.real.bit_count == 32) {
@@ -109,11 +109,11 @@ namespace Akela_llvm {
             }
         }
 
-        if (tu->kind == AKE_TYPE_DEF_BOOLEAN) {
+        if (tu->kind == AKE_TYPE_BOOLEAN) {
             return Type::getInt1Ty(*jd->TheContext);
         }
 
-        if (tu->kind == AKE_TYPE_DEF_STRUCT) {
+        if (tu->kind == AKE_TYPE_STRUCT) {
             return GetStructTypeFromType(jd, tu);
         }
 
@@ -121,21 +121,21 @@ namespace Akela_llvm {
         return nullptr;
     }
 
-    bool NeedPointer(Ake_TypeDefKind kind)
+    bool NeedPointer(Ake_TypeKind kind)
     {
-        if (kind == AKE_TYPE_DEF_ARRAY) {
+        if (kind == AKE_TYPE_ARRAY) {
             return true;
         }
 
-        if (kind == AKE_TYPE_DEF_ARRAY_CONST) {
+        if (kind == AKE_TYPE_ARRAY_CONST) {
             return true;
         }
 
-        if (kind == AKE_TYPE_DEF_FUNCTION) {
+        if (kind == AKE_TYPE_FUNCTION) {
             return true;
         }
 
-        if (kind == AKE_TYPE_DEF_STRUCT) {
+        if (kind == AKE_TYPE_STRUCT) {
             return true;
         }
 
@@ -155,13 +155,13 @@ namespace Akela_llvm {
         return t;
     }
 
-    bool IsArray(Ake_TypeDefKind kind)
+    bool IsArray(Ake_TypeKind kind)
     {
-        if (kind == AKE_TYPE_DEF_ARRAY) {
+        if (kind == AKE_TYPE_ARRAY) {
             return true;
         }
 
-        if (kind == AKE_TYPE_DEF_ARRAY_CONST) {
+        if (kind == AKE_TYPE_ARRAY_CONST) {
             return true;
         }
 
@@ -174,16 +174,16 @@ namespace Akela_llvm {
         Type *t;
         if (tu && IsArray(tu->kind)) {
             size_t dim = 0;
-            if (tu->kind == AKE_TYPE_DEF_ARRAY) {
+            if (tu->kind == AKE_TYPE_ARRAY) {
                 dim = tu->data.array.dim;
                 //t = ArrayType::get(Get_type(jd, tu->data.array.td), dim);
                 Ake_TypeDef* tu2 = tu->data.array.td;
                 t = Get_type(jd, tu2);
-                if (tu2->kind == AKE_TYPE_DEF_FUNCTION) {
+                if (tu2->kind == AKE_TYPE_FUNCTION) {
                     t = PointerType::get(t, 0);
                 }
                 t = ArrayType::get(t, dim);
-            } else if (tu->kind == AKE_TYPE_DEF_ARRAY_CONST) {
+            } else if (tu->kind == AKE_TYPE_ARRAY_CONST) {
                 dim = tu->data.array_const.dim;
                 t = ArrayType::get(Get_type(jd, tu->data.array_const.td), dim);
             } else {
@@ -211,12 +211,12 @@ namespace Akela_llvm {
         Zinc_string* value = &result->value;
         auto ExprSymbol = jd->ExitOnErr(jd->TheJIT->lookup(TOP_LEVEL_NAME));
         if (n->tu) {
-            Ake_TypeDefKind type = n->tu->kind;
+            Ake_TypeKind type = n->tu->kind;
 
             if (IsArray(type)) {
-                if (type == AKE_TYPE_DEF_ARRAY_CONST) {
+                if (type == AKE_TYPE_ARRAY_CONST) {
                     Ake_TypeDef* tu = n->tu->data.array_const.td;
-                    if (tu->kind == AKE_TYPE_DEF_NATURAL && tu->data.natural.bit_count == 8) {
+                    if (tu->kind == AKE_TYPE_NATURAL && tu->data.natural.bit_count == 8) {
                         char* (*fp)() = ExprSymbol.getAddress().toPtr<char*(*)()>();
                         char* v = fp();
                         Zinc_string_add_str(&result->value, v);
@@ -229,7 +229,7 @@ namespace Akela_llvm {
                 } else {
                     assert(false && "return of arrays not supported");
                 }
-            } else if (type == AKE_TYPE_DEF_INTEGER) {
+            } else if (type == AKE_TYPE_INTEGER) {
                 size_t bit_count = n->tu->data.integer.bit_count;
                 if (bit_count == 64) {
                     int64_t (*fp)() = ExprSymbol.getAddress().toPtr<int64_t(*)()>();
@@ -262,7 +262,7 @@ namespace Akela_llvm {
                 } else {
                     assert(false);
                 }
-            } else if (type == AKE_TYPE_DEF_NATURAL) {
+            } else if (type == AKE_TYPE_NATURAL) {
                 size_t bit_count = n->tu->data.natural.bit_count;
                 if (bit_count == 64) {
                     uint64_t (*fp)() = ExprSymbol.getAddress().toPtr<uint64_t(*)()>();
@@ -295,7 +295,7 @@ namespace Akela_llvm {
                 } else {
                     assert(false);
                 }
-            } else if (type == AKE_TYPE_DEF_REAL) {
+            } else if (type == AKE_TYPE_REAL) {
                 size_t bit_count = n->tu->data.real.bit_count;
                 if (bit_count == 64) {
                     double (*fp)() = ExprSymbol.getAddress().toPtr <double(*)()>();
@@ -325,7 +325,7 @@ namespace Akela_llvm {
                 } else {
                     assert(false);
                 }
-            } else if (type == AKE_TYPE_DEF_BOOLEAN) {
+            } else if (type == AKE_TYPE_BOOLEAN) {
                 bool (*fp)() = ExprSymbol.getAddress().toPtr <bool(*)()>();
                 bool v = fp();
                 if (v) {
@@ -336,7 +336,7 @@ namespace Akela_llvm {
                 if (result->return_address) {
                     *(bool*)result->return_address = v;
                 }
-            } else if (type == AKE_TYPE_DEF_FUNCTION) {
+            } else if (type == AKE_TYPE_FUNCTION) {
                 void* (*fp)() = ExprSymbol.getAddress().toPtr<void*(*)()>();
                 void* v = fp();
                 Zinc_string_add_format(value, "Function");
@@ -411,11 +411,11 @@ namespace Akela_llvm {
         size_t size = 0;
         Ake_TypeDef* lhs_tu2 = NULL;
         Ake_TypeDef* rhs_tu2 = NULL;
-        if (lhs_tu->kind == AKE_TYPE_DEF_ARRAY) {
+        if (lhs_tu->kind == AKE_TYPE_ARRAY) {
             size = lhs_tu->data.array.dim;
             lhs_tu2 = lhs_tu->data.array.td;
             rhs_tu2 = rhs_tu->data.array.td;
-        } else if (lhs_tu->kind == AKE_TYPE_DEF_ARRAY_CONST) {
+        } else if (lhs_tu->kind == AKE_TYPE_ARRAY_CONST) {
             size = lhs_tu->data.array_const.dim;
             lhs_tu2 = lhs_tu->data.array_const.td;
             rhs_tu2 = rhs_tu->data.array_const.td;

@@ -90,84 +90,84 @@ void Ake_symbol_table_init_builtin_types(Ake_symbol_table* st)
 
 	name = "Int8";
 	Ake_TypeDefCreate(&td);
-	td->kind = AKE_TYPE_DEF_INTEGER;
+	td->kind = AKE_TYPE_INTEGER;
 	Zinc_string_add_str(&td->name, name);
 	td->data.integer.bit_count = 8;
 	Ake_symbol_table_add_type(st, name, td);
 
 	name = "Int16";
 	Ake_TypeDefCreate(&td);
-	Ake_TypeDefSet(td, AKE_TYPE_DEF_INTEGER);
+	Ake_TypeDefSet(td, AKE_TYPE_INTEGER);
 	Zinc_string_add_str(&td->name, name);
 	td->data.integer.bit_count = 16;
 	Ake_symbol_table_add_type(st, name, td);
 
 	name = "Int32";
 	Ake_TypeDefCreate(&td);
-	td->kind = AKE_TYPE_DEF_INTEGER;
+	td->kind = AKE_TYPE_INTEGER;
 	Zinc_string_add_str(&td->name, name);
 	td->data.integer.bit_count = 32;
 	Ake_symbol_table_add_type(st, name, td);
 
 	name = "Int64";
 	Ake_TypeDefCreate(&td);
-	td->kind = AKE_TYPE_DEF_INTEGER;
+	td->kind = AKE_TYPE_INTEGER;
 	Zinc_string_add_str(&td->name, name);
 	td->data.integer.bit_count = 64;
 	Ake_symbol_table_add_type(st, name, td);
 
     name = "Nat8";
 	Ake_TypeDefCreate(&td);
-	td->kind = AKE_TYPE_DEF_NATURAL;
+	td->kind = AKE_TYPE_NATURAL;
     Zinc_string_add_str(&td->name, name);
     td->data.natural.bit_count = 8;
     Ake_symbol_table_add_type(st, name, td);
 
 	name = "Nat16";
 	Ake_TypeDefCreate(&td);
-	td->kind = AKE_TYPE_DEF_NATURAL;
+	td->kind = AKE_TYPE_NATURAL;
 	Zinc_string_add_str(&td->name, name);
 	td->data.natural.bit_count = 16;
 	Ake_symbol_table_add_type(st, name, td);
 
     name = "Nat32";
 	Ake_TypeDefCreate(&td);
-	td->kind = AKE_TYPE_DEF_NATURAL;
+	td->kind = AKE_TYPE_NATURAL;
 	Zinc_string_add_str(&td->name, name);
 	td->data.natural.bit_count = 32;
 	Ake_symbol_table_add_type(st, name, td);
 
 	name = "Nat64";
 	Ake_TypeDefCreate(&td);
-	td->kind = AKE_TYPE_DEF_NATURAL;
+	td->kind = AKE_TYPE_NATURAL;
 	Zinc_string_add_str(&td->name, name);
 	td->data.natural.bit_count = 64;
 	Ake_symbol_table_add_type(st, name, td);
 
 	name = "Real16";
 	Ake_TypeDefCreate(&td);
-	td->kind = AKE_TYPE_DEF_REAL;
+	td->kind = AKE_TYPE_REAL;
 	Zinc_string_add_str(&td->name, name);
 	td->data.real.bit_count = 16;
 	Ake_symbol_table_add_type(st, name, td);
 
 	name = "Real32";
 	Ake_TypeDefCreate(&td);
-	td->kind = AKE_TYPE_DEF_REAL;
+	td->kind = AKE_TYPE_REAL;
 	Zinc_string_add_str(&td->name, name);
 	td->data.real.bit_count = 32;
 	Ake_symbol_table_add_type(st, name, td);
 
 	name = "Real64";
 	Ake_TypeDefCreate(&td);
-	td->kind = AKE_TYPE_DEF_REAL;
+	td->kind = AKE_TYPE_REAL;
 	Zinc_string_add_str(&td->name, name);
 	td->data.real.bit_count = 64;
 	Ake_symbol_table_add_type(st, name, td);
 
 	name = "Bool";
 	Ake_TypeDefCreate(&td);
-	td->kind = AKE_TYPE_DEF_BOOLEAN;
+	td->kind = AKE_TYPE_BOOLEAN;
 	Zinc_string_add_str(&td->name, name);
 	Ake_symbol_table_add_type(st, name, td);
 }
@@ -229,13 +229,13 @@ void Ake_symbol_table_destroy(Ake_symbol_table* st)
 
 bool Ake_is_numeric(Ake_TypeDef* td)
 {
-	if (td->kind == AKE_TYPE_DEF_INTEGER) {
+	if (td->kind == AKE_TYPE_INTEGER) {
 		return true;
 	}
-	if (td->kind == AKE_TYPE_DEF_NATURAL) {
+	if (td->kind == AKE_TYPE_NATURAL) {
 		return true;
 	}
-	if (td->kind == AKE_TYPE_DEF_REAL) {
+	if (td->kind == AKE_TYPE_REAL) {
 		return true;
 	}
 

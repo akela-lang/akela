@@ -15,7 +15,7 @@ namespace Akela_llvm {
             Ake_ast* element_type_node = Ast_node_get(element_dec, 1);
             Ake_TypeDef* element_tu = element_type_node->tu;
             Type* element_type = Get_type(jd, element_tu);
-            if (element_tu->kind == AKE_TYPE_DEF_FUNCTION) {
+            if (element_tu->kind == AKE_TYPE_FUNCTION) {
                 //element_type = element_type->getPointerTo();
                 element_type = PointerType::get(element_type, 0);
             }
@@ -28,11 +28,11 @@ namespace Akela_llvm {
     StructType* GetStructTypeFromType(Jit_data* jd, Ake_TypeDef* td)
     {
         std::vector<Type*> type_list;
-        assert(td->kind == AKE_TYPE_DEF_STRUCT);
+        assert(td->kind == AKE_TYPE_STRUCT);
         Ake_TypeField* tf = td->data.fields.head;
         while (tf) {
             Type* element_type = Get_type(jd, tf->td);
-            if (tf->td->kind == AKE_TYPE_DEF_FUNCTION) {
+            if (tf->td->kind == AKE_TYPE_FUNCTION) {
                 //element_type = element_type->getPointerTo();
                 element_type = PointerType::get(element_type, 0);
             }
@@ -57,7 +57,7 @@ namespace Akela_llvm {
         Ake_ast* left = Ast_node_get(n, 0);
         Ake_TypeDef* left_tu = left->tu;
         assert(left_tu);
-        assert(left_tu->kind == AKE_TYPE_DEF_STRUCT);
+        assert(left_tu->kind == AKE_TYPE_STRUCT);
         left->tu->context = Ake_type_context_ptr;
         Value* struct_value = Dispatch(jd, left);
 
@@ -94,7 +94,7 @@ namespace Akela_llvm {
     Value* Handle_struct_literal(Jit_data* jd, Ake_ast* n)
     {
         assert(n && n->tu);
-        assert(n->tu->kind == AKE_TYPE_DEF_STRUCT);
+        assert(n->tu->kind == AKE_TYPE_STRUCT);
         auto t = (StructType*)GetStructTypeFromType(jd, n->tu);
         Zinc_string bf;
         Zinc_string_init(&bf);
@@ -116,7 +116,7 @@ namespace Akela_llvm {
 
             Zinc_string_finish(&id->value);
             Value* gep_value = jd->Builder->CreateStructGEP(t, value, i, id->value.buf);
-            if (expr->tu && expr->tu->kind == AKE_TYPE_DEF_STRUCT) {
+            if (expr->tu && expr->tu->kind == AKE_TYPE_STRUCT) {
                 Handle_struct_literal_element(jd, gep_value, expr);
             } else if (IsArray(expr->tu->kind)) {
                 Value* expr_value = Dispatch(jd, expr);
@@ -146,7 +146,7 @@ namespace Akela_llvm {
 
             Zinc_string_finish(&id->value);
             Value* gep_value = jd->Builder->CreateStructGEP(t, ptr, i, id->value.buf);
-            if (expr->tu->kind == AKE_TYPE_DEF_STRUCT) {
+            if (expr->tu->kind == AKE_TYPE_STRUCT) {
                 Handle_struct_literal_element(jd, gep_value, expr);
             } else if (IsArray(expr->tu->kind)) {
                 Value* expr_value = Dispatch(jd, expr);
