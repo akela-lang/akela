@@ -5,7 +5,7 @@
 extern "C" {
 #endif
 
-typedef struct Ake_TypeDef Ake_TypeDef;
+typedef struct Ake_Type Ake_Type;
 #include "token.h"
 #include "ast.h"
 #include "type.h"
@@ -21,8 +21,8 @@ typedef enum Ake_symbol_type {
 typedef struct Ake_symbol {
     Ake_symbol_type type;
     Ake_token_enum tk_type;
-    Ake_TypeDef* td;
-    Ake_TypeDef* tu;
+    Ake_Type* td;
+    Ake_Type* tu;
     Ake_ast* root;
     Ake_ast* root_ptr;
     void* value;

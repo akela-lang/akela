@@ -54,19 +54,19 @@ void AkeUnit_TypeDefMatchIntegerTrue(Zinc_test* test)
 		return;
 	}
 
-	Ake_TypeDef* td0 = NULL;
-	Ake_TypeDefCreate(&td0);
-	Ake_TypeDefSet(td0, AKE_TYPE_INTEGER);
+	Ake_Type* td0 = NULL;
+	Ake_TypeCreate(&td0);
+	Ake_TypeSet(td0, AKE_TYPE_INTEGER);
 	td0->data.integer.bit_count = 32;
 
-	Ake_TypeDef* td1 = NULL;
-	Ake_TypeDefCreate(&td1);
-	Ake_TypeDefSet(td1, AKE_TYPE_INTEGER);
+	Ake_Type* td1 = NULL;
+	Ake_TypeCreate(&td1);
+	Ake_TypeSet(td1, AKE_TYPE_INTEGER);
 	td1->data.integer.bit_count = 32;
 
-	Zinc_expect_true(test, Ake_TypeDefMatch(td0, td1, NULL), "true");
+	Zinc_expect_true(test, Ake_TypeMatch(td0, td1, NULL), "true");
 
-	Ake_TypeDefDestroy(td0);
+	Ake_TypeDestroy(td0);
 }
 
 void AkeUnit_TypeDefMatchIntegerFalse(Zinc_test* test)
@@ -78,19 +78,19 @@ void AkeUnit_TypeDefMatchIntegerFalse(Zinc_test* test)
 		return;
 	}
 
-	Ake_TypeDef* td0 = NULL;
-	Ake_TypeDefCreate(&td0);
-	Ake_TypeDefSet(td0, AKE_TYPE_INTEGER);
+	Ake_Type* td0 = NULL;
+	Ake_TypeCreate(&td0);
+	Ake_TypeSet(td0, AKE_TYPE_INTEGER);
 	td0->data.integer.bit_count = 32;
 
-	Ake_TypeDef* td1 = NULL;
-	Ake_TypeDefCreate(&td1);
-	Ake_TypeDefSet(td1, AKE_TYPE_INTEGER);
+	Ake_Type* td1 = NULL;
+	Ake_TypeCreate(&td1);
+	Ake_TypeSet(td1, AKE_TYPE_INTEGER);
 	td1->data.integer.bit_count = 16;
 
-	Zinc_expect_false(test, Ake_TypeDefMatch(td0, td1, NULL), "true");
+	Zinc_expect_false(test, Ake_TypeMatch(td0, td1, NULL), "true");
 
-	Ake_TypeDefDestroy(td0);
+	Ake_TypeDestroy(td0);
 }
 
 void AkeUnit_TypeDefMatchNaturalTrue(Zinc_test* test)
@@ -102,19 +102,19 @@ void AkeUnit_TypeDefMatchNaturalTrue(Zinc_test* test)
 		return;
 	}
 
-	Ake_TypeDef* td0 = NULL;
-	Ake_TypeDefCreate(&td0);
-	Ake_TypeDefSet(td0, AKE_TYPE_NATURAL);
+	Ake_Type* td0 = NULL;
+	Ake_TypeCreate(&td0);
+	Ake_TypeSet(td0, AKE_TYPE_NATURAL);
 	td0->data.natural.bit_count = 32;
 
-	Ake_TypeDef* td1 = NULL;
-	Ake_TypeDefCreate(&td1);
-	Ake_TypeDefSet(td1, AKE_TYPE_NATURAL);
+	Ake_Type* td1 = NULL;
+	Ake_TypeCreate(&td1);
+	Ake_TypeSet(td1, AKE_TYPE_NATURAL);
 	td1->data.natural.bit_count = 32;
 
-	Zinc_expect_true(test, Ake_TypeDefMatch(td0, td1, NULL), "true");
+	Zinc_expect_true(test, Ake_TypeMatch(td0, td1, NULL), "true");
 
-	Ake_TypeDefDestroy(td0);
+	Ake_TypeDestroy(td0);
 }
 
 void AkeUnit_TypeDefMatchNaturalFalse(Zinc_test* test)
@@ -126,19 +126,19 @@ void AkeUnit_TypeDefMatchNaturalFalse(Zinc_test* test)
 		return;
 	}
 
-	Ake_TypeDef* td0 = NULL;
-	Ake_TypeDefCreate(&td0);
-	Ake_TypeDefSet(td0, AKE_TYPE_NATURAL);
+	Ake_Type* td0 = NULL;
+	Ake_TypeCreate(&td0);
+	Ake_TypeSet(td0, AKE_TYPE_NATURAL);
 	td0->data.natural.bit_count = 32;
 
-	Ake_TypeDef* td1 = NULL;
-	Ake_TypeDefCreate(&td1);
-	Ake_TypeDefSet(td1, AKE_TYPE_NATURAL);
+	Ake_Type* td1 = NULL;
+	Ake_TypeCreate(&td1);
+	Ake_TypeSet(td1, AKE_TYPE_NATURAL);
 	td1->data.natural.bit_count = 16;
 
-	Zinc_expect_false(test, Ake_TypeDefMatch(td0, td1, NULL), "false");
+	Zinc_expect_false(test, Ake_TypeMatch(td0, td1, NULL), "false");
 
-	Ake_TypeDefDestroy(td0);
+	Ake_TypeDestroy(td0);
 }
 
 void AkeUnit_TypeDefMatchRealTrue(Zinc_test* test)
@@ -150,19 +150,19 @@ void AkeUnit_TypeDefMatchRealTrue(Zinc_test* test)
 		return;
 	}
 
-	Ake_TypeDef* td0 = NULL;
-	Ake_TypeDefCreate(&td0);
-	Ake_TypeDefSet(td0, AKE_TYPE_REAL);
+	Ake_Type* td0 = NULL;
+	Ake_TypeCreate(&td0);
+	Ake_TypeSet(td0, AKE_TYPE_REAL);
 	td0->data.natural.bit_count = 64;
 
-	Ake_TypeDef* td1 = NULL;
-	Ake_TypeDefCreate(&td1);
-	Ake_TypeDefSet(td1, AKE_TYPE_REAL);
+	Ake_Type* td1 = NULL;
+	Ake_TypeCreate(&td1);
+	Ake_TypeSet(td1, AKE_TYPE_REAL);
 	td1->data.natural.bit_count = 64;
 
-	Zinc_expect_true(test, Ake_TypeDefMatch(td0, td1, NULL), "true");
+	Zinc_expect_true(test, Ake_TypeMatch(td0, td1, NULL), "true");
 
-	Ake_TypeDefDestroy(td0);
+	Ake_TypeDestroy(td0);
 }
 
 void AkeUnit_TypeDefMatchRealFalse(Zinc_test* test)
@@ -174,19 +174,19 @@ void AkeUnit_TypeDefMatchRealFalse(Zinc_test* test)
 		return;
 	}
 
-	Ake_TypeDef* td0 = NULL;
-	Ake_TypeDefCreate(&td0);
-	Ake_TypeDefSet(td0, AKE_TYPE_REAL);
+	Ake_Type* td0 = NULL;
+	Ake_TypeCreate(&td0);
+	Ake_TypeSet(td0, AKE_TYPE_REAL);
 	td0->data.natural.bit_count = 64;
 
-	Ake_TypeDef* td1 = NULL;
-	Ake_TypeDefCreate(&td1);
-	Ake_TypeDefSet(td1, AKE_TYPE_REAL);
+	Ake_Type* td1 = NULL;
+	Ake_TypeCreate(&td1);
+	Ake_TypeSet(td1, AKE_TYPE_REAL);
 	td1->data.natural.bit_count = 32;
 
-	Zinc_expect_false(test, Ake_TypeDefMatch(td0, td1, NULL), "false");
+	Zinc_expect_false(test, Ake_TypeMatch(td0, td1, NULL), "false");
 
-	Ake_TypeDefDestroy(td0);
+	Ake_TypeDestroy(td0);
 }
 
 void AkeUnit_TypeDefMatchBoolean(Zinc_test* test)
@@ -198,17 +198,17 @@ void AkeUnit_TypeDefMatchBoolean(Zinc_test* test)
 		return;
 	}
 
-	Ake_TypeDef* td0 = NULL;
-	Ake_TypeDefCreate(&td0);
-	Ake_TypeDefSet(td0, AKE_TYPE_BOOLEAN);
+	Ake_Type* td0 = NULL;
+	Ake_TypeCreate(&td0);
+	Ake_TypeSet(td0, AKE_TYPE_BOOLEAN);
 
-	Ake_TypeDef* td1 = NULL;
-	Ake_TypeDefCreate(&td1);
-	Ake_TypeDefSet(td1, AKE_TYPE_BOOLEAN);
+	Ake_Type* td1 = NULL;
+	Ake_TypeCreate(&td1);
+	Ake_TypeSet(td1, AKE_TYPE_BOOLEAN);
 
-	Zinc_expect_true(test, Ake_TypeDefMatch(td0, td1, NULL), "true");
+	Zinc_expect_true(test, Ake_TypeMatch(td0, td1, NULL), "true");
 
-	Ake_TypeDefDestroy(td0);
+	Ake_TypeDestroy(td0);
 }
 
 void AkeUnit_TypeDefMatchStructTrue(Zinc_test* test)
@@ -220,39 +220,39 @@ void AkeUnit_TypeDefMatchStructTrue(Zinc_test* test)
 		return;
 	}
 
-	Ake_TypeDef* td0 = NULL;
-	Ake_TypeDefCreate(&td0);
-	Ake_TypeDefSet(td0, AKE_TYPE_STRUCT);
+	Ake_Type* td0 = NULL;
+	Ake_TypeCreate(&td0);
+	Ake_TypeSet(td0, AKE_TYPE_STRUCT);
 
 	Ake_TypeField* tf00 = NULL;
 	Ake_TypeFieldCreate(&tf00);
 
-	Ake_TypeDef* td00 = NULL;
-	Ake_TypeDefCreate(&td00);
-	Ake_TypeDefSet(td00, AKE_TYPE_INTEGER);
+	Ake_Type* td00 = NULL;
+	Ake_TypeCreate(&td00);
+	Ake_TypeSet(td00, AKE_TYPE_INTEGER);
 	td00->data.integer.bit_count = 32;
 	tf00->td = td00;
 
-	Ake_TypeDefStructAdd(td0, tf00);
+	Ake_TypeStructAdd(td0, tf00);
 
-	Ake_TypeDef* td1 = NULL;
-	Ake_TypeDefCreate(&td1);
-	Ake_TypeDefSet(td1, AKE_TYPE_STRUCT);
+	Ake_Type* td1 = NULL;
+	Ake_TypeCreate(&td1);
+	Ake_TypeSet(td1, AKE_TYPE_STRUCT);
 
 	Ake_TypeField* tf10 = NULL;
 	Ake_TypeFieldCreate(&tf10);
 
-	Ake_TypeDef* td10 = NULL;
-	Ake_TypeDefCreate(&td10);
-	Ake_TypeDefSet(td10, AKE_TYPE_INTEGER);
+	Ake_Type* td10 = NULL;
+	Ake_TypeCreate(&td10);
+	Ake_TypeSet(td10, AKE_TYPE_INTEGER);
 	td10->data.integer.bit_count = 32;
 	tf10->td = td10;
 
-	Ake_TypeDefStructAdd(td1, tf10);
+	Ake_TypeStructAdd(td1, tf10);
 
-	Zinc_expect_true(test, Ake_TypeDefMatch(td0, td1, NULL), "true");
+	Zinc_expect_true(test, Ake_TypeMatch(td0, td1, NULL), "true");
 
-	Ake_TypeDefDestroy(td0);
+	Ake_TypeDestroy(td0);
 }
 
 void AkeUnit_TypeDefMatchStructFalse(Zinc_test* test)
@@ -264,39 +264,39 @@ void AkeUnit_TypeDefMatchStructFalse(Zinc_test* test)
 		return;
 	}
 
-	Ake_TypeDef* td0 = NULL;
-	Ake_TypeDefCreate(&td0);
-	Ake_TypeDefSet(td0, AKE_TYPE_STRUCT);
+	Ake_Type* td0 = NULL;
+	Ake_TypeCreate(&td0);
+	Ake_TypeSet(td0, AKE_TYPE_STRUCT);
 
 	Ake_TypeField* tf00 = NULL;
 	Ake_TypeFieldCreate(&tf00);
 
-	Ake_TypeDef* td00 = NULL;
-	Ake_TypeDefCreate(&td00);
-	Ake_TypeDefSet(td00, AKE_TYPE_INTEGER);
+	Ake_Type* td00 = NULL;
+	Ake_TypeCreate(&td00);
+	Ake_TypeSet(td00, AKE_TYPE_INTEGER);
 	td00->data.integer.bit_count = 32;
 	tf00->td = td00;
 
-	Ake_TypeDefStructAdd(td0, tf00);
+	Ake_TypeStructAdd(td0, tf00);
 
-	Ake_TypeDef* td1 = NULL;
-	Ake_TypeDefCreate(&td1);
-	Ake_TypeDefSet(td1, AKE_TYPE_STRUCT);
+	Ake_Type* td1 = NULL;
+	Ake_TypeCreate(&td1);
+	Ake_TypeSet(td1, AKE_TYPE_STRUCT);
 
 	Ake_TypeField* tf10 = NULL;
 	Ake_TypeFieldCreate(&tf10);
 
-	Ake_TypeDef* td10 = NULL;
-	Ake_TypeDefCreate(&td10);
-	Ake_TypeDefSet(td10, AKE_TYPE_INTEGER);
+	Ake_Type* td10 = NULL;
+	Ake_TypeCreate(&td10);
+	Ake_TypeSet(td10, AKE_TYPE_INTEGER);
 	td10->data.integer.bit_count = 64;
 	tf10->td = td10;
 
-	Ake_TypeDefStructAdd(td1, tf10);
+	Ake_TypeStructAdd(td1, tf10);
 
-	Zinc_expect_false(test, Ake_TypeDefMatch(td0, td1, NULL), "false");
+	Zinc_expect_false(test, Ake_TypeMatch(td0, td1, NULL), "false");
 
-	Ake_TypeDefDestroy(td0);
+	Ake_TypeDestroy(td0);
 }
 
 void AkeUnit_TypeDefMatchArrayTrue(Zinc_test* test)
@@ -308,29 +308,29 @@ void AkeUnit_TypeDefMatchArrayTrue(Zinc_test* test)
 		return;
 	}
 
-	Ake_TypeDef* td0 = NULL;
-	Ake_TypeDefCreate(&td0);
-	Ake_TypeDefSet(td0, AKE_TYPE_ARRAY);
+	Ake_Type* td0 = NULL;
+	Ake_TypeCreate(&td0);
+	Ake_TypeSet(td0, AKE_TYPE_ARRAY);
 
-	Ake_TypeDef* td00 = NULL;
-	Ake_TypeDefCreate(&td00);
-	Ake_TypeDefSet(td00, AKE_TYPE_INTEGER);
+	Ake_Type* td00 = NULL;
+	Ake_TypeCreate(&td00);
+	Ake_TypeSet(td00, AKE_TYPE_INTEGER);
 	td00->data.integer.bit_count = 32;
 	td0->data.array.td = td00;
 
-	Ake_TypeDef* td1 = NULL;
-	Ake_TypeDefCreate(&td1);
-	Ake_TypeDefSet(td1, AKE_TYPE_ARRAY);
+	Ake_Type* td1 = NULL;
+	Ake_TypeCreate(&td1);
+	Ake_TypeSet(td1, AKE_TYPE_ARRAY);
 
-	Ake_TypeDef* td10 = NULL;
-	Ake_TypeDefCreate(&td10);
-	Ake_TypeDefSet(td10, AKE_TYPE_INTEGER);
+	Ake_Type* td10 = NULL;
+	Ake_TypeCreate(&td10);
+	Ake_TypeSet(td10, AKE_TYPE_INTEGER);
 	td10->data.integer.bit_count = 32;
 	td1->data.array.td = td10;
 
-	Zinc_expect_true(test, Ake_TypeDefMatch(td0, td1, NULL), "true");
+	Zinc_expect_true(test, Ake_TypeMatch(td0, td1, NULL), "true");
 
-	Ake_TypeDefDestroy(td0);
+	Ake_TypeDestroy(td0);
 }
 
 void AkeUnit_TypeDefMatchArrayFalse(Zinc_test* test)
@@ -342,29 +342,29 @@ void AkeUnit_TypeDefMatchArrayFalse(Zinc_test* test)
 		return;
 	}
 
-	Ake_TypeDef* td0 = NULL;
-	Ake_TypeDefCreate(&td0);
-	Ake_TypeDefSet(td0, AKE_TYPE_ARRAY);
+	Ake_Type* td0 = NULL;
+	Ake_TypeCreate(&td0);
+	Ake_TypeSet(td0, AKE_TYPE_ARRAY);
 
-	Ake_TypeDef* td00 = NULL;
-	Ake_TypeDefCreate(&td00);
-	Ake_TypeDefSet(td00, AKE_TYPE_INTEGER);
+	Ake_Type* td00 = NULL;
+	Ake_TypeCreate(&td00);
+	Ake_TypeSet(td00, AKE_TYPE_INTEGER);
 	td00->data.integer.bit_count = 32;
 	td0->data.array.td = td00;
 
-	Ake_TypeDef* td1 = NULL;
-	Ake_TypeDefCreate(&td1);
-	Ake_TypeDefSet(td1, AKE_TYPE_ARRAY);
+	Ake_Type* td1 = NULL;
+	Ake_TypeCreate(&td1);
+	Ake_TypeSet(td1, AKE_TYPE_ARRAY);
 
-	Ake_TypeDef* td10 = NULL;
-	Ake_TypeDefCreate(&td10);
-	Ake_TypeDefSet(td10, AKE_TYPE_INTEGER);
+	Ake_Type* td10 = NULL;
+	Ake_TypeCreate(&td10);
+	Ake_TypeSet(td10, AKE_TYPE_INTEGER);
 	td10->data.integer.bit_count = 64;
 	td1->data.array.td = td10;
 
-	Zinc_expect_false(test, Ake_TypeDefMatch(td0, td1, NULL), "false");
+	Zinc_expect_false(test, Ake_TypeMatch(td0, td1, NULL), "false");
 
-	Ake_TypeDefDestroy(td0);
+	Ake_TypeDestroy(td0);
 }
 
 void AkeUnit_TypeDefMatchArrayConstTrue(Zinc_test* test)
@@ -376,29 +376,29 @@ void AkeUnit_TypeDefMatchArrayConstTrue(Zinc_test* test)
 		return;
 	}
 
-	Ake_TypeDef* td0 = NULL;
-	Ake_TypeDefCreate(&td0);
-	Ake_TypeDefSet(td0, AKE_TYPE_ARRAY_CONST);
+	Ake_Type* td0 = NULL;
+	Ake_TypeCreate(&td0);
+	Ake_TypeSet(td0, AKE_TYPE_ARRAY_CONST);
 
-	Ake_TypeDef* td00 = NULL;
-	Ake_TypeDefCreate(&td00);
-	Ake_TypeDefSet(td00, AKE_TYPE_INTEGER);
+	Ake_Type* td00 = NULL;
+	Ake_TypeCreate(&td00);
+	Ake_TypeSet(td00, AKE_TYPE_INTEGER);
 	td00->data.integer.bit_count = 32;
 	td0->data.array_const.td = td00;
 
-	Ake_TypeDef* td1 = NULL;
-	Ake_TypeDefCreate(&td1);
-	Ake_TypeDefSet(td1, AKE_TYPE_ARRAY_CONST);
+	Ake_Type* td1 = NULL;
+	Ake_TypeCreate(&td1);
+	Ake_TypeSet(td1, AKE_TYPE_ARRAY_CONST);
 
-	Ake_TypeDef* td10 = NULL;
-	Ake_TypeDefCreate(&td10);
-	Ake_TypeDefSet(td10, AKE_TYPE_INTEGER);
+	Ake_Type* td10 = NULL;
+	Ake_TypeCreate(&td10);
+	Ake_TypeSet(td10, AKE_TYPE_INTEGER);
 	td10->data.integer.bit_count = 32;
 	td1->data.array_const.td = td10;
 
-	Zinc_expect_true(test, Ake_TypeDefMatch(td0, td1, NULL), "match");
+	Zinc_expect_true(test, Ake_TypeMatch(td0, td1, NULL), "match");
 
-	Ake_TypeDefDestroy(td0);
+	Ake_TypeDestroy(td0);
 }
 
 void AkeUnit_TypeDefMatchArrayConstFalse(Zinc_test* test)
@@ -410,29 +410,29 @@ void AkeUnit_TypeDefMatchArrayConstFalse(Zinc_test* test)
 		return;
 	}
 
-	Ake_TypeDef* td0 = NULL;
-	Ake_TypeDefCreate(&td0);
-	Ake_TypeDefSet(td0, AKE_TYPE_ARRAY_CONST);
+	Ake_Type* td0 = NULL;
+	Ake_TypeCreate(&td0);
+	Ake_TypeSet(td0, AKE_TYPE_ARRAY_CONST);
 
-	Ake_TypeDef* td00 = NULL;
-	Ake_TypeDefCreate(&td00);
-	Ake_TypeDefSet(td00, AKE_TYPE_INTEGER);
+	Ake_Type* td00 = NULL;
+	Ake_TypeCreate(&td00);
+	Ake_TypeSet(td00, AKE_TYPE_INTEGER);
 	td00->data.integer.bit_count = 32;
 	td0->data.array_const.td = td00;
 
-	Ake_TypeDef* td1 = NULL;
-	Ake_TypeDefCreate(&td1);
-	Ake_TypeDefSet(td1, AKE_TYPE_ARRAY_CONST);
+	Ake_Type* td1 = NULL;
+	Ake_TypeCreate(&td1);
+	Ake_TypeSet(td1, AKE_TYPE_ARRAY_CONST);
 
-	Ake_TypeDef* td10 = NULL;
-	Ake_TypeDefCreate(&td10);
-	Ake_TypeDefSet(td10, AKE_TYPE_INTEGER);
+	Ake_Type* td10 = NULL;
+	Ake_TypeCreate(&td10);
+	Ake_TypeSet(td10, AKE_TYPE_INTEGER);
 	td10->data.integer.bit_count = 64;
 	td1->data.array_const.td = td10;
 
-	Zinc_expect_false(test, Ake_TypeDefMatch(td0, td1, NULL), "match");
+	Zinc_expect_false(test, Ake_TypeMatch(td0, td1, NULL), "match");
 
-	Ake_TypeDefDestroy(td0);
+	Ake_TypeDestroy(td0);
 }
 
 void AkeUnit_TypeDefMatchSliceTrue(Zinc_test* test)
@@ -444,29 +444,29 @@ void AkeUnit_TypeDefMatchSliceTrue(Zinc_test* test)
 		return;
 	}
 
-	Ake_TypeDef* td0 = NULL;
-	Ake_TypeDefCreate(&td0);
-	Ake_TypeDefSet(td0, AKE_TYPE_SLICE);
+	Ake_Type* td0 = NULL;
+	Ake_TypeCreate(&td0);
+	Ake_TypeSet(td0, AKE_TYPE_SLICE);
 
-	Ake_TypeDef* td00 = NULL;
-	Ake_TypeDefCreate(&td00);
-	Ake_TypeDefSet(td00, AKE_TYPE_INTEGER);
+	Ake_Type* td00 = NULL;
+	Ake_TypeCreate(&td00);
+	Ake_TypeSet(td00, AKE_TYPE_INTEGER);
 	td00->data.integer.bit_count = 32;
 	td0->data.slice.td = td00;
 
-	Ake_TypeDef* td1 = NULL;
-	Ake_TypeDefCreate(&td1);
-	Ake_TypeDefSet(td1, AKE_TYPE_SLICE);
+	Ake_Type* td1 = NULL;
+	Ake_TypeCreate(&td1);
+	Ake_TypeSet(td1, AKE_TYPE_SLICE);
 
-	Ake_TypeDef* td10 = NULL;
-	Ake_TypeDefCreate(&td10);
-	Ake_TypeDefSet(td10, AKE_TYPE_INTEGER);
+	Ake_Type* td10 = NULL;
+	Ake_TypeCreate(&td10);
+	Ake_TypeSet(td10, AKE_TYPE_INTEGER);
 	td10->data.integer.bit_count = 32;
 	td1->data.slice.td = td10;
 
-	Zinc_expect_true(test, Ake_TypeDefMatch(td0, td1, NULL), "match");
+	Zinc_expect_true(test, Ake_TypeMatch(td0, td1, NULL), "match");
 
-	Ake_TypeDefDestroy(td0);
+	Ake_TypeDestroy(td0);
 }
 
 void AkeUnit_TypeDefMatchSliceFalse(Zinc_test* test)
@@ -478,29 +478,29 @@ void AkeUnit_TypeDefMatchSliceFalse(Zinc_test* test)
 		return;
 	}
 
-	Ake_TypeDef* td0 = NULL;
-	Ake_TypeDefCreate(&td0);
-	Ake_TypeDefSet(td0, AKE_TYPE_SLICE);
+	Ake_Type* td0 = NULL;
+	Ake_TypeCreate(&td0);
+	Ake_TypeSet(td0, AKE_TYPE_SLICE);
 
-	Ake_TypeDef* td00 = NULL;
-	Ake_TypeDefCreate(&td00);
-	Ake_TypeDefSet(td00, AKE_TYPE_INTEGER);
+	Ake_Type* td00 = NULL;
+	Ake_TypeCreate(&td00);
+	Ake_TypeSet(td00, AKE_TYPE_INTEGER);
 	td00->data.integer.bit_count = 32;
 	td0->data.slice.td = td00;
 
-	Ake_TypeDef* td1 = NULL;
-	Ake_TypeDefCreate(&td1);
-	Ake_TypeDefSet(td1, AKE_TYPE_SLICE);
+	Ake_Type* td1 = NULL;
+	Ake_TypeCreate(&td1);
+	Ake_TypeSet(td1, AKE_TYPE_SLICE);
 
-	Ake_TypeDef* td10 = NULL;
-	Ake_TypeDefCreate(&td10);
-	Ake_TypeDefSet(td10, AKE_TYPE_INTEGER);
+	Ake_Type* td10 = NULL;
+	Ake_TypeCreate(&td10);
+	Ake_TypeSet(td10, AKE_TYPE_INTEGER);
 	td10->data.integer.bit_count = 64;
 	td1->data.slice.td = td10;
 
-	Zinc_expect_false(test, Ake_TypeDefMatch(td0, td1, NULL), "match");
+	Zinc_expect_false(test, Ake_TypeMatch(td0, td1, NULL), "match");
 
-	Ake_TypeDefDestroy(td0);
+	Ake_TypeDestroy(td0);
 }
 
 void AkeUnit_TypeDefMatchPointerTrue(Zinc_test* test)
@@ -512,29 +512,29 @@ void AkeUnit_TypeDefMatchPointerTrue(Zinc_test* test)
 		return;
 	}
 
-	Ake_TypeDef* td0 = NULL;
-	Ake_TypeDefCreate(&td0);
-	Ake_TypeDefSet(td0, AKE_TYPE_POINTER);
+	Ake_Type* td0 = NULL;
+	Ake_TypeCreate(&td0);
+	Ake_TypeSet(td0, AKE_TYPE_POINTER);
 
-	Ake_TypeDef* td00 = NULL;
-	Ake_TypeDefCreate(&td00);
-	Ake_TypeDefSet(td00, AKE_TYPE_INTEGER);
+	Ake_Type* td00 = NULL;
+	Ake_TypeCreate(&td00);
+	Ake_TypeSet(td00, AKE_TYPE_INTEGER);
 	td00->data.integer.bit_count = 32;
 	td0->data.pointer.td = td00;
 
-	Ake_TypeDef* td1 = NULL;
-	Ake_TypeDefCreate(&td1);
-	Ake_TypeDefSet(td1, AKE_TYPE_POINTER);
+	Ake_Type* td1 = NULL;
+	Ake_TypeCreate(&td1);
+	Ake_TypeSet(td1, AKE_TYPE_POINTER);
 
-	Ake_TypeDef* td10 = NULL;
-	Ake_TypeDefCreate(&td10);
-	Ake_TypeDefSet(td10, AKE_TYPE_INTEGER);
+	Ake_Type* td10 = NULL;
+	Ake_TypeCreate(&td10);
+	Ake_TypeSet(td10, AKE_TYPE_INTEGER);
 	td10->data.integer.bit_count = 32;
 	td1->data.pointer.td = td10;
 
-	Zinc_expect_true(test, Ake_TypeDefMatch(td0, td1, NULL), "match");
+	Zinc_expect_true(test, Ake_TypeMatch(td0, td1, NULL), "match");
 
-	Ake_TypeDefDestroy(td0);
+	Ake_TypeDestroy(td0);
 }
 
 void AkeUnit_TypeDefMatchPointerFalse(Zinc_test* test)
@@ -546,29 +546,29 @@ void AkeUnit_TypeDefMatchPointerFalse(Zinc_test* test)
 		return;
 	}
 
-	Ake_TypeDef* td0 = NULL;
-	Ake_TypeDefCreate(&td0);
-	Ake_TypeDefSet(td0, AKE_TYPE_POINTER);
+	Ake_Type* td0 = NULL;
+	Ake_TypeCreate(&td0);
+	Ake_TypeSet(td0, AKE_TYPE_POINTER);
 
-	Ake_TypeDef* td00 = NULL;
-	Ake_TypeDefCreate(&td00);
-	Ake_TypeDefSet(td00, AKE_TYPE_INTEGER);
+	Ake_Type* td00 = NULL;
+	Ake_TypeCreate(&td00);
+	Ake_TypeSet(td00, AKE_TYPE_INTEGER);
 	td00->data.integer.bit_count = 32;
 	td0->data.pointer.td = td00;
 
-	Ake_TypeDef* td1 = NULL;
-	Ake_TypeDefCreate(&td1);
-	Ake_TypeDefSet(td1, AKE_TYPE_POINTER);
+	Ake_Type* td1 = NULL;
+	Ake_TypeCreate(&td1);
+	Ake_TypeSet(td1, AKE_TYPE_POINTER);
 
-	Ake_TypeDef* td10 = NULL;
-	Ake_TypeDefCreate(&td10);
-	Ake_TypeDefSet(td10, AKE_TYPE_INTEGER);
+	Ake_Type* td10 = NULL;
+	Ake_TypeCreate(&td10);
+	Ake_TypeSet(td10, AKE_TYPE_INTEGER);
 	td10->data.integer.bit_count = 64;
 	td1->data.pointer.td = td10;
 
-	Zinc_expect_false(test, Ake_TypeDefMatch(td0, td1, NULL), "match");
+	Zinc_expect_false(test, Ake_TypeMatch(td0, td1, NULL), "match");
 
-	Ake_TypeDefDestroy(td0);
+	Ake_TypeDestroy(td0);
 }
 
 void AkeUnit_TypeDefMatchFunctionTrue(Zinc_test* test)
@@ -580,49 +580,49 @@ void AkeUnit_TypeDefMatchFunctionTrue(Zinc_test* test)
 		return;
 	}
 
-	Ake_TypeDef* f0 = NULL;
-	Ake_TypeDefCreate(&f0);
-	Ake_TypeDefSet(f0, AKE_TYPE_FUNCTION);
+	Ake_Type* f0 = NULL;
+	Ake_TypeCreate(&f0);
+	Ake_TypeSet(f0, AKE_TYPE_FUNCTION);
 
-	Ake_TypeDef* arg00 = NULL;
-	Ake_TypeDefCreate(&arg00);
-	Ake_TypeDefSet(arg00, AKE_TYPE_INTEGER);
+	Ake_Type* arg00 = NULL;
+	Ake_TypeCreate(&arg00);
+	Ake_TypeSet(arg00, AKE_TYPE_INTEGER);
 	arg00->data.integer.bit_count = 32;
 
 	Ake_TypeParam* tp00 = NULL;
 	Ake_TypeParamCreate(&tp00);
 	tp00->td = arg00;
-	Ake_TypeDefInputAdd(f0, tp00);
+	Ake_TypeInputAdd(f0, tp00);
 
-	Ake_TypeDef* out0 = NULL;
-	Ake_TypeDefCreate(&out0);
-	Ake_TypeDefSet(out0, AKE_TYPE_INTEGER);
+	Ake_Type* out0 = NULL;
+	Ake_TypeCreate(&out0);
+	Ake_TypeSet(out0, AKE_TYPE_INTEGER);
 	out0->data.integer.bit_count = 32;
 	f0->data.function.output = out0;
 
-	Ake_TypeDef* f1 = NULL;
-	Ake_TypeDefCreate(&f1);
-	Ake_TypeDefSet(f1, AKE_TYPE_FUNCTION);
+	Ake_Type* f1 = NULL;
+	Ake_TypeCreate(&f1);
+	Ake_TypeSet(f1, AKE_TYPE_FUNCTION);
 
-	Ake_TypeDef* td10 = NULL;
-	Ake_TypeDefCreate(&td10);
-	Ake_TypeDefSet(td10, AKE_TYPE_INTEGER);
+	Ake_Type* td10 = NULL;
+	Ake_TypeCreate(&td10);
+	Ake_TypeSet(td10, AKE_TYPE_INTEGER);
 	td10->data.integer.bit_count = 32;
 
 	Ake_TypeParam* tp10 = NULL;
 	Ake_TypeParamCreate(&tp10);
 	tp10->td = td10;
-	Ake_TypeDefInputAdd(f1, tp10);
+	Ake_TypeInputAdd(f1, tp10);
 
-	Ake_TypeDef* out1 = NULL;
-	Ake_TypeDefCreate(&out1);
-	Ake_TypeDefSet(out1, AKE_TYPE_INTEGER);
+	Ake_Type* out1 = NULL;
+	Ake_TypeCreate(&out1);
+	Ake_TypeSet(out1, AKE_TYPE_INTEGER);
 	out1->data.integer.bit_count = 32;
 	f1->data.function.output = out1;
 
-	Zinc_expect_true(test, Ake_TypeDefMatch(f0, f1, NULL), "match");
+	Zinc_expect_true(test, Ake_TypeMatch(f0, f1, NULL), "match");
 
-	Ake_TypeDefDestroy(f0);
+	Ake_TypeDestroy(f0);
 }
 
 void AkeUnit_TypeDefMatchFunctionFalse(Zinc_test* test)
@@ -634,49 +634,49 @@ void AkeUnit_TypeDefMatchFunctionFalse(Zinc_test* test)
 		return;
 	}
 
-	Ake_TypeDef* f0 = NULL;
-	Ake_TypeDefCreate(&f0);
-	Ake_TypeDefSet(f0, AKE_TYPE_FUNCTION);
+	Ake_Type* f0 = NULL;
+	Ake_TypeCreate(&f0);
+	Ake_TypeSet(f0, AKE_TYPE_FUNCTION);
 
-	Ake_TypeDef* arg00 = NULL;
-	Ake_TypeDefCreate(&arg00);
-	Ake_TypeDefSet(arg00, AKE_TYPE_INTEGER);
+	Ake_Type* arg00 = NULL;
+	Ake_TypeCreate(&arg00);
+	Ake_TypeSet(arg00, AKE_TYPE_INTEGER);
 	arg00->data.integer.bit_count = 32;
 
 	Ake_TypeParam* tp00 = NULL;
 	Ake_TypeParamCreate(&tp00);
 	tp00->td = arg00;
-	Ake_TypeDefInputAdd(f0, tp00);
+	Ake_TypeInputAdd(f0, tp00);
 
-	Ake_TypeDef* out0 = NULL;
-	Ake_TypeDefCreate(&out0);
-	Ake_TypeDefSet(out0, AKE_TYPE_INTEGER);
+	Ake_Type* out0 = NULL;
+	Ake_TypeCreate(&out0);
+	Ake_TypeSet(out0, AKE_TYPE_INTEGER);
 	out0->data.integer.bit_count = 32;
 	f0->data.function.output = out0;
 
-	Ake_TypeDef* f1 = NULL;
-	Ake_TypeDefCreate(&f1);
-	Ake_TypeDefSet(f1, AKE_TYPE_FUNCTION);
+	Ake_Type* f1 = NULL;
+	Ake_TypeCreate(&f1);
+	Ake_TypeSet(f1, AKE_TYPE_FUNCTION);
 
-	Ake_TypeDef* td10 = NULL;
-	Ake_TypeDefCreate(&td10);
-	Ake_TypeDefSet(td10, AKE_TYPE_INTEGER);
+	Ake_Type* td10 = NULL;
+	Ake_TypeCreate(&td10);
+	Ake_TypeSet(td10, AKE_TYPE_INTEGER);
 	td10->data.integer.bit_count = 64;
 
 	Ake_TypeParam* tp10 = NULL;
 	Ake_TypeParamCreate(&tp10);
 	tp10->td = td10;
-	Ake_TypeDefInputAdd(f1, tp10);
+	Ake_TypeInputAdd(f1, tp10);
 
-	Ake_TypeDef* out1 = NULL;
-	Ake_TypeDefCreate(&out1);
-	Ake_TypeDefSet(out1, AKE_TYPE_INTEGER);
+	Ake_Type* out1 = NULL;
+	Ake_TypeCreate(&out1);
+	Ake_TypeSet(out1, AKE_TYPE_INTEGER);
 	out1->data.integer.bit_count = 32;
 	f1->data.function.output = out1;
 
-	Zinc_expect_false(test, Ake_TypeDefMatch(f0, f1, NULL), "match");
+	Zinc_expect_false(test, Ake_TypeMatch(f0, f1, NULL), "match");
 
-	Ake_TypeDefDestroy(f0);
+	Ake_TypeDestroy(f0);
 }
 
 void AkeUnit_TypeDefMatchCastTrue(Zinc_test* test)
@@ -688,21 +688,21 @@ void AkeUnit_TypeDefMatchCastTrue(Zinc_test* test)
 		return;
 	}
 
-	Ake_TypeDef* td0 = NULL;
-	Ake_TypeDefCreate(&td0);
-	Ake_TypeDefSet(td0, AKE_TYPE_INTEGER);
+	Ake_Type* td0 = NULL;
+	Ake_TypeCreate(&td0);
+	Ake_TypeSet(td0, AKE_TYPE_INTEGER);
 	td0->data.integer.bit_count = 32;
 
-	Ake_TypeDef* td1 = NULL;
-	Ake_TypeDefCreate(&td1);
-	Ake_TypeDefSet(td1, AKE_TYPE_INTEGER);
+	Ake_Type* td1 = NULL;
+	Ake_TypeCreate(&td1);
+	Ake_TypeSet(td1, AKE_TYPE_INTEGER);
 	td1->data.integer.bit_count = 32;
 
 	bool cast = false;
-	Zinc_expect_true(test, Ake_TypeDefMatch(td0, td1, &cast), "match");
+	Zinc_expect_true(test, Ake_TypeMatch(td0, td1, &cast), "match");
 	Zinc_expect_false(test, cast, "cast");
 
-	Ake_TypeDefDestroy(td0);
+	Ake_TypeDestroy(td0);
 }
 
 void AkeUnit_TypeDefMatchCastTrue2(Zinc_test* test)
@@ -714,21 +714,21 @@ void AkeUnit_TypeDefMatchCastTrue2(Zinc_test* test)
 		return;
 	}
 
-	Ake_TypeDef* td0 = NULL;
-	Ake_TypeDefCreate(&td0);
-	Ake_TypeDefSet(td0, AKE_TYPE_INTEGER);
+	Ake_Type* td0 = NULL;
+	Ake_TypeCreate(&td0);
+	Ake_TypeSet(td0, AKE_TYPE_INTEGER);
 	td0->data.integer.bit_count = 32;
 
-	Ake_TypeDef* td1 = NULL;
-	Ake_TypeDefCreate(&td1);
-	Ake_TypeDefSet(td1, AKE_TYPE_NATURAL);
+	Ake_Type* td1 = NULL;
+	Ake_TypeCreate(&td1);
+	Ake_TypeSet(td1, AKE_TYPE_NATURAL);
 	td1->data.natural.bit_count = 32;
 
 	bool cast = false;
-	Zinc_expect_true(test, Ake_TypeDefMatch(td0, td1, &cast), "match");
+	Zinc_expect_true(test, Ake_TypeMatch(td0, td1, &cast), "match");
 	Zinc_expect_true(test, cast, "cast");
 
-	Ake_TypeDefDestroy(td0);
+	Ake_TypeDestroy(td0);
 }
 
 void AkeUnit_TypeDefMatchCastTrue3(Zinc_test* test)
@@ -740,21 +740,21 @@ void AkeUnit_TypeDefMatchCastTrue3(Zinc_test* test)
 		return;
 	}
 
-	Ake_TypeDef* td0 = NULL;
-	Ake_TypeDefCreate(&td0);
-	Ake_TypeDefSet(td0, AKE_TYPE_INTEGER);
+	Ake_Type* td0 = NULL;
+	Ake_TypeCreate(&td0);
+	Ake_TypeSet(td0, AKE_TYPE_INTEGER);
 	td0->data.integer.bit_count = 32;
 
-	Ake_TypeDef* td1 = NULL;
-	Ake_TypeDefCreate(&td1);
-	Ake_TypeDefSet(td1, AKE_TYPE_INTEGER);
+	Ake_Type* td1 = NULL;
+	Ake_TypeCreate(&td1);
+	Ake_TypeSet(td1, AKE_TYPE_INTEGER);
 	td1->data.integer.bit_count = 64;
 
 	bool cast = false;
-	Zinc_expect_true(test, Ake_TypeDefMatch(td0, td1, &cast), "match");
+	Zinc_expect_true(test, Ake_TypeMatch(td0, td1, &cast), "match");
 	Zinc_expect_true(test, cast, "cast");
 
-	Ake_TypeDefDestroy(td0);
+	Ake_TypeDestroy(td0);
 }
 
 void AkeUnit_TypeDefMatchCastTrue4(Zinc_test* test)
@@ -766,21 +766,21 @@ void AkeUnit_TypeDefMatchCastTrue4(Zinc_test* test)
 		return;
 	}
 
-	Ake_TypeDef* td0 = NULL;
-	Ake_TypeDefCreate(&td0);
-	Ake_TypeDefSet(td0, AKE_TYPE_NATURAL);
+	Ake_Type* td0 = NULL;
+	Ake_TypeCreate(&td0);
+	Ake_TypeSet(td0, AKE_TYPE_NATURAL);
 	td0->data.natural.bit_count = 32;
 
-	Ake_TypeDef* td1 = NULL;
-	Ake_TypeDefCreate(&td1);
-	Ake_TypeDefSet(td1, AKE_TYPE_NATURAL);
+	Ake_Type* td1 = NULL;
+	Ake_TypeCreate(&td1);
+	Ake_TypeSet(td1, AKE_TYPE_NATURAL);
 	td1->data.natural.bit_count = 64;
 
 	bool cast = false;
-	Zinc_expect_true(test, Ake_TypeDefMatch(td0, td1, &cast), "match");
+	Zinc_expect_true(test, Ake_TypeMatch(td0, td1, &cast), "match");
 	Zinc_expect_true(test, cast, "cast");
 
-	Ake_TypeDefDestroy(td0);
+	Ake_TypeDestroy(td0);
 }
 
 void AkeUnit_TypeDefMatchCastTrue5(Zinc_test* test)
@@ -792,21 +792,21 @@ void AkeUnit_TypeDefMatchCastTrue5(Zinc_test* test)
 		return;
 	}
 
-	Ake_TypeDef* td0 = NULL;
-	Ake_TypeDefCreate(&td0);
-	Ake_TypeDefSet(td0, AKE_TYPE_REAL);
+	Ake_Type* td0 = NULL;
+	Ake_TypeCreate(&td0);
+	Ake_TypeSet(td0, AKE_TYPE_REAL);
 	td0->data.real.bit_count = 32;
 
-	Ake_TypeDef* td1 = NULL;
-	Ake_TypeDefCreate(&td1);
-	Ake_TypeDefSet(td1, AKE_TYPE_REAL);
+	Ake_Type* td1 = NULL;
+	Ake_TypeCreate(&td1);
+	Ake_TypeSet(td1, AKE_TYPE_REAL);
 	td1->data.real.bit_count = 64;
 
 	bool cast = false;
-	Zinc_expect_true(test, Ake_TypeDefMatch(td0, td1, &cast), "match");
+	Zinc_expect_true(test, Ake_TypeMatch(td0, td1, &cast), "match");
 	Zinc_expect_true(test, cast, "cast");
 
-	Ake_TypeDefDestroy(td0);
+	Ake_TypeDestroy(td0);
 }
 
 void AkeUnit_TypeCloneInteger(Zinc_test* test)
@@ -818,14 +818,14 @@ void AkeUnit_TypeCloneInteger(Zinc_test* test)
 		return;
 	}
 
-	Ake_TypeDef* td0 = NULL;
-	Ake_TypeDefCreate(&td0);
-	Ake_TypeDefSet(td0, AKE_TYPE_INTEGER);
+	Ake_Type* td0 = NULL;
+	Ake_TypeCreate(&td0);
+	Ake_TypeSet(td0, AKE_TYPE_INTEGER);
 	td0->data.integer.bit_count = 32;
 
-	Ake_TypeDef* td1 = Ake_TypeDefClone(td0);
+	Ake_Type* td1 = Ake_TypeClone(td0);
 
-	Zinc_expect_true(test, Ake_TypeDefMatch(td0, td1, NULL), "clone");
+	Zinc_expect_true(test, Ake_TypeMatch(td0, td1, NULL), "clone");
 }
 
 void AkeUnit_TypeCloneNatural(Zinc_test* test)
@@ -837,14 +837,14 @@ void AkeUnit_TypeCloneNatural(Zinc_test* test)
 		return;
 	}
 
-	Ake_TypeDef* td0 = NULL;
-	Ake_TypeDefCreate(&td0);
-	Ake_TypeDefSet(td0, AKE_TYPE_NATURAL);
+	Ake_Type* td0 = NULL;
+	Ake_TypeCreate(&td0);
+	Ake_TypeSet(td0, AKE_TYPE_NATURAL);
 	td0->data.natural.bit_count = 32;
 
-	Ake_TypeDef* td1 = Ake_TypeDefClone(td0);
+	Ake_Type* td1 = Ake_TypeClone(td0);
 
-	Zinc_expect_true(test, Ake_TypeDefMatch(td0, td1, NULL), "clone");
+	Zinc_expect_true(test, Ake_TypeMatch(td0, td1, NULL), "clone");
 }
 
 void AkeUnit_TypeCloneReal(Zinc_test* test)
@@ -856,14 +856,14 @@ void AkeUnit_TypeCloneReal(Zinc_test* test)
 		return;
 	}
 
-	Ake_TypeDef* td0 = NULL;
-	Ake_TypeDefCreate(&td0);
-	Ake_TypeDefSet(td0, AKE_TYPE_REAL);
+	Ake_Type* td0 = NULL;
+	Ake_TypeCreate(&td0);
+	Ake_TypeSet(td0, AKE_TYPE_REAL);
 	td0->data.real.bit_count = 32;
 
-	Ake_TypeDef* td1 = Ake_TypeDefClone(td0);
+	Ake_Type* td1 = Ake_TypeClone(td0);
 
-	Zinc_expect_true(test, Ake_TypeDefMatch(td0, td1, NULL), "clone");
+	Zinc_expect_true(test, Ake_TypeMatch(td0, td1, NULL), "clone");
 }
 
 void AkeUnit_TypeCloneBoolean(Zinc_test* test)
@@ -875,13 +875,13 @@ void AkeUnit_TypeCloneBoolean(Zinc_test* test)
 		return;
 	}
 
-	Ake_TypeDef* td0 = NULL;
-	Ake_TypeDefCreate(&td0);
-	Ake_TypeDefSet(td0, AKE_TYPE_BOOLEAN);
+	Ake_Type* td0 = NULL;
+	Ake_TypeCreate(&td0);
+	Ake_TypeSet(td0, AKE_TYPE_BOOLEAN);
 
-	Ake_TypeDef* td1 = Ake_TypeDefClone(td0);
+	Ake_Type* td1 = Ake_TypeClone(td0);
 
-	Zinc_expect_true(test, Ake_TypeDefMatch(td0, td1, NULL), "clone");
+	Zinc_expect_true(test, Ake_TypeMatch(td0, td1, NULL), "clone");
 }
 
 void AkeUnit_TypeCloneStruct(Zinc_test* test)
@@ -893,33 +893,33 @@ void AkeUnit_TypeCloneStruct(Zinc_test* test)
 		return;
 	}
 
-	Ake_TypeDef* td0 = NULL;
-	Ake_TypeDefCreate(&td0);
-	Ake_TypeDefSet(td0, AKE_TYPE_STRUCT);
+	Ake_Type* td0 = NULL;
+	Ake_TypeCreate(&td0);
+	Ake_TypeSet(td0, AKE_TYPE_STRUCT);
 
 	Ake_TypeField* tf0 = NULL;
 	Ake_TypeFieldCreate(&tf0);
 
-	Ake_TypeDef* td00 = NULL;
-	Ake_TypeDefCreate(&td00);
-	Ake_TypeDefSet(td00, AKE_TYPE_INTEGER);
+	Ake_Type* td00 = NULL;
+	Ake_TypeCreate(&td00);
+	Ake_TypeSet(td00, AKE_TYPE_INTEGER);
 	td00->data.integer.bit_count = 32;
 	tf0->td = td00;
-	Ake_TypeDefStructAdd(td0, tf0);
+	Ake_TypeStructAdd(td0, tf0);
 
 	Ake_TypeField* tf1 = NULL;
 	Ake_TypeFieldCreate(&tf1);
 
-	Ake_TypeDef* td01 = NULL;
-	Ake_TypeDefCreate(&td01);
-	Ake_TypeDefSet(td01, AKE_TYPE_NATURAL);
+	Ake_Type* td01 = NULL;
+	Ake_TypeCreate(&td01);
+	Ake_TypeSet(td01, AKE_TYPE_NATURAL);
 	td01->data.integer.bit_count = 32;
 	tf1->td = td01;
-	Ake_TypeDefStructAdd(td0, tf1);
+	Ake_TypeStructAdd(td0, tf1);
 
-	Ake_TypeDef* td1 = Ake_TypeDefClone(td0);
+	Ake_Type* td1 = Ake_TypeClone(td0);
 
-	Zinc_expect_true(test, Ake_TypeDefMatch(td0, td1, NULL), "clone");
+	Zinc_expect_true(test, Ake_TypeMatch(td0, td1, NULL), "clone");
 }
 
 void AkeUnit_TypeCloneArray(Zinc_test* test)
@@ -931,20 +931,20 @@ void AkeUnit_TypeCloneArray(Zinc_test* test)
 		return;
 	}
 
-	Ake_TypeDef* td0 = NULL;
-	Ake_TypeDefCreate(&td0);
-	Ake_TypeDefSet(td0, AKE_TYPE_ARRAY);
+	Ake_Type* td0 = NULL;
+	Ake_TypeCreate(&td0);
+	Ake_TypeSet(td0, AKE_TYPE_ARRAY);
 	td0->data.array.dim = 10;
 
-	Ake_TypeDef* td00 = NULL;
-	Ake_TypeDefCreate(&td00);
-	Ake_TypeDefSet(td00, AKE_TYPE_INTEGER);
+	Ake_Type* td00 = NULL;
+	Ake_TypeCreate(&td00);
+	Ake_TypeSet(td00, AKE_TYPE_INTEGER);
 	td00->data.integer.bit_count = 32;
 	td0->data.array.td = td00;
 
-	Ake_TypeDef* td1 = Ake_TypeDefClone(td0);
+	Ake_Type* td1 = Ake_TypeClone(td0);
 
-	Zinc_expect_true(test, Ake_TypeDefMatch(td0, td1, NULL), "clone");
+	Zinc_expect_true(test, Ake_TypeMatch(td0, td1, NULL), "clone");
 }
 
 void AkeUnit_TypeCloneArrayConst(Zinc_test* test)
@@ -956,20 +956,20 @@ void AkeUnit_TypeCloneArrayConst(Zinc_test* test)
 		return;
 	}
 
-	Ake_TypeDef* td0 = NULL;
-	Ake_TypeDefCreate(&td0);
-	Ake_TypeDefSet(td0, AKE_TYPE_ARRAY_CONST);
+	Ake_Type* td0 = NULL;
+	Ake_TypeCreate(&td0);
+	Ake_TypeSet(td0, AKE_TYPE_ARRAY_CONST);
 	td0->data.array_const.dim = 10;
 
-	Ake_TypeDef* td00 = NULL;
-	Ake_TypeDefCreate(&td00);
-	Ake_TypeDefSet(td00, AKE_TYPE_INTEGER);
+	Ake_Type* td00 = NULL;
+	Ake_TypeCreate(&td00);
+	Ake_TypeSet(td00, AKE_TYPE_INTEGER);
 	td00->data.integer.bit_count = 32;
 	td0->data.array.td = td00;
 
-	Ake_TypeDef* td1 = Ake_TypeDefClone(td0);
+	Ake_Type* td1 = Ake_TypeClone(td0);
 
-	Zinc_expect_true(test, Ake_TypeDefMatch(td0, td1, NULL), "clone");
+	Zinc_expect_true(test, Ake_TypeMatch(td0, td1, NULL), "clone");
 }
 
 void AkeUnit_TypeCloneSlice(Zinc_test* test)
@@ -981,19 +981,19 @@ void AkeUnit_TypeCloneSlice(Zinc_test* test)
 		return;
 	}
 
-	Ake_TypeDef* td0 = NULL;
-	Ake_TypeDefCreate(&td0);
-	Ake_TypeDefSet(td0, AKE_TYPE_SLICE);
+	Ake_Type* td0 = NULL;
+	Ake_TypeCreate(&td0);
+	Ake_TypeSet(td0, AKE_TYPE_SLICE);
 
-	Ake_TypeDef* td00 = NULL;
-	Ake_TypeDefCreate(&td00);
-	Ake_TypeDefSet(td00, AKE_TYPE_INTEGER);
+	Ake_Type* td00 = NULL;
+	Ake_TypeCreate(&td00);
+	Ake_TypeSet(td00, AKE_TYPE_INTEGER);
 	td00->data.integer.bit_count = 32;
 	td0->data.slice.td = td00;
 
-	Ake_TypeDef* td1 = Ake_TypeDefClone(td0);
+	Ake_Type* td1 = Ake_TypeClone(td0);
 
-	Zinc_expect_true(test, Ake_TypeDefMatch(td0, td1, NULL), "clone");
+	Zinc_expect_true(test, Ake_TypeMatch(td0, td1, NULL), "clone");
 }
 
 void AkeUnit_TypeClonePointer(Zinc_test* test)
@@ -1005,19 +1005,19 @@ void AkeUnit_TypeClonePointer(Zinc_test* test)
 		return;
 	}
 
-	Ake_TypeDef* td0 = NULL;
-	Ake_TypeDefCreate(&td0);
-	Ake_TypeDefSet(td0, AKE_TYPE_POINTER);
+	Ake_Type* td0 = NULL;
+	Ake_TypeCreate(&td0);
+	Ake_TypeSet(td0, AKE_TYPE_POINTER);
 
-	Ake_TypeDef* td00 = NULL;
-	Ake_TypeDefCreate(&td00);
-	Ake_TypeDefSet(td00, AKE_TYPE_INTEGER);
+	Ake_Type* td00 = NULL;
+	Ake_TypeCreate(&td00);
+	Ake_TypeSet(td00, AKE_TYPE_INTEGER);
 	td00->data.integer.bit_count = 32;
 	td0->data.pointer.td = td00;
 
-	Ake_TypeDef* td1 = Ake_TypeDefClone(td0);
+	Ake_Type* td1 = Ake_TypeClone(td0);
 
-	Zinc_expect_true(test, Ake_TypeDefMatch(td0, td1, NULL), "clone");
+	Zinc_expect_true(test, Ake_TypeMatch(td0, td1, NULL), "clone");
 }
 
 void AkeUnit_TypeCloneFunction(Zinc_test* test)
@@ -1029,39 +1029,39 @@ void AkeUnit_TypeCloneFunction(Zinc_test* test)
 		return;
 	}
 
-	Ake_TypeDef* td0 = NULL;
-	Ake_TypeDefCreate(&td0);
-	Ake_TypeDefSet(td0, AKE_TYPE_FUNCTION);
+	Ake_Type* td0 = NULL;
+	Ake_TypeCreate(&td0);
+	Ake_TypeSet(td0, AKE_TYPE_FUNCTION);
 
-	Ake_TypeDef* td00 = NULL;
-	Ake_TypeDefCreate(&td00);
-	Ake_TypeDefSet(td00, AKE_TYPE_INTEGER);
+	Ake_Type* td00 = NULL;
+	Ake_TypeCreate(&td00);
+	Ake_TypeSet(td00, AKE_TYPE_INTEGER);
 	td00->data.integer.bit_count = 32;
 
 	Ake_TypeParam* arg0 = NULL;
 	Ake_TypeParamCreate(&arg0);
 	arg0->td = td00;
-	Ake_TypeDefInputAdd(td0, arg0);
+	Ake_TypeInputAdd(td0, arg0);
 
-	Ake_TypeDef* td01 = NULL;
-	Ake_TypeDefCreate(&td01);
-	Ake_TypeDefSet(td01, AKE_TYPE_NATURAL);
+	Ake_Type* td01 = NULL;
+	Ake_TypeCreate(&td01);
+	Ake_TypeSet(td01, AKE_TYPE_NATURAL);
 	td01->data.natural.bit_count = 32;
 
 	Ake_TypeParam* arg1 = NULL;
 	Ake_TypeParamCreate(&arg1);
 	arg1->td = td01;
-	Ake_TypeDefInputAdd(td0, arg1);
+	Ake_TypeInputAdd(td0, arg1);
 
-	Ake_TypeDef* out = NULL;
-	Ake_TypeDefCreate(&out);
-	Ake_TypeDefSet(out, AKE_TYPE_INTEGER);
+	Ake_Type* out = NULL;
+	Ake_TypeCreate(&out);
+	Ake_TypeSet(out, AKE_TYPE_INTEGER);
 	out->data.integer.bit_count = 32;
 	td0->data.function.output = out;
 
-	Ake_TypeDef* td1 = Ake_TypeDefClone(td0);
+	Ake_Type* td1 = Ake_TypeClone(td0);
 
-	Zinc_expect_true(test, Ake_TypeDefMatch(td0, td1, NULL), "clone");
+	Zinc_expect_true(test, Ake_TypeMatch(td0, td1, NULL), "clone");
 }
 
 void AkeUnit_TypeName(Zinc_test* test)

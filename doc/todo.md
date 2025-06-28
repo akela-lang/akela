@@ -1,6 +1,4 @@
 # Akela
-* new type:
-  * change type def to type
 * new syntax tree
 * move checks into their own functions
 * run IR generation in same pass

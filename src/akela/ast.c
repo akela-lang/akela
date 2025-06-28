@@ -40,7 +40,7 @@ void Ake_ast_destroy(Ake_ast* n)
         }
 
         Zinc_string_destroy(&n->value);
-        Ake_TypeDefDestroy(n->tu);
+        Ake_TypeDestroy(n->tu);
 
     	Ake_EnvironmentDestroy(n->env);
     	free(n->env);
@@ -90,7 +90,7 @@ Ake_ast* Ast_node_get(Ake_ast* p, size_t pos)
 void Ake_ast_copy(Ake_ast* src, Ake_ast* dest)
 {
     dest->type = src->type;
-    dest->tu = Ake_TypeDefClone(src->tu);
+    dest->tu = Ake_TypeClone(src->tu);
     dest->loc = src->loc;
     Zinc_string_copy(&src->value, &dest->value);
 }
@@ -128,7 +128,7 @@ bool Ake_ast_match(Ake_ast* a, Ake_ast* b)
 			return false;
 		}
 
-		if (!Ake_TypeDefMatch(a->tu, b->tu, NULL)) {
+		if (!Ake_TypeMatch(a->tu, b->tu, NULL)) {
 			return false;
 		}
 

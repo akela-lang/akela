@@ -13,7 +13,7 @@ namespace Akela_llvm {
         Ake_ast* lseq = Ast_node_get(n, 0);
         Ake_ast* type_node = Ast_node_get(n, 1);
         Ake_ast* rseq = Ast_node_get(n, 2);
-        Ake_TypeDef* tu = type_node->tu;
+        Ake_Type* tu = type_node->tu;
 
         Ake_ast *lhs = Ast_node_get(lseq, 0);
         Ake_ast *rhs = nullptr;

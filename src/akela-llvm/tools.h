@@ -66,18 +66,18 @@ namespace Akela_llvm {
 
     bool IsArray(Ake_TypeKind kind);
     void Jit_data_init(Jit_data* jd, Zinc_error_list* el);
-    llvm::FunctionType* Get_function_type(Jit_data* jd, Ake_TypeDef* tu);
-    llvm::Type* Get_scalar_type(Jit_data * jd, Ake_TypeDef* tu);
-    llvm::Type* Get_type(Jit_data * jd, Ake_TypeDef* tu);
-    llvm::Type* Get_type_pointer(Jit_data *jd, Ake_TypeDef *tu);
-    llvm::Type* Get_return_type(Jit_data * jd, Ake_TypeDef * tu);
+    llvm::FunctionType* Get_function_type(Jit_data* jd, Ake_Type* tu);
+    llvm::Type* Get_scalar_type(Jit_data * jd, Ake_Type* tu);
+    llvm::Type* Get_type(Jit_data * jd, Ake_Type* tu);
+    llvm::Type* Get_type_pointer(Jit_data *jd, Ake_Type *tu);
+    llvm::Type* Get_return_type(Jit_data * jd, Ake_Type * tu);
     void Run(Jit_data* jd, Ake_ast* n, Ake_code_gen_result* result);
     llvm::BasicBlock* Get_last_block(Jit_data * jd, llvm::Function * f);
     llvm::Value* Dispatch(Jit_data* jd, Ake_ast* n);
     void Array_copy(
             Jit_data* jd,
-            Ake_TypeDef* lhs_tu,
-            Ake_TypeDef* rhs_tu,
+            Ake_Type* lhs_tu,
+            Ake_Type* rhs_tu,
             llvm::Value* lhs_ptr,
             llvm::Value* rhs_ptr);
 }

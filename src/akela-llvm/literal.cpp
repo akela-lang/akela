@@ -7,7 +7,7 @@ using namespace llvm::orc;
 namespace Akela_llvm {
     Value* Handle_number(Jit_data* jd, Ake_ast* n)
     {
-        Ake_TypeDef* tu = n->tu;
+        Ake_Type* tu = n->tu;
         if (tu->kind == AKE_TYPE_INTEGER) {
             Type* t = Get_type(jd, n->tu);
             Zinc_string_finish(&n->value);

@@ -19,27 +19,27 @@ bool Apt_compare_ast(Zinc_test* top_test, Zinc_test* case_test, Ake_ast* n, Cent
 bool Apt_compare_type_def(
     Zinc_test* case_test,
     Ake_ast* n,
-    Ake_TypeDef* tu,
+    Ake_Type* tu,
     Cent_value* value);
 bool Apt_compare_type_def_integer(
     Zinc_test* case_test,
     Ake_ast* n,
-    Ake_TypeDef* tu,
+    Ake_Type* tu,
     Cent_value* value);
 bool Apt_compare_type_def_natural(
     Zinc_test* case_test,
     Ake_ast* n,
-    Ake_TypeDef* tu,
+    Ake_Type* tu,
     Cent_value* value);
 bool Apt_compare_type_def_real(
     Zinc_test* case_test,
     Ake_ast* n,
-    Ake_TypeDef* tu,
+    Ake_Type* tu,
     Cent_value* value);
 bool Apt_compare_type_def_struct(
     Zinc_test* case_test,
     Ake_ast* n,
-    Ake_TypeDef* tu,
+    Ake_Type* tu,
     Cent_value* value);
 
 void Apt_suite_run(Zinc_test* suite_test)
@@ -256,7 +256,7 @@ bool Apt_compare_ast(Zinc_test* top_test, Zinc_test* case_test, Ake_ast* n, Cent
         }
     }
 
-    Ake_TypeDef* tu = n->tu;
+    Ake_Type* tu = n->tu;
     Cent_value* tu_value = Cent_value_get_str(value, "tu");
     pass = Apt_compare_type_def(case_test, n, tu, tu_value) && pass;
 
@@ -286,7 +286,7 @@ bool Apt_compare_ast(Zinc_test* top_test, Zinc_test* case_test, Ake_ast* n, Cent
 bool Apt_compare_type_def(
     Zinc_test* case_test,
     Ake_ast* n,
-    Ake_TypeDef* tu,
+    Ake_Type* tu,
     Cent_value* value)
 {
     bool pass = true;
@@ -398,7 +398,7 @@ bool Apt_compare_type_def(
 bool Apt_compare_type_def_integer(
     Zinc_test* case_test,
     Ake_ast* n,
-    Ake_TypeDef* tu,
+    Ake_Type* tu,
     Cent_value* value)
 {
     Apt_case_data* case_data = case_test->data;
@@ -436,7 +436,7 @@ bool Apt_compare_type_def_integer(
 bool Apt_compare_type_def_natural(
     Zinc_test* case_test,
     Ake_ast* n,
-    Ake_TypeDef* tu,
+    Ake_Type* tu,
     Cent_value* value)
 {
     Apt_case_data* case_data = case_test->data;
@@ -474,7 +474,7 @@ bool Apt_compare_type_def_natural(
 bool Apt_compare_type_def_real(
     Zinc_test* case_test,
     Ake_ast* n,
-    Ake_TypeDef* tu,
+    Ake_Type* tu,
     Cent_value* value)
 {
     Apt_case_data* case_data = case_test->data;
@@ -513,7 +513,7 @@ bool Apt_compare_type_def_real(
 bool Apt_compare_type_def_struct(
     Zinc_test* case_test,
     Ake_ast* n,
-    Ake_TypeDef* tu,
+    Ake_Type* tu,
     Cent_value* value)
 {
     Apt_case_data* case_data = case_test->data;

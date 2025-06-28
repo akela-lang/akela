@@ -2,7 +2,7 @@
 #include "zinc/memory.h"
 #include <assert.h>
 
-void Ake_TypeDefInit(Ake_TypeDef* td)
+void Ake_TypeInit(Ake_Type* td)
 {
     td->kind = AKE_TYPE_NONE;
     Zinc_string_init(&td->name);
@@ -10,13 +10,13 @@ void Ake_TypeDefInit(Ake_TypeDef* td)
     td->context = Ake_type_context_value;
 }
 
-void Ake_TypeDefCreate(Ake_TypeDef** td)
+void Ake_TypeCreate(Ake_Type** td)
 {
-    Zinc_malloc_safe((void**)td, sizeof(Ake_TypeDef));
-    Ake_TypeDefInit(*td);
+    Zinc_malloc_safe((void**)td, sizeof(Ake_Type));
+    Ake_TypeInit(*td);
 }
 
-void Ake_TypeDefSet(Ake_TypeDef* td, Ake_TypeKind kind)
+void Ake_TypeSet(Ake_Type* td, Ake_TypeKind kind)
 {
     td->kind = kind;
     switch (kind) {
@@ -60,7 +60,8 @@ void Ake_TypeDefSet(Ake_TypeDef* td, Ake_TypeKind kind)
     }
 }
 
-void Ake_TypeDefDestroy(Ake_TypeDef* td)
+/* NOLINTNEXTLINE(misc-no-recursion) */
+void Ake_TypeDestroy(Ake_Type* td)
 {
     if (td) {
         Zinc_string_destroy(&td->name);
@@ -81,16 +82,16 @@ void Ake_TypeDefDestroy(Ake_TypeDef* td)
                 }
                 break;
             case AKE_TYPE_ARRAY:
-                Ake_TypeDefDestroy(td->data.array.td);
+                Ake_TypeDestroy(td->data.array.td);
                 break;
             case AKE_TYPE_ARRAY_CONST:
-                Ake_TypeDefDestroy(td->data.array_const.td);
+                Ake_TypeDestroy(td->data.array_const.td);
                 break;
             case AKE_TYPE_SLICE:
-                Ake_TypeDefDestroy(td->data.slice.td);
+                Ake_TypeDestroy(td->data.slice.td);
                 break;
             case AKE_TYPE_POINTER:
-                Ake_TypeDefDestroy(td->data.pointer.td);
+                Ake_TypeDestroy(td->data.pointer.td);
                 break;
             case AKE_TYPE_FUNCTION:
                 Ake_TypeParam* tp = td->data.function.input_head;
@@ -101,7 +102,7 @@ void Ake_TypeDefDestroy(Ake_TypeDef* td)
                     free(temp);
                 }
 
-                Ake_TypeDefDestroy(td->data.function.output);
+                Ake_TypeDestroy(td->data.function.output);
                 break;
             default:
                 assert(false && "invalid kind");
@@ -126,7 +127,8 @@ bool Ake_TypeIsNumeric(Ake_TypeKind kind)
     return false;
 }
 
-bool Ake_TypeDefMatch(Ake_TypeDef* a, Ake_TypeDef* b, bool* cast)
+/* NOLINTNEXTLINE(misc-no-recursion) */
+bool Ake_TypeMatch(Ake_Type* a, Ake_Type* b, bool* cast)
 {
     if (a->kind != b->kind) {
         if (cast && a->kind == AKE_TYPE_ARRAY_CONST && b->kind == AKE_TYPE_ARRAY) {
@@ -182,7 +184,7 @@ bool Ake_TypeDefMatch(Ake_TypeDef* a, Ake_TypeDef* b, bool* cast)
                 if (!a_tf || !b_tf) {
                     return false;
                 }
-                if (!Ake_TypeDefMatch(a_tf->td, b_tf->td, NULL)) {
+                if (!Ake_TypeMatch(a_tf->td, b_tf->td, NULL)) {
                     return false;
                 }
                 a_tf = a_tf->next;
@@ -193,16 +195,16 @@ bool Ake_TypeDefMatch(Ake_TypeDef* a, Ake_TypeDef* b, bool* cast)
             if (a->data.array.dim != b->data.array.dim) {
                 return false;
             }
-            return Ake_TypeDefMatch(a->data.array.td, b->data.array.td, cast);
+            return Ake_TypeMatch(a->data.array.td, b->data.array.td, cast);
         case AKE_TYPE_ARRAY_CONST:
             if (a->data.array_const.dim < b->data.array_const.dim) {
                 return false;
             }
-            return Ake_TypeDefMatch(a->data.array_const.td, b->data.array_const.td, cast);
+            return Ake_TypeMatch(a->data.array_const.td, b->data.array_const.td, cast);
         case AKE_TYPE_SLICE:
-            return Ake_TypeDefMatch(a->data.slice.td, b->data.slice.td, NULL);
+            return Ake_TypeMatch(a->data.slice.td, b->data.slice.td, NULL);
         case AKE_TYPE_POINTER:
-            return Ake_TypeDefMatch(a->data.pointer.td, b->data.pointer.td, cast);
+            return Ake_TypeMatch(a->data.pointer.td, b->data.pointer.td, cast);
         case AKE_TYPE_FUNCTION:
             Ake_TypeParam* a_tp = a->data.function.input_head;
             Ake_TypeParam* b_tp = b->data.function.input_head;
@@ -210,7 +212,7 @@ bool Ake_TypeDefMatch(Ake_TypeDef* a, Ake_TypeDef* b, bool* cast)
                 if (!a_tp || !b_tp) {
                     return false;
                 }
-                if (!Ake_TypeDefMatch(a_tp->td, b_tp->td, NULL)) {
+                if (!Ake_TypeMatch(a_tp->td, b_tp->td, NULL)) {
                     return false;
                 }
                 a_tp = a_tp->next;
@@ -222,7 +224,7 @@ bool Ake_TypeDefMatch(Ake_TypeDef* a, Ake_TypeDef* b, bool* cast)
                     return false;
                 }
 
-                if (!Ake_TypeDefMatch(a->data.function.output, b->data.function.output, NULL)) {
+                if (!Ake_TypeMatch(a->data.function.output, b->data.function.output, NULL)) {
                     return false;
                 }
             }
@@ -234,12 +236,13 @@ bool Ake_TypeDefMatch(Ake_TypeDef* a, Ake_TypeDef* b, bool* cast)
     return true;
 }
 
-Ake_TypeDef* Ake_TypeDefClone(Ake_TypeDef* td)
+/* NOLINTNEXTLINE(misc-no-recursion) */
+Ake_Type* Ake_TypeClone(Ake_Type* td)
 {
-    Ake_TypeDef* new_td = NULL;
+    Ake_Type* new_td = NULL;
     if (td) {
-        Ake_TypeDefCreate(&new_td);
-        Ake_TypeDefSet(new_td, td->kind);
+        Ake_TypeCreate(&new_td);
+        Ake_TypeSet(new_td, td->kind);
         Zinc_string_add_string(&new_td->name, &td->name);
         switch (td->kind) {
             case AKE_TYPE_INTEGER:
@@ -255,24 +258,24 @@ Ake_TypeDef* Ake_TypeDefClone(Ake_TypeDef* td)
                     Ake_TypeField* new_tf = NULL;
                     Ake_TypeFieldCreate(&new_tf);
                     Zinc_string_add_string(&new_tf->name, &tf->name);
-                    new_tf->td = Ake_TypeDefClone(tf->td);
-                    Ake_TypeDefStructAdd(new_td, new_tf);
+                    new_tf->td = Ake_TypeClone(tf->td);
+                    Ake_TypeStructAdd(new_td, new_tf);
                     tf = tf->next;
                 }
                 break;
             case AKE_TYPE_ARRAY:
                 new_td->data.array.dim = td->data.array.dim;
-                new_td->data.array.td = Ake_TypeDefClone(td->data.array.td);
+                new_td->data.array.td = Ake_TypeClone(td->data.array.td);
                 break;
             case AKE_TYPE_ARRAY_CONST:
                 new_td->data.array_const.dim = td->data.array_const.dim;
-                new_td->data.array_const.td = Ake_TypeDefClone(td->data.array_const.td);
+                new_td->data.array_const.td = Ake_TypeClone(td->data.array_const.td);
                 break;
             case AKE_TYPE_SLICE:
-                new_td->data.slice.td = Ake_TypeDefClone(td->data.slice.td);
+                new_td->data.slice.td = Ake_TypeClone(td->data.slice.td);
                 break;
             case AKE_TYPE_POINTER:
-                new_td->data.pointer.td = Ake_TypeDefClone(td->data.pointer.td);
+                new_td->data.pointer.td = Ake_TypeClone(td->data.pointer.td);
                 break;
             case AKE_TYPE_FUNCTION:
                 Ake_TypeParam* tp = td->data.function.input_head;
@@ -280,11 +283,11 @@ Ake_TypeDef* Ake_TypeDefClone(Ake_TypeDef* td)
                     Ake_TypeParam* new_tp = NULL;
                     Ake_TypeParamCreate(&new_tp);
                     Zinc_string_add_string(&new_tp->name, &tp->name);
-                    new_tp->td = Ake_TypeDefClone(tp->td);
-                    Ake_TypeDefInputAdd(new_td, new_tp);
+                    new_tp->td = Ake_TypeClone(tp->td);
+                    Ake_TypeInputAdd(new_td, new_tp);
                     tp = tp->next;
                 }
-                new_td->data.function.output = Ake_TypeDefClone(td->data.function.output);
+                new_td->data.function.output = Ake_TypeClone(td->data.function.output);
                 break;
             default:
                 assert(false && "invalid kind");
@@ -294,11 +297,11 @@ Ake_TypeDef* Ake_TypeDefClone(Ake_TypeDef* td)
     return new_td;
 }
 
-void Ake_TypeDefCopy(Ake_TypeDef* a, Ake_TypeDef* b)
+void Ake_TypeCopy(Ake_Type* a, Ake_Type* b)
 {
-    Ake_TypeDefDestroy(b);
-    Ake_TypeDefInit(b);
-    Ake_TypeDefSet(b, a->kind);
+    Ake_TypeDestroy(b);
+    Ake_TypeInit(b);
+    Ake_TypeSet(b, a->kind);
     Zinc_string_add_string(&b->name, &a->name);
 
     switch (a->kind) {
@@ -315,24 +318,24 @@ void Ake_TypeDefCopy(Ake_TypeDef* a, Ake_TypeDef* b)
                 Ake_TypeField* new_tf = NULL;
                 Ake_TypeFieldCreate(&new_tf);
                 Zinc_string_add_string(&new_tf->name, &tf->name);
-                new_tf->td = Ake_TypeDefClone(tf->td);
-                Ake_TypeDefStructAdd(b, new_tf);
+                new_tf->td = Ake_TypeClone(tf->td);
+                Ake_TypeStructAdd(b, new_tf);
                 tf = tf->next;
             }
             break;
         case AKE_TYPE_ARRAY:
             b->data.array.dim = a->data.array.dim;
-            b->data.array.td = Ake_TypeDefClone(a->data.array.td);
+            b->data.array.td = Ake_TypeClone(a->data.array.td);
             break;
         case AKE_TYPE_ARRAY_CONST:
             b->data.array_const.dim = a->data.array_const.dim;
-            b->data.array_const.td = Ake_TypeDefClone(a->data.array_const.td);
+            b->data.array_const.td = Ake_TypeClone(a->data.array_const.td);
             break;
         case AKE_TYPE_SLICE:
-            b->data.slice.td = Ake_TypeDefClone(a->data.slice.td);
+            b->data.slice.td = Ake_TypeClone(a->data.slice.td);
             break;
         case AKE_TYPE_POINTER:
-            b->data.pointer.td = Ake_TypeDefClone(a->data.pointer.td);
+            b->data.pointer.td = Ake_TypeClone(a->data.pointer.td);
             break;
         case AKE_TYPE_FUNCTION:
             Ake_TypeParam* tp = a->data.function.input_head;
@@ -340,18 +343,18 @@ void Ake_TypeDefCopy(Ake_TypeDef* a, Ake_TypeDef* b)
                 Ake_TypeParam* new_tp = NULL;
                 Ake_TypeParamCreate(&new_tp);
                 Zinc_string_add_string(&new_tp->name, &tp->name);
-                new_tp->td = Ake_TypeDefClone(tp->td);
-                Ake_TypeDefInputAdd(b, new_tp);
+                new_tp->td = Ake_TypeClone(tp->td);
+                Ake_TypeInputAdd(b, new_tp);
                 tp = tp->next;
             }
-            b->data.function.output = Ake_TypeDefClone(a->data.function.output);
+            b->data.function.output = Ake_TypeClone(a->data.function.output);
             break;
         default:
             assert(false && "invalid kind");
     }
 }
 
-void Ake_TypeDefStructAdd(Ake_TypeDef* td, Ake_TypeField* tf)
+void Ake_TypeStructAdd(Ake_Type* td, Ake_TypeField* tf)
 {
     assert(td->kind == AKE_TYPE_STRUCT);
 
@@ -365,7 +368,7 @@ void Ake_TypeDefStructAdd(Ake_TypeDef* td, Ake_TypeField* tf)
     }
 }
 
-void Ake_TypeDefInputAdd(Ake_TypeDef* td, Ake_TypeParam* tp)
+void Ake_TypeInputAdd(Ake_Type* td, Ake_TypeParam* tp)
 {
     assert(td->kind == AKE_TYPE_FUNCTION);
 
@@ -398,7 +401,7 @@ void Ake_TypeParamCreate(Ake_TypeParam** tp)
 void Ake_TypeParamDestroy(Ake_TypeParam* tp)
 {
     Zinc_string_destroy(&tp->name);
-    Ake_TypeDefDestroy(tp->td);
+    Ake_TypeDestroy(tp->td);
 }
 
 void Ake_TypeFieldInit(Ake_TypeField* tf)
@@ -415,8 +418,9 @@ void Ake_TypeFieldCreate(Ake_TypeField** tf)
     Ake_TypeFieldInit(*tf);
 }
 
+/* NOLINTNEXTLINE(misc-no-recursion) */
 void Ake_TypeFieldDestroy(Ake_TypeField* tf)
 {
     Zinc_string_destroy(&tf->name);
-    Ake_TypeDefDestroy(tf->td);
+    Ake_TypeDestroy(tf->td);
 }

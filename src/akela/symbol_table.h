@@ -30,7 +30,7 @@ AKELA_API void Ake_end_environment(struct Ake_symbol_table* st);
 AKELA_API void Ake_symbol_table_init(struct Ake_symbol_table* st);
 AKELA_API void Ake_symbol_table_create(struct Ake_symbol_table** st);
 AKELA_API void Ake_symbol_table_destroy(struct Ake_symbol_table* st);
-AKELA_API bool Ake_is_numeric(Ake_TypeDef* td);
+AKELA_API bool Ake_is_numeric(Ake_Type* td);
 AKELA_API void Ake_set_current_function(Ake_symbol_table* st, Ake_ast* fd);
 AKELA_API Ake_ast* Ake_get_current_function(Ake_symbol_table* st);
 AKELA_API size_t Ake_symbol_table_generate_id(struct Ake_symbol_table* st);

@@ -57,7 +57,7 @@ static const char* Ake_TypeName(Ake_TypeKind kind)
     return name[kind];
 }
 
-struct Ake_TypeDef {
+struct Ake_Type {
     Ake_TypeKind kind;
     Zinc_string name;
     union {
@@ -65,14 +65,14 @@ struct Ake_TypeDef {
         struct { uint8_t bit_count; } natural;
         struct { uint8_t bit_count; } real;
         struct { Ake_TypeField* head; Ake_TypeField* tail; void* backend_type; } fields;
-        struct { size_t dim; Ake_TypeDef* td; } array;
-        struct { size_t dim; Ake_TypeDef* td; } array_const;
-        struct { Ake_TypeDef* td; } slice;
-        struct { Ake_TypeDef* td; } pointer;
+        struct { size_t dim; Ake_Type* td; } array;
+        struct { size_t dim; Ake_Type* td; } array_const;
+        struct { Ake_Type* td; } slice;
+        struct { Ake_Type* td; } pointer;
         struct {
             Ake_TypeParam* input_head;
             Ake_TypeParam* input_tail;
-            Ake_TypeDef* output;
+            Ake_Type* output;
         } function;
     } data;
     Ake_type_context context;
@@ -88,27 +88,27 @@ typedef enum Ake_TypeParamKind {
 struct Ake_TypeParam {
     Ake_TypeParamKind kind;
     Zinc_string name;
-    Ake_TypeDef* td;
+    Ake_Type* td;
     Ake_TypeParam* next;
     Ake_TypeParam* prev;
 };
 
 struct Ake_TypeField {
     Zinc_string name;
-    Ake_TypeDef* td;
+    Ake_Type* td;
     Ake_TypeField* next;
     Ake_TypeField* prev;
 };
 
-void Ake_TypeDefInit(Ake_TypeDef* td);
-void Ake_TypeDefCreate(Ake_TypeDef** td);
-void Ake_TypeDefSet(Ake_TypeDef* td, Ake_TypeKind kind);
-void Ake_TypeDefDestroy(Ake_TypeDef* td);
-void Ake_TypeDefStructAdd(Ake_TypeDef* td, Ake_TypeField* tf);
-void Ake_TypeDefInputAdd(Ake_TypeDef* td, Ake_TypeParam* tp);
-bool Ake_TypeDefMatch(Ake_TypeDef* a, Ake_TypeDef* b, bool* cast);
-Ake_TypeDef* Ake_TypeDefClone(Ake_TypeDef* td);
-void Ake_TypeDefCopy(Ake_TypeDef* a, Ake_TypeDef* b);
+void Ake_TypeInit(Ake_Type* td);
+void Ake_TypeCreate(Ake_Type** td);
+void Ake_TypeSet(Ake_Type* td, Ake_TypeKind kind);
+void Ake_TypeDestroy(Ake_Type* td);
+void Ake_TypeStructAdd(Ake_Type* td, Ake_TypeField* tf);
+void Ake_TypeInputAdd(Ake_Type* td, Ake_TypeParam* tp);
+bool Ake_TypeMatch(Ake_Type* a, Ake_Type* b, bool* cast);
+Ake_Type* Ake_TypeClone(Ake_Type* td);
+void Ake_TypeCopy(Ake_Type* a, Ake_Type* b);
 
 void Ake_TypeParamInit(Ake_TypeParam* tp);
 void Ake_TypeParamCreate(Ake_TypeParam** tp);

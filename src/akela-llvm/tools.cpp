@@ -31,7 +31,7 @@ namespace Akela_llvm {
     }
 
     /* NOLINTNEXTLINE(misc-no-recursion) */
-    FunctionType *Get_function_type(Jit_data *jd, Ake_TypeDef *tu) {
+    FunctionType *Get_function_type(Jit_data *jd, Ake_Type *tu) {
         bool is_variadic = false;
         std::vector<Type *> param_types = std::vector<Type *>();
         Ake_TypeParam* tp = tu->data.function.input_head;
@@ -56,7 +56,7 @@ namespace Akela_llvm {
     }
 
     /* NOLINTNEXTLINE(misc-no-recursion) */
-    Type *Get_scalar_type(Jit_data *jd, Ake_TypeDef *tu) {
+    Type *Get_scalar_type(Jit_data *jd, Ake_Type *tu) {
         if (!tu) {
             return Type::getVoidTy(*jd->TheContext);
         }
@@ -143,7 +143,7 @@ namespace Akela_llvm {
     }
 
     /* NOLINTNEXTLINE(misc-no-recursion) */
-    Type* Get_type_pointer(Jit_data *jd, Ake_TypeDef *tu)
+    Type* Get_type_pointer(Jit_data *jd, Ake_Type *tu)
     {
         Type* t = Get_type(jd, tu);
         if (tu) {
@@ -169,7 +169,7 @@ namespace Akela_llvm {
     }
 
     /* NOLINTNEXTLINE(misc-no-recursion) */
-    Type* Get_type(Jit_data* jd, Ake_TypeDef* tu)
+    Type* Get_type(Jit_data* jd, Ake_Type* tu)
     {
         Type *t;
         if (tu && IsArray(tu->kind)) {
@@ -177,7 +177,7 @@ namespace Akela_llvm {
             if (tu->kind == AKE_TYPE_ARRAY) {
                 dim = tu->data.array.dim;
                 //t = ArrayType::get(Get_type(jd, tu->data.array.td), dim);
-                Ake_TypeDef* tu2 = tu->data.array.td;
+                Ake_Type* tu2 = tu->data.array.td;
                 t = Get_type(jd, tu2);
                 if (tu2->kind == AKE_TYPE_FUNCTION) {
                     t = PointerType::get(t, 0);
@@ -215,7 +215,7 @@ namespace Akela_llvm {
 
             if (IsArray(type)) {
                 if (type == AKE_TYPE_ARRAY_CONST) {
-                    Ake_TypeDef* tu = n->tu->data.array_const.td;
+                    Ake_Type* tu = n->tu->data.array_const.td;
                     if (tu->kind == AKE_TYPE_NATURAL && tu->data.natural.bit_count == 8) {
                         char* (*fp)() = ExprSymbol.getAddress().toPtr<char*(*)()>();
                         char* v = fp();
@@ -403,14 +403,14 @@ namespace Akela_llvm {
     /* NOLINTNEXTLINE(misc-no-recursion) */
     void Array_copy(
             Jit_data* jd,
-            Ake_TypeDef* lhs_tu,
-            Ake_TypeDef* rhs_tu,
+            Ake_Type* lhs_tu,
+            Ake_Type* rhs_tu,
             Value* lhs_ptr,
             Value* rhs_ptr)
     {
         size_t size = 0;
-        Ake_TypeDef* lhs_tu2 = NULL;
-        Ake_TypeDef* rhs_tu2 = NULL;
+        Ake_Type* lhs_tu2 = NULL;
+        Ake_Type* rhs_tu2 = NULL;
         if (lhs_tu->kind == AKE_TYPE_ARRAY) {
             size = lhs_tu->data.array.dim;
             lhs_tu2 = lhs_tu->data.array.td;

@@ -92,12 +92,12 @@ namespace Akela_llvm {
 
         std::vector<Value*> arg_list;
         Ake_ast* arg = cseq->head;
-        Ake_TypeDef* func_type = callee->tu;
+        Ake_Type* func_type = callee->tu;
 
         Ake_TypeParam* tp = func_type->data.function.input_head;
         while (tp) {
-            Ake_TypeDef* param_tu = tp->td;
-            Ake_TypeDef* arg_tu = arg->tu;
+            Ake_Type* param_tu = tp->td;
+            Ake_Type* arg_tu = arg->tu;
             if (arg->type == Ake_ast_type_number) {
                 if ((arg_tu->kind == AKE_TYPE_INTEGER && arg_tu->data.integer.bit_count == 32)
                     && (param_tu->kind == AKE_TYPE_NATURAL && param_tu->data.natural.bit_count == 64)) {

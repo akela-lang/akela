@@ -141,7 +141,7 @@ static char const* Ast_type_name(Ake_ast_type type)
 typedef struct Ake_ast {
 	Ake_ast_type type;
 	Zinc_string value;
-	Ake_TypeDef* tu;
+	Ake_Type* tu;
     bool is_mut;
     Zinc_location loc;
 	Ake_Environment* env;

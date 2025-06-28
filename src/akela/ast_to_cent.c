@@ -4,7 +4,7 @@
 
 void Ake_indent_print(size_t level);
 char* Ake_ast_cent_name(Ake_ast_type type);
-void Ake_type_def_cent_print(Ake_TypeDef* td, size_t level, bool is_property);
+void Ake_type_def_cent_print(Ake_Type* td, size_t level, bool is_property);
 char* Ake_type_def_cent_name(Ake_TypeKind kind);
 char* Ake_type_param_cent_name(Ake_TypeParamKind kind);
 
@@ -272,7 +272,7 @@ char* Ake_ast_cent_name(Ake_ast_type type)
 }
 
 /* NOLINTNEXTLINE(misc-no-recursion) */
-void Ake_type_def_cent_print(Ake_TypeDef* td, size_t level, bool is_property)
+void Ake_type_def_cent_print(Ake_Type* td, size_t level, bool is_property)
 {
     if (!is_property) {
         Ake_indent_print(level);
