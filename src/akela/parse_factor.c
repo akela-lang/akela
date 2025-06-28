@@ -627,7 +627,8 @@ void Ake_parse_struct_literal_elements(
             Ake_ast_add(field, expr);
 
             if (parent->type != Ake_ast_type_error) {
-                if (!Ake_TypeDefMatch(sfr.td, expr->tu, NULL)) {
+                bool cast = false;
+                if (!Ake_TypeDefMatch(sfr.td, expr->tu, &cast)) {
                     Zinc_error_list_set(ps->el, &expr->loc, "invalid type for field");
                     parent->type = Ake_ast_type_error;
                 }
