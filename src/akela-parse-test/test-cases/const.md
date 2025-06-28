@@ -73,7 +73,7 @@ Double constant
 use lib::base::*
 Test {
   .mute = false
-  .solo = true
+  .solo = false
   .snapshot = false
   .has_error = false
 }
