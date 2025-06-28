@@ -41,15 +41,15 @@ AKELA_API bool Ake_match(
     enum Ake_token_enum type,
     const char* reason,
     struct Ake_token** t,
-    Ake_ast* n);
-AKELA_API bool Ake_consume_newline(struct Ake_parse_state* ps, Ake_ast* n);
-AKELA_API bool Ake_is_identity_comparison(enum Ake_ast_type type);
+    Ake_Ast* n);
+AKELA_API bool Ake_consume_newline(struct Ake_parse_state* ps, Ake_Ast* n);
+AKELA_API bool Ake_is_identity_comparison(enum Ake_AstKind type);
 AKELA_API struct Zinc_location Ake_get_location(struct Ake_parse_state* ps);
 AKELA_API struct Ake_token* Ake_get_lookahead(struct Ake_parse_state* ps);
-AKELA_API bool Ake_check_assignment_value_count(Ake_ast* a, Ake_ast* b);
+AKELA_API bool Ake_check_assignment_value_count(Ake_Ast* a, Ake_Ast* b);
 AKELA_API void Ake_parse_separator(
     struct Ake_parse_state* ps,
-    Ake_ast* n,
+    Ake_Ast* n,
     bool* has_separator);
 size_t Ake_get_current_seq(Ake_parse_state* ps);
 

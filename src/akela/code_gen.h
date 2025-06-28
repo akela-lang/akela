@@ -26,13 +26,13 @@ typedef struct {
 } Ake_code_gen_result;
 
 typedef void* (*Ake_code_gen_init_interface)();
-typedef bool (*Ake_code_gen_jit_interface)(void* cg_obj, void* jd, Ake_ast* n, Ake_code_gen_result* result);
+typedef bool (*Ake_code_gen_jit_interface)(void* cg_obj, void* jd, Ake_Ast* n, Ake_code_gen_result* result);
 typedef void (*Ake_code_gen_destroy_interface)(void* cg_jit);
 
 void Ake_code_gen_result_init(Ake_code_gen_result* result);
 void Ake_code_gen_result_destroy(Ake_code_gen_result* result);
 void* Ake_code_gen_init(void* cg_obj, Ake_Vt* cg_vtable);
-bool Ake_code_gen_jit(void* cg_obj, Ake_Vt* cg_vtable, void* jd, Ake_ast* n, Ake_code_gen_result* result);
+bool Ake_code_gen_jit(void* cg_obj, Ake_Vt* cg_vtable, void* jd, Ake_Ast* n, Ake_code_gen_result* result);
 void Ake_code_gen_destroy(void* cg_obj, Ake_Vt* cg_vtable, void* cg_jit);
 
 #endif

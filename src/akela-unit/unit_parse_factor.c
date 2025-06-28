@@ -27,15 +27,15 @@ void AkeUnit_parse_number_integer(Zinc_test* test)
 	if (!Zinc_expect_ptr(test, cu.root, "ptr cu.root")) {
 		return Zinc_assert();
 	}
-	if (!Zinc_expect_int_equal(test, cu.root->type, Ake_ast_type_stmts, "parse_stmts cu.root")) {
+	if (!Zinc_expect_int_equal(test, cu.root->kind, Ake_ast_type_stmts, "parse_stmts cu.root")) {
 		return Zinc_assert();
 	}
 
-	Ake_ast* number = Ast_node_get(cu.root, 0);
+	Ake_Ast* number = Ast_node_get(cu.root, 0);
 	if (!Zinc_expect_ptr(test, number, "ptr number")) {
 		return Zinc_assert();
 	}
-	Zinc_expect_int_equal(test, number->type, Ake_ast_type_number, "number num");
+	Zinc_expect_int_equal(test, number->kind, Ake_ast_type_number, "number num");
 	Zinc_expect_string(test, &number->value, "32", "32 num");
 
 	Ake_Type* tu = number->tu;
@@ -69,15 +69,15 @@ void AkeUnit_parse_number_float(Zinc_test* test)
 	if (!Zinc_expect_ptr(test, cu.root, "ptr cu.root")) {
 		return Zinc_assert();
 	}
-	if (!Zinc_expect_int_equal(test, cu.root->type, Ake_ast_type_stmts, "parse_stmts cu.root")) {
+	if (!Zinc_expect_int_equal(test, cu.root->kind, Ake_ast_type_stmts, "parse_stmts cu.root")) {
 		return Zinc_assert();
 	}
 
-	Ake_ast* number = Ast_node_get(cu.root, 0);
+	Ake_Ast* number = Ast_node_get(cu.root, 0);
 	if (!Zinc_expect_ptr(test, number, "ptr num")) {
 		return Zinc_assert();
 	}
-	Zinc_expect_int_equal(test, number->type, Ake_ast_type_number, "number number");
+	Zinc_expect_int_equal(test, number->kind, Ake_ast_type_number, "number number");
 	Zinc_expect_string(test, &number->value, "5.0e0", "5.0e0 number");
 
 	Ake_Type* tu = number->tu;
@@ -110,13 +110,13 @@ void AkeUnit_parse_string(Zinc_test* test)
 	if (!Zinc_expect_ptr(test, cu.root, "ptr cu.root")) {
 		return Zinc_assert();
 	}
-	Zinc_expect_int_equal(test, cu.root->type, Ake_ast_type_stmts, "type cu.root");
+	Zinc_expect_int_equal(test, cu.root->kind, Ake_ast_type_stmts, "type cu.root");
 
-	Ake_ast* string = Ast_node_get(cu.root, 0);
+	Ake_Ast* string = Ast_node_get(cu.root, 0);
 	if (!Zinc_expect_ptr(test, string, "ptr string")) {
 		return Zinc_assert();
 	}
-	Zinc_expect_int_equal(test, string->type, Ake_ast_type_string, "type string");
+	Zinc_expect_int_equal(test, string->kind, Ake_ast_type_string, "type string");
 	Zinc_expect_string(test, &string->value, "hello", "value string");
 
 	Ake_Type* tu = string->tu;
@@ -157,13 +157,13 @@ void AkeUnit_parse_boolean_true(Zinc_test* test)
 	if (!Zinc_expect_ptr(test, cu.root, "ptr cu.root")) {
 		return Zinc_assert();
 	}
-	Zinc_expect_int_equal(test, cu.root->type, Ake_ast_type_stmts, "parse_stmts cu.root");
+	Zinc_expect_int_equal(test, cu.root->kind, Ake_ast_type_stmts, "parse_stmts cu.root");
 
-	Ake_ast* true_node = Ast_node_get(cu.root, 0);
+	Ake_Ast* true_node = Ast_node_get(cu.root, 0);
 	if (!Zinc_expect_ptr(test, true_node, "ptr true_node")) {
 		return Zinc_assert();
 	}
-	Zinc_expect_int_equal(test, true_node->type, Ake_ast_type_boolean, "boolean true_node");
+	Zinc_expect_int_equal(test, true_node->kind, Ake_ast_type_boolean, "boolean true_node");
 	Zinc_expect_string(test, &true_node->value, "true", "true true_node");
 
 	Ake_Type* tu = true_node->tu;
@@ -196,13 +196,13 @@ void AkeUnit_parse_boolean_false(Zinc_test* test)
 	if (!Zinc_expect_ptr(test, cu.root, "ptr cu.root")) {
 		return Zinc_assert();
 	}
-	Zinc_expect_int_equal(test, cu.root->type, Ake_ast_type_stmts, "parse_stmts cu.root");
+	Zinc_expect_int_equal(test, cu.root->kind, Ake_ast_type_stmts, "parse_stmts cu.root");
 
-	Ake_ast* false_node = Ast_node_get(cu.root, 0);
+	Ake_Ast* false_node = Ast_node_get(cu.root, 0);
 	if (!Zinc_expect_ptr(test, false_node, "ptr false_node")) {
 		return Zinc_assert();
 	}
-	Zinc_expect_int_equal(test, false_node->type, Ake_ast_type_boolean, "boolean false_node");
+	Zinc_expect_int_equal(test, false_node->kind, Ake_ast_type_boolean, "boolean false_node");
 	Zinc_expect_string(test, &false_node->value, "false", "false false_node");
 
 	Ake_Type* tu = false_node->tu;
@@ -235,44 +235,44 @@ void AkeUnit_parse_id(Zinc_test* test)
 	if (!Zinc_expect_ptr(test, cu.root, "ptr cu.root")) {
 		return Zinc_assert();
 	}
-	if (!Zinc_expect_int_equal(test, cu.root->type, Ake_ast_type_stmts, "parse_stmts cu.root")) {
+	if (!Zinc_expect_int_equal(test, cu.root->kind, Ake_ast_type_stmts, "parse_stmts cu.root")) {
 		return Zinc_assert();
 	}
 
-	Ake_ast* let = Ast_node_get(cu.root, 0);
+	Ake_Ast* let = Ast_node_get(cu.root, 0);
 	if (!Zinc_expect_ptr(test, let, "ptr let")) {
 		return Zinc_assert();
 	}
-	if (!Zinc_expect_int_equal(test, let->type, Ake_ast_type_const, "type let")) {
+	if (!Zinc_expect_int_equal(test, let->kind, Ake_ast_type_const, "type let")) {
 		return Zinc_assert();
 	}
 
-	Ake_ast* let_lseq = Ast_node_get(let, 0);
+	Ake_Ast* let_lseq = Ast_node_get(let, 0);
 	if (!Zinc_expect_ptr(test, let_lseq, "ptr let_lseq")) {
 		return Zinc_assert();
 	}
-	if (!Zinc_expect_int_equal(test, let_lseq->type, Ake_ast_type_let_lseq, "let_lseq let_lseq")) {
+	if (!Zinc_expect_int_equal(test, let_lseq->kind, Ake_ast_type_let_lseq, "let_lseq let_lseq")) {
 		return Zinc_assert();
 	}
 
-	Ake_ast* id = Ast_node_get(let_lseq, 0);
+	Ake_Ast* id = Ast_node_get(let_lseq, 0);
 	if (!Zinc_expect_ptr(test, id, "ptr id")) {
 		return Zinc_assert();
 	}
-	Zinc_expect_int_equal(test, id->type, Ake_ast_type_id, "id id");
+	Zinc_expect_int_equal(test, id->kind, Ake_ast_type_id, "id id");
 	Zinc_expect_string(test, &id->value, "x", "x");
 
-	Ake_ast* type = Ast_node_get(let, 1);
+	Ake_Ast* type = Ast_node_get(let, 1);
 	if (!Zinc_expect_ptr(test, type, "ptr type")) {
 		return Zinc_assert();
 	}
-	Zinc_expect_int_equal(test, type->type, Ake_ast_type_type, "type type");
+	Zinc_expect_int_equal(test, type->kind, Ake_ast_type_type, "type type");
 
-	Ake_ast* id2 = Ast_node_get(cu.root, 1);
+	Ake_Ast* id2 = Ast_node_get(cu.root, 1);
 	if (!Zinc_expect_ptr(test, id2, "ptr id2")) {
 		return Zinc_assert();
 	}
-	Zinc_expect_int_equal(test, id2->type, Ake_ast_type_id, "id id2");
+	Zinc_expect_int_equal(test, id2->kind, Ake_ast_type_id, "id id2");
 	Zinc_expect_string(test, &id2->value, "x", "x id2");
 
 	Ake_Type* tu = id2->tu;
@@ -306,15 +306,15 @@ void AkeUnit_parse_id2(Zinc_test* test)
 	if (!Zinc_expect_ptr(test, cu.root, "ptr cu.root")) {
 		return Zinc_assert();
 	}
-	if (!Zinc_expect_int_equal(test, cu.root->type, Ake_ast_type_stmts, "parse_stmts cu.root")) {
+	if (!Zinc_expect_int_equal(test, cu.root->kind, Ake_ast_type_stmts, "parse_stmts cu.root")) {
 		return Zinc_assert();
 	}
 
-	Ake_ast* id = Ast_node_get(cu.root, 1);
+	Ake_Ast* id = Ast_node_get(cu.root, 1);
 	if (!Zinc_expect_ptr(test, id, "ptr id")) {
 		return Zinc_assert();
 	}
-	Zinc_expect_int_equal(test, id->type, Ake_ast_type_id, "id id");
+	Zinc_expect_int_equal(test, id->kind, Ake_ast_type_id, "id id");
 	Zinc_expect_string(test, &id->value, "_a23", "_a23 id");
 
     AkeUnit_parse_teardown(&cu);
@@ -340,15 +340,15 @@ void AkeUnit_parse_id3(Zinc_test* test)
 	if (!Zinc_expect_ptr(test, cu.root, "ptr cu.root")) {
 		return Zinc_assert();
 	}
-	if (!Zinc_expect_int_equal(test, cu.root->type, Ake_ast_type_stmts, "parse_stmts cu.root")) {
+	if (!Zinc_expect_int_equal(test, cu.root->kind, Ake_ast_type_stmts, "parse_stmts cu.root")) {
 		return Zinc_assert();
 	}
 
-	Ake_ast* id = Ast_node_get(cu.root, 1);
+	Ake_Ast* id = Ast_node_get(cu.root, 1);
 	if (!Zinc_expect_ptr(test, id, "ptr id")) {
 		return Zinc_assert();
 	}
-	Zinc_expect_int_equal(test, id->type, Ake_ast_type_id, "id id");
+	Zinc_expect_int_equal(test, id->kind, Ake_ast_type_id, "id id");
 	Zinc_expect_string(test, &id->value, "a2", "a2 id");
 
     AkeUnit_parse_teardown(&cu);
@@ -374,15 +374,15 @@ void AkeUnit_parse_id_greek(Zinc_test* test)
     if (!Zinc_expect_ptr(test, cu.root, "ptr cu.root")) {
 	    return Zinc_assert();
     }
-    if (!Zinc_expect_int_equal(test, cu.root->type, Ake_ast_type_stmts, "parse_stmts cu.root")) {
+    if (!Zinc_expect_int_equal(test, cu.root->kind, Ake_ast_type_stmts, "parse_stmts cu.root")) {
 		return Zinc_assert();
 	}
 
-    Ake_ast* id = Ast_node_get(cu.root, 1);
+    Ake_Ast* id = Ast_node_get(cu.root, 1);
     if (!Zinc_expect_ptr(test, id, "ptr id")) {
 	    return Zinc_assert();
     }
-    Zinc_expect_int_equal(test, id->type, Ake_ast_type_id, "id");
+    Zinc_expect_int_equal(test, id->kind, Ake_ast_type_id, "id");
     Zinc_expect_string(test, &id->value, "αβγ", "value");
 
     AkeUnit_parse_teardown(&cu);
@@ -436,13 +436,13 @@ void AkeUnit_parse_sign_negative(Zinc_test* test)
 	if (!Zinc_expect_ptr(test, cu.root, "ptr cu.root")) {
 		return Zinc_assert();
 	}
-	Zinc_expect_int_equal(test, cu.root->type, Ake_ast_type_stmts, "parse_stmts cu.root");
+	Zinc_expect_int_equal(test, cu.root->kind, Ake_ast_type_stmts, "parse_stmts cu.root");
 
-	Ake_ast* sign = Ast_node_get(cu.root, 0);
+	Ake_Ast* sign = Ast_node_get(cu.root, 0);
 	if (!Zinc_expect_ptr(test, sign, "ptr sign")) {
 		return Zinc_assert();
 	}
-	Zinc_expect_int_equal(test, sign->type, Ake_ast_type_sign, "sign sign");
+	Zinc_expect_int_equal(test, sign->kind, Ake_ast_type_sign, "sign sign");
 
 	Ake_Type* tu = sign->tu;
 	if (!Zinc_expect_ptr(test, tu, "ptr tu")) {
@@ -452,17 +452,17 @@ void AkeUnit_parse_sign_negative(Zinc_test* test)
 	Zinc_expect_string(test, &tu->name, "Int32", "Int32 tu");
 	Zinc_expect_int_equal(test, tu->data.integer.bit_count, 32, "bit_count tu");
 
-	Ake_ast* left = Ast_node_get(sign, 0);
+	Ake_Ast* left = Ast_node_get(sign, 0);
 	if (!Zinc_expect_ptr(test, left, "left")) {
 		return Zinc_assert();
 	}
-	Zinc_expect_int_equal(test, left->type, Ake_ast_type_minus, "minus");
+	Zinc_expect_int_equal(test, left->kind, Ake_ast_type_minus, "minus");
 
-	Ake_ast* right = Ast_node_get(sign, 1);
+	Ake_Ast* right = Ast_node_get(sign, 1);
 	if (!Zinc_expect_ptr(test, right, "right")) {
 		return Zinc_assert();
 	}
-	Zinc_expect_int_equal(test, right->type, Ake_ast_type_number, "number");
+	Zinc_expect_int_equal(test, right->kind, Ake_ast_type_number, "number");
 	Zinc_expect_string(test, &right->value, "30", "30");
 
     AkeUnit_parse_teardown(&cu);
@@ -488,15 +488,15 @@ void AkeUnit_parse_sign_positive(Zinc_test* test)
 	if (!Zinc_expect_ptr(test, cu.root, "ptr cu.root")) {
 		return Zinc_assert();
 	}
-	if (!Zinc_expect_int_equal(test, cu.root->type, Ake_ast_type_stmts, "parse_stmts cu.root")) {
+	if (!Zinc_expect_int_equal(test, cu.root->kind, Ake_ast_type_stmts, "parse_stmts cu.root")) {
 		return Zinc_assert();
 	}
 
-	Ake_ast* sign = Ast_node_get(cu.root, 0);
+	Ake_Ast* sign = Ast_node_get(cu.root, 0);
 	if (!Zinc_expect_ptr(test, sign, "ptr sign")) {
 		return Zinc_assert();
 	}
-	Zinc_expect_int_equal(test, sign->type, Ake_ast_type_sign, "sign sign");
+	Zinc_expect_int_equal(test, sign->kind, Ake_ast_type_sign, "sign sign");
 
 	Ake_Type* tu = sign->tu;
 	if (!Zinc_expect_ptr(test, tu, "ptr tu")) {
@@ -506,19 +506,19 @@ void AkeUnit_parse_sign_positive(Zinc_test* test)
 	Zinc_expect_string(test, &tu->name, "Int32", "Int32 tu");
 	Zinc_expect_uint8_t_equal(test, tu->data.integer.bit_count, 32, "bit_count tu");
 
-	Ake_ast* left = Ast_node_get(sign, 0);
+	Ake_Ast* left = Ast_node_get(sign, 0);
 	if (!Zinc_expect_ptr(test, left, "left")) {
 		return Zinc_assert();
 	}
-	if (!Zinc_expect_int_equal(test, left->type, Ake_ast_type_plus, "plus")) {
+	if (!Zinc_expect_int_equal(test, left->kind, Ake_ast_type_plus, "plus")) {
 		return Zinc_assert();
 	}
 
-	Ake_ast* right = Ast_node_get(sign, 1);
+	Ake_Ast* right = Ast_node_get(sign, 1);
 	if (!Zinc_expect_ptr(test, right, "right")) {
 		return Zinc_assert();
 	}
-	if (!Zinc_expect_int_equal(test, right->type, Ake_ast_type_number, "number")) {
+	if (!Zinc_expect_int_equal(test, right->kind, Ake_ast_type_number, "number")) {
 		return Zinc_assert();
 	}
 	Zinc_expect_string(test, &right->value, "30", "30");
@@ -584,13 +584,13 @@ void AkeUnit_parse_not_id(Zinc_test* test)
 	if (!Zinc_expect_ptr(test, cu.root, "ptr cu.root")) {
 		return Zinc_assert();
 	}
-	Zinc_expect_int_equal(test, cu.root->type, Ake_ast_type_stmts, "parse_stmts cu.root");
+	Zinc_expect_int_equal(test, cu.root->kind, Ake_ast_type_stmts, "parse_stmts cu.root");
 
-	Ake_ast* not = Ast_node_get(cu.root, 1);
+	Ake_Ast* not = Ast_node_get(cu.root, 1);
 	if (!Zinc_expect_ptr(test, not, "ptr not")) {
 		return Zinc_assert();
 	}
-	Zinc_expect_int_equal(test, not->type, Ake_ast_type_not, "not not");
+	Zinc_expect_int_equal(test, not->kind, Ake_ast_type_not, "not not");
 
 	Ake_Type* tu = not->tu;
 	if (!Zinc_expect_ptr(test, tu, "ptr tu")) {
@@ -599,11 +599,11 @@ void AkeUnit_parse_not_id(Zinc_test* test)
 	Zinc_expect_int_equal(test, tu->kind, AKE_TYPE_BOOLEAN, "boolean td");
 	Zinc_expect_string(test, &tu->name, "Bool", "name td");
 
-	Ake_ast* id = Ast_node_get(not, 0);
+	Ake_Ast* id = Ast_node_get(not, 0);
 	if (!Zinc_expect_ptr(test, id, "ptr id")) {
 		return Zinc_assert();
 	}
-	Zinc_expect_int_equal(test, id->type, Ake_ast_type_id, "id id");
+	Zinc_expect_int_equal(test, id->kind, Ake_ast_type_id, "id id");
 	Zinc_expect_string(test, &id->value, "a", "a id");
 
     AkeUnit_parse_teardown(&cu);
@@ -629,13 +629,13 @@ void AkeUnit_parse_not_literal(Zinc_test* test)
 	if (!Zinc_expect_ptr(test, cu.root, "ptr cu.root")) {
 		return Zinc_assert();
 	}
-	Zinc_expect_int_equal(test, cu.root->type, Ake_ast_type_stmts, "parse_stmts cu.root");
+	Zinc_expect_int_equal(test, cu.root->kind, Ake_ast_type_stmts, "parse_stmts cu.root");
 
-	Ake_ast* not = Ast_node_get(cu.root, 0);
+	Ake_Ast* not = Ast_node_get(cu.root, 0);
 	if (!Zinc_expect_ptr(test, not, "ptr not")) {
 		return Zinc_assert();
 	}
-	Zinc_expect_int_equal(test, not->type, Ake_ast_type_not, "not not");
+	Zinc_expect_int_equal(test, not->kind, Ake_ast_type_not, "not not");
 
 	Ake_Type* tu = not->tu;
 	if (!Zinc_expect_ptr(test, tu, "ptr tu")) {
@@ -644,11 +644,11 @@ void AkeUnit_parse_not_literal(Zinc_test* test)
 	Zinc_expect_int_equal(test, tu->kind, AKE_TYPE_BOOLEAN, "boolean td");
 	Zinc_expect_string(test, &tu->name, "Bool", "name td");
 
-	Ake_ast* lit_bool = Ast_node_get(not, 0);
+	Ake_Ast* lit_bool = Ast_node_get(not, 0);
 	if (!Zinc_expect_ptr(test, lit_bool, "ptr lit_bool")) {
 		return Zinc_assert();
 	}
-	Zinc_expect_int_equal(test, lit_bool->type, Ake_ast_type_boolean, "boolean true");
+	Zinc_expect_int_equal(test, lit_bool->kind, Ake_ast_type_boolean, "boolean true");
 	Zinc_expect_string(test, &lit_bool->value, "true", "true lit_bool");
 
     AkeUnit_parse_teardown(&cu);
@@ -693,13 +693,13 @@ void AkeUnit_parse_array_literal_integer(Zinc_test* test)
 	if (!Zinc_expect_ptr(test, cu.root, "ptr cu.root")) {
 		return Zinc_assert();
 	}
-	Zinc_expect_int_equal(test, cu.root->type, Ake_ast_type_stmts, "parse_stmts cu.root");
+	Zinc_expect_int_equal(test, cu.root->kind, Ake_ast_type_stmts, "parse_stmts cu.root");
 
-	Ake_ast* a = Ast_node_get(cu.root, 0);
+	Ake_Ast* a = Ast_node_get(cu.root, 0);
 	if (!Zinc_expect_ptr(test, a, "ptr a")) {
 		return Zinc_assert();
 	}
-	Zinc_expect_int_equal(test, a->type, Ake_ast_type_array_literal, "array-literal a");
+	Zinc_expect_int_equal(test, a->kind, Ake_ast_type_array_literal, "array-literal a");
 
 	Ake_Type* a_tu = a->tu;
 	if (!Zinc_expect_ptr(test, a_tu, "ptr array_tu")) {
@@ -716,25 +716,25 @@ void AkeUnit_parse_array_literal_integer(Zinc_test* test)
 	Zinc_expect_string(test, &a_tu2->name, "Int32", "Int32 array_td");
 	Zinc_expect_uint8_t_equal(test, a_tu2->data.integer.bit_count, 32, "bit_count a_tu2");
 
-	Ake_ast* a0 = Ast_node_get(a, 0);
+	Ake_Ast* a0 = Ast_node_get(a, 0);
 	if (!Zinc_expect_ptr(test, a0, "ptr a0")) {
 		return Zinc_assert();
 	}
-	Zinc_expect_int_equal(test, a0->type, Ake_ast_type_number, "number a0");
+	Zinc_expect_int_equal(test, a0->kind, Ake_ast_type_number, "number a0");
 	Zinc_expect_string(test, &a0->value, "1", "1 a0");
 
-	Ake_ast* a1 = Ast_node_get(a, 1);
+	Ake_Ast* a1 = Ast_node_get(a, 1);
 	if (!Zinc_expect_ptr(test, a1, "ptr a1")) {
 		return Zinc_assert();
 	}
-	Zinc_expect_int_equal(test, a1->type, Ake_ast_type_number, "number a1");
+	Zinc_expect_int_equal(test, a1->kind, Ake_ast_type_number, "number a1");
 	Zinc_expect_string(test, &a1->value, "2", "2 a1");
 
-	Ake_ast* a2 = Ast_node_get(a, 2);
+	Ake_Ast* a2 = Ast_node_get(a, 2);
 	if (!Zinc_expect_ptr(test, a2, "ptr a2")) {
 		return Zinc_assert();
 	}
-	Zinc_expect_int_equal(test, a2->type, Ake_ast_type_number, "number a2");
+	Zinc_expect_int_equal(test, a2->kind, Ake_ast_type_number, "number a2");
 	Zinc_expect_string(test, &a2->value, "3", "3 a2");
 
     AkeUnit_parse_teardown(&cu);
@@ -760,13 +760,13 @@ void AkeUnit_parse_array_literal_float(Zinc_test* test)
 	if (!Zinc_expect_ptr(test, cu.root, "ptr cu.root")) {
 		return Zinc_assert();
 	}
-	Zinc_expect_int_equal(test, cu.root->type, Ake_ast_type_stmts, "parse_stmts cu.root");
+	Zinc_expect_int_equal(test, cu.root->kind, Ake_ast_type_stmts, "parse_stmts cu.root");
 
-	Ake_ast* a = Ast_node_get(cu.root, 0);
+	Ake_Ast* a = Ast_node_get(cu.root, 0);
 	if (!Zinc_expect_ptr(test, a, "ptr a")) {
 		return Zinc_assert();
 	}
-	Zinc_expect_int_equal(test, a->type, Ake_ast_type_array_literal, "array-literal a");
+	Zinc_expect_int_equal(test, a->kind, Ake_ast_type_array_literal, "array-literal a");
 
 	Ake_Type* array_tu = a->tu;
 	if (!Zinc_expect_ptr(test, array_tu, "ptr array_tu")) {
@@ -781,25 +781,25 @@ void AkeUnit_parse_array_literal_float(Zinc_test* test)
 	Zinc_expect_string(test, &array_tu2->name, "Real64", "name array_td");
 	Zinc_expect_uint8_t_equal(test, array_tu2->data.real.bit_count, 64, "bit_count array_td");
 
-	Ake_ast* a0 = Ast_node_get(a, 0);
+	Ake_Ast* a0 = Ast_node_get(a, 0);
 	if (!Zinc_expect_ptr(test, a0, "ptr a0")) {
 		return Zinc_assert();
 	}
-	Zinc_expect_int_equal(test, a0->type, Ake_ast_type_number, "number a0");
+	Zinc_expect_int_equal(test, a0->kind, Ake_ast_type_number, "number a0");
 	Zinc_expect_string(test, &a0->value, "1.0", "1.0 a0");
 
-	Ake_ast* a1 = Ast_node_get(a, 1);
+	Ake_Ast* a1 = Ast_node_get(a, 1);
 	if (!Zinc_expect_ptr(test, a1, "ptr a1")) {
 		return Zinc_assert();
 	}
-	Zinc_expect_int_equal(test, a1->type, Ake_ast_type_number, "number a1");
+	Zinc_expect_int_equal(test, a1->kind, Ake_ast_type_number, "number a1");
 	Zinc_expect_string(test, &a1->value, "2.5", "2.5 a1");
 
-	Ake_ast* a2 = Ast_node_get(a, 2);
+	Ake_Ast* a2 = Ast_node_get(a, 2);
 	if (!Zinc_expect_ptr(test, a2, "ptr a2")) {
 		return Zinc_assert();
 	}
-	Zinc_expect_int_equal(test, a2->type, Ake_ast_type_number, "number a2");
+	Zinc_expect_int_equal(test, a2->kind, Ake_ast_type_number, "number a2");
 	Zinc_expect_string(test, &a2->value, "3.2", "3.2 a2");
 
     AkeUnit_parse_teardown(&cu);
@@ -823,13 +823,13 @@ void AkeUnit_parse_array_literal_numeric(Zinc_test* test)
 	if (!Zinc_expect_ptr(test, cu.root, "ptr cu.root")) {
 		return Zinc_assert();
 	}
-	Zinc_expect_int_equal(test, cu.root->type, Ake_ast_type_stmts, "parse_stmts cu.root");
+	Zinc_expect_int_equal(test, cu.root->kind, Ake_ast_type_stmts, "parse_stmts cu.root");
 
-	Ake_ast* a = Ast_node_get(cu.root, 0);
+	Ake_Ast* a = Ast_node_get(cu.root, 0);
 	if (!Zinc_expect_ptr(test, a, "ptr a")) {
 		return Zinc_assert();
 	}
-	Zinc_expect_int_equal(test, a->type, Ake_ast_type_array_literal, "array-literal a");
+	Zinc_expect_int_equal(test, a->kind, Ake_ast_type_array_literal, "array-literal a");
 
 	Ake_Type* array_tu = a->tu;
 	if (!Zinc_expect_ptr(test, array_tu, "ptr array_tu")) {
@@ -842,25 +842,25 @@ void AkeUnit_parse_array_literal_numeric(Zinc_test* test)
 	Zinc_expect_int_equal(test, array_tu2->kind, AKE_TYPE_INTEGER, "float array_td");
 	Zinc_expect_string(test, &array_tu2->name, "Int32", "name array_td");
 
-	Ake_ast* a0 = Ast_node_get(a, 0);
+	Ake_Ast* a0 = Ast_node_get(a, 0);
 	if (!Zinc_expect_ptr(test, a0, "ptr a0")) {
 		return Zinc_assert();
 	}
-	Zinc_expect_int_equal(test, a0->type, Ake_ast_type_number, "number a0");
+	Zinc_expect_int_equal(test, a0->kind, Ake_ast_type_number, "number a0");
 	Zinc_expect_string(test, &a0->value, "1", "1 a0");
 
-	Ake_ast* a1 = Ast_node_get(a, 1);
+	Ake_Ast* a1 = Ast_node_get(a, 1);
 	if (!Zinc_expect_ptr(test, a1, "ptr a1")) {
 		return Zinc_assert();
 	}
-	Zinc_expect_int_equal(test, a1->type, Ake_ast_type_number, "number a1");
+	Zinc_expect_int_equal(test, a1->kind, Ake_ast_type_number, "number a1");
 	Zinc_expect_string(test, &a1->value, "2.5", "2.5 a1");
 
-	Ake_ast* a2 = Ast_node_get(a, 2);
+	Ake_Ast* a2 = Ast_node_get(a, 2);
 	if (!Zinc_expect_ptr(test, a2, "ptr a2")) {
 		return Zinc_assert();
 	}
-	Zinc_expect_int_equal(test, a2->type, Ake_ast_type_number, "number a2");
+	Zinc_expect_int_equal(test, a2->kind, Ake_ast_type_number, "number a2");
 	Zinc_expect_string(test, &a2->value, "3", "3 a2");
 
     AkeUnit_parse_teardown(&cu);
@@ -901,25 +901,25 @@ void AkeUnit_parse_array_literal_bool(Zinc_test* test)
 	Zinc_expect_true(test, cu.valid, "valid");
 
 	Zinc_expect_ptr(test, cu.root, "ptr root");
-	Zinc_expect_int_equal(test, cu.root->type, Ake_ast_type_stmts, "type stmts");
+	Zinc_expect_int_equal(test, cu.root->kind, Ake_ast_type_stmts, "type stmts");
 
-	Ake_ast* array = Ast_node_get(cu.root, 0);
+	Ake_Ast* array = Ast_node_get(cu.root, 0);
 	Zinc_expect_ptr(test, array, "ptr array");
-	Zinc_expect_int_equal(test, array->type, Ake_ast_type_array_literal, "array literal");
+	Zinc_expect_int_equal(test, array->kind, Ake_ast_type_array_literal, "array literal");
 
-	Ake_ast* a0 = Ast_node_get(array, 0);
+	Ake_Ast* a0 = Ast_node_get(array, 0);
 	Zinc_expect_ptr(test, a0, "ptr a0");
-	Zinc_expect_int_equal(test, a0->type, Ake_ast_type_boolean, "type a0");
+	Zinc_expect_int_equal(test, a0->kind, Ake_ast_type_boolean, "type a0");
 	Zinc_expect_string(test, &a0->value, "false", "value a0");
 
-	Ake_ast* a1 = Ast_node_get(array, 1);
+	Ake_Ast* a1 = Ast_node_get(array, 1);
 	Zinc_expect_ptr(test, a1, "ptr a1");
-	Zinc_expect_int_equal(test, a1->type, Ake_ast_type_boolean, "type a1");
+	Zinc_expect_int_equal(test, a1->kind, Ake_ast_type_boolean, "type a1");
 	Zinc_expect_string(test, &a1->value, "true", "value a1");
 
-	Ake_ast* a2 = Ast_node_get(array, 2);
+	Ake_Ast* a2 = Ast_node_get(array, 2);
 	Zinc_expect_ptr(test, a2, "ptr a2");
-	Zinc_expect_int_equal(test, a2->type, Ake_ast_type_boolean, "type a2");
+	Zinc_expect_int_equal(test, a2->kind, Ake_ast_type_boolean, "type a2");
 	Zinc_expect_string(test, &a2->value, "false", "value a2");
 
 	AkeUnit_parse_teardown(&cu);
@@ -1002,16 +1002,16 @@ void AkeUnit_parse_paren_num(Zinc_test* test)
 	if (!Zinc_expect_ptr(test, cu.root, "ptr cu.root")) {
 		return Zinc_assert();
 	}
-	Zinc_expect_int_equal(test, cu.root->type, Ake_ast_type_stmts, "parse_stmts cu.root");
+	Zinc_expect_int_equal(test, cu.root->kind, Ake_ast_type_stmts, "parse_stmts cu.root");
 
-	Ake_ast* paren = Ast_node_get(cu.root, 0);
+	Ake_Ast* paren = Ast_node_get(cu.root, 0);
 	if (!Zinc_expect_ptr(test, paren, "ptr paren")) {
 		return Zinc_assert();
 	}
-	Zinc_expect_int_equal(test, paren->type, Ake_ast_type_parenthesis, "parenthesis paren");
+	Zinc_expect_int_equal(test, paren->kind, Ake_ast_type_parenthesis, "parenthesis paren");
 
-	Ake_ast* number = Ast_node_get(paren, 0);
-	Zinc_expect_int_equal(test, number->type, Ake_ast_type_number, "number number");
+	Ake_Ast* number = Ast_node_get(paren, 0);
+	Zinc_expect_int_equal(test, number->kind, Ake_ast_type_number, "number number");
 	Zinc_expect_string(test, &number->value, "32", "32 number");
 
     AkeUnit_parse_teardown(&cu);
@@ -1194,23 +1194,23 @@ void AkeUnit_parse_factor_newline_not(Zinc_test* test)
     Zinc_expect_true(test, cu.valid, "AkeUnit_parse_setup valid");
     Zinc_expect_no_errors(test, &cu.errors);
 
-    Ake_ast* stmts = cu.root;
+    Ake_Ast* stmts = cu.root;
     if (!Zinc_expect_ptr(test, stmts, "ptr parse_stmts")) {
 	    return Zinc_assert();
     }
-    Zinc_expect_int_equal(test, stmts->type, Ake_ast_type_stmts, "stmts parse_stmts");
+    Zinc_expect_int_equal(test, stmts->kind, Ake_ast_type_stmts, "stmts parse_stmts");
 
-    Ake_ast* not = stmts->head;
+    Ake_Ast* not = stmts->head;
     if (!Zinc_expect_ptr(test, not, "ptr not")) {
 	    return Zinc_assert();
     }
-    Zinc_expect_int_equal(test, not->type, not->type, "not not");
+    Zinc_expect_int_equal(test, not->kind, not->kind, "not not");
 
-    Ake_ast* tr = not->head;
+    Ake_Ast* tr = not->head;
     if (!Zinc_expect_ptr(test, tr, "ptr tr")) {
 	    return Zinc_assert();
     }
-    Zinc_expect_int_equal(test, tr->type, Ake_ast_type_boolean, "boolean tr");
+    Zinc_expect_int_equal(test, tr->kind, Ake_ast_type_boolean, "boolean tr");
     Zinc_expect_string(test, &tr->value, "true", "true");
 
     AkeUnit_parse_teardown(&cu);
@@ -1231,23 +1231,23 @@ void AkeUnit_parse_factor_newline_sign(Zinc_test* test)
     Zinc_expect_true(test, cu.valid, "AkeUnit_parse_setup valid");
     Zinc_expect_no_errors(test, &cu.errors);
 
-    Ake_ast* stmts = cu.root;
+    Ake_Ast* stmts = cu.root;
     if (!Zinc_expect_ptr(test, stmts, "ptr parse_stmts")) {
 	    return Zinc_assert();
     }
-    Zinc_expect_int_equal(test, stmts->type, Ake_ast_type_stmts, "stmts parse_stmts");
+    Zinc_expect_int_equal(test, stmts->kind, Ake_ast_type_stmts, "stmts parse_stmts");
 
-    Ake_ast* sign = stmts->head;
+    Ake_Ast* sign = stmts->head;
     if (!Zinc_expect_ptr(test, sign, "ptr sign")) {
 	    return Zinc_assert();
     }
-    Zinc_expect_int_equal(test, sign->type, sign->type, "sign sign");
+    Zinc_expect_int_equal(test, sign->kind, sign->kind, "sign sign");
 
-    Ake_ast* op = sign->head;
+    Ake_Ast* op = sign->head;
     if (!Zinc_expect_ptr(test, op, "ptr op")) {
 	    return Zinc_assert();
     }
-    Zinc_expect_int_equal(test, op->type, Ake_ast_type_minus, "minus op");
+    Zinc_expect_int_equal(test, op->kind, Ake_ast_type_minus, "minus op");
 
     AkeUnit_parse_teardown(&cu);
 }
@@ -1267,37 +1267,37 @@ void AkeUnit_parse_factor_newline_array_literal(Zinc_test* test)
     Zinc_expect_true(test, cu.valid, "AkeUnit_parse_setup valid");
     Zinc_expect_no_errors(test, &cu.errors);
 
-    Ake_ast* stmts = cu.root;
+    Ake_Ast* stmts = cu.root;
     if (!Zinc_expect_ptr(test, stmts, "ptr parse_stmts")) {
 	    return Zinc_assert();
     }
-    Zinc_expect_int_equal(test, stmts->type, Ake_ast_type_stmts, "parse_stmts stmts");
+    Zinc_expect_int_equal(test, stmts->kind, Ake_ast_type_stmts, "parse_stmts stmts");
 
-    Ake_ast* al = Ast_node_get(stmts, 0);
+    Ake_Ast* al = Ast_node_get(stmts, 0);
     if (!Zinc_expect_ptr(test, al, "ptr al")) {
 	    return Zinc_assert();
     }
-    Zinc_expect_int_equal(test, al->type, Ake_ast_type_array_literal, "array_literal al");
+    Zinc_expect_int_equal(test, al->kind, Ake_ast_type_array_literal, "array_literal al");
 
-    Ake_ast* one = Ast_node_get(al, 0);
+    Ake_Ast* one = Ast_node_get(al, 0);
     if (!Zinc_expect_ptr(test, one, "ptr one")) {
 	    return Zinc_assert();
     }
-    Zinc_expect_int_equal(test, one->type, Ake_ast_type_number, "number one");
+    Zinc_expect_int_equal(test, one->kind, Ake_ast_type_number, "number one");
     Zinc_expect_string(test, &one->value, "1", "1");
 
-    Ake_ast* two = Ast_node_get(al, 1);
+    Ake_Ast* two = Ast_node_get(al, 1);
     if (!Zinc_expect_ptr(test, two, "ptr two")) {
 	    return Zinc_assert();
     }
-    Zinc_expect_int_equal(test, two->type, Ake_ast_type_number, "number two");
+    Zinc_expect_int_equal(test, two->kind, Ake_ast_type_number, "number two");
     Zinc_expect_string(test, &two->value, "2", "2");
 
-    Ake_ast* three = Ast_node_get(al, 2);
+    Ake_Ast* three = Ast_node_get(al, 2);
     if (!Zinc_expect_ptr(test, three, "ptr three")) {
 	    return Zinc_assert();
     }
-    Zinc_expect_int_equal(test, three->type, Ake_ast_type_number, "number three");
+    Zinc_expect_int_equal(test, three->kind, Ake_ast_type_number, "number three");
     Zinc_expect_string(test, &three->value, "3", "3");
 
     AkeUnit_parse_teardown(&cu);
@@ -1318,23 +1318,23 @@ void AkeUnit_parse_factor_newline_array_parenthesis(Zinc_test* test)
     Zinc_expect_true(test, cu.valid, "AkeUnit_parse_setup valid");
     Zinc_expect_no_errors(test, &cu.errors);
 
-    Ake_ast* stmts = cu.root;
+    Ake_Ast* stmts = cu.root;
     if (!Zinc_expect_ptr(test, stmts, "ptr parse_stmts")) {
 	    return Zinc_assert();
     }
-    Zinc_expect_int_equal(test, stmts->type, Ake_ast_type_stmts, "parse_stmts stmts");
+    Zinc_expect_int_equal(test, stmts->kind, Ake_ast_type_stmts, "parse_stmts stmts");
 
-    Ake_ast* paren = Ast_node_get(stmts, 0);
+    Ake_Ast* paren = Ast_node_get(stmts, 0);
     if (!Zinc_expect_ptr(test, paren, "ptr paren")) {
 	    return Zinc_assert();
     }
-    Zinc_expect_int_equal(test, paren->type, Ake_ast_type_parenthesis, " parenthesis paren");
+    Zinc_expect_int_equal(test, paren->kind, Ake_ast_type_parenthesis, " parenthesis paren");
 
-    Ake_ast* plus = Ast_node_get(paren, 0);
+    Ake_Ast* plus = Ast_node_get(paren, 0);
     if (!Zinc_expect_ptr(test, plus, "ptr plus")) {
 	    return Zinc_assert();
     }
-    Zinc_expect_int_equal(test, plus->type, Ake_ast_type_plus, "plus plus");
+    Zinc_expect_int_equal(test, plus->kind, Ake_ast_type_plus, "plus plus");
 
     AkeUnit_parse_teardown(&cu);
 }
@@ -1356,17 +1356,17 @@ void AkeUnit_parse_factor_array_element_const(Zinc_test* test)
     Zinc_expect_true(test, cu.valid, "valid");
     Zinc_expect_no_errors(test, &cu.errors);
 
-    Ake_ast* let = Ast_node_get(cu.root, 0);
+    Ake_Ast* let = Ast_node_get(cu.root, 0);
     if (!Zinc_expect_ptr(test, let, "ptr let")) {
 	    return Zinc_assert();
     }
-    Zinc_expect_int_equal(test, let->type, Ake_ast_type_const, "type let");
+    Zinc_expect_int_equal(test, let->kind, Ake_ast_type_const, "type let");
 
-    Ake_ast* let_type = Ast_node_get(let, 1);
+    Ake_Ast* let_type = Ast_node_get(let, 1);
     if (!Zinc_expect_ptr(test, let_type, "ptr type")) {
 	    return Zinc_assert();
     }
-    Zinc_expect_int_equal(test, let_type->type, Ake_ast_type_type, "type type");
+    Zinc_expect_int_equal(test, let_type->kind, Ake_ast_type_type, "type type");
     Zinc_expect_true(test, let_type->tu->kind == AKE_TYPE_ARRAY_CONST, "is_array type");
     Zinc_expect_size_t_equal(test, let_type->tu->data.array_const.dim, 4, "size let_type_dim");
 

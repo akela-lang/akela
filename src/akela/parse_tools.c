@@ -65,7 +65,7 @@ bool Ake_match(
     enum Ake_token_enum type,
     const char* reason,
     struct Ake_token** t,
-    Ake_ast* n)
+    Ake_Ast* n)
 {
 	bool valid = true;
 	struct Zinc_location loc;
@@ -88,7 +88,7 @@ bool Ake_match(
 	return valid;
 }
 
-bool Ake_consume_newline(struct Ake_parse_state* ps, Ake_ast* n)
+bool Ake_consume_newline(struct Ake_parse_state* ps, Ake_Ast* n)
 {
     bool valid = true;
     while (true) {
@@ -113,7 +113,7 @@ struct Zinc_location Ake_get_location(struct Ake_parse_state* ps)
     return ps->lookahead->loc;
 }
 
-bool Ake_is_identity_comparison(enum Ake_ast_type type)
+bool Ake_is_identity_comparison(enum Ake_AstKind type)
 {
 	return type == Ake_ast_type_equality || type == Ake_ast_type_not_equal;
 }
@@ -125,15 +125,15 @@ struct Ake_token* Ake_get_lookahead(struct Ake_parse_state* ps)
     return t;
 }
 
-bool Ake_check_assignment_value_count(Ake_ast* a, Ake_ast* b)
+bool Ake_check_assignment_value_count(Ake_Ast* a, Ake_Ast* b)
 {
     if (a && b) {
-        if (a->type != Ake_ast_type_error && b->type != Ake_ast_type_error) {
-            if (a->type == Ake_ast_type_eseq && b->type != Ake_ast_type_eseq) {
+        if (a->kind != Ake_ast_type_error && b->kind != Ake_ast_type_error) {
+            if (a->kind == Ake_ast_type_eseq && b->kind != Ake_ast_type_eseq) {
                 return false;
-            } else if (a->type != Ake_ast_type_eseq && b->type == Ake_ast_type_eseq) {
+            } else if (a->kind != Ake_ast_type_eseq && b->kind == Ake_ast_type_eseq) {
                 return false;
-            } else if (a->type == Ake_ast_type_eseq || b->type == Ake_ast_type_eseq) {
+            } else if (a->kind == Ake_ast_type_eseq || b->kind == Ake_ast_type_eseq) {
                 if (Ake_ast_count_children(a) != Ake_ast_count_children(b)) {
                     return false;
                 }
@@ -144,7 +144,7 @@ bool Ake_check_assignment_value_count(Ake_ast* a, Ake_ast* b)
 }
 
 /* separator -> \n | ; */
-void Ake_parse_separator(struct Ake_parse_state* ps, Ake_ast* n, bool* has_separator)
+void Ake_parse_separator(struct Ake_parse_state* ps, Ake_Ast* n, bool* has_separator)
 {
     enum Ake_token_enum type;
     *has_separator = false;

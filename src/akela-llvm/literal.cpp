@@ -5,7 +5,7 @@ using namespace llvm;
 using namespace llvm::orc;
 
 namespace Akela_llvm {
-    Value* Handle_number(Jit_data* jd, Ake_ast* n)
+    Value* Handle_number(Jit_data* jd, Ake_Ast* n)
     {
         Ake_Type* tu = n->tu;
         if (tu->kind == AKE_TYPE_INTEGER) {
@@ -51,7 +51,7 @@ namespace Akela_llvm {
         assert(false);
     }
 
-    Value* Handle_boolean(Jit_data* jd, Ake_ast* n)
+    Value* Handle_boolean(Jit_data* jd, Ake_Ast* n)
     {
         if (Zinc_string_compare_str(&n->value, "true")) {
             Type* t = Type::getInt1Ty(*jd->TheContext);
@@ -63,7 +63,7 @@ namespace Akela_llvm {
         assert(false && "invalid boolean identifier");
     }
 
-    Value* Handle_string(Jit_data* jd, Ake_ast* n)
+    Value* Handle_string(Jit_data* jd, Ake_Ast* n)
     {
         Zinc_string_finish(&n->value);
         Value* str_value = jd->Builder->CreateGlobalString(n->value.buf, ".str");

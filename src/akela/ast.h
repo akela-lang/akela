@@ -13,7 +13,7 @@
 #include "zinc/list.h"
 #include "environment.h"
 
-typedef enum Ake_ast_type {
+typedef enum Ake_AstKind {
 	Ake_ast_type_none,
 	Ake_ast_type_id,
 	Ake_ast_type_sign,
@@ -70,9 +70,9 @@ typedef enum Ake_ast_type {
 	Ake_ast_type_const,
 	Ake_ast_type_var,
 	Ake_ast_type_count		/* keep at end */
-} Ake_ast_type;
+} Ake_AstKind;
 
-static char const* Ast_type_name(Ake_ast_type type)
+static char const* Ast_type_name(Ake_AstKind kind)
 {
 	char const* name[Ake_ast_type_count];
     name[Ake_ast_type_none] = "none";
@@ -131,44 +131,44 @@ static char const* Ast_type_name(Ake_ast_type type)
 	name[Ake_ast_type_const] = "const";
 	name[Ake_ast_type_var] = "var";
 
-	if (type >= 0 && type < Ake_ast_type_count) {
-		return name[type];
+	if (kind >= 0 && kind < Ake_ast_type_count) {
+		return name[kind];
 	}
 
 	return "Invalid Ake_ast_type";
 }
 
-typedef struct Ake_ast {
-	Ake_ast_type type;
+typedef struct Ake_Ast {
+	Ake_AstKind kind;
 	Zinc_string value;
 	Ake_Type* tu;
     bool is_mut;
     Zinc_location loc;
 	Ake_Environment* env;
-	Ake_ast* next;
-	Ake_ast* prev;
-	Ake_ast* head;
-	Ake_ast* tail;
-	Ake_ast* parent;
-} Ake_ast;
+	Ake_Ast* next;
+	Ake_Ast* prev;
+	Ake_Ast* head;
+	Ake_Ast* tail;
+	Ake_Ast* parent;
+} Ake_Ast;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-void Ake_ast_create(Ake_ast** n);
-AKELA_API void Ake_ast_destroy(Ake_ast* n);
-AKELA_API void Ake_ast_init(Ake_ast* n);
-AKELA_API void Ake_ast_add(Ake_ast* p, Ake_ast* c);
-AKELA_API void Ast_node_push(Ake_ast* parent, Ake_ast* child);
-AKELA_API Ake_ast* Ast_node_get(Ake_ast* p, size_t pos);
-AKELA_API void Ake_ast_print(Ake_ast* n);
-AKELA_API void Ake_ast_print_pointers(Ake_ast* root, struct Zinc_list* l);
-AKELA_API void Ake_ast_copy(Ake_ast* src, Ake_ast* dest);
-AKELA_API Ake_ast* Ake_ast_clone(Ake_ast* n);
-AKELA_API bool Ake_ast_match(Ake_ast* a, Ake_ast* b);
-AKELA_API size_t Ake_ast_count_children(Ake_ast* n);
-AKELA_API void Ast_node_validate(Ake_ast* n, struct Zinc_list* l);
+void Ake_ast_create(Ake_Ast** n);
+AKELA_API void Ake_ast_destroy(Ake_Ast* n);
+AKELA_API void Ake_ast_init(Ake_Ast* n);
+AKELA_API void Ake_ast_add(Ake_Ast* p, Ake_Ast* c);
+AKELA_API void Ast_node_push(Ake_Ast* parent, Ake_Ast* child);
+AKELA_API Ake_Ast* Ast_node_get(Ake_Ast* p, size_t pos);
+AKELA_API void Ake_ast_print(Ake_Ast* n);
+AKELA_API void Ake_ast_print_pointers(Ake_Ast* root, struct Zinc_list* l);
+AKELA_API void Ake_ast_copy(Ake_Ast* src, Ake_Ast* dest);
+AKELA_API Ake_Ast* Ake_ast_clone(Ake_Ast* n);
+AKELA_API bool Ake_ast_match(Ake_Ast* a, Ake_Ast* b);
+AKELA_API size_t Ake_ast_count_children(Ake_Ast* n);
+AKELA_API void Ast_node_validate(Ake_Ast* n, struct Zinc_list* l);
 
 #ifdef __cplusplus
 }

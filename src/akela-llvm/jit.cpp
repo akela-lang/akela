@@ -26,7 +26,7 @@ namespace Akela_llvm {
         delete jd;
     }
 
-    bool Jit(Akela_llvm_cg* cg, Jit_data* jd, Ake_ast* n, Ake_code_gen_result* result)
+    bool Jit(Akela_llvm_cg* cg, Jit_data* jd, Ake_Ast* n, Ake_code_gen_result* result)
     {
         bool valid = true;
 

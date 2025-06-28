@@ -4,12 +4,12 @@ using namespace llvm;
 
 namespace Akela_llvm {
     /* NOLINTNEXTLINE(misc-no-recursion) */
-    Value* Handle_mult(Jit_data* jd, Ake_ast* n)
+    Value* Handle_mult(Jit_data* jd, Ake_Ast* n)
     {
-        Ake_ast* a = Ast_node_get(n, 0);
+        Ake_Ast* a = Ast_node_get(n, 0);
         Value* lhs = Dispatch(jd, a);
 
-        Ake_ast* b = Ast_node_get(n, 1);
+        Ake_Ast* b = Ast_node_get(n, 1);
         Value* rhs = Dispatch(jd, b);
 
         if (a->tu->kind == AKE_TYPE_REAL || b->tu->kind == AKE_TYPE_REAL) {
@@ -20,12 +20,12 @@ namespace Akela_llvm {
     }
 
     /* NOLINTNEXTLINE(misc-no-recursion) */
-    Value* Handle_add(Jit_data* jd, Ake_ast* n)
+    Value* Handle_add(Jit_data* jd, Ake_Ast* n)
     {
-        Ake_ast* a = Ast_node_get(n, 0);
+        Ake_Ast* a = Ast_node_get(n, 0);
         Value* lhs = Dispatch(jd, a);
 
-        Ake_ast* b = Ast_node_get(n, 1);
+        Ake_Ast* b = Ast_node_get(n, 1);
         Value* rhs = Dispatch(jd, b);
 
         if (a->tu->kind == AKE_TYPE_REAL || b->tu->kind == AKE_TYPE_REAL) {
@@ -36,29 +36,29 @@ namespace Akela_llvm {
     }
 
     /* NOLINTNEXTLINE(misc-no-recursion) */
-    Value* Handle_sub(Jit_data* jd, Ake_ast* n)
+    Value* Handle_sub(Jit_data* jd, Ake_Ast* n)
     {
-        Ake_ast* a = Ast_node_get(n, 0);
+        Ake_Ast* a = Ast_node_get(n, 0);
         Value* lhs = Dispatch(jd, a);
 
-        Ake_ast* b = Ast_node_get(n, 1);
+        Ake_Ast* b = Ast_node_get(n, 1);
         Value* rhs = Dispatch(jd, b);
 
         return jd->Builder->CreateSub(lhs, rhs, "subtmp");
     }
 
     /* NOLINTNEXTLINE(misc-no-recursion) */
-    Value* Handle_sign(Jit_data* jd, Ake_ast* n)
+    Value* Handle_sign(Jit_data* jd, Ake_Ast* n)
     {
-        Ake_ast* op = Ast_node_get(n, 0);
-        Ake_ast* number = Ast_node_get(n, 1);
+        Ake_Ast* op = Ast_node_get(n, 0);
+        Ake_Ast* number = Ast_node_get(n, 1);
         Value* number_value = Dispatch(jd, number);
 
-        if (op->type == Ake_ast_type_plus) {
+        if (op->kind == Ake_ast_type_plus) {
             return number_value;
         }
 
-        assert(op->type == Ake_ast_type_minus);
+        assert(op->kind == Ake_ast_type_minus);
 
         Type* number_type = Get_type(jd, number->tu);
 

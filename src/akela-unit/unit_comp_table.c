@@ -37,17 +37,17 @@ void AkeUnit_comp_table_compile(Zinc_test* test)
 	bool valid = Ake_comp_unit_compile(cu, input, input->vtable);
 	Zinc_expect_true(test, valid, "valid");
 
-	Ake_ast* root = cu->root;
+	Ake_Ast* root = cu->root;
 	if (!Zinc_expect_ptr(test, root, "ptr root")) {
 		return Zinc_assert();
 	}
-	Zinc_expect_int_equal(test, root->type, Ake_ast_type_stmts, "parse_stmts root");
+	Zinc_expect_int_equal(test, root->kind, Ake_ast_type_stmts, "parse_stmts root");
 
-	Ake_ast* number = Ast_node_get(root, 0);
+	Ake_Ast* number = Ast_node_get(root, 0);
 	if (!Zinc_expect_ptr(test, number, "ptr number")) {
 		return Zinc_assert();
 	}
-	Zinc_expect_int_equal(test, number->type, Ake_ast_type_number, "number number");
+	Zinc_expect_int_equal(test, number->kind, Ake_ast_type_number, "number number");
 	Zinc_expect_string(test, &number->value, "10", "10 number");
 
     free(input);

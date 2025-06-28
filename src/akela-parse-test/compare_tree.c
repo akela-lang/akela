@@ -15,30 +15,30 @@
 #include "zinc/expect.h"
 #include "compare_errors.h"
 
-bool Apt_compare_ast(Zinc_test* top_test, Zinc_test* case_test, Ake_ast* n, Cent_value* value);
+bool Apt_compare_ast(Zinc_test* top_test, Zinc_test* case_test, Ake_Ast* n, Cent_value* value);
 bool Apt_compare_type_def(
     Zinc_test* case_test,
-    Ake_ast* n,
+    Ake_Ast* n,
     Ake_Type* tu,
     Cent_value* value);
 bool Apt_compare_type_def_integer(
     Zinc_test* case_test,
-    Ake_ast* n,
+    Ake_Ast* n,
     Ake_Type* tu,
     Cent_value* value);
 bool Apt_compare_type_def_natural(
     Zinc_test* case_test,
-    Ake_ast* n,
+    Ake_Ast* n,
     Ake_Type* tu,
     Cent_value* value);
 bool Apt_compare_type_def_real(
     Zinc_test* case_test,
-    Ake_ast* n,
+    Ake_Ast* n,
     Ake_Type* tu,
     Cent_value* value);
 bool Apt_compare_type_def_struct(
     Zinc_test* case_test,
-    Ake_ast* n,
+    Ake_Ast* n,
     Ake_Type* tu,
     Cent_value* value);
 
@@ -158,7 +158,7 @@ void Apt_case_run(Zinc_test* case_test)
 }
 
 /* NOLINTNEXTLINE(misc-no-recursion) */
-bool Apt_compare_ast(Zinc_test* top_test, Zinc_test* case_test, Ake_ast* n, Cent_value* value)
+bool Apt_compare_ast(Zinc_test* top_test, Zinc_test* case_test, Ake_Ast* n, Cent_value* value)
 {
     Apt_top_data* top_data = top_test->data;
     Apt_case_data* case_data = case_test->data;
@@ -205,15 +205,15 @@ bool Apt_compare_ast(Zinc_test* top_test, Zinc_test* case_test, Ake_ast* n, Cent
     /* properties */
     Cent_value* type = Cent_value_get_str(value, "@tag");
     assert(type);
-    if (n->type != type->data.enumeration.enum_value->value) {
+    if (n->kind != type->data.enumeration.enum_value->value) {
         Zinc_spec_error_list_set(
             &case_data->spec_errors,
             case_test,
             &n->loc,
             &value_n->loc,
             "Ast type does not match (%d-%s) (%d-%bf)",
-            n->type,
-            Ast_type_name(n->type),
+            n->kind,
+            Ast_type_name(n->kind),
             type->data.enumeration.enum_value->value,
             &type->data.enumeration.enum_value->display);
         pass = false;
@@ -261,7 +261,7 @@ bool Apt_compare_ast(Zinc_test* top_test, Zinc_test* case_test, Ake_ast* n, Cent
     pass = Apt_compare_type_def(case_test, n, tu, tu_value) && pass;
 
     /* children */
-    Ake_ast* n2 = NULL;
+    Ake_Ast* n2 = NULL;
     Cent_value* value2 = NULL;
 
     n2 = n->head;
@@ -285,7 +285,7 @@ bool Apt_compare_ast(Zinc_test* top_test, Zinc_test* case_test, Ake_ast* n, Cent
 /* NOLINTNEXTLINE(misc-no-recursion) */
 bool Apt_compare_type_def(
     Zinc_test* case_test,
-    Ake_ast* n,
+    Ake_Ast* n,
     Ake_Type* tu,
     Cent_value* value)
 {
@@ -304,12 +304,12 @@ bool Apt_compare_type_def(
             &n->loc,
             NULL,
             "type use value is null: (%d-%s)-(NULL)",
-            n->type,
-            Ast_type_name(n->type));
+            n->kind,
+            Ast_type_name(n->kind));
         return false;
     }
 
-    Ake_ast* value_n = value->n;
+    Ake_Ast* value_n = value->n;
 
     if (!tu && value) {
         Zinc_spec_error_list_set(
@@ -397,12 +397,12 @@ bool Apt_compare_type_def(
 
 bool Apt_compare_type_def_integer(
     Zinc_test* case_test,
-    Ake_ast* n,
+    Ake_Ast* n,
     Ake_Type* tu,
     Cent_value* value)
 {
     Apt_case_data* case_data = case_test->data;
-    Ake_ast* value_n = value->n;
+    Ake_Ast* value_n = value->n;
 
     bool pass = true;
 
@@ -435,12 +435,12 @@ bool Apt_compare_type_def_integer(
 
 bool Apt_compare_type_def_natural(
     Zinc_test* case_test,
-    Ake_ast* n,
+    Ake_Ast* n,
     Ake_Type* tu,
     Cent_value* value)
 {
     Apt_case_data* case_data = case_test->data;
-    Ake_ast* value_n = value->n;
+    Ake_Ast* value_n = value->n;
 
     bool pass = true;
 
@@ -473,12 +473,12 @@ bool Apt_compare_type_def_natural(
 
 bool Apt_compare_type_def_real(
     Zinc_test* case_test,
-    Ake_ast* n,
+    Ake_Ast* n,
     Ake_Type* tu,
     Cent_value* value)
 {
     Apt_case_data* case_data = case_test->data;
-    Ake_ast* value_n = value->n;
+    Ake_Ast* value_n = value->n;
 
     bool pass = true;
 
@@ -512,12 +512,12 @@ bool Apt_compare_type_def_real(
 /* NOLINTNEXTLINE(misc-no-recursion) */
 bool Apt_compare_type_def_struct(
     Zinc_test* case_test,
-    Ake_ast* n,
+    Ake_Ast* n,
     Ake_Type* tu,
     Cent_value* value)
 {
     Apt_case_data* case_data = case_test->data;
-    Ake_ast* value_n = value->n;
+    Ake_Ast* value_n = value->n;
 
     bool pass = true;
 

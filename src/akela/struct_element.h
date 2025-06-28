@@ -11,8 +11,8 @@ typedef enum Ake_struct_element_type {
 
 typedef struct Ake_struct_element {
     Ake_struct_element_type type;
-    Ake_ast* tu;
-    Ake_ast* func;
+    Ake_Ast* tu;
+    Ake_Ast* func;
     size_t index;
 } Ake_struct_element;
 

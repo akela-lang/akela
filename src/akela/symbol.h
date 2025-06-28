@@ -23,8 +23,8 @@ typedef struct Ake_symbol {
     Ake_token_enum tk_type;
     Ake_Type* td;
     Ake_Type* tu;
-    Ake_ast* root;
-    Ake_ast* root_ptr;
+    Ake_Ast* root;
+    Ake_Ast* root_ptr;
     void* value;
     void* reference;
     size_t assign_count;

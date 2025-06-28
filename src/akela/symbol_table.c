@@ -6,10 +6,10 @@
 #include "ast.h"
 #include "symbol.h"
 
-bool Ake_type_use_can_cast_prototype(Ake_ast* a, Ake_ast* b);
+bool Ake_type_use_can_cast_prototype(Ake_Ast* a, Ake_Ast* b);
 bool Ake_type_use_match(Ake_type_use* a, Ake_type_use* b);
 
-void Ake_begin_environment(struct Ake_symbol_table* st, Ake_ast* n)
+void Ake_begin_environment(struct Ake_symbol_table* st, Ake_Ast* n)
 {
     Ake_Environment* env = NULL;
     Ake_EnvironmentCreate(&env, st->top);
@@ -242,7 +242,7 @@ bool Ake_is_numeric(Ake_Type* td)
 	return false;
 }
 
-void Ake_set_current_function(Ake_symbol_table* st, Ake_ast* fd)
+void Ake_set_current_function(Ake_symbol_table* st, Ake_Ast* fd)
 {
 	struct Ake_symbol* sym = NULL;
 	Zinc_malloc_safe((void**)&sym, sizeof(struct Ake_symbol));
@@ -257,7 +257,7 @@ void Ake_set_current_function(Ake_symbol_table* st, Ake_ast* fd)
 	Zinc_string_destroy(&bf);
 }
 
-Ake_ast* Ake_get_current_function(Ake_symbol_table* st)
+Ake_Ast* Ake_get_current_function(Ake_symbol_table* st)
 {
 	struct Zinc_string bf;
 	Zinc_string_init(&bf);
@@ -276,7 +276,7 @@ size_t Ake_symbol_table_generate_id(struct Ake_symbol_table* st)
     return st->id_count++;
 }
 
-Ake_Environment* Ake_get_current_env(Ake_ast* n)
+Ake_Environment* Ake_get_current_env(Ake_Ast* n)
 {
 	while (n) {
 		if (n->env) {

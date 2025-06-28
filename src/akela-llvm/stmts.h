@@ -4,8 +4,8 @@
 #include "tools.h"
 
 namespace Akela_llvm {
-    llvm::Value* Handle_stmts(Jit_data* jd, Ake_ast* n);
-    llvm::Value* Handle_if(Jit_data* jd, Ake_ast* n);
+    llvm::Value* Handle_stmts(Jit_data* jd, Ake_Ast* n);
+    llvm::Value* Handle_if(Jit_data* jd, Ake_Ast* n);
 }
 
 #endif

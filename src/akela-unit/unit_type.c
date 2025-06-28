@@ -12,31 +12,31 @@ void AkeUnit_type_use1(Zinc_test* test)
 		return;
 	}
 
-	Ake_ast* n;
+	Ake_Ast* n;
     Ake_ast_create(&n);
-	n->type = Ake_ast_type_type;
+	n->kind = Ake_ast_type_type;
 
-	Ake_ast* a;
+	Ake_Ast* a;
     Ake_ast_create(&a);
-	a->type = Ake_ast_type_type;
+	a->kind = Ake_ast_type_type;
     Ake_ast_add(n, a);
 
-	Ake_ast* b;
+	Ake_Ast* b;
     Ake_ast_create(&b);
-	b->type = Ake_ast_type_type;
+	b->kind = Ake_ast_type_type;
     Ake_ast_add(n, b);
 
 	if (!Zinc_expect_ptr(test, n, "ptr n")) {
 		return Zinc_assert();
 	}
 
-	Ake_ast* n0 = Ast_node_get(n, 0);
+	Ake_Ast* n0 = Ast_node_get(n, 0);
 	if (!Zinc_expect_ptr(test, n0, "ptr a")) {
 		return Zinc_assert();
 	}
 	Zinc_expect_ptr_equal(test, n0, a, "a");
 
-	Ake_ast* n1 = Ast_node_get(n, 1);
+	Ake_Ast* n1 = Ast_node_get(n, 1);
 	if (!Zinc_expect_ptr(test, n1, "ptr b")) {
 		return Zinc_assert();
 	}

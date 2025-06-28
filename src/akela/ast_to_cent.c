@@ -3,17 +3,17 @@
 #include <assert.h>
 
 void Ake_indent_print(size_t level);
-char* Ake_ast_cent_name(Ake_ast_type type);
+char* Ake_ast_cent_name(Ake_AstKind type);
 void Ake_type_def_cent_print(Ake_Type* td, size_t level, bool is_property);
 char* Ake_type_def_cent_name(Ake_TypeKind kind);
 char* Ake_type_param_cent_name(Ake_TypeParamKind kind);
 
 /* NOLINTNEXTLINE(misc-no-recursion) */
-void Ake_ast_cent_print(Ake_ast* n, size_t level)
+void Ake_ast_cent_print(Ake_Ast* n, size_t level)
 {
     if (n) {
         Ake_indent_print(level);
-        printf("%s {\n", Ake_ast_cent_name(n->type));
+        printf("%s {\n", Ake_ast_cent_name(n->kind));
 
         level++;
 
@@ -28,7 +28,7 @@ void Ake_ast_cent_print(Ake_ast* n, size_t level)
             Ake_type_def_cent_print(n->tu, level, true);
         }
 
-        Ake_ast* p = n->head;
+        Ake_Ast* p = n->head;
         while (p) {
             Ake_ast_cent_print(p, level);
             p = p->next;
@@ -50,7 +50,7 @@ void Ake_indent_print(size_t level)
     }
 }
 
-char* Ake_ast_cent_name(Ake_ast_type type)
+char* Ake_ast_cent_name(Ake_AstKind type)
 {
     if (type == Ake_ast_type_id) {
         return "Ast::Id";

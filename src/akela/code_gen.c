@@ -31,7 +31,7 @@ void* Ake_code_gen_init(void* cg_obj, Ake_Vt* cg_vtable)
     return NULL;
 }
 
-bool Ake_code_gen_jit(void* cg_obj, Ake_Vt* cg_vtable, void* jd, Ake_ast* n, Ake_code_gen_result* result)
+bool Ake_code_gen_jit(void* cg_obj, Ake_Vt* cg_vtable, void* jd, Ake_Ast* n, Ake_code_gen_result* result)
 {
     if (cg_obj && cg_vtable) {
         Ake_code_gen_jit_interface* code_gen_jit =

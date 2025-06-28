@@ -8,8 +8,8 @@
 #include "ast.h"
 #include "parse_tools.h"
 
-AKELA_API Ake_ast* Ake_parse_expr(struct Ake_parse_state* ps);
-AKELA_API Ake_ast* Ake_parse_simple_expr(struct Ake_parse_state* ps);
-Ake_ast* Ake_parse_complex_operators(struct Ake_parse_state* ps);
+AKELA_API Ake_Ast* Ake_parse_expr(struct Ake_parse_state* ps);
+AKELA_API Ake_Ast* Ake_parse_simple_expr(struct Ake_parse_state* ps);
+Ake_Ast* Ake_parse_complex_operators(struct Ake_parse_state* ps);
 
 #endif
