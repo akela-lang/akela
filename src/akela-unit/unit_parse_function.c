@@ -33,11 +33,11 @@ void AkeUnit_parse_function_no_inputs_no_outputs(Zinc_test* test)
 	}
     Zinc_expect_int_equal(test, f->kind, Ake_ast_type_function, "function");
 
-    Ake_Type* tu = f->type;
-    if (!Zinc_expect_ptr(test, tu, "ptr tu")) {
+    Ake_Type* type = f->type;
+    if (!Zinc_expect_ptr(test, type, "ptr tu")) {
 		return Zinc_assert();
 	}
-    Zinc_expect_int_equal(test, tu->kind, AKE_TYPE_FUNCTION, "function td");
+    Zinc_expect_int_equal(test, type->kind, AKE_TYPE_FUNCTION, "function td");
 
     Ake_Ast* proto = Ast_node_get(f, 0);
     if (!Zinc_expect_ptr(test, proto, "ptr proto")) {
@@ -397,14 +397,14 @@ void AkeUnit_parse_function_three_inputs(Zinc_test* test)
 	}
     Zinc_expect_int_equal(test, f->kind, Ake_ast_type_function, "function f");
 
-    Ake_Type* tu = f->type;
-    if (!Zinc_expect_ptr(test, tu, "ptr tu")) {
+    Ake_Type* type = f->type;
+    if (!Zinc_expect_ptr(test, type, "ptr tu")) {
 		return Zinc_assert();
 	}
-    Zinc_expect_string(test, &tu->name, "foo", "name tu");
-    Zinc_expect_int_equal(test, tu->kind, AKE_TYPE_FUNCTION, "function td");
+    Zinc_expect_string(test, &type->name, "foo", "name tu");
+    Zinc_expect_int_equal(test, type->kind, AKE_TYPE_FUNCTION, "function td");
 
-    Ake_TypeParam* tp0 = tu->data.function.input_head;
+    Ake_TypeParam* tp0 = type->data.function.input_head;
     if (!Zinc_expect_ptr(test, tp0, "ptr tp0")) {
 		return Zinc_assert();
 	}
@@ -418,7 +418,7 @@ void AkeUnit_parse_function_three_inputs(Zinc_test* test)
 	Zinc_expect_int_equal(test, input0->kind, AKE_TYPE_INTEGER, "kind input0");
 	Zinc_expect_string(test, &input0->name, "Int32", "name input0");
 
-	Ake_Type* output = tu->data.function.output;
+	Ake_Type* output = type->data.function.output;
 	if (!Zinc_expect_ptr(test, output, "ptr output")) {
 		return Zinc_assert();
 	}
@@ -1293,12 +1293,12 @@ void AkeUnit_parse_call2(Zinc_test* test)
 		return Zinc_assert();
 	}
 
-    Ake_Type* tu = type_node->type;
-    if (!Zinc_expect_ptr(test, tu, "ptr tu")) {
+    Ake_Type* type = type_node->type;
+    if (!Zinc_expect_ptr(test, type, "ptr tu")) {
 		return Zinc_assert();
 	}
-    Zinc_expect_int_equal(test, tu->kind, AKE_TYPE_INTEGER, "integer td");
-    Zinc_expect_string(test, &tu->name, "Int32", "Int32 td");
+    Zinc_expect_int_equal(test, type->kind, AKE_TYPE_INTEGER, "integer td");
+    Zinc_expect_string(test, &type->name, "Int32", "Int32 td");
 
     Ake_Ast* dret = Ast_node_get(proto, 2);
     if (!Zinc_expect_ptr(test, dret, "ptr dret")) {
