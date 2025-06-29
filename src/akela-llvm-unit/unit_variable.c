@@ -59,41 +59,6 @@ void AkeLlvmUnit_variable_const_int(Zinc_test* test)
     Ake_code_gen_result_destroy(&result);
 }
 
-void AkeLlvmUnit_variable_const_assign_multiple(Zinc_test* test)
-{
-    if (test->dry_run) {
-        Zinc_string_add_str(&test->name, __func__);
-        test->mute = false;
-        test->solo = false;
-        return;
-    }
-    Ake_code_gen_result result;
-
-    Ake_code_gen_result_init(&result);
-    AkeLlvmUnit_cg_setup("const a, b, c: Int32 = 1, 2, 3\n"
-             "a\n"
-            ,&result);
-    Zinc_expect_no_errors(test, &result.cu->errors);
-    Zinc_expect_string(test, &result.value, "1", "value");
-    Ake_code_gen_result_destroy(&result);
-
-    Ake_code_gen_result_init(&result);
-    AkeLlvmUnit_cg_setup("const a, b, c: Int32 = 1, 2, 3\n"
-             "b\n"
-            ,&result);
-    Zinc_expect_no_errors(test, &result.cu->errors);
-    Zinc_expect_string(test, &result.value, "2", "value");
-    Ake_code_gen_result_destroy(&result);
-
-    Ake_code_gen_result_init(&result);
-    AkeLlvmUnit_cg_setup("const a, b, c: Int32 = 1, 2, 3\n"
-             "c\n"
-            ,&result);
-    Zinc_expect_no_errors(test, &result.cu->errors);
-    Zinc_expect_string(test, &result.value, "3", "value");
-    Ake_code_gen_result_destroy(&result);
-}
-
 void AkeLlvmUnit_variable_assign(Zinc_test* test)
 {
     if (test->dry_run) {
@@ -124,7 +89,10 @@ void AkeLlvmUnit_variable_assign_multiple(Zinc_test* test)
     Ake_code_gen_result result;
 
     Ake_code_gen_result_init(&result);
-    AkeLlvmUnit_cg_setup("var a,b,c: Int32\n"
+    AkeLlvmUnit_cg_setup(
+            "var a: Int32\n"
+            "var b: Int32\n"
+            "var c: Int32\n"
              "a = b = c = 44\n"
              "a",
              &result);
@@ -133,7 +101,10 @@ void AkeLlvmUnit_variable_assign_multiple(Zinc_test* test)
     Ake_code_gen_result_destroy(&result);
 
     Ake_code_gen_result_init(&result);
-    AkeLlvmUnit_cg_setup("var a,b,c: Int32\n"
+    AkeLlvmUnit_cg_setup(
+        "var a: Int32\n"
+            "var b: Int32\n"
+            "var c: Int32\n"
              "a = b = c = 44\n"
              "b",
              &result);
@@ -142,8 +113,11 @@ void AkeLlvmUnit_variable_assign_multiple(Zinc_test* test)
     Ake_code_gen_result_destroy(&result);
 
     Ake_code_gen_result_init(&result);
-    AkeLlvmUnit_cg_setup("var a,b,c: Int32\n"
-             "a = b = c = 44\n"
+    AkeLlvmUnit_cg_setup(
+            "var a: Int32\n"
+            "var b: Int32\n"
+            "var c: Int32\n"
+            "a = b = c = 44\n"
              "c",
              &result);
     Zinc_expect_no_errors(test, &result.cu->errors);
@@ -151,8 +125,11 @@ void AkeLlvmUnit_variable_assign_multiple(Zinc_test* test)
     Ake_code_gen_result_destroy(&result);
 
     Ake_code_gen_result_init(&result);
-    AkeLlvmUnit_cg_setup("var a,b,c: Int32\n"
-             "a = b = c = 44\n",
+    AkeLlvmUnit_cg_setup(
+    "var a: Int32\n"
+        "var b: Int32\n"
+        "var c: Int32\n"
+         "a = b = c = 44\n",
              &result);
     Zinc_expect_no_errors(test, &result.cu->errors);
     Zinc_expect_string(test, &result.value, "44", "value");
@@ -269,17 +246,25 @@ void AkeLlvmUnit_variable_assign_eseq(Zinc_test* test)
     Ake_code_gen_result result;
 
     Ake_code_gen_result_init(&result);
-    AkeLlvmUnit_cg_setup("var a, b, c, d: Int32\n"
-             "a, b, c, d = 1, 2, 3, 4\n"
-             "a",
+    AkeLlvmUnit_cg_setup(
+        "var a: Int32\n"
+        "var b: Int32\n"
+        "var c: Int32\n"
+        "var d: Int32\n"
+        "a, b, c, d = 1, 2, 3, 4\n"
+        "a",
              &result);
     Zinc_expect_no_errors(test, &result.cu->errors);
     Zinc_expect_string(test, &result.value, "1", "value");
     Ake_code_gen_result_destroy(&result);
 
     Ake_code_gen_result_init(&result);
-    AkeLlvmUnit_cg_setup("var a, b, c, d: Int32\n"
-             "a, b, c, d = 1, 2, 3, 4\n"
+    AkeLlvmUnit_cg_setup(
+        "var a: Int32\n"
+        "var b: Int32\n"
+        "var c: Int32\n"
+        "var d: Int32\n"
+         "a, b, c, d = 1, 2, 3, 4\n"
              "b",
              &result);
     Zinc_expect_no_errors(test, &result.cu->errors);
@@ -287,17 +272,25 @@ void AkeLlvmUnit_variable_assign_eseq(Zinc_test* test)
     Ake_code_gen_result_destroy(&result);
 
     Ake_code_gen_result_init(&result);
-    AkeLlvmUnit_cg_setup("var a, b, c, d: Int32\n"
-             "a, b, c, d = 1, 2, 3, 4\n"
-             "c",
+    AkeLlvmUnit_cg_setup(
+        "var a: Int32\n"
+        "var b: Int32\n"
+        "var c: Int32\n"
+        "var d: Int32\n"
+        "a, b, c, d = 1, 2, 3, 4\n"
+        "c",
              &result);
     Zinc_expect_no_errors(test, &result.cu->errors);
     Zinc_expect_string(test, &result.value, "3", "value");
     Ake_code_gen_result_destroy(&result);
 
     Ake_code_gen_result_init(&result);
-    AkeLlvmUnit_cg_setup("var a, b, c, d: Int32\n"
-             "a, b, c, d = 1, 2, 3, 4\n"
+    AkeLlvmUnit_cg_setup(
+        "var a: Int32\n"
+        "var b: Int32\n"
+        "var c: Int32\n"
+        "var d: Int32\n"
+         "a, b, c, d = 1, 2, 3, 4\n"
              "d",
              &result);
     Zinc_expect_no_errors(test, &result.cu->errors);
@@ -316,7 +309,6 @@ void AkeLlvmUnit_variable(Zinc_test* test)
         Zinc_test_register(test, AkeLlvmUnit_variable_const_void1);
         Zinc_test_register(test, AkeLlvmUnit_variable_const_void2);
         Zinc_test_register(test, AkeLlvmUnit_variable_const_int);
-        Zinc_test_register(test, AkeLlvmUnit_variable_const_assign_multiple);
         Zinc_test_register(test, AkeLlvmUnit_variable_assign);
         Zinc_test_register(test, AkeLlvmUnit_variable_assign_multiple);
         Zinc_test_register(test, AkeLlvmUnit_variable_copy_from_variable);

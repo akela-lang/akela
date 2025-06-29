@@ -769,6 +769,7 @@ Ake_Ast* Ake_parse_let_lseq(struct Ake_parse_state* ps)
     Ake_Ast* n = NULL;
     Ake_ast_create(&n);
     n->kind = Ake_ast_type_let_lseq;
+	size_t count = 0;
 
     struct Ake_token* t0 = Ake_get_lookahead(ps);
     if (t0->type != Ake_token_mut && t0->type != Ake_token_id) {
@@ -803,6 +804,10 @@ Ake_Ast* Ake_parse_let_lseq(struct Ake_parse_state* ps)
     Ake_token_destroy(id);
     free(id);
 
+	if (n->kind != Ake_ast_type_error) {
+		count++;
+	}
+
     while (true) {
         t0 = Ake_get_lookahead(ps);
         if (!t0 || t0->type != Ake_token_comma) {
@@ -831,9 +836,17 @@ Ake_Ast* Ake_parse_let_lseq(struct Ake_parse_state* ps)
         Ake_ast_add(n, a);
         a->loc = id->loc;
 
+    	if (n->kind != Ake_ast_type_error) {
+    		count++;
+    	}
+
         Ake_token_destroy(id);
         free(id);
     }
+
+	if (n->kind != Ake_ast_type_error && count > 1) {
+		Zinc_error_list_set(ps->el, &a->loc, "more than one lvalue per const or var");
+	}
 
     return n;
 }
