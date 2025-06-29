@@ -53,7 +53,6 @@ typedef enum Ake_token_enum {
     Ake_token_return,
     Ake_token_eof,
     Ake_token_extern,
-    Ake_token_mut,
     Ake_token_const,
     Ake_token_var,
     Ake_token_arrow,
@@ -116,7 +115,6 @@ static char const* Ake_token_name(Ake_token_enum type)
     name[Ake_token_return] = "return";
     name[Ake_token_eof] = "EOF";
     name[Ake_token_extern] = "extern";
-    name[Ake_token_mut] = "mut";
     name[Ake_token_const] = "const";
     name[Ake_token_var] = "var";
     name[Ake_token_arrow] = "arrow";
