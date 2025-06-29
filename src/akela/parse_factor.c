@@ -130,10 +130,10 @@ Ake_Ast* Ake_parse_function(struct Ake_parse_state* ps, bool is_method, Ake_Type
     if (!is_method) {
         if (n->kind != Ake_ast_type_error) {
             Ake_Ast* id_node = Ast_node_get(proto, 0);
-            struct Ake_symbol* new_sym = NULL;
-            Zinc_malloc_safe((void**)&new_sym, sizeof(struct Ake_symbol));
-            Ake_symbol_init(new_sym);
-            new_sym->type = Ake_symbol_type_variable;
+            struct Ake_Symbol* new_sym = NULL;
+            Zinc_malloc_safe((void**)&new_sym, sizeof(struct Ake_Symbol));
+            Ake_SymbolInit(new_sym);
+            new_sym->kind = AKE_SYMBOL_VARIABLE;
             new_sym->tu = Ake_TypeClone(type);
             Ake_EnvironmentAdd(ps->st->top, &id_node->value, new_sym, n->loc.start);
         }
@@ -441,7 +441,7 @@ Ake_Ast* Ake_parse_literal(struct Ake_parse_state* ps)
 	    size_t seq = Ake_get_current_seq(ps);
         Ake_symbol* sym = Ake_EnvironmentGet(ps->st->top, &bf, seq);
         assert(sym);
-        if (sym->type != Ake_symbol_type_type) {
+        if (sym->kind != AKE_SYMBOL_TYPE) {
             Zinc_error_list_set(ps->el, &n->loc, "expected a type");
             n->kind = Ake_ast_type_error;
         }
@@ -487,7 +487,7 @@ Ake_Ast* Ake_parse_id(Ake_parse_state* ps)
 
     size_t seq = Ake_get_current_seq(ps);
     Ake_symbol* sym = Ake_EnvironmentGet(ps->st->top, &id->value, seq);
-    if (sym && sym->type == Ake_symbol_type_type && sym->td && sym->td->kind == AKE_TYPE_STRUCT) {
+    if (sym && sym->kind == AKE_SYMBOL_TYPE && sym->td && sym->td->kind == AKE_TYPE_STRUCT) {
         /* struct literal */
 
         Ake_consume_newline(ps, n);

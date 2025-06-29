@@ -40,7 +40,7 @@ void Ake_EnvironmentEntryInit(Ake_EnvironmentEntry* ent)
 void Ake_EnvironmentEntryDestroy(Ake_EnvironmentEntry* ent)
 {
     Zinc_string_destroy(&ent->name);
-    Ake_symbol_destroy(ent->sym);
+    Ake_SymbolDestroy(ent->sym);
     free(ent->sym);
 }
 

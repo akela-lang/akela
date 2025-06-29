@@ -15,13 +15,13 @@ void AkeUnit_EnvironmentAdd(Zinc_test* test)
     Ake_symbol_table_create(&st);
 
     Ake_symbol* t0 = NULL;
-    Ake_symbol_create(&t0);
+    Ake_SymbolCreate(&t0);
 
     Ake_symbol* t1 = NULL;
-    Ake_symbol_create(&t1);
+    Ake_SymbolCreate(&t1);
 
     Ake_symbol* t2 = NULL;
-    Ake_symbol_create(&t2);
+    Ake_SymbolCreate(&t2);
 
     Ake_begin_environment(st, NULL);
     Ake_EnvironmentAddStr(st->top, "t0", t0, AKE_SEQ_DEFAULT);
@@ -29,13 +29,13 @@ void AkeUnit_EnvironmentAdd(Zinc_test* test)
     Ake_EnvironmentAddStr(st->top, "t2", t2, AKE_SEQ_DEFAULT);
 
     Ake_symbol* sym0 = NULL;
-    Ake_symbol_create(&sym0);
+    Ake_SymbolCreate(&sym0);
 
     Ake_symbol* sym1 = NULL;
-    Ake_symbol_create(&sym1);
+    Ake_SymbolCreate(&sym1);
 
     Ake_symbol* sym2 = NULL;
-    Ake_symbol_create(&sym2);
+    Ake_SymbolCreate(&sym2);
 
     Ake_begin_environment(st, NULL);
     Ake_EnvironmentAddStr(st->top, "sym0", sym0, 10);
@@ -97,13 +97,13 @@ void AkeUnit_EnvironmentAdd2(Zinc_test* test)
     Ake_symbol_table_create(&st);
 
     Ake_symbol* sym0 = NULL;
-    Ake_symbol_create(&sym0);
+    Ake_SymbolCreate(&sym0);
 
     Ake_symbol* sym1 = NULL;
-    Ake_symbol_create(&sym1);
+    Ake_SymbolCreate(&sym1);
 
     Ake_symbol* sym2 = NULL;
-    Ake_symbol_create(&sym2);
+    Ake_SymbolCreate(&sym2);
 
     Ake_begin_environment(st, NULL);
     Ake_EnvironmentAddStr(st->top, "a", sym0, AKE_SEQ_DEFAULT);

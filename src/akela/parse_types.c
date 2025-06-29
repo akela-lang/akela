@@ -611,7 +611,7 @@ Ake_Type* Ake_parse_type_id(Ake_parse_state* ps, Ake_Ast* n)
         n->kind = Ake_ast_type_error;
     }
 
-    struct Ake_symbol* sym = NULL;
+    struct Ake_Symbol* sym = NULL;
     if (n->kind != Ake_ast_type_error) {
         Ake_get_lookahead(ps);
         size_t seq = ps->lookahead->loc.start;
@@ -652,8 +652,8 @@ Ake_Type* Ake_parse_type_id(Ake_parse_state* ps, Ake_Ast* n)
 void Ake_create_variable_symbol(Ake_parse_state* ps, Zinc_string* name, Ake_Type* tu, size_t seq, bool is_const)
 {
     Ake_symbol* new_sym = NULL;
-    Ake_symbol_create(&new_sym);
-    new_sym->type = Ake_symbol_type_variable;
+    Ake_SymbolCreate(&new_sym);
+    new_sym->kind = AKE_SYMBOL_VARIABLE;
     new_sym->tu = Ake_TypeClone(tu);
     new_sym->is_const = is_const;
     Ake_EnvironmentAdd(ps->st->top, name, new_sym, seq);

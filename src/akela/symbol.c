@@ -2,9 +2,9 @@
 #include "zinc/memory.h"
 #include "type.h"
 
-void Ake_symbol_init(struct Ake_symbol* sym)
+void Ake_SymbolInit(struct Ake_Symbol* sym)
 {
-    sym->type = Ake_symbol_type_none;
+    sym->kind = AKE_SYMBOL_NONE;
     sym->tk_type = Ake_token_none;
     sym->td = NULL;
     sym->tu = NULL;
@@ -19,7 +19,7 @@ void Ake_symbol_init(struct Ake_symbol* sym)
 }
 
 /* NOLINTNEXTLINE(misc-no-recursion) */
-void Ake_symbol_destroy(Ake_symbol* sym)
+void Ake_SymbolDestroy(Ake_symbol* sym)
 {
     Ake_TypeDestroy(sym->tu);
     free(sym->tu);
@@ -28,18 +28,18 @@ void Ake_symbol_destroy(Ake_symbol* sym)
     Ake_ast_destroy(sym->root);
 }
 
-void Ake_symbol_create(struct Ake_symbol** sym)
+void Ake_SymbolCreate(struct Ake_Symbol** sym)
 {
-    Zinc_malloc_safe((void**)sym, sizeof(struct Ake_symbol));
-    Ake_symbol_init(*sym);
+    Zinc_malloc_safe((void**)sym, sizeof(struct Ake_Symbol));
+    Ake_SymbolInit(*sym);
 }
 
-Ake_symbol* Ake_symbol_clone_shallow(struct Ake_symbol* sym)
+Ake_symbol* Ake_SymbolCloneShallow(struct Ake_Symbol* sym)
 {
     Ake_symbol* new_sym = NULL;
     if (sym) {
-        Ake_symbol_create(&new_sym);
-        new_sym->type = sym->type;
+        Ake_SymbolCreate(&new_sym);
+        new_sym->kind = sym->kind;
         new_sym->tk_type = sym->tk_type;
         new_sym->tu = sym->tu;
         new_sym->td = sym->td;

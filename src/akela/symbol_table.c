@@ -31,10 +31,10 @@ void Ake_symbol_table_add_reserved_word(Ake_symbol_table* st, const char* name, 
     Zinc_string_init(&bf);
     Zinc_string_add_str(&bf, name);
 
-    struct Ake_symbol* sym = NULL;
-    Zinc_malloc_safe((void**)&sym, sizeof(struct Ake_symbol));
-    Ake_symbol_init(sym);
-    sym->type = Ake_symbol_type_reserved_word;
+    struct Ake_Symbol* sym = NULL;
+    Zinc_malloc_safe((void**)&sym, sizeof(struct Ake_Symbol));
+    Ake_SymbolInit(sym);
+    sym->kind = AKE_SYMBOL_RESERVED_WORD;
     sym->tk_type = tk_type;
 
     Ake_EnvironmentAdd(st->top, &bf, sym, AKE_SEQ_DEFAULT);
@@ -51,8 +51,8 @@ void Ake_symbol_table_add_type(Ake_symbol_table* st, const char* name, Ake_Type*
 
 	Ake_symbol* sym = NULL;
 	Zinc_malloc_safe((void**)&sym, sizeof(Ake_symbol));
-	Ake_symbol_init(sym);
-    sym->type = Ake_symbol_type_type;
+	Ake_SymbolInit(sym);
+    sym->kind = AKE_SYMBOL_TYPE;
 	sym->td = td;
 
 	Ake_EnvironmentAdd(st->top, &bf, sym, AKE_SEQ_DEFAULT);
@@ -179,7 +179,7 @@ void Ake_symbol_table_add_numeric(Ake_symbol_table* st, const char* name)
 	Zinc_string_add_str(&bf, name);
 	Ake_symbol* sym = Ake_EnvironmentGet(st->top, &bf, AKE_SEQ_ANY);
 	assert(sym);
-	assert(sym->type == Ake_symbol_type_type);
+	assert(sym->kind == AKE_SYMBOL_TYPE);
 	assert(sym->td);
     Zinc_list_add_item(&st->numeric_pool, sym->td);
     Zinc_string_destroy(&bf);
@@ -244,10 +244,10 @@ bool Ake_is_numeric(Ake_Type* td)
 
 void Ake_set_current_function(Ake_symbol_table* st, Ake_Ast* fd)
 {
-	struct Ake_symbol* sym = NULL;
-	Zinc_malloc_safe((void**)&sym, sizeof(struct Ake_symbol));
-	Ake_symbol_init(sym);
-	sym->type = Ake_symbol_type_info;
+	struct Ake_Symbol* sym = NULL;
+	Zinc_malloc_safe((void**)&sym, sizeof(struct Ake_Symbol));
+	Ake_SymbolInit(sym);
+	sym->kind = AKE_SYMBOL_INFO;
 	sym->root_ptr = fd;
 
 	struct Zinc_string bf;
@@ -262,7 +262,7 @@ Ake_Ast* Ake_get_current_function(Ake_symbol_table* st)
 	struct Zinc_string bf;
 	Zinc_string_init(&bf);
 	Zinc_string_add_str(&bf, "|current_function|");
-	struct Ake_symbol* sym = Ake_EnvironmentGet(st->top, &bf, AKE_SEQ_ANY);
+	struct Ake_Symbol* sym = Ake_EnvironmentGet(st->top, &bf, AKE_SEQ_ANY);
 	Zinc_string_destroy(&bf);
 	if (sym) {
 		return sym->root_ptr;
