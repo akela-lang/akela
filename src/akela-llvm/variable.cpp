@@ -45,14 +45,13 @@ namespace Akela_llvm {
                 Type *t = Get_type(jd, type);
                 Zinc_string_finish(&lhs->value);
                 AllocaInst *lhs_value = jd->Builder->CreateAlloca(t, nullptr, lhs->value.buf);
-                rhs->type->lhs_allocation = lhs_value;
+                sym->value = lhs_value;
                 if (rhs->kind == Ake_ast_type_array_literal) {
                     Value *rhs_value = Dispatch(jd, rhs);
                 } else {
                     Value *rhs_value = Dispatch(jd, rhs);
                     Array_copy(jd, type, rhs->type, lhs_value, rhs_value);
                 }
-                sym->value = lhs_value;
             } else {
                 Type *t = Get_type(jd, type);
                 Zinc_string_finish(&lhs->value);
@@ -64,9 +63,8 @@ namespace Akela_llvm {
                 Type *t = Get_type(jd, type);
                 Zinc_string_finish(&lhs->value);
                 AllocaInst *lhs_value = jd->Builder->CreateAlloca(t, nullptr, lhs->value.buf);
-                rhs->type->lhs_allocation = lhs_value;
-                Value *rhs_value = Dispatch(jd, rhs);
                 sym->value = lhs_value;
+                Value *rhs_value = Dispatch(jd, rhs);
             } else {
                 Type *t = Get_type(jd, type);
                 Zinc_string_finish(&lhs->value);
@@ -190,8 +188,12 @@ namespace Akela_llvm {
         std::vector<size_t> index;
         Type *t = Get_type(jd, n->type);
         Value* ptr;
-        if (n->type->lhs_allocation) {
-            ptr = (Value*)n->type->lhs_allocation;
+        if (n->parent->kind == Ake_ast_type_const || n->parent->kind == Ake_ast_type_var) {
+            Ake_Environment* env = Ake_get_current_env(n->parent);
+            Ake_Ast* lhs =  Ast_node_get(n->parent, 0);
+            Ake_Ast* type_node = Ast_node_get(n->parent, 1);
+            Ake_symbol* sym = Ake_EnvironmentGet(env, &lhs->value, type_node->loc.start);
+            ptr = (Value*)sym->value;
         } else {
             ptr = jd->Builder->CreateAlloca(t, nullptr, "arrayliteraltmp");
         }

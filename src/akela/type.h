@@ -76,7 +76,6 @@ struct Ake_Type {
         } function;
     } data;
     Ake_type_context context;
-    void* lhs_allocation;
 };
 
 typedef enum Ake_TypeParamKind {

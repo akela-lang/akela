@@ -101,8 +101,12 @@ namespace Akela_llvm {
         Zinc_string_add_str(&bf, ".tmp");
         Zinc_string_finish(&bf);
         Value* value;
-        if (n->type->lhs_allocation) {
-            value = (Value*)n->type->lhs_allocation;
+        if (n->parent->kind == Ake_ast_type_const || n->parent->kind == Ake_ast_type_var) {
+            Ake_Environment* env = Ake_get_current_env(n->parent);
+            Ake_Ast* lhs =  Ast_node_get(n->parent, 0);
+            Ake_Ast* type_node = Ast_node_get(n->parent, 1);
+            Ake_symbol* sym = Ake_EnvironmentGet(env, &lhs->value, type_node->loc.start);
+            value = (Value*)sym->value;
         } else {
             value = jd->Builder->CreateAlloca(t, nullptr, bf.buf);
         }

@@ -6,7 +6,6 @@ void Ake_TypeInit(Ake_Type* type)
 {
     type->kind = AKE_TYPE_NONE;
     Zinc_string_init(&type->name);
-    type->lhs_allocation = NULL;
     type->context = Ake_type_context_value;
 }
 
