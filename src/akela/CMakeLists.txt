@@ -15,7 +15,6 @@ set(lib_files
         comp_table.c
         code_gen.c
         symbol.c
-        struct_element.c
         parse_data.c
         ast_to_cent.c
         environment.c
