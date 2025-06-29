@@ -18,7 +18,7 @@ Ake_Ast* Ake_parse_id(struct Ake_parse_state* ps);
 void Ake_parse_struct_literal_elements(
         Ake_parse_state* ps,
         Ake_Ast* parent,
-        Ake_Type* td);
+        Ake_Type* type);
 Ake_Ast* Ake_parse_sign(struct Ake_parse_state* ps);
 Ake_Ast* Ake_parse_array_literal(struct Ake_parse_state* ps);
 void Ake_parse_aseq(struct Ake_parse_state* ps, Ake_Ast* parent);
@@ -540,13 +540,13 @@ Ake_Ast* Ake_parse_id(Ake_parse_state* ps)
 typedef struct Ake_struct_field_result {
     bool found;
     size_t index;
-    Ake_Type* td;
+    Ake_Type* type;
 } Ake_struct_field_result;
 
-Ake_struct_field_result Ake_get_struct_field(Ake_Type* td, Zinc_string* name) {
-    assert(td->kind == AKE_TYPE_STRUCT);
+Ake_struct_field_result Ake_get_struct_field(Ake_Type* type, Zinc_string* name) {
+    assert(type->kind == AKE_TYPE_STRUCT);
     size_t index = 0;
-    Ake_TypeField* tf = td->data.fields.head;
+    Ake_TypeField* tf = type->data.fields.head;
     while (tf) {
         if (Zinc_string_compare(&tf->name, name)) {
             return (Ake_struct_field_result) {true, index, tf->type};
@@ -558,9 +558,9 @@ Ake_struct_field_result Ake_get_struct_field(Ake_Type* td, Zinc_string* name) {
     return (Ake_struct_field_result) {false, 0, NULL};
 }
 
-void Ake_find_missing_fields(Ake_parse_state* ps, Ake_Type* td, Ake_Ast* n) {
-    assert(td->kind == AKE_TYPE_STRUCT);
-    Ake_TypeField *tf = td->data.fields.head;
+void Ake_find_missing_fields(Ake_parse_state* ps, Ake_Type* type, Ake_Ast* n) {
+    assert(type->kind == AKE_TYPE_STRUCT);
+    Ake_TypeField *tf = type->data.fields.head;
     while (tf) {
         bool found = false;
         Ake_Ast *field = n->head;
@@ -583,7 +583,7 @@ void Ake_find_missing_fields(Ake_parse_state* ps, Ake_Type* td, Ake_Ast* n) {
 void Ake_parse_struct_literal_elements(
         Ake_parse_state* ps,
         Ake_Ast* parent,
-        Ake_Type* td)
+        Ake_Type* type)
 {
     Ake_token* t0;
 
@@ -599,9 +599,9 @@ void Ake_parse_struct_literal_elements(
         field->kind = Ake_ast_type_struct_literal_field;
         Ake_ast_add(parent, field);
 
-        Ake_struct_field_result sfr = Ake_get_struct_field(td, &name->value);
+        Ake_struct_field_result sfr = Ake_get_struct_field(type, &name->value);
         if (!sfr.found) {
-            Zinc_error_list_set(ps->el, &name->loc, "Not a valid field for %bf: %bf", &td->name, &name->value);
+            Zinc_error_list_set(ps->el, &name->loc, "Not a valid field for %bf: %bf", &type->name, &name->value);
             parent->kind = Ake_ast_type_error;
         }
 
@@ -628,7 +628,7 @@ void Ake_parse_struct_literal_elements(
 
             if (parent->kind != Ake_ast_type_error) {
                 bool cast = false;
-                if (!Ake_TypeMatch(sfr.td, expr->type, &cast)) {
+                if (!Ake_TypeMatch(sfr.type, expr->type, &cast)) {
                     Zinc_error_list_set(ps->el, &expr->loc, "invalid type for field");
                     parent->kind = Ake_ast_type_error;
                 }
@@ -660,7 +660,7 @@ void Ake_parse_struct_literal_elements(
         }
     }
 
-    Ake_find_missing_fields(ps, td, parent);
+    Ake_find_missing_fields(ps, type, parent);
 }
 
 Ake_Ast* Ake_parse_sign(struct Ake_parse_state* ps)
