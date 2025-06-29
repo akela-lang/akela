@@ -463,8 +463,8 @@ Ake_Ast* Ake_parse_comparison(struct Ake_parse_state* ps)
 					/* test case: test_parse_comparison_error_right_not_numeric */
                     n->kind = Ake_ast_type_error;
 				} else {
-					Ake_Type* tu = Ake_TypeClone(left->type);
-					n->type = tu;
+					Ake_Type* type = Ake_TypeClone(left->type);
+					n->type = type;
 				}
 			}
 			left = n;
@@ -553,38 +553,38 @@ Ake_Ast* Ake_parse_add(struct Ake_parse_state* ps)
         }
 
 		if (n->kind != Ake_ast_type_error) {
-			Ake_Type* tu_a = a->type;
-			Ake_Type* tu_b = b->type;
+			Ake_Type* a_type = a->type;
+			Ake_Type* b_type = b->type;
 
-			if (!tu_a) {
+			if (!a_type) {
 				Zinc_error_list_set(ps->el, &a->loc, "%s operand has no value", op_name);
 				/* test case: test_parse_add_error_left_no_value */
                 n->kind = Ake_ast_type_error;
-			} else if (!Ake_is_numeric(tu_a)) {
+			} else if (!Ake_is_numeric(a_type)) {
 				Zinc_error_list_set(ps->el, &a->loc, "%s on non-numeric operand", op_name);
                 n->kind = Ake_ast_type_error;
 			}
 
-			if (!tu_b) {
+			if (!b_type) {
 				Zinc_error_list_set(ps->el, &b->loc, "%s operand has no value", op_name);
 				/* test case: test_parse_add_error_right_no_value */
                 n->kind = Ake_ast_type_error;
-			} else if (!Ake_is_numeric(tu_b)) {
+			} else if (!Ake_is_numeric(b_type)) {
 				Zinc_error_list_set(ps->el, &b->loc, "%s on non-numeric operand", op_name);
 				/* test case: test_parse_add_error_right_not_numeric */
                 n->kind = Ake_ast_type_error;
 			}
 
 			if (n->kind != Ake_ast_type_error) {
-				Ake_Type* tu = Ake_TypeClone(tu_a);
+				Ake_Type* a_type2 = Ake_TypeClone(a_type);
 				bool cast = false;
-				if (!Ake_TypeMatch(tu, tu_b, &cast)) {
+				if (!Ake_TypeMatch(a_type2, b_type, &cast)) {
 					Zinc_error_list_set(ps->el, &op->loc, "invalid types for %s", op_name);
 					/* test case: no test case needed */
                     n->kind = Ake_ast_type_error;
-                    Ake_TypeDestroy(tu);
+                    Ake_TypeDestroy(a_type2);
 				} else {
-					n->type = tu;
+					n->type = a_type2;
 				}
 			}
 
@@ -678,39 +678,39 @@ Ake_Ast* Ake_parse_mult(struct Ake_parse_state* ps)
 		if (n->kind != Ake_ast_type_error) {
 			assert(a);
 			assert(b);
-			Ake_Type* tu_a = a->type;
-			Ake_Type* tu_b = b->type;
+			Ake_Type* a_type = a->type;
+			Ake_Type* b_type = b->type;
 
-			if (!tu_a) {
+			if (!a_type) {
 				Zinc_error_list_set(ps->el, &a->loc, "%s operand has no value", op_name);
 				/* test case: test_parse_mult_error_left_no_value */
                 n->kind = Ake_ast_type_error;
-			} else if (!Ake_is_numeric(tu_a)) {
+			} else if (!Ake_is_numeric(a_type)) {
 				Zinc_error_list_set(ps->el, &a->loc, "%s on non-numeric operand", op_name);
 				/* test case: test_parse_mult_error_left_not_numeric */
                 n->kind = Ake_ast_type_error;
 			}
 
-			if (!tu_b) {
+			if (!b_type) {
 				Zinc_error_list_set(ps->el, &b->loc, "%s operand has no value", op_name);
 				/* test case: test_parse_mult_error_right_no_value*/
                 n->kind = Ake_ast_type_error;
-			} else if (!Ake_is_numeric(tu_b)) {
+			} else if (!Ake_is_numeric(b_type)) {
 				Zinc_error_list_set(ps->el, &b->loc, "%s on non-numeric operand", op_name);
 				/* test case: test_parse_mult_error_right_not_numeric */
                 n->kind = Ake_ast_type_error;
 			}
 
 			if (n->kind != Ake_ast_type_error) {
-				Ake_Type* tu = Ake_TypeClone(tu_a);
+				Ake_Type* a_type2 = Ake_TypeClone(a_type);
 				bool cast = false;
-				if (!Ake_TypeMatch(tu, tu_b, &cast)) {
+				if (!Ake_TypeMatch(a_type2, b_type, &cast)) {
 					Zinc_error_list_set(ps->el, &op->loc, "invalid types for %s", op_name);
 					/* test case: no test case needed */
                     n->kind = Ake_ast_type_error;
-                    Ake_TypeDestroy(tu);
+                    Ake_TypeDestroy(a_type2);
 				} else {
-					n->type = tu;
+					n->type = a_type2;
 				}
 			}
 
@@ -790,39 +790,39 @@ Ake_Ast* Ake_parse_power(struct Ake_parse_state* ps)
         if (n->kind != Ake_ast_type_error) {
 			assert(left);
 			assert(b);
-			Ake_Type* tu_left = left->type;
-			Ake_Type* tu_b = b->type;
+			Ake_Type* left_type = left->type;
+			Ake_Type* b_type = b->type;
 
-			if (!tu_left) {
+			if (!left_type) {
 				Zinc_error_list_set(ps->el, &left->loc, "power operand has no value");
 				/* test case: test_parse_power_error_left_no_value */
                 n->kind = Ake_ast_type_error;
-			} else if (!Ake_is_numeric(tu_left)) {
+			} else if (!Ake_is_numeric(left_type)) {
 				Zinc_error_list_set(ps->el, &left->loc, "power on non-numeric operand");
 				/* test case: test_parse_power_error_left_not_numeric */
                 n->kind = Ake_ast_type_error;
 			}
 
-			if (!tu_b) {
+			if (!b_type) {
 				Zinc_error_list_set(ps->el, &b->loc, "power operand has no value");
 				/* test case: test_parse_power_error_right_no_value */
                 n->kind = Ake_ast_type_error;
-			} else if (!Ake_is_numeric(tu_b)) {
+			} else if (!Ake_is_numeric(b_type)) {
 				Zinc_error_list_set(ps->el, &b->loc, "power on non-numeric operand");
 				/* test case: test_parse_power_error_right_not_numeric */
                 n->kind = Ake_ast_type_error;
 			}
 
 			if (n->kind != Ake_ast_type_error) {
-				Ake_Type* tu = Ake_TypeClone(tu_left);
+				Ake_Type* left_type2 = Ake_TypeClone(left_type);
 				bool cast = false;
-				if (!Ake_TypeMatch(tu, tu_b, &cast)) {
+				if (!Ake_TypeMatch(left_type2, b_type, &cast)) {
 					Zinc_error_list_set(ps->el, &b->loc, "invalid power types");
 					/* test case: no test case needed */
                     n->kind = Ake_ast_type_error;
-                    Ake_TypeDestroy(tu);
+                    Ake_TypeDestroy(left_type2);
 				} else {
-					n->type = tu;
+					n->type = left_type2;
 				}
 			}
 
