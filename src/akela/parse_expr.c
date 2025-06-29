@@ -1188,7 +1188,7 @@ Ake_Ast* Ake_parse_dot(struct Ake_parse_state* ps)
             	Ake_Type* found_type = NULL;
                 while (tf) {
                     if (Zinc_string_compare(&tf->name, &b->value)) {
-                    	found_type = tf->td;
+                    	found_type = tf->type;
                         found = true;
                         break;
                     }

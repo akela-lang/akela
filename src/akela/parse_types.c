@@ -716,11 +716,11 @@ Ake_Type* Ake_Type_use_add_proto(
 
             if (dec->kind == Ake_ast_type_self) {
                 tp->kind = AKE_TYPE_PARAM_SELF;
-                tp->td = Ake_TypeClone(struct_type);
+                tp->type = Ake_TypeClone(struct_type);
             } else if (dec->kind == Ake_ast_type_ellipsis) {
                 tp->kind = AKE_TYPE_PARAM_ELLIPSIS;
             } else {
-                tp->td = Ake_TypeClone(type_node->type);
+                tp->type = Ake_TypeClone(type_node->type);
             }
 
             Ake_TypeInputAdd(func, tp);
@@ -780,7 +780,7 @@ bool Ake_check_input_type(
 	if (func) {
 		Ake_TypeParam* tp = Ake_get_function_input_type(func, index);
 		if (tp) {
-		    Ake_Type* tu0 = tp->td;
+		    Ake_Type* tu0 = tp->type;
 			Ake_Type* call_tu0 = a->type;
 			if (call_tu0) {
 			    bool cast = false;
@@ -944,7 +944,7 @@ Ake_Type* Ake_StructToType(Ake_Ast* n)
         Ake_Ast* type_node = id_node->next;
         assert(type_node);
 
-        tf->td = Ake_TypeClone(type_node->type);
+        tf->type = Ake_TypeClone(type_node->type);
         Ake_TypeStructAdd(type, tf);
 
         dec = dec->next;

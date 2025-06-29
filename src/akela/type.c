@@ -184,7 +184,7 @@ bool Ake_TypeMatch(Ake_Type* a, Ake_Type* b, bool* cast)
                 if (!a_tf || !b_tf) {
                     return false;
                 }
-                if (!Ake_TypeMatch(a_tf->td, b_tf->td, NULL)) {
+                if (!Ake_TypeMatch(a_tf->type, b_tf->type, NULL)) {
                     return false;
                 }
                 a_tf = a_tf->next;
@@ -212,7 +212,7 @@ bool Ake_TypeMatch(Ake_Type* a, Ake_Type* b, bool* cast)
                 if (!a_tp || !b_tp) {
                     return false;
                 }
-                if (!Ake_TypeMatch(a_tp->td, b_tp->td, NULL)) {
+                if (!Ake_TypeMatch(a_tp->type, b_tp->type, NULL)) {
                     return false;
                 }
                 a_tp = a_tp->next;
@@ -258,7 +258,7 @@ Ake_Type* Ake_TypeClone(Ake_Type* td)
                     Ake_TypeField* new_tf = NULL;
                     Ake_TypeFieldCreate(&new_tf);
                     Zinc_string_add_string(&new_tf->name, &tf->name);
-                    new_tf->td = Ake_TypeClone(tf->td);
+                    new_tf->type = Ake_TypeClone(tf->type);
                     Ake_TypeStructAdd(new_td, new_tf);
                     tf = tf->next;
                 }
@@ -283,7 +283,7 @@ Ake_Type* Ake_TypeClone(Ake_Type* td)
                     Ake_TypeParam* new_tp = NULL;
                     Ake_TypeParamCreate(&new_tp);
                     Zinc_string_add_string(&new_tp->name, &tp->name);
-                    new_tp->td = Ake_TypeClone(tp->td);
+                    new_tp->type = Ake_TypeClone(tp->type);
                     Ake_TypeInputAdd(new_td, new_tp);
                     tp = tp->next;
                 }
@@ -318,7 +318,7 @@ void Ake_TypeCopy(Ake_Type* a, Ake_Type* b)
                 Ake_TypeField* new_tf = NULL;
                 Ake_TypeFieldCreate(&new_tf);
                 Zinc_string_add_string(&new_tf->name, &tf->name);
-                new_tf->td = Ake_TypeClone(tf->td);
+                new_tf->type = Ake_TypeClone(tf->type);
                 Ake_TypeStructAdd(b, new_tf);
                 tf = tf->next;
             }
@@ -343,7 +343,7 @@ void Ake_TypeCopy(Ake_Type* a, Ake_Type* b)
                 Ake_TypeParam* new_tp = NULL;
                 Ake_TypeParamCreate(&new_tp);
                 Zinc_string_add_string(&new_tp->name, &tp->name);
-                new_tp->td = Ake_TypeClone(tp->td);
+                new_tp->type = Ake_TypeClone(tp->type);
                 Ake_TypeInputAdd(b, new_tp);
                 tp = tp->next;
             }
@@ -386,7 +386,7 @@ void Ake_TypeParamInit(Ake_TypeParam* tp)
 {
     tp->kind = AKE_TYPE_PARAM_REGULAR;
     Zinc_string_init(&tp->name);
-    tp->td = NULL;
+    tp->type = NULL;
     tp->next = NULL;
     tp->prev = NULL;
 }
@@ -401,13 +401,13 @@ void Ake_TypeParamCreate(Ake_TypeParam** tp)
 void Ake_TypeParamDestroy(Ake_TypeParam* tp)
 {
     Zinc_string_destroy(&tp->name);
-    Ake_TypeDestroy(tp->td);
+    Ake_TypeDestroy(tp->type);
 }
 
 void Ake_TypeFieldInit(Ake_TypeField* tf)
 {
     Zinc_string_init(&tf->name);
-    tf->td = NULL;
+    tf->type = NULL;
     tf->next = NULL;
     tf->prev = NULL;
 }
@@ -422,5 +422,5 @@ void Ake_TypeFieldCreate(Ake_TypeField** tf)
 void Ake_TypeFieldDestroy(Ake_TypeField* tf)
 {
     Zinc_string_destroy(&tf->name);
-    Ake_TypeDestroy(tf->td);
+    Ake_TypeDestroy(tf->type);
 }

@@ -311,7 +311,7 @@ void Ake_type_def_cent_print(Ake_Type* td, size_t level, bool is_property)
                 printf(".name = \"%s\"\n", Zinc_string_c_str(&field->name));
                 Ake_indent_print(level);
                 printf(".td = ");
-                Ake_type_def_cent_print(field->td, level, true);
+                Ake_type_def_cent_print(field->type, level, true);
                 level--;
                 Ake_indent_print(level);
                 printf("}\n");
@@ -350,7 +350,7 @@ void Ake_type_def_cent_print(Ake_Type* td, size_t level, bool is_property)
                 printf(".name = \"%s\"\n", Zinc_string_c_str(&tp->name));
                 Ake_indent_print(level);
                 printf(".td = ");
-                Ake_type_def_cent_print(tp->td, level, true);
+                Ake_type_def_cent_print(tp->type, level, true);
                 level--;
                 Ake_indent_print(level);
                 printf("}\n");

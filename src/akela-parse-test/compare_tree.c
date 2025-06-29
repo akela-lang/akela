@@ -554,12 +554,12 @@ bool Apt_compare_type_def_struct(
             break;
         }
 
-        Cent_value* td_value = Cent_value_get_str(field_value, "td");
-        if (!Zinc_expect_ptr(case_test, td_value, "td not in type field")) {
+        Cent_value* type_value = Cent_value_get_str(field_value, "td");
+        if (!Zinc_expect_ptr(case_test, type_value, "td not in type field")) {
             break;
         }
 
-        pass = Apt_compare_type_def(case_test, n, tf->td, td_value) && pass;
+        pass = Apt_compare_type_def(case_test, n, tf->type, type_value) && pass;
 
         tf = tf->next;
         field_value = field_value->next;

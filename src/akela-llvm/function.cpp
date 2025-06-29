@@ -96,7 +96,7 @@ namespace Akela_llvm {
 
         Ake_TypeParam* tp = func_type->data.function.input_head;
         while (tp) {
-            Ake_Type* param_tu = tp->td;
+            Ake_Type* param_tu = tp->type;
             Ake_Type* arg_tu = arg->type;
             if (arg->kind == Ake_ast_type_number) {
                 if ((arg_tu->kind == AKE_TYPE_INTEGER && arg_tu->data.integer.bit_count == 32)

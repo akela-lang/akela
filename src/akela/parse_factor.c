@@ -549,7 +549,7 @@ Ake_struct_field_result Ake_get_struct_field(Ake_Type* td, Zinc_string* name) {
     Ake_TypeField* tf = td->data.fields.head;
     while (tf) {
         if (Zinc_string_compare(&tf->name, name)) {
-            return (Ake_struct_field_result) {true, index, tf->td};
+            return (Ake_struct_field_result) {true, index, tf->type};
         }
         tf = tf->next;
         index++;

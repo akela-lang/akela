@@ -88,14 +88,14 @@ typedef enum Ake_TypeParamKind {
 struct Ake_TypeParam {
     Ake_TypeParamKind kind;
     Zinc_string name;
-    Ake_Type* td;
+    Ake_Type* type;
     Ake_TypeParam* next;
     Ake_TypeParam* prev;
 };
 
 struct Ake_TypeField {
     Zinc_string name;
-    Ake_Type* td;
+    Ake_Type* type;
     Ake_TypeField* next;
     Ake_TypeField* prev;
 };

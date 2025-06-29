@@ -39,7 +39,7 @@ namespace Akela_llvm {
             if (tp->kind == AKE_TYPE_PARAM_ELLIPSIS) {
                 is_variadic = true;
             } else {
-                Type *dec_type = Get_type_pointer(jd, tp->td);
+                Type *dec_type = Get_type_pointer(jd, tp->type);
                 param_types.push_back(dec_type);
             }
             tp = tp->next;
@@ -409,30 +409,30 @@ namespace Akela_llvm {
             Value* rhs_ptr)
     {
         size_t size = 0;
-        Ake_Type* lhs_tu2 = NULL;
-        Ake_Type* rhs_tu2 = NULL;
+        Ake_Type* lhs_type2 = NULL;
+        Ake_Type* rhs_type2 = NULL;
         if (lhs_type->kind == AKE_TYPE_ARRAY) {
             size = lhs_type->data.array.dim;
-            lhs_tu2 = lhs_type->data.array.type;
-            rhs_tu2 = rhs_type->data.array.type;
+            lhs_type2 = lhs_type->data.array.type;
+            rhs_type2 = rhs_type->data.array.type;
         } else if (lhs_type->kind == AKE_TYPE_ARRAY_CONST) {
             size = lhs_type->data.array_const.dim;
-            lhs_tu2 = lhs_type->data.array_const.type;
-            rhs_tu2 = rhs_type->data.array_const.type;
+            lhs_type2 = lhs_type->data.array_const.type;
+            rhs_type2 = rhs_type->data.array_const.type;
         } else {
             assert(false && "invalid type");
         }
 
         for (size_t i = 0; i < size; i++) {
-            Type* t = Get_type(jd, lhs_tu2);
+            Type* t = Get_type(jd, lhs_type2);
             std::vector<Value*> list = std::vector<Value*>();
             Value* i_value = ConstantInt::get(*jd->TheContext, APInt(64, i, false));
             list.push_back(i_value);
             Value* lhs_ptr2 = jd->Builder->CreateInBoundsGEP(t, lhs_ptr, list, "lhstmp");
             Value* rhs_ptr2 = jd->Builder->CreateInBoundsGEP(t, rhs_ptr, list, "rhstmp");
 
-            if (IsArray(lhs_tu2->kind)) {
-                Array_copy(jd, lhs_tu2, rhs_tu2, lhs_ptr2, rhs_ptr2);
+            if (IsArray(lhs_type2->kind)) {
+                Array_copy(jd, lhs_type2, rhs_type2, lhs_ptr2, rhs_ptr2);
             } else {
                 Value* value = jd->Builder->CreateLoad(t, rhs_ptr2, "rhs");
                 jd->Builder->CreateStore(value, lhs_ptr2);
