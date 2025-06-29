@@ -151,8 +151,8 @@ Ake_Ast* Ake_parse_extern(struct Ake_parse_state* ps)
         if (proto->kind == Ake_ast_type_error) {
             n->kind = Ake_ast_type_error;
         }
-        Ake_Type* tu = Ake_proto2type_use(ps, proto, NULL);
-        n->type = tu;
+        Ake_Type* type = Ake_proto2type_use(ps, proto, NULL);
+        n->type = type;
     }
 
     if (!has_id) {
@@ -171,8 +171,8 @@ Ake_Ast* Ake_parse_extern(struct Ake_parse_state* ps)
         Zinc_malloc_safe((void **) &new_sym, sizeof(struct Ake_symbol));
         Ake_symbol_init(new_sym);
         new_sym->type = Ake_symbol_type_variable;
-        Ake_Type* tu = Ake_TypeClone(n->type);
-        new_sym->tu = tu;
+        Ake_Type* type = Ake_TypeClone(n->type);
+        new_sym->tu = type;
         Ake_EnvironmentAdd(ps->st->top, &id_node->value, new_sym, n->loc.start);
     }
 
