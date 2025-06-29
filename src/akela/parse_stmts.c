@@ -434,27 +434,27 @@ void Ake_parse_for_iteration(struct Ake_parse_state* ps, Ake_Ast* parent)
 		Ake_Ast* element = Ast_node_get(parent, 0);
 		Ake_Ast* element_type_node = Ast_node_get(element, 1);
 
-		Ake_Type* list_tu = list->type;
+		Ake_Type* list_type = list->type;
 
-		if (!list_tu) {
+		if (!list_type) {
 			Zinc_error_list_set(ps->el, &list->loc, "iteration expression has no value");
             parent->kind = Ake_ast_type_error;
 			/* test case: test_parse_for_iteration_error_no_value */
 		} else if (
-			list_tu->kind != AKE_TYPE_ARRAY
-			&& list_tu->kind != AKE_TYPE_ARRAY_CONST
-			&& list_tu->kind != AKE_TYPE_SLICE) {
+			list_type->kind != AKE_TYPE_ARRAY
+			&& list_type->kind != AKE_TYPE_ARRAY_CONST
+			&& list_type->kind != AKE_TYPE_SLICE) {
 			Zinc_error_list_set(ps->el, &list->loc, "iteration expression is not an array or slice");
             parent->kind = Ake_ast_type_error;
 			/* test case: test_parse_for_iteration_error_no_child_element */
 		} else {
             Ake_Type* element_tu2 = NULL;
-			if (list_tu->kind == AKE_TYPE_ARRAY) {
-				element_tu2 = Ake_TypeClone(list_tu->data.array.type);
-			} else if (list_tu->kind == AKE_TYPE_ARRAY_CONST) {
-				element_tu2 = Ake_TypeClone(list_tu->data.array_const.type);
-			} else if (list_tu->kind == AKE_TYPE_SLICE) {
-				element_tu2 = Ake_TypeClone(list_tu->data.slice.type);
+			if (list_type->kind == AKE_TYPE_ARRAY) {
+				element_tu2 = Ake_TypeClone(list_type->data.array.type);
+			} else if (list_type->kind == AKE_TYPE_ARRAY_CONST) {
+				element_tu2 = Ake_TypeClone(list_type->data.array_const.type);
+			} else if (list_type->kind == AKE_TYPE_SLICE) {
+				element_tu2 = Ake_TypeClone(list_type->data.slice.type);
 			} else {
 				assert(false && "expected array or slice");
 			}
