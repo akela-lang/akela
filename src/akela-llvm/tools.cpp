@@ -211,12 +211,12 @@ namespace Akela_llvm {
         Zinc_string* value = &result->value;
         auto ExprSymbol = jd->ExitOnErr(jd->TheJIT->lookup(TOP_LEVEL_NAME));
         if (n->type) {
-            Ake_TypeKind type = n->type->kind;
+            Ake_TypeKind kind = n->type->kind;
 
-            if (IsArray(type)) {
-                if (type == AKE_TYPE_ARRAY_CONST) {
-                    Ake_Type* tu = n->type->data.array_const.td;
-                    if (tu->kind == AKE_TYPE_NATURAL && tu->data.natural.bit_count == 8) {
+            if (IsArray(kind)) {
+                if (kind == AKE_TYPE_ARRAY_CONST) {
+                    Ake_Type* type = n->type->data.array_const.td;
+                    if (type->kind == AKE_TYPE_NATURAL && type->data.natural.bit_count == 8) {
                         char* (*fp)() = ExprSymbol.getAddress().toPtr<char*(*)()>();
                         char* v = fp();
                         Zinc_string_add_str(&result->value, v);
@@ -229,7 +229,7 @@ namespace Akela_llvm {
                 } else {
                     assert(false && "return of arrays not supported");
                 }
-            } else if (type == AKE_TYPE_INTEGER) {
+            } else if (kind == AKE_TYPE_INTEGER) {
                 size_t bit_count = n->type->data.integer.bit_count;
                 if (bit_count == 64) {
                     int64_t (*fp)() = ExprSymbol.getAddress().toPtr<int64_t(*)()>();
@@ -262,7 +262,7 @@ namespace Akela_llvm {
                 } else {
                     assert(false);
                 }
-            } else if (type == AKE_TYPE_NATURAL) {
+            } else if (kind == AKE_TYPE_NATURAL) {
                 size_t bit_count = n->type->data.natural.bit_count;
                 if (bit_count == 64) {
                     uint64_t (*fp)() = ExprSymbol.getAddress().toPtr<uint64_t(*)()>();
@@ -295,7 +295,7 @@ namespace Akela_llvm {
                 } else {
                     assert(false);
                 }
-            } else if (type == AKE_TYPE_REAL) {
+            } else if (kind == AKE_TYPE_REAL) {
                 size_t bit_count = n->type->data.real.bit_count;
                 if (bit_count == 64) {
                     double (*fp)() = ExprSymbol.getAddress().toPtr <double(*)()>();
@@ -325,7 +325,7 @@ namespace Akela_llvm {
                 } else {
                     assert(false);
                 }
-            } else if (type == AKE_TYPE_BOOLEAN) {
+            } else if (kind == AKE_TYPE_BOOLEAN) {
                 bool (*fp)() = ExprSymbol.getAddress().toPtr <bool(*)()>();
                 bool v = fp();
                 if (v) {
@@ -336,7 +336,7 @@ namespace Akela_llvm {
                 if (result->return_address) {
                     *(bool*)result->return_address = v;
                 }
-            } else if (type == AKE_TYPE_FUNCTION) {
+            } else if (kind == AKE_TYPE_FUNCTION) {
                 void* (*fp)() = ExprSymbol.getAddress().toPtr<void*(*)()>();
                 void* v = fp();
                 Zinc_string_add_format(value, "Function");
