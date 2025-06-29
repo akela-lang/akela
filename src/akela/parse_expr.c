@@ -1175,10 +1175,10 @@ Ake_Ast* Ake_parse_dot(struct Ake_parse_state* ps)
                 /* test case: test_parse_dot_error_left_non_module */
                 n->kind = Ake_ast_type_error;
             } else {
-                Ake_Type* td = left->type;
-                assert(td);
+                Ake_Type* type = left->type;
+                assert(type);
             	size_t seq = Ake_get_current_seq(ps);
-                struct Ake_Symbol* sym = Ake_EnvironmentGet(ps->st->top, &td->name, seq);
+                struct Ake_Symbol* sym = Ake_EnvironmentGet(ps->st->top, &type->name, seq);
                 assert(sym);
                 //left->sym = sym;
                 assert(sym->td);
