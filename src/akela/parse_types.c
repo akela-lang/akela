@@ -649,17 +649,17 @@ Ake_Type* Ake_parse_type_id(Ake_parse_state* ps, Ake_Ast* n)
  * @param n type node
  * @param id_node ID node
  */
-void Ake_create_variable_symbol(Ake_parse_state* ps, Zinc_string* name, Ake_Type* tu, size_t seq, bool is_const)
+void Ake_create_variable_symbol(Ake_parse_state* ps, Zinc_string* name, Ake_Type* type, size_t seq, bool is_const)
 {
     Ake_symbol* new_sym = NULL;
     Ake_SymbolCreate(&new_sym);
     new_sym->kind = AKE_SYMBOL_VARIABLE;
-    new_sym->tu = Ake_TypeClone(tu);
+    new_sym->tu = Ake_TypeClone(type);
     new_sym->is_const = is_const;
     Ake_EnvironmentAdd(ps->st->top, name, new_sym, seq);
 }
 
-void Ake_declare_type(struct Ake_parse_state* ps, Ake_Ast* type_node, Ake_Ast* id_node, bool is_const)
+void Ake_declare_type(Ake_parse_state* ps, Ake_Ast* type_node, Ake_Ast* id_node, bool is_const)
 {
     if (type_node && type_node->kind != Ake_ast_type_error) {
         if (id_node) {
@@ -799,35 +799,35 @@ bool Ake_check_input_type(
 }
 
 /* NOLINTNEXTLINE(misc-no-recursion) */
-void Ake_Override_rhs(Ake_Type* tu, Ake_Ast* rhs)
+void Ake_Override_rhs(Ake_Type* type, Ake_Ast* rhs)
 {
     if (rhs->kind == Ake_ast_type_sign) {
         Ake_Ast* p = Ast_node_get(rhs, 1);
         if (p->kind == Ake_ast_type_number) {
-            Ake_TypeCopy(tu, p->type);
-            Ake_TypeCopy(tu, rhs->type);
+            Ake_TypeCopy(type, p->type);
+            Ake_TypeCopy(type, rhs->type);
         }
         return;
     }
 
     if (rhs->kind == Ake_ast_type_number) {
-        if (Ake_is_numeric(tu)) {
-            Ake_TypeCopy(tu, rhs->type);
+        if (Ake_is_numeric(type)) {
+            Ake_TypeCopy(type, rhs->type);
         }
         return;
     }
 
     if (rhs->kind == Ake_ast_type_array_literal) {
-        if (tu->kind == AKE_TYPE_ARRAY) {
+        if (type->kind == AKE_TYPE_ARRAY) {
             Ake_Ast* p = rhs->head;
             while (p) {
-                Ake_Override_rhs(tu->data.array.type, p);
+                Ake_Override_rhs(type->data.array.type, p);
                 p = p->next;
             }
-        } else if (tu->kind == AKE_TYPE_ARRAY_CONST) {
+        } else if (type->kind == AKE_TYPE_ARRAY_CONST) {
             Ake_Ast* p = rhs->head;
             while (p) {
-                Ake_Override_rhs(tu->data.array_const.type, p);
+                Ake_Override_rhs(type->data.array_const.type, p);
                 p = p->next;
             }
         }

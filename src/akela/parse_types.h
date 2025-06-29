@@ -41,7 +41,7 @@ AKELA_API bool Ake_check_input_type(
         Ake_Type* func,
         int index,
         Ake_Ast* a);
-AKELA_API void Ake_Override_rhs(Ake_Type* tu, Ake_Ast* rhs);
+AKELA_API void Ake_Override_rhs(Ake_Type* type, Ake_Ast* rhs);
 AKELA_API bool Ake_check_lvalue(Ake_parse_state* ps, Ake_Ast* n, Zinc_location* loc);
 AKELA_API Ake_Type* Ake_StructToType(Ake_Ast* n);
 

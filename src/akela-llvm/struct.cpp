@@ -13,13 +13,13 @@ namespace Akela_llvm {
         struct Ake_Ast* element_dec = n->head;
         while (element_dec) {
             Ake_Ast* element_type_node = Ast_node_get(element_dec, 1);
-            Ake_Type* element_tu = element_type_node->type;
-            Type* element_type = Get_type(jd, element_tu);
-            if (element_tu->kind == AKE_TYPE_FUNCTION) {
+            Ake_Type* element_type = element_type_node->type;
+            Type* element_type2 = Get_type(jd, element_type);
+            if (element_type->kind == AKE_TYPE_FUNCTION) {
                 //element_type = element_type->getPointerTo();
-                element_type = PointerType::get(element_type, 0);
+                element_type2 = PointerType::get(element_type2, 0);
             }
-            type_list.push_back(element_type);
+            type_list.push_back(element_type2);
             element_dec = element_dec->next;
         }
         return StructType::create(*jd->TheContext, type_list, n->value.buf);
@@ -54,16 +54,16 @@ namespace Akela_llvm {
     Value* Handle_dot(Jit_data* jd, Ake_Ast* n)
     {
         Ake_Ast* left = Ast_node_get(n, 0);
-        Ake_Type* left_tu = left->type;
-        assert(left_tu);
-        assert(left_tu->kind == AKE_TYPE_STRUCT);
+        Ake_Type* left_type = left->type;
+        assert(left_type);
+        assert(left_type->kind == AKE_TYPE_STRUCT);
         left->type->context = Ake_type_context_ptr;
         Value* struct_value = Dispatch(jd, left);
 
         Ake_Ast* right = Ast_node_get(n, 1);
-        Ake_TypeField* tf = left_tu->data.fields.head;
+        Ake_TypeField* tf = left_type->data.fields.head;
         //auto struct_type = (StructType*)left_tu->data.fields.backend_type;
-        StructType* struct_type = GetStructTypeFromType(jd, left_tu);
+        StructType* struct_type = GetStructTypeFromType(jd, left_type);
         size_t i = 0;
         Ake_Type* dec_tu = nullptr;
         bool found = false;
