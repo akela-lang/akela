@@ -7,35 +7,35 @@ using namespace llvm::orc;
 namespace Akela_llvm {
     Value* Handle_number(Jit_data* jd, Ake_Ast* n)
     {
-        Ake_Type* tu = n->type;
-        if (tu->kind == AKE_TYPE_INTEGER) {
+        Ake_Type* type = n->type;
+        if (type->kind == AKE_TYPE_INTEGER) {
             Type* t = Get_type(jd, n->type);
             Zinc_string_finish(&n->value);
             long v = strtol(n->value.buf, nullptr, 10);
-            return ConstantInt::get(t, APInt(tu->data.integer.bit_count, v, true));
+            return ConstantInt::get(t, APInt(type->data.integer.bit_count, v, true));
         }
 
-        if (tu->kind == AKE_TYPE_NATURAL) {
+        if (type->kind == AKE_TYPE_NATURAL) {
             Type* t = Get_type(jd, n->type);
             Zinc_string_finish(&n->value);
             long v = strtol(n->value.buf, nullptr, 10);
-            return ConstantInt::get(t, APInt(tu->data.natural.bit_count, v, false));
+            return ConstantInt::get(t, APInt(type->data.natural.bit_count, v, false));
         }
 
-        if (tu->kind == AKE_TYPE_REAL) {
+        if (type->kind == AKE_TYPE_REAL) {
             Zinc_string_finish(&n->value);
-            if (tu->data.real.bit_count == 64) {
+            if (type->data.real.bit_count == 64) {
                 double v = strtod(n->value.buf, nullptr);
                 Type* t = Get_type(jd, n->type);
                 return ConstantFP::get(*jd->TheContext, APFloat(v));
             }
 
-            if (tu->data.real.bit_count == 32) {
+            if (type->data.real.bit_count == 32) {
                 float v = strtof(n->value.buf, nullptr);
                 return ConstantFP::get(*jd->TheContext, APFloat(v));
             }
 
-            if (tu->data.real.bit_count == 16) {
+            if (type->data.real.bit_count == 16) {
 #if IS_UNIX
                 _Float16 v = (_Float16)strtof(n->value.buf, nullptr);
                 Type* t = Type::getHalfTy(*jd->TheContext);
