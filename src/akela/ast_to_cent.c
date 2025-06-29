@@ -4,7 +4,7 @@
 
 void Ake_indent_print(size_t level);
 char* Ake_ast_cent_name(Ake_AstKind type);
-void Ake_type_def_cent_print(Ake_Type* td, size_t level, bool is_property);
+void Ake_type_def_cent_print(Ake_Type* type, size_t level, bool is_property);
 char* Ake_type_def_cent_name(Ake_TypeKind kind);
 char* Ake_type_param_cent_name(Ake_TypeParamKind kind);
 
@@ -272,37 +272,37 @@ char* Ake_ast_cent_name(Ake_AstKind type)
 }
 
 /* NOLINTNEXTLINE(misc-no-recursion) */
-void Ake_type_def_cent_print(Ake_Type* td, size_t level, bool is_property)
+void Ake_type_def_cent_print(Ake_Type* type, size_t level, bool is_property)
 {
     if (!is_property) {
         Ake_indent_print(level);
     }
-    printf("%s {\n", Ake_type_def_cent_name(td->kind));
+    printf("%s {\n", Ake_type_def_cent_name(type->kind));
 
     level++;
 
-    if (td->name.size > 0) {
+    if (type->name.size > 0) {
         Ake_indent_print(level);
-        printf(".name = \"%s\"\n", Zinc_string_c_str(&td->name));
+        printf(".name = \"%s\"\n", Zinc_string_c_str(&type->name));
     }
 
-    switch (td->kind) {
+    switch (type->kind) {
         case AKE_TYPE_INTEGER:
             Ake_indent_print(level);
-            printf(".bit_count = %d\n", td->data.integer.bit_count);
+            printf(".bit_count = %d\n", type->data.integer.bit_count);
             break;
         case AKE_TYPE_NATURAL:
             Ake_indent_print(level);
-            printf(".bit_count = %d\n", td->data.natural.bit_count);
+            printf(".bit_count = %d\n", type->data.natural.bit_count);
             break;
         case AKE_TYPE_REAL:
             Ake_indent_print(level);
-            printf(".bit_count = %d\n", td->data.real.bit_count);
+            printf(".bit_count = %d\n", type->data.real.bit_count);
             break;
         case AKE_TYPE_BOOLEAN:
             break;
         case AKE_TYPE_STRUCT:
-            Ake_TypeField* field = td->data.fields.head;
+            Ake_TypeField* field = type->data.fields.head;
             while (field) {
                 Ake_indent_print(level);
                 printf("TypeField {\n");
@@ -319,27 +319,27 @@ void Ake_type_def_cent_print(Ake_Type* td, size_t level, bool is_property)
             break;
         case AKE_TYPE_ARRAY:
             Ake_indent_print(level);
-            printf(".dim = %zu\n", td->data.array.dim);
+            printf(".dim = %zu\n", type->data.array.dim);
             Ake_indent_print(level);
             printf(".td = ");
-            Ake_type_def_cent_print(td->data.array.type, level, true);
+            Ake_type_def_cent_print(type->data.array.type, level, true);
             break;
         case AKE_TYPE_ARRAY_CONST:
             Ake_indent_print(level);
-            printf(".dim = %zu\n", td->data.array_const.dim);
+            printf(".dim = %zu\n", type->data.array_const.dim);
             Ake_indent_print(level);
             printf(".td = ");
-            Ake_type_def_cent_print(td->data.array_const.type, level, true);
+            Ake_type_def_cent_print(type->data.array_const.type, level, true);
         case AKE_TYPE_SLICE:
             Ake_indent_print(level);
             printf(".td = ");
-            Ake_type_def_cent_print(td->data.slice.type, level, true);
+            Ake_type_def_cent_print(type->data.slice.type, level, true);
         case AKE_TYPE_POINTER:
             Ake_indent_print(level);
             printf(".td = ");
-            Ake_type_def_cent_print(td->data.pointer.type, level, true);
+            Ake_type_def_cent_print(type->data.pointer.type, level, true);
         case AKE_TYPE_FUNCTION:
-            Ake_TypeParam* tp = td->data.function.input_head;
+            Ake_TypeParam* tp = type->data.function.input_head;
             while (tp) {
                 Ake_indent_print(level);
                 printf("TypeParam {\n");
