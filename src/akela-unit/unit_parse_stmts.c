@@ -540,12 +540,12 @@ void AkeUnit_parse_stmts_type(Zinc_test* test)
 	Zinc_expect_int_equal(test, type->kind, AKE_TYPE_ARRAY_CONST, "kind tu");
 	Zinc_expect_uint8_t_equal(test, type->data.array_const.dim, 6, "dim tu");
 
-	Ake_Type* td = type->data.array_const.type;
-	if (!Zinc_expect_ptr(test, td, "ptr td")) {
+	Ake_Type* type2 = type->data.array_const.type;
+	if (!Zinc_expect_ptr(test, type2, "ptr td")) {
 		return Zinc_assert();
 	}
-	Zinc_expect_int_equal(test, td->kind, AKE_TYPE_NATURAL, "type td");
-	Zinc_expect_string(test, &td->name, "Nat8", "name td");
+	Zinc_expect_int_equal(test, type2->kind, AKE_TYPE_NATURAL, "type td");
+	Zinc_expect_string(test, &type2->name, "Nat8", "name td");
 
     AkeUnit_parse_teardown(&cu);
 }
