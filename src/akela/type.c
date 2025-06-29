@@ -2,57 +2,57 @@
 #include "zinc/memory.h"
 #include <assert.h>
 
-void Ake_TypeInit(Ake_Type* td)
+void Ake_TypeInit(Ake_Type* type)
 {
-    td->kind = AKE_TYPE_NONE;
-    Zinc_string_init(&td->name);
-    td->lhs_allocation = NULL;
-    td->context = Ake_type_context_value;
+    type->kind = AKE_TYPE_NONE;
+    Zinc_string_init(&type->name);
+    type->lhs_allocation = NULL;
+    type->context = Ake_type_context_value;
 }
 
-void Ake_TypeCreate(Ake_Type** td)
+void Ake_TypeCreate(Ake_Type** type)
 {
-    Zinc_malloc_safe((void**)td, sizeof(Ake_Type));
-    Ake_TypeInit(*td);
+    Zinc_malloc_safe((void**)type, sizeof(Ake_Type));
+    Ake_TypeInit(*type);
 }
 
-void Ake_TypeSet(Ake_Type* td, Ake_TypeKind kind)
+void Ake_TypeSet(Ake_Type* type, Ake_TypeKind kind)
 {
-    td->kind = kind;
+    type->kind = kind;
     switch (kind) {
         case AKE_TYPE_INTEGER:
-            td->data.integer.bit_count = 0;
+            type->data.integer.bit_count = 0;
             break;
         case AKE_TYPE_NATURAL:
-            td->data.natural.bit_count = 0;
+            type->data.natural.bit_count = 0;
             break;
         case AKE_TYPE_REAL:
-            td->data.real.bit_count = 0;
+            type->data.real.bit_count = 0;
             break;
         case AKE_TYPE_BOOLEAN:
             break;
         case AKE_TYPE_STRUCT:
-            td->data.fields.head = NULL;
-            td->data.fields.tail = NULL;
+            type->data.fields.head = NULL;
+            type->data.fields.tail = NULL;
             break;
         case AKE_TYPE_ARRAY:
-            td->data.array.dim = 0;
-            td->data.array.type = NULL;
+            type->data.array.dim = 0;
+            type->data.array.type = NULL;
             break;
         case AKE_TYPE_ARRAY_CONST:
-            td->data.array.dim = 0;
-            td->data.array.type = NULL;
+            type->data.array.dim = 0;
+            type->data.array.type = NULL;
             break;
         case AKE_TYPE_SLICE:
-            td->data.slice.type = NULL;
+            type->data.slice.type = NULL;
             break;
         case AKE_TYPE_POINTER:
-            td->data.pointer.type = NULL;
+            type->data.pointer.type = NULL;
             break;
         case AKE_TYPE_FUNCTION:
-            td->data.function.input_head = NULL;
-            td->data.function.input_tail = NULL;
-            td->data.function.output = NULL;
+            type->data.function.input_head = NULL;
+            type->data.function.input_tail = NULL;
+            type->data.function.output = NULL;
             break;
         case AKE_TYPE_NONE:
         default:
@@ -61,11 +61,11 @@ void Ake_TypeSet(Ake_Type* td, Ake_TypeKind kind)
 }
 
 /* NOLINTNEXTLINE(misc-no-recursion) */
-void Ake_TypeDestroy(Ake_Type* td)
+void Ake_TypeDestroy(Ake_Type* type)
 {
-    if (td) {
-        Zinc_string_destroy(&td->name);
-        switch (td->kind) {
+    if (type) {
+        Zinc_string_destroy(&type->name);
+        switch (type->kind) {
             case AKE_TYPE_NONE:
             case AKE_TYPE_INTEGER:
             case AKE_TYPE_NATURAL:
@@ -73,7 +73,7 @@ void Ake_TypeDestroy(Ake_Type* td)
             case AKE_TYPE_BOOLEAN:
                 break;
             case AKE_TYPE_STRUCT:
-                Ake_TypeField* tf = td->data.fields.head;
+                Ake_TypeField* tf = type->data.fields.head;
                 while (tf) {
                     Ake_TypeField* temp = tf;
                     tf = tf->next;
@@ -82,19 +82,19 @@ void Ake_TypeDestroy(Ake_Type* td)
                 }
                 break;
             case AKE_TYPE_ARRAY:
-                Ake_TypeDestroy(td->data.array.type);
+                Ake_TypeDestroy(type->data.array.type);
                 break;
             case AKE_TYPE_ARRAY_CONST:
-                Ake_TypeDestroy(td->data.array_const.type);
+                Ake_TypeDestroy(type->data.array_const.type);
                 break;
             case AKE_TYPE_SLICE:
-                Ake_TypeDestroy(td->data.slice.type);
+                Ake_TypeDestroy(type->data.slice.type);
                 break;
             case AKE_TYPE_POINTER:
-                Ake_TypeDestroy(td->data.pointer.type);
+                Ake_TypeDestroy(type->data.pointer.type);
                 break;
             case AKE_TYPE_FUNCTION:
-                Ake_TypeParam* tp = td->data.function.input_head;
+                Ake_TypeParam* tp = type->data.function.input_head;
                 while (tp) {
                     Ake_TypeParam* temp = tp;
                     tp = tp->next;
@@ -102,7 +102,7 @@ void Ake_TypeDestroy(Ake_Type* td)
                     free(temp);
                 }
 
-                Ake_TypeDestroy(td->data.function.output);
+                Ake_TypeDestroy(type->data.function.output);
                 break;
             default:
                 assert(false && "invalid kind");
@@ -237,64 +237,64 @@ bool Ake_TypeMatch(Ake_Type* a, Ake_Type* b, bool* cast)
 }
 
 /* NOLINTNEXTLINE(misc-no-recursion) */
-Ake_Type* Ake_TypeClone(Ake_Type* td)
+Ake_Type* Ake_TypeClone(Ake_Type* type)
 {
-    Ake_Type* new_td = NULL;
-    if (td) {
-        Ake_TypeCreate(&new_td);
-        Ake_TypeSet(new_td, td->kind);
-        Zinc_string_add_string(&new_td->name, &td->name);
-        switch (td->kind) {
+    Ake_Type* new_type = NULL;
+    if (type) {
+        Ake_TypeCreate(&new_type);
+        Ake_TypeSet(new_type, type->kind);
+        Zinc_string_add_string(&new_type->name, &type->name);
+        switch (type->kind) {
             case AKE_TYPE_INTEGER:
             case AKE_TYPE_NATURAL:
             case AKE_TYPE_REAL:
-                new_td->data = td->data;
+                new_type->data = type->data;
                 break;
             case AKE_TYPE_BOOLEAN:
                 break;
             case AKE_TYPE_STRUCT:
-                Ake_TypeField* tf = td->data.fields.head;
+                Ake_TypeField* tf = type->data.fields.head;
                 while (tf) {
                     Ake_TypeField* new_tf = NULL;
                     Ake_TypeFieldCreate(&new_tf);
                     Zinc_string_add_string(&new_tf->name, &tf->name);
                     new_tf->type = Ake_TypeClone(tf->type);
-                    Ake_TypeStructAdd(new_td, new_tf);
+                    Ake_TypeStructAdd(new_type, new_tf);
                     tf = tf->next;
                 }
                 break;
             case AKE_TYPE_ARRAY:
-                new_td->data.array.dim = td->data.array.dim;
-                new_td->data.array.type = Ake_TypeClone(td->data.array.type);
+                new_type->data.array.dim = type->data.array.dim;
+                new_type->data.array.type = Ake_TypeClone(type->data.array.type);
                 break;
             case AKE_TYPE_ARRAY_CONST:
-                new_td->data.array_const.dim = td->data.array_const.dim;
-                new_td->data.array_const.type = Ake_TypeClone(td->data.array_const.type);
+                new_type->data.array_const.dim = type->data.array_const.dim;
+                new_type->data.array_const.type = Ake_TypeClone(type->data.array_const.type);
                 break;
             case AKE_TYPE_SLICE:
-                new_td->data.slice.type = Ake_TypeClone(td->data.slice.type);
+                new_type->data.slice.type = Ake_TypeClone(type->data.slice.type);
                 break;
             case AKE_TYPE_POINTER:
-                new_td->data.pointer.type = Ake_TypeClone(td->data.pointer.type);
+                new_type->data.pointer.type = Ake_TypeClone(type->data.pointer.type);
                 break;
             case AKE_TYPE_FUNCTION:
-                Ake_TypeParam* tp = td->data.function.input_head;
+                Ake_TypeParam* tp = type->data.function.input_head;
                 while (tp) {
                     Ake_TypeParam* new_tp = NULL;
                     Ake_TypeParamCreate(&new_tp);
                     Zinc_string_add_string(&new_tp->name, &tp->name);
                     new_tp->type = Ake_TypeClone(tp->type);
-                    Ake_TypeInputAdd(new_td, new_tp);
+                    Ake_TypeInputAdd(new_type, new_tp);
                     tp = tp->next;
                 }
-                new_td->data.function.output = Ake_TypeClone(td->data.function.output);
+                new_type->data.function.output = Ake_TypeClone(type->data.function.output);
                 break;
             default:
                 assert(false && "invalid kind");
         }
     }
 
-    return new_td;
+    return new_type;
 }
 
 void Ake_TypeCopy(Ake_Type* a, Ake_Type* b)
@@ -354,31 +354,31 @@ void Ake_TypeCopy(Ake_Type* a, Ake_Type* b)
     }
 }
 
-void Ake_TypeStructAdd(Ake_Type* td, Ake_TypeField* tf)
+void Ake_TypeStructAdd(Ake_Type* type, Ake_TypeField* tf)
 {
-    assert(td->kind == AKE_TYPE_STRUCT);
+    assert(type->kind == AKE_TYPE_STRUCT);
 
-    if (td->data.fields.head && td->data.fields.tail) {
-        tf->prev = td->data.fields.tail;
-        td->data.fields.tail->next = tf;
-        td->data.fields.tail = tf;
+    if (type->data.fields.head && type->data.fields.tail) {
+        tf->prev = type->data.fields.tail;
+        type->data.fields.tail->next = tf;
+        type->data.fields.tail = tf;
     } else {
-        td->data.fields.head = tf;
-        td->data.fields.tail = tf;
+        type->data.fields.head = tf;
+        type->data.fields.tail = tf;
     }
 }
 
-void Ake_TypeInputAdd(Ake_Type* td, Ake_TypeParam* tp)
+void Ake_TypeInputAdd(Ake_Type* type, Ake_TypeParam* tp)
 {
-    assert(td->kind == AKE_TYPE_FUNCTION);
+    assert(type->kind == AKE_TYPE_FUNCTION);
 
-    if (td->data.function.input_head && td->data.function.input_tail) {
-        td->data.function.input_tail->next = tp;
-        tp->prev = td->data.function.input_tail;
-        td->data.function.input_tail = tp;
+    if (type->data.function.input_head && type->data.function.input_tail) {
+        type->data.function.input_tail->next = tp;
+        tp->prev = type->data.function.input_tail;
+        type->data.function.input_tail = tp;
     } else {
-        td->data.function.input_head = tp;
-        td->data.function.input_tail = tp;
+        type->data.function.input_head = tp;
+        type->data.function.input_tail = tp;
     }
 }
 

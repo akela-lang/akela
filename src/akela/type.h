@@ -100,14 +100,14 @@ struct Ake_TypeField {
     Ake_TypeField* prev;
 };
 
-void Ake_TypeInit(Ake_Type* td);
-void Ake_TypeCreate(Ake_Type** td);
-void Ake_TypeSet(Ake_Type* td, Ake_TypeKind kind);
-void Ake_TypeDestroy(Ake_Type* td);
-void Ake_TypeStructAdd(Ake_Type* td, Ake_TypeField* tf);
-void Ake_TypeInputAdd(Ake_Type* td, Ake_TypeParam* tp);
+void Ake_TypeInit(Ake_Type* type);
+void Ake_TypeCreate(Ake_Type** type);
+void Ake_TypeSet(Ake_Type* type, Ake_TypeKind kind);
+void Ake_TypeDestroy(Ake_Type* type);
+void Ake_TypeStructAdd(Ake_Type* type, Ake_TypeField* tf);
+void Ake_TypeInputAdd(Ake_Type* type, Ake_TypeParam* tp);
 bool Ake_TypeMatch(Ake_Type* a, Ake_Type* b, bool* cast);
-Ake_Type* Ake_TypeClone(Ake_Type* td);
+Ake_Type* Ake_TypeClone(Ake_Type* type);
 void Ake_TypeCopy(Ake_Type* a, Ake_Type* b);
 
 void Ake_TypeParamInit(Ake_TypeParam* tp);
