@@ -986,9 +986,9 @@ void Ake_parse_call(struct Ake_parse_state* ps, Ake_Ast* left, Ake_Ast* n) {
     }
 
     if (n->kind != Ake_ast_type_error) {
-        Ake_Type *tu = left->type;
-        assert(tu);
-        if (tu->kind != AKE_TYPE_FUNCTION) {
+        Ake_Type *type = left->type;
+        assert(type);
+        if (type->kind != AKE_TYPE_FUNCTION) {
             Zinc_error_list_set(ps->el, &left->loc, "not a function type");
             /* test case: test_parse_call_error_not_function */
             n->kind = Ake_ast_type_error;
@@ -996,7 +996,7 @@ void Ake_parse_call(struct Ake_parse_state* ps, Ake_Ast* left, Ake_Ast* n) {
             /* input */
             size_t tcount = 0;
             bool is_variadic = false;
-        	Ake_TypeParam* tp = tu->data.function.input_head;
+        	Ake_TypeParam* tp = type->data.function.input_head;
             while (tp) {
 	            if (tp->kind == AKE_TYPE_PARAM_ELLIPSIS) {
 	            	is_variadic = true;
@@ -1021,8 +1021,8 @@ void Ake_parse_call(struct Ake_parse_state* ps, Ake_Ast* left, Ake_Ast* n) {
             }
 
             /* output */
-            if (tu->data.function.output) {
-                n->type = Ake_TypeClone(tu->data.function.output);
+            if (type->data.function.output) {
+                n->type = Ake_TypeClone(type->data.function.output);
             }
         }
 
@@ -1185,10 +1185,10 @@ Ake_Ast* Ake_parse_dot(struct Ake_parse_state* ps)
                 assert(sym->td->data.fields.head);
                 bool found = false;
                 Ake_TypeField* tf = sym->td->data.fields.head;
-            	Ake_Type* found_tu = NULL;
+            	Ake_Type* found_type = NULL;
                 while (tf) {
                     if (Zinc_string_compare(&tf->name, &b->value)) {
-                    	found_tu = tf->td;
+                    	found_type = tf->td;
                         found = true;
                         break;
                     }
@@ -1201,7 +1201,7 @@ Ake_Ast* Ake_parse_dot(struct Ake_parse_state* ps)
                             "identifier not a field of struct: %bf", &id->value);
                     n->kind = Ake_ast_type_error;
                 } else {
-                    n->type = Ake_TypeClone(found_tu);
+                    n->type = Ake_TypeClone(found_type);
                 }
             }
 
