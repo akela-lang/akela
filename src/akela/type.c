@@ -37,17 +37,17 @@ void Ake_TypeSet(Ake_Type* td, Ake_TypeKind kind)
             break;
         case AKE_TYPE_ARRAY:
             td->data.array.dim = 0;
-            td->data.array.td = NULL;
+            td->data.array.type = NULL;
             break;
         case AKE_TYPE_ARRAY_CONST:
             td->data.array.dim = 0;
-            td->data.array.td = NULL;
+            td->data.array.type = NULL;
             break;
         case AKE_TYPE_SLICE:
-            td->data.slice.td = NULL;
+            td->data.slice.type = NULL;
             break;
         case AKE_TYPE_POINTER:
-            td->data.pointer.td = NULL;
+            td->data.pointer.type = NULL;
             break;
         case AKE_TYPE_FUNCTION:
             td->data.function.input_head = NULL;
@@ -82,16 +82,16 @@ void Ake_TypeDestroy(Ake_Type* td)
                 }
                 break;
             case AKE_TYPE_ARRAY:
-                Ake_TypeDestroy(td->data.array.td);
+                Ake_TypeDestroy(td->data.array.type);
                 break;
             case AKE_TYPE_ARRAY_CONST:
-                Ake_TypeDestroy(td->data.array_const.td);
+                Ake_TypeDestroy(td->data.array_const.type);
                 break;
             case AKE_TYPE_SLICE:
-                Ake_TypeDestroy(td->data.slice.td);
+                Ake_TypeDestroy(td->data.slice.type);
                 break;
             case AKE_TYPE_POINTER:
-                Ake_TypeDestroy(td->data.pointer.td);
+                Ake_TypeDestroy(td->data.pointer.type);
                 break;
             case AKE_TYPE_FUNCTION:
                 Ake_TypeParam* tp = td->data.function.input_head;
@@ -195,16 +195,16 @@ bool Ake_TypeMatch(Ake_Type* a, Ake_Type* b, bool* cast)
             if (a->data.array.dim != b->data.array.dim) {
                 return false;
             }
-            return Ake_TypeMatch(a->data.array.td, b->data.array.td, cast);
+            return Ake_TypeMatch(a->data.array.type, b->data.array.type, cast);
         case AKE_TYPE_ARRAY_CONST:
             if (a->data.array_const.dim < b->data.array_const.dim) {
                 return false;
             }
-            return Ake_TypeMatch(a->data.array_const.td, b->data.array_const.td, cast);
+            return Ake_TypeMatch(a->data.array_const.type, b->data.array_const.type, cast);
         case AKE_TYPE_SLICE:
-            return Ake_TypeMatch(a->data.slice.td, b->data.slice.td, NULL);
+            return Ake_TypeMatch(a->data.slice.type, b->data.slice.type, NULL);
         case AKE_TYPE_POINTER:
-            return Ake_TypeMatch(a->data.pointer.td, b->data.pointer.td, cast);
+            return Ake_TypeMatch(a->data.pointer.type, b->data.pointer.type, cast);
         case AKE_TYPE_FUNCTION:
             Ake_TypeParam* a_tp = a->data.function.input_head;
             Ake_TypeParam* b_tp = b->data.function.input_head;
@@ -265,17 +265,17 @@ Ake_Type* Ake_TypeClone(Ake_Type* td)
                 break;
             case AKE_TYPE_ARRAY:
                 new_td->data.array.dim = td->data.array.dim;
-                new_td->data.array.td = Ake_TypeClone(td->data.array.td);
+                new_td->data.array.type = Ake_TypeClone(td->data.array.type);
                 break;
             case AKE_TYPE_ARRAY_CONST:
                 new_td->data.array_const.dim = td->data.array_const.dim;
-                new_td->data.array_const.td = Ake_TypeClone(td->data.array_const.td);
+                new_td->data.array_const.type = Ake_TypeClone(td->data.array_const.type);
                 break;
             case AKE_TYPE_SLICE:
-                new_td->data.slice.td = Ake_TypeClone(td->data.slice.td);
+                new_td->data.slice.type = Ake_TypeClone(td->data.slice.type);
                 break;
             case AKE_TYPE_POINTER:
-                new_td->data.pointer.td = Ake_TypeClone(td->data.pointer.td);
+                new_td->data.pointer.type = Ake_TypeClone(td->data.pointer.type);
                 break;
             case AKE_TYPE_FUNCTION:
                 Ake_TypeParam* tp = td->data.function.input_head;
@@ -325,17 +325,17 @@ void Ake_TypeCopy(Ake_Type* a, Ake_Type* b)
             break;
         case AKE_TYPE_ARRAY:
             b->data.array.dim = a->data.array.dim;
-            b->data.array.td = Ake_TypeClone(a->data.array.td);
+            b->data.array.type = Ake_TypeClone(a->data.array.type);
             break;
         case AKE_TYPE_ARRAY_CONST:
             b->data.array_const.dim = a->data.array_const.dim;
-            b->data.array_const.td = Ake_TypeClone(a->data.array_const.td);
+            b->data.array_const.type = Ake_TypeClone(a->data.array_const.type);
             break;
         case AKE_TYPE_SLICE:
-            b->data.slice.td = Ake_TypeClone(a->data.slice.td);
+            b->data.slice.type = Ake_TypeClone(a->data.slice.type);
             break;
         case AKE_TYPE_POINTER:
-            b->data.pointer.td = Ake_TypeClone(a->data.pointer.td);
+            b->data.pointer.type = Ake_TypeClone(a->data.pointer.type);
             break;
         case AKE_TYPE_FUNCTION:
             Ake_TypeParam* tp = a->data.function.input_head;

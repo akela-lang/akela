@@ -453,7 +453,7 @@ Ake_Ast* Ake_parse_literal(struct Ake_parse_state* ps)
             Ake_TypeCreate(&type);
             type->kind = AKE_TYPE_ARRAY_CONST;
             type->data.array_const.dim = n->value.size + 1;
-            type->data.array_const.td = n->type;
+            type->data.array_const.type = n->type;
             n->type = type;
         }
 	}
@@ -790,7 +790,7 @@ Ake_Ast* Ake_parse_array_literal(struct Ake_parse_state* ps)
             Ake_TypeCreate(&type);
             Ake_TypeSet(type, AKE_TYPE_ARRAY);
             type->data.array.dim = count;
-            type->data.array.td = Ake_TypeClone(tu_first);
+            type->data.array.type = Ake_TypeClone(tu_first);
             n->type = type;
         }
     }

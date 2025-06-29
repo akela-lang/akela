@@ -322,22 +322,22 @@ void Ake_type_def_cent_print(Ake_Type* td, size_t level, bool is_property)
             printf(".dim = %zu\n", td->data.array.dim);
             Ake_indent_print(level);
             printf(".td = ");
-            Ake_type_def_cent_print(td->data.array.td, level, true);
+            Ake_type_def_cent_print(td->data.array.type, level, true);
             break;
         case AKE_TYPE_ARRAY_CONST:
             Ake_indent_print(level);
             printf(".dim = %zu\n", td->data.array_const.dim);
             Ake_indent_print(level);
             printf(".td = ");
-            Ake_type_def_cent_print(td->data.array_const.td, level, true);
+            Ake_type_def_cent_print(td->data.array_const.type, level, true);
         case AKE_TYPE_SLICE:
             Ake_indent_print(level);
             printf(".td = ");
-            Ake_type_def_cent_print(td->data.slice.td, level, true);
+            Ake_type_def_cent_print(td->data.slice.type, level, true);
         case AKE_TYPE_POINTER:
             Ake_indent_print(level);
             printf(".td = ");
-            Ake_type_def_cent_print(td->data.pointer.td, level, true);
+            Ake_type_def_cent_print(td->data.pointer.type, level, true);
         case AKE_TYPE_FUNCTION:
             Ake_TypeParam* tp = td->data.function.input_head;
             while (tp) {

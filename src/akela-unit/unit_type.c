@@ -316,7 +316,7 @@ void AkeUnit_TypeDefMatchArrayTrue(Zinc_test* test)
 	Ake_TypeCreate(&td00);
 	Ake_TypeSet(td00, AKE_TYPE_INTEGER);
 	td00->data.integer.bit_count = 32;
-	td0->data.array.td = td00;
+	td0->data.array.type = td00;
 
 	Ake_Type* td1 = NULL;
 	Ake_TypeCreate(&td1);
@@ -326,7 +326,7 @@ void AkeUnit_TypeDefMatchArrayTrue(Zinc_test* test)
 	Ake_TypeCreate(&td10);
 	Ake_TypeSet(td10, AKE_TYPE_INTEGER);
 	td10->data.integer.bit_count = 32;
-	td1->data.array.td = td10;
+	td1->data.array.type = td10;
 
 	Zinc_expect_true(test, Ake_TypeMatch(td0, td1, NULL), "true");
 
@@ -350,7 +350,7 @@ void AkeUnit_TypeDefMatchArrayFalse(Zinc_test* test)
 	Ake_TypeCreate(&td00);
 	Ake_TypeSet(td00, AKE_TYPE_INTEGER);
 	td00->data.integer.bit_count = 32;
-	td0->data.array.td = td00;
+	td0->data.array.type = td00;
 
 	Ake_Type* td1 = NULL;
 	Ake_TypeCreate(&td1);
@@ -360,7 +360,7 @@ void AkeUnit_TypeDefMatchArrayFalse(Zinc_test* test)
 	Ake_TypeCreate(&td10);
 	Ake_TypeSet(td10, AKE_TYPE_INTEGER);
 	td10->data.integer.bit_count = 64;
-	td1->data.array.td = td10;
+	td1->data.array.type = td10;
 
 	Zinc_expect_false(test, Ake_TypeMatch(td0, td1, NULL), "false");
 
@@ -384,7 +384,7 @@ void AkeUnit_TypeDefMatchArrayConstTrue(Zinc_test* test)
 	Ake_TypeCreate(&td00);
 	Ake_TypeSet(td00, AKE_TYPE_INTEGER);
 	td00->data.integer.bit_count = 32;
-	td0->data.array_const.td = td00;
+	td0->data.array_const.type = td00;
 
 	Ake_Type* td1 = NULL;
 	Ake_TypeCreate(&td1);
@@ -394,7 +394,7 @@ void AkeUnit_TypeDefMatchArrayConstTrue(Zinc_test* test)
 	Ake_TypeCreate(&td10);
 	Ake_TypeSet(td10, AKE_TYPE_INTEGER);
 	td10->data.integer.bit_count = 32;
-	td1->data.array_const.td = td10;
+	td1->data.array_const.type = td10;
 
 	Zinc_expect_true(test, Ake_TypeMatch(td0, td1, NULL), "match");
 
@@ -418,7 +418,7 @@ void AkeUnit_TypeDefMatchArrayConstFalse(Zinc_test* test)
 	Ake_TypeCreate(&td00);
 	Ake_TypeSet(td00, AKE_TYPE_INTEGER);
 	td00->data.integer.bit_count = 32;
-	td0->data.array_const.td = td00;
+	td0->data.array_const.type = td00;
 
 	Ake_Type* td1 = NULL;
 	Ake_TypeCreate(&td1);
@@ -428,7 +428,7 @@ void AkeUnit_TypeDefMatchArrayConstFalse(Zinc_test* test)
 	Ake_TypeCreate(&td10);
 	Ake_TypeSet(td10, AKE_TYPE_INTEGER);
 	td10->data.integer.bit_count = 64;
-	td1->data.array_const.td = td10;
+	td1->data.array_const.type = td10;
 
 	Zinc_expect_false(test, Ake_TypeMatch(td0, td1, NULL), "match");
 
@@ -452,7 +452,7 @@ void AkeUnit_TypeDefMatchSliceTrue(Zinc_test* test)
 	Ake_TypeCreate(&td00);
 	Ake_TypeSet(td00, AKE_TYPE_INTEGER);
 	td00->data.integer.bit_count = 32;
-	td0->data.slice.td = td00;
+	td0->data.slice.type = td00;
 
 	Ake_Type* td1 = NULL;
 	Ake_TypeCreate(&td1);
@@ -462,7 +462,7 @@ void AkeUnit_TypeDefMatchSliceTrue(Zinc_test* test)
 	Ake_TypeCreate(&td10);
 	Ake_TypeSet(td10, AKE_TYPE_INTEGER);
 	td10->data.integer.bit_count = 32;
-	td1->data.slice.td = td10;
+	td1->data.slice.type = td10;
 
 	Zinc_expect_true(test, Ake_TypeMatch(td0, td1, NULL), "match");
 
@@ -486,7 +486,7 @@ void AkeUnit_TypeDefMatchSliceFalse(Zinc_test* test)
 	Ake_TypeCreate(&td00);
 	Ake_TypeSet(td00, AKE_TYPE_INTEGER);
 	td00->data.integer.bit_count = 32;
-	td0->data.slice.td = td00;
+	td0->data.slice.type = td00;
 
 	Ake_Type* td1 = NULL;
 	Ake_TypeCreate(&td1);
@@ -496,7 +496,7 @@ void AkeUnit_TypeDefMatchSliceFalse(Zinc_test* test)
 	Ake_TypeCreate(&td10);
 	Ake_TypeSet(td10, AKE_TYPE_INTEGER);
 	td10->data.integer.bit_count = 64;
-	td1->data.slice.td = td10;
+	td1->data.slice.type = td10;
 
 	Zinc_expect_false(test, Ake_TypeMatch(td0, td1, NULL), "match");
 
@@ -520,7 +520,7 @@ void AkeUnit_TypeDefMatchPointerTrue(Zinc_test* test)
 	Ake_TypeCreate(&td00);
 	Ake_TypeSet(td00, AKE_TYPE_INTEGER);
 	td00->data.integer.bit_count = 32;
-	td0->data.pointer.td = td00;
+	td0->data.pointer.type = td00;
 
 	Ake_Type* td1 = NULL;
 	Ake_TypeCreate(&td1);
@@ -530,7 +530,7 @@ void AkeUnit_TypeDefMatchPointerTrue(Zinc_test* test)
 	Ake_TypeCreate(&td10);
 	Ake_TypeSet(td10, AKE_TYPE_INTEGER);
 	td10->data.integer.bit_count = 32;
-	td1->data.pointer.td = td10;
+	td1->data.pointer.type = td10;
 
 	Zinc_expect_true(test, Ake_TypeMatch(td0, td1, NULL), "match");
 
@@ -554,7 +554,7 @@ void AkeUnit_TypeDefMatchPointerFalse(Zinc_test* test)
 	Ake_TypeCreate(&td00);
 	Ake_TypeSet(td00, AKE_TYPE_INTEGER);
 	td00->data.integer.bit_count = 32;
-	td0->data.pointer.td = td00;
+	td0->data.pointer.type = td00;
 
 	Ake_Type* td1 = NULL;
 	Ake_TypeCreate(&td1);
@@ -564,7 +564,7 @@ void AkeUnit_TypeDefMatchPointerFalse(Zinc_test* test)
 	Ake_TypeCreate(&td10);
 	Ake_TypeSet(td10, AKE_TYPE_INTEGER);
 	td10->data.integer.bit_count = 64;
-	td1->data.pointer.td = td10;
+	td1->data.pointer.type = td10;
 
 	Zinc_expect_false(test, Ake_TypeMatch(td0, td1, NULL), "match");
 
@@ -940,7 +940,7 @@ void AkeUnit_TypeCloneArray(Zinc_test* test)
 	Ake_TypeCreate(&td00);
 	Ake_TypeSet(td00, AKE_TYPE_INTEGER);
 	td00->data.integer.bit_count = 32;
-	td0->data.array.td = td00;
+	td0->data.array.type = td00;
 
 	Ake_Type* td1 = Ake_TypeClone(td0);
 
@@ -965,7 +965,7 @@ void AkeUnit_TypeCloneArrayConst(Zinc_test* test)
 	Ake_TypeCreate(&td00);
 	Ake_TypeSet(td00, AKE_TYPE_INTEGER);
 	td00->data.integer.bit_count = 32;
-	td0->data.array.td = td00;
+	td0->data.array.type = td00;
 
 	Ake_Type* td1 = Ake_TypeClone(td0);
 
@@ -989,7 +989,7 @@ void AkeUnit_TypeCloneSlice(Zinc_test* test)
 	Ake_TypeCreate(&td00);
 	Ake_TypeSet(td00, AKE_TYPE_INTEGER);
 	td00->data.integer.bit_count = 32;
-	td0->data.slice.td = td00;
+	td0->data.slice.type = td00;
 
 	Ake_Type* td1 = Ake_TypeClone(td0);
 
@@ -1013,7 +1013,7 @@ void AkeUnit_TypeClonePointer(Zinc_test* test)
 	Ake_TypeCreate(&td00);
 	Ake_TypeSet(td00, AKE_TYPE_INTEGER);
 	td00->data.integer.bit_count = 32;
-	td0->data.pointer.td = td00;
+	td0->data.pointer.type = td00;
 
 	Ake_Type* td1 = Ake_TypeClone(td0);
 

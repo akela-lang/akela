@@ -2664,7 +2664,7 @@ void AkeUnit_parse_assign_string(Zinc_test* test)
     Zinc_expect_int_equal(test, type->kind, AKE_TYPE_ARRAY_CONST, "type type");
     Zinc_expect_uint8_t_equal(test, type->data.array_const.dim, 6, "dim type");
 
-	Ake_Type* type2 = type->data.array_const.td;
+	Ake_Type* type2 = type->data.array_const.type;
 	if (!Zinc_expect_ptr(test, type2, "ptr type2")) {
 		return Zinc_assert();
 	}

@@ -888,13 +888,13 @@ void Ake_parse_subscript(struct Ake_parse_state* ps, Ake_Ast* left, Ake_Ast* n)
 	bool is_array_or_slice = false;
     if (left->kind != Ake_ast_type_error) {
         if (left->type->kind == AKE_TYPE_ARRAY) {
-	        n->type = Ake_TypeClone(left->type->data.array.td);
+	        n->type = Ake_TypeClone(left->type->data.array.type);
         	is_array_or_slice = true;
         } else if (left->type->kind == AKE_TYPE_ARRAY_CONST) {
-	        n->type = Ake_TypeClone(left->type->data.array_const.td);
+	        n->type = Ake_TypeClone(left->type->data.array_const.type);
         	is_array_or_slice = true;
         } else if (left->type->kind == AKE_TYPE_SLICE) {
-            n->type = Ake_TypeClone(left->type->data.slice.td);
+            n->type = Ake_TypeClone(left->type->data.slice.type);
         	is_array_or_slice = true;
         }
     }

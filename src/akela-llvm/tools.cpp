@@ -177,7 +177,7 @@ namespace Akela_llvm {
             if (tu->kind == AKE_TYPE_ARRAY) {
                 dim = tu->data.array.dim;
                 //t = ArrayType::get(Get_type(jd, tu->data.array.td), dim);
-                Ake_Type* tu2 = tu->data.array.td;
+                Ake_Type* tu2 = tu->data.array.type;
                 t = Get_type(jd, tu2);
                 if (tu2->kind == AKE_TYPE_FUNCTION) {
                     t = PointerType::get(t, 0);
@@ -185,7 +185,7 @@ namespace Akela_llvm {
                 t = ArrayType::get(t, dim);
             } else if (tu->kind == AKE_TYPE_ARRAY_CONST) {
                 dim = tu->data.array_const.dim;
-                t = ArrayType::get(Get_type(jd, tu->data.array_const.td), dim);
+                t = ArrayType::get(Get_type(jd, tu->data.array_const.type), dim);
             } else {
                 assert(false && "unsupported array type");
             }
@@ -215,7 +215,7 @@ namespace Akela_llvm {
 
             if (IsArray(kind)) {
                 if (kind == AKE_TYPE_ARRAY_CONST) {
-                    Ake_Type* type = n->type->data.array_const.td;
+                    Ake_Type* type = n->type->data.array_const.type;
                     if (type->kind == AKE_TYPE_NATURAL && type->data.natural.bit_count == 8) {
                         char* (*fp)() = ExprSymbol.getAddress().toPtr<char*(*)()>();
                         char* v = fp();
@@ -413,12 +413,12 @@ namespace Akela_llvm {
         Ake_Type* rhs_tu2 = NULL;
         if (lhs_tu->kind == AKE_TYPE_ARRAY) {
             size = lhs_tu->data.array.dim;
-            lhs_tu2 = lhs_tu->data.array.td;
-            rhs_tu2 = rhs_tu->data.array.td;
+            lhs_tu2 = lhs_tu->data.array.type;
+            rhs_tu2 = rhs_tu->data.array.type;
         } else if (lhs_tu->kind == AKE_TYPE_ARRAY_CONST) {
             size = lhs_tu->data.array_const.dim;
-            lhs_tu2 = lhs_tu->data.array_const.td;
-            rhs_tu2 = rhs_tu->data.array_const.td;
+            lhs_tu2 = lhs_tu->data.array_const.type;
+            rhs_tu2 = rhs_tu->data.array_const.type;
         } else {
             assert(false && "invalid type");
         }

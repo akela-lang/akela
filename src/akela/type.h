@@ -65,10 +65,10 @@ struct Ake_Type {
         struct { uint8_t bit_count; } natural;
         struct { uint8_t bit_count; } real;
         struct { Ake_TypeField* head; Ake_TypeField* tail; } fields;
-        struct { size_t dim; Ake_Type* td; } array;
-        struct { size_t dim; Ake_Type* td; } array_const;
-        struct { Ake_Type* td; } slice;
-        struct { Ake_Type* td; } pointer;
+        struct { size_t dim; Ake_Type* type; } array;
+        struct { size_t dim; Ake_Type* type; } array_const;
+        struct { Ake_Type* type; } slice;
+        struct { Ake_Type* type; } pointer;
         struct {
             Ake_TypeParam* input_head;
             Ake_TypeParam* input_tail;

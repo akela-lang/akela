@@ -450,11 +450,11 @@ void Ake_parse_for_iteration(struct Ake_parse_state* ps, Ake_Ast* parent)
 		} else {
             Ake_Type* element_tu2 = NULL;
 			if (list_tu->kind == AKE_TYPE_ARRAY) {
-				element_tu2 = Ake_TypeClone(list_tu->data.array.td);
+				element_tu2 = Ake_TypeClone(list_tu->data.array.type);
 			} else if (list_tu->kind == AKE_TYPE_ARRAY_CONST) {
-				element_tu2 = Ake_TypeClone(list_tu->data.array_const.td);
+				element_tu2 = Ake_TypeClone(list_tu->data.array_const.type);
 			} else if (list_tu->kind == AKE_TYPE_SLICE) {
-				element_tu2 = Ake_TypeClone(list_tu->data.slice.td);
+				element_tu2 = Ake_TypeClone(list_tu->data.slice.type);
 			} else {
 				assert(false && "expected array or slice");
 			}

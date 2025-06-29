@@ -522,7 +522,7 @@ Ake_Type* Ake_parse_type_array(Ake_parse_state* ps, Ake_Ast* n)
             td->data.array_const.dim = dim_size_number;
             Ake_Type* td2 = Ake_parse_type_dispatch(ps, n);
             if (td2) {
-                td->data.array_const.td = td2;
+                td->data.array_const.type = td2;
             } else {
                 Zinc_error_list_set(ps->el, &n->loc, "expected array const element type");
                 n->kind = Ake_ast_type_error;
@@ -532,7 +532,7 @@ Ake_Type* Ake_parse_type_array(Ake_parse_state* ps, Ake_Ast* n)
             td->data.array.dim = dim_size_number;
             Ake_Type* td2 = Ake_parse_type_dispatch(ps, n);
             if (td2) {
-                td->data.array.td = td2;
+                td->data.array.type = td2;
             } else {
                 Zinc_error_list_set(ps->el, &n->loc, "expected array element type");
                 n->kind = Ake_ast_type_error;
@@ -542,7 +542,7 @@ Ake_Type* Ake_parse_type_array(Ake_parse_state* ps, Ake_Ast* n)
         Ake_TypeSet(td, AKE_TYPE_SLICE);
         Ake_Type* td2 = Ake_parse_type_dispatch(ps, n);
         if (td) {
-            td->data.slice.td = td2;
+            td->data.slice.type = td2;
         } else {
             Zinc_error_list_set(ps->el, &n->loc, "expected slice element type");
             n->kind = Ake_ast_type_error;
@@ -565,7 +565,7 @@ Ake_Type* Ake_parse_type_pointer(Ake_parse_state* ps, Ake_Ast* n)
     free(ast);
     Ake_Type* td2 = Ake_parse_type_dispatch(ps, n);
     if (td2) {
-        td->data.pointer.td = td2;
+        td->data.pointer.type = td2;
     } else {
         Zinc_error_list_set(ps->el, &n->loc, "expected pointer type");
         n->kind = Ake_ast_type_error;
@@ -821,13 +821,13 @@ void Ake_Override_rhs(Ake_Type* tu, Ake_Ast* rhs)
         if (tu->kind == AKE_TYPE_ARRAY) {
             Ake_Ast* p = rhs->head;
             while (p) {
-                Ake_Override_rhs(tu->data.array.td, p);
+                Ake_Override_rhs(tu->data.array.type, p);
                 p = p->next;
             }
         } else if (tu->kind == AKE_TYPE_ARRAY_CONST) {
             Ake_Ast* p = rhs->head;
             while (p) {
-                Ake_Override_rhs(tu->data.array_const.td, p);
+                Ake_Override_rhs(tu->data.array_const.type, p);
                 p = p->next;
             }
         }
