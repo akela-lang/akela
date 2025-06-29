@@ -13,7 +13,7 @@ namespace Akela_llvm {
         Ake_Ast* lseq = Ast_node_get(n, 0);
         Ake_Ast* type_node = Ast_node_get(n, 1);
         Ake_Ast* rseq = Ast_node_get(n, 2);
-        Ake_Type* tu = type_node->type;
+        Ake_Type* type = type_node->type;
 
         Ake_Ast *lhs = Ast_node_get(lseq, 0);
         Ake_Ast *rhs = nullptr;
@@ -24,9 +24,9 @@ namespace Akela_llvm {
             Ake_Environment* env = Ake_get_current_env(type_node);
             Ake_symbol* sym = Ake_EnvironmentGet(env, &lhs->value, type_node->loc.start);
             assert(sym);
-            if (tu->kind == AKE_TYPE_FUNCTION) {
+            if (type->kind == AKE_TYPE_FUNCTION) {
                 if (rhs) {
-                    FunctionType *func_type = Get_function_type(jd, tu);
+                    FunctionType *func_type = Get_function_type(jd, type);
                     //PointerType *pt = func_type->getPointerTo();
                     PointerType *pt = PointerType::get(func_type, 0);
                     Zinc_string_finish(&lhs->value);
@@ -35,21 +35,21 @@ namespace Akela_llvm {
                     Value* rhs_value = Dispatch(jd, rhs);
                     jd->Builder->CreateStore(rhs_value, lhs_value);
                 } else {
-                    if (IsArray(tu->kind)) {
-                        Type *t = Get_type(jd, tu);
+                    if (IsArray(type->kind)) {
+                        Type *t = Get_type(jd, type);
                         Zinc_string_finish(&lhs->value);
                         AllocaInst* lhs_value = jd->Builder->CreateAlloca(t, nullptr, lhs->value.buf);
                         sym->value = lhs_value;
                     } else {
-                        Type *t = Get_type_pointer(jd, tu);
+                        Type *t = Get_type_pointer(jd, type);
                         Zinc_string_finish(&lhs->value);
                         AllocaInst* lhs_value = jd->Builder->CreateAlloca(t, nullptr, lhs->value.buf);
                         sym->reference = lhs_value;
                     }
                 }
-            } else if (IsArray(tu->kind)) {
+            } else if (IsArray(type->kind)) {
                 if (rhs) {
-                    Type *t = Get_type(jd, tu);
+                    Type *t = Get_type(jd, type);
                     Zinc_string_finish(&lhs->value);
                     AllocaInst *lhs_value = jd->Builder->CreateAlloca(t, nullptr, lhs->value.buf);
                     rhs->type->lhs_allocation = lhs_value;
@@ -57,39 +57,39 @@ namespace Akela_llvm {
                         Value *rhs_value = Dispatch(jd, rhs);
                     } else {
                         Value *rhs_value = Dispatch(jd, rhs);
-                        Array_copy(jd, tu, rhs->type, lhs_value, rhs_value);
+                        Array_copy(jd, type, rhs->type, lhs_value, rhs_value);
                     }
                     sym->value = lhs_value;
                 } else {
-                    Type *t = Get_type(jd, tu);
+                    Type *t = Get_type(jd, type);
                     Zinc_string_finish(&lhs->value);
                     AllocaInst *lhs_value = jd->Builder->CreateAlloca(t, nullptr, lhs->value.buf);
                     sym->value = lhs_value;
                 }
-            } else if (tu->kind == AKE_TYPE_STRUCT) {
+            } else if (type->kind == AKE_TYPE_STRUCT) {
                 if (rhs) {
-                    Type *t = Get_type(jd, tu);
+                    Type *t = Get_type(jd, type);
                     Zinc_string_finish(&lhs->value);
                     AllocaInst *lhs_value = jd->Builder->CreateAlloca(t, nullptr, lhs->value.buf);
                     rhs->type->lhs_allocation = lhs_value;
                     Value *rhs_value = Dispatch(jd, rhs);
                     sym->value = lhs_value;
                 } else {
-                    Type *t = Get_type(jd, tu);
+                    Type *t = Get_type(jd, type);
                     Zinc_string_finish(&lhs->value);
                     AllocaInst *lhs_value = jd->Builder->CreateAlloca(t, nullptr, lhs->value.buf);
                     sym->value = lhs_value;
                 }
             } else {
                 if (rhs) {
-                    Type* t = Get_type(jd, tu);
+                    Type* t = Get_type(jd, type);
                     Zinc_string_finish(&lhs->value);
                     AllocaInst* lhs_value = jd->Builder->CreateAlloca(t, nullptr, lhs->value.buf);
                     sym->reference = lhs_value;
                     Value *rhs_value = Dispatch(jd, rhs);
                     jd->Builder->CreateStore(rhs_value, lhs_value);
                 } else {
-                    Type* t = Get_type(jd, tu);
+                    Type* t = Get_type(jd, type);
                     Zinc_string_finish(&lhs->value);
                     AllocaInst* lhs_value = jd->Builder->CreateAlloca(t, nullptr, lhs->value.buf);
                     sym->reference = lhs_value;                }
