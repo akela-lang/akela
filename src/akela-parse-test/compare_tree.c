@@ -19,27 +19,27 @@ bool Apt_compare_ast(Zinc_test* top_test, Zinc_test* case_test, Ake_Ast* n, Cent
 bool Apt_compare_type_def(
     Zinc_test* case_test,
     Ake_Ast* n,
-    Ake_Type* tu,
+    Ake_Type* type,
     Cent_value* value);
 bool Apt_compare_type_def_integer(
     Zinc_test* case_test,
     Ake_Ast* n,
-    Ake_Type* tu,
+    Ake_Type* type,
     Cent_value* value);
 bool Apt_compare_type_def_natural(
     Zinc_test* case_test,
     Ake_Ast* n,
-    Ake_Type* tu,
+    Ake_Type* type,
     Cent_value* value);
 bool Apt_compare_type_def_real(
     Zinc_test* case_test,
     Ake_Ast* n,
-    Ake_Type* tu,
+    Ake_Type* type,
     Cent_value* value);
 bool Apt_compare_type_def_struct(
     Zinc_test* case_test,
     Ake_Ast* n,
-    Ake_Type* tu,
+    Ake_Type* type,
     Cent_value* value);
 
 void Apt_suite_run(Zinc_test* suite_test)
@@ -286,18 +286,18 @@ bool Apt_compare_ast(Zinc_test* top_test, Zinc_test* case_test, Ake_Ast* n, Cent
 bool Apt_compare_type_def(
     Zinc_test* case_test,
     Ake_Ast* n,
-    Ake_Type* tu,
+    Ake_Type* type,
     Cent_value* value)
 {
     bool pass = true;
 
-    if (!tu && !value) {
+    if (!type && !value) {
         return true;
     }
 
     Apt_case_data* case_data = case_test->data;
 
-    if (tu && !value) {
+    if (type && !value) {
         Zinc_spec_error_list_set(
             &case_data->spec_errors,
             case_test,
@@ -311,7 +311,7 @@ bool Apt_compare_type_def(
 
     Ake_Ast* value_n = value->n;
 
-    if (!tu && value) {
+    if (!type && value) {
         Zinc_spec_error_list_set(
             &case_data->spec_errors,
             case_test,
@@ -341,14 +341,14 @@ bool Apt_compare_type_def(
             &value_n->loc,
             "name not set");
     } else {
-        if (!Zinc_string_compare(&tu->name, &name_value->data.string)) {
+        if (!Zinc_string_compare(&type->name, &name_value->data.string)) {
             Zinc_spec_error_list_set(
                 &case_data->spec_errors,
                 case_test,
                 &n->loc,
                 &value_n->loc,
                 "type def name does not match (%bf) (%bf)",
-                &tu->name,
+                &type->name,
                 &name_value->data.string);
             pass = false;
         }
@@ -364,30 +364,30 @@ bool Apt_compare_type_def(
             "type not set");
     } else {
         assert(type_value->type == Cent_value_type_enum);
-        if (tu->kind != type_value->data.enumeration.enum_value->value) {
+        if (type->kind != type_value->data.enumeration.enum_value->value) {
             Zinc_spec_error_list_set(
                 &case_data->spec_errors,
                 case_test,
                 &n->loc,
                 &value_n->loc,
                 "type def type does not match (%d) (%d)",
-                tu->kind,
+                type->kind,
                 type_value->data.enumeration.enum_value->value);
             pass = false;
         }
     }
 
-    switch (tu->kind) {
+    switch (type->kind) {
         case AKE_TYPE_INTEGER:
-            return Apt_compare_type_def_integer(case_test, n, tu, value);
+            return Apt_compare_type_def_integer(case_test, n, type, value);
         case AKE_TYPE_NATURAL:
-            return Apt_compare_type_def_natural(case_test, n, tu, value);
+            return Apt_compare_type_def_natural(case_test, n, type, value);
         case AKE_TYPE_REAL:
-            return Apt_compare_type_def_real(case_test, n, tu, value);
+            return Apt_compare_type_def_real(case_test, n, type, value);
         case AKE_TYPE_BOOLEAN:
             break;
         case AKE_TYPE_STRUCT:
-            return Apt_compare_type_def_struct(case_test, n, tu, value);
+            return Apt_compare_type_def_struct(case_test, n, type, value);
         default:
             assert(false && "invalid kind");
     }
@@ -398,7 +398,7 @@ bool Apt_compare_type_def(
 bool Apt_compare_type_def_integer(
     Zinc_test* case_test,
     Ake_Ast* n,
-    Ake_Type* tu,
+    Ake_Type* type,
     Cent_value* value)
 {
     Apt_case_data* case_data = case_test->data;
@@ -409,18 +409,18 @@ bool Apt_compare_type_def_integer(
     Cent_value* bit_count_value = Cent_value_get_str(value, "bit_count");
     if (bit_count_value) {
         assert(bit_count_value->type == Cent_value_type_natural);
-        if (tu->data.integer.bit_count != bit_count_value->data.natural) {
+        if (type->data.integer.bit_count != bit_count_value->data.natural) {
             Zinc_spec_error_list_set(
                 &case_data->spec_errors,
                 case_test,
                 &n->loc,
                 &value_n->loc,
                 "type def integer bit_count does not match (%d) (%d)",
-                tu->data.integer.bit_count,
+                type->data.integer.bit_count,
                 bit_count_value->data.integer);
             pass = false;
         }
-    } else if (tu->data.integer.bit_count > 0) {
+    } else if (type->data.integer.bit_count > 0) {
         Zinc_spec_error_list_set(
             &case_data->spec_errors,
             case_test,
@@ -436,7 +436,7 @@ bool Apt_compare_type_def_integer(
 bool Apt_compare_type_def_natural(
     Zinc_test* case_test,
     Ake_Ast* n,
-    Ake_Type* tu,
+    Ake_Type* type,
     Cent_value* value)
 {
     Apt_case_data* case_data = case_test->data;
@@ -447,18 +447,18 @@ bool Apt_compare_type_def_natural(
     Cent_value* bit_count_value = Cent_value_get_str(value, "bit_count");
     if (bit_count_value) {
         assert(bit_count_value->type == Cent_value_type_natural);
-        if (tu->data.natural.bit_count != bit_count_value->data.natural) {
+        if (type->data.natural.bit_count != bit_count_value->data.natural) {
             Zinc_spec_error_list_set(
                 &case_data->spec_errors,
                 case_test,
                 &n->loc,
                 &value_n->loc,
                 "type def natural bit_count does not match (%d) (%d)",
-                tu->data.natural.bit_count,
+                type->data.natural.bit_count,
                 bit_count_value->data.natural);
             pass = false;
         }
-    } else if (tu->data.natural.bit_count > 0) {
+    } else if (type->data.natural.bit_count > 0) {
         Zinc_spec_error_list_set(
             &case_data->spec_errors,
             case_test,
@@ -474,7 +474,7 @@ bool Apt_compare_type_def_natural(
 bool Apt_compare_type_def_real(
     Zinc_test* case_test,
     Ake_Ast* n,
-    Ake_Type* tu,
+    Ake_Type* type,
     Cent_value* value)
 {
     Apt_case_data* case_data = case_test->data;
@@ -485,18 +485,18 @@ bool Apt_compare_type_def_real(
     Cent_value* bit_count_value = Cent_value_get_str(value, "bit_count");
     if (bit_count_value) {
         assert(bit_count_value->type == Cent_value_type_natural);
-        if (tu->data.real.bit_count != bit_count_value->data.natural) {
+        if (type->data.real.bit_count != bit_count_value->data.natural) {
             Zinc_spec_error_list_set(
                 &case_data->spec_errors,
                 case_test,
                 &n->loc,
                 &value_n->loc,
                 "type def real bit_count does not match (%d) (%d)",
-                tu->data.real.bit_count,
+                type->data.real.bit_count,
                 bit_count_value->data.real);
             pass = false;
         }
-    } else if (tu->data.real.bit_count > 0) {
+    } else if (type->data.real.bit_count > 0) {
         Zinc_spec_error_list_set(
             &case_data->spec_errors,
             case_test,
@@ -513,7 +513,7 @@ bool Apt_compare_type_def_real(
 bool Apt_compare_type_def_struct(
     Zinc_test* case_test,
     Ake_Ast* n,
-    Ake_Type* tu,
+    Ake_Type* type,
     Cent_value* value)
 {
     Apt_case_data* case_data = case_test->data;
@@ -521,7 +521,7 @@ bool Apt_compare_type_def_struct(
 
     bool pass = true;
 
-    Ake_TypeField* tf = tu->data.fields.head;
+    Ake_TypeField* tf = type->data.fields.head;
     Cent_value* field_value = value->data.dag.head;
 
     while (tf || field_value) {
