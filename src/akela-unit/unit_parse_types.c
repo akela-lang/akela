@@ -108,13 +108,7 @@ void AkeUnit_parse_types_array(Zinc_test* test)
 	}
 	Zinc_expect_int_equal(test, const_->kind, Ake_ast_type_const, "type const");
 
-	Ake_Ast* let_lseq = Ast_node_get(const_, 0);
-	if (!Zinc_expect_ptr(test, let_lseq, "ptr let_lseq")) {
-		return Zinc_assert();
-	}
-	Zinc_expect_int_equal(test, let_lseq->kind, Ake_ast_type_let_lseq, "type let_lseq");
-
-	Ake_Ast* name = Ast_node_get(let_lseq, 0);
+	Ake_Ast* name = Ast_node_get(const_, 0);
 	if (!Zinc_expect_ptr(test, name, "ptr name")) {
 		return Zinc_assert();
 	}

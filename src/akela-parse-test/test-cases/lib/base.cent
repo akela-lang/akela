@@ -87,8 +87,6 @@ enum AstType {
   Struct
   Return
   Eseq
-  LetLseq
-  LetRseq
   Error
   Prototype
   Extern

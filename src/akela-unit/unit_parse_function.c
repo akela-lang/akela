@@ -628,7 +628,7 @@ void AkeUnit_parse_anonymous_function(Zinc_test* test)
 
     struct Ake_comp_unit cu;
 
-    AkeUnit_parse_setup("var mut a: fn(Int32, Int32, Int32)\n"
+    AkeUnit_parse_setup("var a: fn(Int32, Int32, Int32)\n"
         "a = fn (x: Int32,y: Int32,z: Int32)\n"
         "    1\n"
         "  end\n",
@@ -773,7 +773,7 @@ void AkeUnit_parse_anonymous_function2(Zinc_test* test)
     struct Ake_comp_unit cu;
 
     AkeUnit_parse_setup(
-            "var mut a: fn (Int32, Int32, Int32)->Int32\n"
+            "var a: fn (Int32, Int32, Int32)->Int32\n"
             "a = fn(x: Int32, y: Int32, z: Int32)->Int32\n"
             "  1\n"
             "end\n",
@@ -1014,11 +1014,11 @@ void AkeUnit_parse_function_proto(Zinc_test* test)
 	}
     Zinc_expect_int_equal(test, _const_->kind, Ake_ast_type_var, "type const_");
 
-    Ake_Ast* const_lseq = Ast_node_get(_const_, 0);
-    if (!Zinc_expect_ptr(test, const_lseq, "ptr let_lseq")) {
+    Ake_Ast* id_node = Ast_node_get(_const_, 0);
+    if (!Zinc_expect_ptr(test, id_node, "ptr id_node")) {
 		return Zinc_assert();
 	}
-    Zinc_expect_int_equal(test, const_lseq->kind, Ake_ast_type_let_lseq, "type let_lseq");
+    Zinc_expect_int_equal(test, id_node->kind, Ake_ast_type_id, "type id_node");
 
     Ake_Ast* let_type_node = Ast_node_get(_const_, 1);
     if (!Zinc_expect_ptr(test, let_type_node, "ptr let_type")) {

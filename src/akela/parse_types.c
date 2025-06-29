@@ -665,12 +665,6 @@ void Ake_declare_type(Ake_parse_state* ps, Ake_Ast* type_node, Ake_Ast* id_node,
         if (id_node) {
             if (id_node->kind == Ake_ast_type_id) {
                 Ake_create_variable_symbol(ps, &id_node->value, type_node->type, type_node->loc.start, is_const);
-            } else if (id_node->kind == Ake_ast_type_let_lseq) {
-                Ake_Ast* p = id_node->head;
-                while (p) {
-                    Ake_create_variable_symbol(ps, &p->value, type_node->type, type_node->loc.start, is_const);
-                    p = p->next;
-                }
             } else {
                 assert(false);
             }

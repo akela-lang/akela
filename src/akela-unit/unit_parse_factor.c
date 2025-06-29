@@ -247,15 +247,7 @@ void AkeUnit_parse_id(Zinc_test* test)
 		return Zinc_assert();
 	}
 
-	Ake_Ast* let_lseq = Ast_node_get(let, 0);
-	if (!Zinc_expect_ptr(test, let_lseq, "ptr let_lseq")) {
-		return Zinc_assert();
-	}
-	if (!Zinc_expect_int_equal(test, let_lseq->kind, Ake_ast_type_let_lseq, "let_lseq let_lseq")) {
-		return Zinc_assert();
-	}
-
-	Ake_Ast* id = Ast_node_get(let_lseq, 0);
+	Ake_Ast* id = Ast_node_get(let, 0);
 	if (!Zinc_expect_ptr(test, id, "ptr id")) {
 		return Zinc_assert();
 	}
@@ -1350,7 +1342,7 @@ void AkeUnit_parse_factor_array_element_const(Zinc_test* test)
 
 	struct Ake_comp_unit cu;
 
-    AkeUnit_parse_setup("const mut a: [4 const]Int32 = [1, 2, 3, 4]\n"
+    AkeUnit_parse_setup("const a: [4 const]Int32 = [1, 2, 3, 4]\n"
                 "a[0]\n",
                 &cu);
     Zinc_expect_true(test, cu.valid, "valid");
@@ -1362,13 +1354,18 @@ void AkeUnit_parse_factor_array_element_const(Zinc_test* test)
     }
     Zinc_expect_int_equal(test, let->kind, Ake_ast_type_const, "type let");
 
-    Ake_Ast* let_type = Ast_node_get(let, 1);
-    if (!Zinc_expect_ptr(test, let_type, "ptr type")) {
+    Ake_Ast* let_type_node = Ast_node_get(let, 1);
+    if (!Zinc_expect_ptr(test, let_type_node, "ptr type")) {
 	    return Zinc_assert();
     }
-    Zinc_expect_int_equal(test, let_type->kind, Ake_ast_type_type, "type type");
-    Zinc_expect_true(test, let_type->type->kind == AKE_TYPE_ARRAY_CONST, "is_array type");
-    Zinc_expect_size_t_equal(test, let_type->type->data.array_const.dim, 4, "size let_type_dim");
+	Zinc_expect_int_equal(test, let_type_node->kind, Ake_ast_type_type, "type type");
+
+	Ake_Type* let_type = let_type_node->type;
+	if (!Zinc_expect_ptr(test, let_type, "ptr type")) {
+		return Zinc_assert();
+	}
+    Zinc_expect_true(test, let_type->kind == AKE_TYPE_ARRAY_CONST, "is_array type");
+    Zinc_expect_size_t_equal(test, let_type->data.array_const.dim, 4, "size let_type_dim");
 
     AkeUnit_parse_teardown(&cu);
 }
@@ -1384,7 +1381,7 @@ void AkeUnit_parse_factor_array_element_const_error(Zinc_test* test)
 
 	struct Ake_comp_unit cu;
 
-    AkeUnit_parse_setup("const mut a: [4 const]Int32 = [1, 2, 3, 4]\n"
+    AkeUnit_parse_setup("const a: [4 const]Int32 = [1, 2, 3, 4]\n"
                 "a[0] = 10\n",
                 &cu);
     Zinc_expect_false(test, cu.valid, "valid");

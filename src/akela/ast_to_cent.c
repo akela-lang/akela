@@ -220,14 +220,6 @@ char* Ake_ast_cent_name(Ake_AstKind type)
         return "Ast::Eseq";
     }
 
-    if (type == Ake_ast_type_let_lseq) {
-        return "Ast::LetLseq";
-    }
-
-    if (type == Ake_ast_type_let_rseq) {
-        return "Ast::LetRseq";
-    }
-
     if (type == Ake_ast_type_error) {
         return "Ast::Error";
     }

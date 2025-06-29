@@ -35,10 +35,8 @@ Ast::Stmts {
     .bit_count = 32
   }
   Ast::Const {
-    Ast::LetLseq {
-      Ast::Id {
-        .value = "a"
-      }
+    Ast::Id {
+      .value = "a"
     }
     Ast::Type {
       .tu = TypeDef::Integer {
@@ -46,13 +44,11 @@ Ast::Stmts {
         .bit_count = 32
       }
     }
-    Ast::LetRseq {
-      Ast::Number {
-        .value = "105"
-        .tu = TypeDef::Integer {
-          .name = "Int32"
-          .bit_count = 32
-        }
+    Ast::Number {
+      .value = "105"
+      .tu = TypeDef::Integer {
+        .name = "Int32"
+        .bit_count = 32
       }
     }
   }
@@ -92,10 +88,8 @@ Ast::Stmts {
     .bit_count = 64
   }
   Ast::Const {
-    Ast::LetLseq {
-      Ast::Id {
-        .value = "a"
-      }
+    Ast::Id {
+      .value = "a"
     }
     Ast::Type {
       .tu = TypeDef::Real {
@@ -103,13 +97,11 @@ Ast::Stmts {
         .bit_count = 64
       }
     }
-    Ast::LetRseq {
-      Ast::Number {
-        .value = "1.5"
-        .tu = TypeDef::Real {
-          .name = "Real64"
-          .bit_count = 64
-        }
+    Ast::Number {
+      .value = "1.5"
+      .tu = TypeDef::Real {
+        .name = "Real64"
+        .bit_count = 64
       }
     }
   }

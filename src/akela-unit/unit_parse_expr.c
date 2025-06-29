@@ -2470,7 +2470,7 @@ void AkeUnit_parse_expr_array_subscript_3d(Zinc_test* test)
 
     Ake_comp_unit cu;
 
-    AkeUnit_parse_setup("const mut x: [2][3][4 const]Int32 = \n"
+    AkeUnit_parse_setup("const x: [2][3][4 const]Int32 = \n"
                "[\n"
                "  [\n"
                "    [1, 2, 3, 4],\n"
@@ -2640,7 +2640,7 @@ void AkeUnit_parse_assign_string(Zinc_test* test)
 
     struct Ake_comp_unit cu;
 
-    AkeUnit_parse_setup("var mut a: [6 const]Nat8; a = \"hello\"", &cu);
+    AkeUnit_parse_setup("var a: [6 const]Nat8; a = \"hello\"", &cu);
     if (!Zinc_expect_no_errors(test, &cu.errors)) {
 		return Zinc_assert();
 	}
@@ -2699,7 +2699,7 @@ void AkeUnit_parse_assign_multiple(Zinc_test* test)
 
     struct Ake_comp_unit cu;
 
-    AkeUnit_parse_setup("var mut a: Int32; var mut b: Int32; var mut c: Int32; a = b = c = 0", &cu);
+    AkeUnit_parse_setup("var a: Int32; var b: Int32; var c: Int32; a = b = c = 0", &cu);
     if (!Zinc_expect_no_errors(test, &cu.errors)) {
 		return Zinc_assert();
 	}
@@ -2765,7 +2765,7 @@ void AkeUnit_parse_expr_assignment_eseq_error_eseq_count(Zinc_test* test)
 
     struct Ake_comp_unit cu;
 
-    AkeUnit_parse_setup("var mut a: Int32; var mut b: Int32; var mut c: Int32; a, b, c = 1, 2", &cu);
+    AkeUnit_parse_setup("var a: Int32; var b: Int32; var c: Int32; a, b, c = 1, 2", &cu);
     Zinc_expect_has_errors(test, &cu.errors);
     Zinc_expect_false(test, cu.valid, "valid");
     Zinc_expect_source_error(test, &cu.errors, "assignment sequence counts do not match");
@@ -2868,7 +2868,7 @@ void AkeUnit_parse_expr_newline_assignment(Zinc_test* test)
 
     struct Ake_comp_unit cu;
 
-    AkeUnit_parse_setup("var mut a: Int32; a =\n1", &cu);
+    AkeUnit_parse_setup("var a: Int32; a =\n1", &cu);
     if (!Zinc_expect_no_errors(test, &cu.errors)) {
 		return Zinc_assert();
 	}
@@ -3201,9 +3201,9 @@ void AkeUnit_parse_expr_assign_eseq(Zinc_test* test)
 
     struct Ake_comp_unit cu;
 
-    AkeUnit_parse_setup("var mut a: Int32\n"
-               "var mut b: Int32\n"
-               "var mut c: Int32\n"
+    AkeUnit_parse_setup("var a: Int32\n"
+               "var b: Int32\n"
+               "var c: Int32\n"
                "a,b,c = 1,2,3", &cu);
     Zinc_expect_no_errors(test, &cu.errors);
     Zinc_expect_true(test, cu.valid, "valid");

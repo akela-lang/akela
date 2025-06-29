@@ -22,8 +22,6 @@ Ake_Ast* Ake_parse_module(struct Ake_parse_state* ps);
 Ake_Ast* Ake_parse_struct(struct Ake_parse_state* ps);
 Ake_Ast* Ake_parse_return(struct Ake_parse_state* ps);
 Ake_Ast* Ake_parse_let(struct Ake_parse_state* ps);
-Ake_Ast* Ake_parse_let_lseq(struct Ake_parse_state* ps);
-Ake_Ast* Ake_parse_let_rseq(struct Ake_parse_state* ps);
 Ake_Ast* Ake_parse_extern(struct Ake_parse_state* ps);
 Ake_Ast* Ake_parse_impl(struct Ake_parse_state* ps);
 
@@ -640,19 +638,16 @@ Ake_Ast* Ake_parse_let(struct Ake_parse_state* ps)
 
     Ake_consume_newline(ps, n);
 
-    Ake_Ast* a = NULL;
-    a = Ake_parse_let_lseq(ps);
-    if (a && a->kind == Ake_ast_type_error) {
-        n->kind = Ake_ast_type_error;
-    }
+	Ake_token* id = NULL;
+	Ake_match(ps, Ake_token_id, "expected id", &id, n);
 
-    assert(a);
-    Ake_ast_add(n, a);
-
-    if (!a->head) {
-        Zinc_error_list_set(ps->el, &a->loc, "expected variable(s) after let");
-        n->kind = Ake_ast_type_error;
-    }
+	Ake_Ast* id_node = NULL;
+	Ake_ast_create(&id_node);
+	id_node->kind = Ake_ast_type_id;
+	if (id) {
+		Zinc_string_add_string(&id_node->value, &id->value);
+	}
+    Ake_ast_add(n, id_node);
 
     Ake_consume_newline(ps, n);
 
@@ -671,7 +666,7 @@ Ake_Ast* Ake_parse_let(struct Ake_parse_state* ps)
 		Zinc_error_list_set(ps->el, &type_node->loc, "expected type identifier or fn");
 		n->kind = Ake_ast_type_error;
 	}
-    Ake_declare_type(ps, type_node, a, n->kind == Ake_ast_type_const);
+    Ake_declare_type(ps, type_node, id_node, n->kind == Ake_ast_type_const);
     if (type_node && type_node->kind == Ake_ast_type_error) {
         n->kind = Ake_ast_type_error;
     }
@@ -699,7 +694,7 @@ Ake_Ast* Ake_parse_let(struct Ake_parse_state* ps)
         Ake_consume_newline(ps, n);
 
         Ake_Ast* b = NULL;
-        b = Ake_parse_let_rseq(ps);
+        b = Ake_parse_expr(ps);
         if (b && b->kind == Ake_ast_type_error) {
             n->kind = Ake_ast_type_error;
         }
@@ -712,191 +707,21 @@ Ake_Ast* Ake_parse_let(struct Ake_parse_state* ps)
             n->kind = Ake_ast_type_error;
         }
 
-        if (n->kind != Ake_ast_type_error) {
-            size_t a_count = Ake_ast_count_children(a);
-            size_t b_count = Ake_ast_count_children(b);
-            if (a_count != b_count) {
-                Zinc_error_list_set(ps->el, &a->loc, "lvalue count does not equal rvalue count");
-                n->kind = Ake_ast_type_error;
-            } else {
-                for (int i = 0; i < a_count; i++) {
-                    Ake_Ast* y = Ast_node_get(b, i);
-                	bool cast = false;
-                    if (!y->type) {
-                        Zinc_error_list_set(ps->el, &b->loc, "cannot assign with operand that has no value");
-                        n->kind = Ake_ast_type_error;
-                    } else if (!Ake_TypeMatch(type_node->type, y->type, &cast)) {
-                        Zinc_error_list_set(ps->el, &b->loc, "values in assignment are not compatible");
-                        n->kind = Ake_ast_type_error;
-                    }
-                }
-            }
-        }
-
-        if (n->kind != Ake_ast_type_error) {
-            /* adjust rhs to the bit_size of lhs */
-            if (a && type_node && b) {
-                Ake_Ast* rhs = b->head;
-                while (rhs) {
-                    Ake_Override_rhs(type_node->type, rhs);
-                    rhs = rhs->next;
-                }
-            }
-        }
-
-        if (n->kind != Ake_ast_type_error) {
-            assert(a);
-            Ake_Ast* lhs = a->head;
-            while (lhs) {
-                assert(lhs->kind == Ake_ast_type_id);
-                Ake_symbol* sym = NULL;
-            	size_t seq = Ake_get_current_seq(ps);
-                sym = Ake_EnvironmentGet(ps->st->top, &lhs->value, seq);
-                assert(sym);
-                sym->assign_count++;
-                lhs = lhs->next;
-            }
-        }
-    }
-
-    return n;
-}
-
-/* let_lseq -> id let_lseq' */
-/* let_lseq' -> , id let_lseq' */
-Ake_Ast* Ake_parse_let_lseq(struct Ake_parse_state* ps)
-{
-    Ake_Ast* n = NULL;
-    Ake_ast_create(&n);
-    n->kind = Ake_ast_type_let_lseq;
-	size_t count = 0;
-
-    struct Ake_token* t0 = Ake_get_lookahead(ps);
-    if (t0->type != Ake_token_mut && t0->type != Ake_token_id) {
-        return n;
-    }
-
-    bool is_mut = false;
-    if (t0->type == Ake_token_mut) {
-        struct Ake_token* mut = NULL;
-        if (!Ake_match(ps, Ake_token_mut, "expected mut", &mut, n)) {
-            assert(false);
-        }
-        Ake_token_destroy(mut);
-        free(mut);
-
-        is_mut = true;
-    }
-
-    struct Ake_token* id = NULL;
-    if (!Ake_match(ps, Ake_token_id, "expected an id", &id, n)) {
-        n->kind = Ake_ast_type_error;
-    }
-
-    Ake_Ast* a = NULL;
-    Ake_ast_create(&a);
-    a->kind = Ake_ast_type_id;
-    a->is_mut = is_mut;
-    Zinc_string_copy(&id->value, &a->value);
-    Ake_ast_add(n, a);
-    a->loc = id->loc;
-
-    Ake_token_destroy(id);
-    free(id);
-
-	if (n->kind != Ake_ast_type_error) {
-		count++;
-	}
-
-    while (true) {
-        t0 = Ake_get_lookahead(ps);
-        if (!t0 || t0->type != Ake_token_comma) {
-            break;
-        }
-
-        struct Ake_token* comma = NULL;
-        if (!Ake_match(ps, Ake_token_comma, "expected comma", &comma, n)) {
-            /* test case: no test case needed */
-            assert(false);
-        }
-        Ake_token_destroy(comma);
-        free(comma);
-
-        id = NULL;
-        if (!Ake_match(ps, Ake_token_id, "expected id", &id, n)) {
-            Zinc_error_list_set(ps->el, &id->loc, "expected id");
-            n->kind = Ake_ast_type_error;
-            break;
-        }
-
-        a = NULL;
-        Ake_ast_create(&a);
-        a->kind = Ake_ast_type_id;
-        Zinc_string_copy(&id->value, &a->value);
-        Ake_ast_add(n, a);
-        a->loc = id->loc;
-
-    	if (n->kind != Ake_ast_type_error) {
-    		count++;
+    	if (b && b->type == NULL) {
+    		Zinc_error_list_set(ps->el, &b->loc, "cannot assign with operand that has no value");
+    		n->kind = Ake_ast_type_error;
     	}
 
-        Ake_token_destroy(id);
-        free(id);
-    }
-
-	if (n->kind != Ake_ast_type_error && count > 1) {
-		Zinc_error_list_set(ps->el, &a->loc, "more than one lvalue per const or var");
-	}
-
-    return n;
-}
-
-/* let_rseq -> simple_expr let_rseq' */
-/* let_rseq' -> , simple_expr let_rseq' */
-Ake_Ast* Ake_parse_let_rseq(struct Ake_parse_state* ps)
-{
-    Ake_Ast* a = NULL;
-    a = Ake_parse_simple_expr(ps);
-    if (!a) {
-        return NULL;
-    }
-
-    Ake_Ast* n = NULL;
-    Ake_ast_create(&n);
-    n->kind = Ake_ast_type_let_rseq;
-
-    if (a->kind == Ake_ast_type_error) {
-        n->kind = Ake_ast_type_error;
-    }
-
-    Ake_ast_add(n, a);
-
-    while (true) {
-        struct Ake_token* t0 = Ake_get_lookahead(ps);
-        if (!t0 || t0->type != Ake_token_comma) {
-            break;
+        if (n->kind != Ake_ast_type_error) {
+            bool cast = false;
+            if (!Ake_TypeMatch(type_node->type, b->type, &cast)) {
+                Zinc_error_list_set(ps->el, &b->loc, "values in assignment are not compatible");
+                n->kind = Ake_ast_type_error;
+            }
         }
 
-        struct Ake_token* comma = NULL;
-        if (!Ake_match(ps, Ake_token_comma, "expected comma", &comma, n)) {
-            assert(false && "should see comma");
-        }
-
-        Ake_token_destroy(comma);
-        free(comma);
-
-        Ake_Ast* b = NULL;
-        b = Ake_parse_simple_expr(ps);
-        if (b && b->kind == Ake_ast_type_error) {
-            n->kind = Ake_ast_type_error;
-        }
-
-        if (b) {
-            Ake_ast_add(n, b);
-        } else {
-            struct Zinc_location b_loc = Ake_get_location(ps);
-            Zinc_error_list_set(ps->el, &b_loc, "expected an expression");
-            n->kind = Ake_ast_type_error;
+        if (n->kind != Ake_ast_type_error) {
+            Ake_Override_rhs(type_node->type, b);
         }
     }
 
