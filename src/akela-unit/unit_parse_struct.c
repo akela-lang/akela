@@ -209,11 +209,11 @@ void AkeUnit_parse_struct_let_literal(Zinc_test* test)
     }
     Zinc_expect_int_equal(test, p->kind, Ake_ast_type_id, "type p");
 
-    Ake_Ast* let_tu = Ast_node_get(let, 1);
-    if (!Zinc_expect_ptr(test, let_tu, "ptr let_tu")) {
+    Ake_Ast* let_type = Ast_node_get(let, 1);
+    if (!Zinc_expect_ptr(test, let_type, "ptr let_tu")) {
         return Zinc_assert();
     }
-    Zinc_expect_int_equal(test, let_tu->kind, Ake_ast_type_type, "type let_tu");
+    Zinc_expect_int_equal(test, let_type->kind, Ake_ast_type_type, "type let_tu");
 
     Ake_Ast* let_rseq = Ast_node_get(let, 2);
     if (!Zinc_expect_ptr(test, let_rseq, "ptr let_rseq")) {

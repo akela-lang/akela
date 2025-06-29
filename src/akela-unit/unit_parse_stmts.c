@@ -1437,12 +1437,12 @@ void AkeUnit_parse_for_iteration(Zinc_test* test)
 		return Zinc_assert();
 	}
 
-    Ake_Type* i_tu = i_type_node->type;
-    if (!Zinc_expect_ptr(test, i_tu, "ptr i_tu")) {
+    Ake_Type* i_type = i_type_node->type;
+    if (!Zinc_expect_ptr(test, i_type, "ptr i_tu")) {
 		return Zinc_assert();
 	}
-	Zinc_expect_int_equal(test, i_tu->kind, AKE_TYPE_INTEGER, "integer i_td");
-	Zinc_expect_string(test, &i_tu->name, "Int32", "Int32 i_td");
+	Zinc_expect_int_equal(test, i_type->kind, AKE_TYPE_INTEGER, "integer i_td");
+	Zinc_expect_string(test, &i_type->name, "Int32", "Int32 i_td");
 
 	/* expr */
 	Ake_Ast* expr = Ast_node_get(node, 1);
