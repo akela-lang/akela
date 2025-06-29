@@ -448,22 +448,22 @@ void Ake_parse_for_iteration(struct Ake_parse_state* ps, Ake_Ast* parent)
             parent->kind = Ake_ast_type_error;
 			/* test case: test_parse_for_iteration_error_no_child_element */
 		} else {
-            Ake_Type* element_tu2 = NULL;
+            Ake_Type* element_type2 = NULL;
 			if (list_type->kind == AKE_TYPE_ARRAY) {
-				element_tu2 = Ake_TypeClone(list_type->data.array.type);
+				element_type2 = Ake_TypeClone(list_type->data.array.type);
 			} else if (list_type->kind == AKE_TYPE_ARRAY_CONST) {
-				element_tu2 = Ake_TypeClone(list_type->data.array_const.type);
+				element_type2 = Ake_TypeClone(list_type->data.array_const.type);
 			} else if (list_type->kind == AKE_TYPE_SLICE) {
-				element_tu2 = Ake_TypeClone(list_type->data.slice.type);
+				element_type2 = Ake_TypeClone(list_type->data.slice.type);
 			} else {
 				assert(false && "expected array or slice");
 			}
-			if (!Ake_TypeMatch(element_tu2, element_type_node->type, NULL)) {
+			if (!Ake_TypeMatch(element_type2, element_type_node->type, NULL)) {
                 parent->kind = Ake_ast_type_error;
 				Zinc_error_list_set(ps->el, &list->loc, "cannot cast list element");
 				/* test case: test_parse_for_iteration_error_cannot_cast */
 			}
-            Ake_TypeDestroy(element_tu2);
+            Ake_TypeDestroy(element_type2);
 		}
 	}
 
