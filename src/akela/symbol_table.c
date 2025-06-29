@@ -85,91 +85,91 @@ void Ake_symbol_table_init_reserved(Ake_symbol_table* st)
 void Ake_symbol_table_init_builtin_types(Ake_symbol_table* st)
 {
 	const char* name;
-	Ake_Type* td = NULL;
+	Ake_Type* type = NULL;
 	Ake_type_def* old = NULL;
 
 	name = "Int8";
-	Ake_TypeCreate(&td);
-	td->kind = AKE_TYPE_INTEGER;
-	Zinc_string_add_str(&td->name, name);
-	td->data.integer.bit_count = 8;
-	Ake_symbol_table_add_type(st, name, td);
+	Ake_TypeCreate(&type);
+	type->kind = AKE_TYPE_INTEGER;
+	Zinc_string_add_str(&type->name, name);
+	type->data.integer.bit_count = 8;
+	Ake_symbol_table_add_type(st, name, type);
 
 	name = "Int16";
-	Ake_TypeCreate(&td);
-	Ake_TypeSet(td, AKE_TYPE_INTEGER);
-	Zinc_string_add_str(&td->name, name);
-	td->data.integer.bit_count = 16;
-	Ake_symbol_table_add_type(st, name, td);
+	Ake_TypeCreate(&type);
+	Ake_TypeSet(type, AKE_TYPE_INTEGER);
+	Zinc_string_add_str(&type->name, name);
+	type->data.integer.bit_count = 16;
+	Ake_symbol_table_add_type(st, name, type);
 
 	name = "Int32";
-	Ake_TypeCreate(&td);
-	td->kind = AKE_TYPE_INTEGER;
-	Zinc_string_add_str(&td->name, name);
-	td->data.integer.bit_count = 32;
-	Ake_symbol_table_add_type(st, name, td);
+	Ake_TypeCreate(&type);
+	type->kind = AKE_TYPE_INTEGER;
+	Zinc_string_add_str(&type->name, name);
+	type->data.integer.bit_count = 32;
+	Ake_symbol_table_add_type(st, name, type);
 
 	name = "Int64";
-	Ake_TypeCreate(&td);
-	td->kind = AKE_TYPE_INTEGER;
-	Zinc_string_add_str(&td->name, name);
-	td->data.integer.bit_count = 64;
-	Ake_symbol_table_add_type(st, name, td);
+	Ake_TypeCreate(&type);
+	type->kind = AKE_TYPE_INTEGER;
+	Zinc_string_add_str(&type->name, name);
+	type->data.integer.bit_count = 64;
+	Ake_symbol_table_add_type(st, name, type);
 
     name = "Nat8";
-	Ake_TypeCreate(&td);
-	td->kind = AKE_TYPE_NATURAL;
-    Zinc_string_add_str(&td->name, name);
-    td->data.natural.bit_count = 8;
-    Ake_symbol_table_add_type(st, name, td);
+	Ake_TypeCreate(&type);
+	type->kind = AKE_TYPE_NATURAL;
+    Zinc_string_add_str(&type->name, name);
+    type->data.natural.bit_count = 8;
+    Ake_symbol_table_add_type(st, name, type);
 
 	name = "Nat16";
-	Ake_TypeCreate(&td);
-	td->kind = AKE_TYPE_NATURAL;
-	Zinc_string_add_str(&td->name, name);
-	td->data.natural.bit_count = 16;
-	Ake_symbol_table_add_type(st, name, td);
+	Ake_TypeCreate(&type);
+	type->kind = AKE_TYPE_NATURAL;
+	Zinc_string_add_str(&type->name, name);
+	type->data.natural.bit_count = 16;
+	Ake_symbol_table_add_type(st, name, type);
 
     name = "Nat32";
-	Ake_TypeCreate(&td);
-	td->kind = AKE_TYPE_NATURAL;
-	Zinc_string_add_str(&td->name, name);
-	td->data.natural.bit_count = 32;
-	Ake_symbol_table_add_type(st, name, td);
+	Ake_TypeCreate(&type);
+	type->kind = AKE_TYPE_NATURAL;
+	Zinc_string_add_str(&type->name, name);
+	type->data.natural.bit_count = 32;
+	Ake_symbol_table_add_type(st, name, type);
 
 	name = "Nat64";
-	Ake_TypeCreate(&td);
-	td->kind = AKE_TYPE_NATURAL;
-	Zinc_string_add_str(&td->name, name);
-	td->data.natural.bit_count = 64;
-	Ake_symbol_table_add_type(st, name, td);
+	Ake_TypeCreate(&type);
+	type->kind = AKE_TYPE_NATURAL;
+	Zinc_string_add_str(&type->name, name);
+	type->data.natural.bit_count = 64;
+	Ake_symbol_table_add_type(st, name, type);
 
 	name = "Real16";
-	Ake_TypeCreate(&td);
-	td->kind = AKE_TYPE_REAL;
-	Zinc_string_add_str(&td->name, name);
-	td->data.real.bit_count = 16;
-	Ake_symbol_table_add_type(st, name, td);
+	Ake_TypeCreate(&type);
+	type->kind = AKE_TYPE_REAL;
+	Zinc_string_add_str(&type->name, name);
+	type->data.real.bit_count = 16;
+	Ake_symbol_table_add_type(st, name, type);
 
 	name = "Real32";
-	Ake_TypeCreate(&td);
-	td->kind = AKE_TYPE_REAL;
-	Zinc_string_add_str(&td->name, name);
-	td->data.real.bit_count = 32;
-	Ake_symbol_table_add_type(st, name, td);
+	Ake_TypeCreate(&type);
+	type->kind = AKE_TYPE_REAL;
+	Zinc_string_add_str(&type->name, name);
+	type->data.real.bit_count = 32;
+	Ake_symbol_table_add_type(st, name, type);
 
 	name = "Real64";
-	Ake_TypeCreate(&td);
-	td->kind = AKE_TYPE_REAL;
-	Zinc_string_add_str(&td->name, name);
-	td->data.real.bit_count = 64;
-	Ake_symbol_table_add_type(st, name, td);
+	Ake_TypeCreate(&type);
+	type->kind = AKE_TYPE_REAL;
+	Zinc_string_add_str(&type->name, name);
+	type->data.real.bit_count = 64;
+	Ake_symbol_table_add_type(st, name, type);
 
 	name = "Bool";
-	Ake_TypeCreate(&td);
-	td->kind = AKE_TYPE_BOOLEAN;
-	Zinc_string_add_str(&td->name, name);
-	Ake_symbol_table_add_type(st, name, td);
+	Ake_TypeCreate(&type);
+	type->kind = AKE_TYPE_BOOLEAN;
+	Zinc_string_add_str(&type->name, name);
+	Ake_symbol_table_add_type(st, name, type);
 }
 
 void Ake_symbol_table_add_numeric(Ake_symbol_table* st, const char* name)
