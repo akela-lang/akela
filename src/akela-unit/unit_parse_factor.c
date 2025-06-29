@@ -126,13 +126,13 @@ void AkeUnit_parse_string(Zinc_test* test)
     Zinc_expect_true(test, type->kind == AKE_TYPE_ARRAY_CONST, "is_array tu");
     Zinc_expect_size_t_equal(test, type->data.array_const.dim, 6, "dim tu");
 
-	Ake_Type* tu2 = type->data.array_const.type;
-	if (!Zinc_expect_ptr(test, tu2, "ptr td")) {
+	Ake_Type* type2 = type->data.array_const.type;
+	if (!Zinc_expect_ptr(test, type2, "ptr td")) {
 		return Zinc_assert();
 	}
-	Zinc_expect_int_equal(test, tu2->kind, AKE_TYPE_NATURAL, "type tu2");
-	Zinc_expect_size_t_equal(test, tu2->data.natural.bit_count, 8, "bit_count tu2");
-	Zinc_expect_string(test, &tu2->name, "Nat8", "name tu2");
+	Zinc_expect_int_equal(test, type2->kind, AKE_TYPE_NATURAL, "type type2");
+	Zinc_expect_size_t_equal(test, type2->data.natural.bit_count, 8, "bit_count type2");
+	Zinc_expect_string(test, &type2->name, "Nat8", "name type2");
 
     AkeUnit_parse_teardown(&cu);
 }

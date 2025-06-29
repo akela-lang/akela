@@ -66,18 +66,18 @@ namespace Akela_llvm {
 
     bool IsArray(Ake_TypeKind kind);
     void Jit_data_init(Jit_data* jd, Zinc_error_list* el);
-    llvm::FunctionType* Get_function_type(Jit_data* jd, Ake_Type* tu);
-    llvm::Type* Get_scalar_type(Jit_data * jd, Ake_Type* tu);
-    llvm::Type* Get_type(Jit_data * jd, Ake_Type* tu);
-    llvm::Type* Get_type_pointer(Jit_data *jd, Ake_Type *tu);
+    llvm::FunctionType* Get_function_type(Jit_data* jd, Ake_Type* type);
+    llvm::Type* Get_scalar_type(Jit_data * jd, Ake_Type* type);
+    llvm::Type* Get_type(Jit_data * jd, Ake_Type* type);
+    llvm::Type* Get_type_pointer(Jit_data *jd, Ake_Type *type);
     llvm::Type* Get_return_type(Jit_data * jd, Ake_Type * tu);
     void Run(Jit_data* jd, Ake_Ast* n, Ake_code_gen_result* result);
     llvm::BasicBlock* Get_last_block(Jit_data * jd, llvm::Function * f);
     llvm::Value* Dispatch(Jit_data* jd, Ake_Ast* n);
     void Array_copy(
             Jit_data* jd,
-            Ake_Type* lhs_tu,
-            Ake_Type* rhs_tu,
+            Ake_Type* lhs_type,
+            Ake_Type* rhs_type,
             llvm::Value* lhs_ptr,
             llvm::Value* rhs_ptr);
 }

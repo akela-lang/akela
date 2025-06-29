@@ -520,9 +520,9 @@ Ake_Type* Ake_parse_type_array(Ake_parse_state* ps, Ake_Ast* n)
         if (has_const) {
             Ake_TypeSet(type, AKE_TYPE_ARRAY_CONST);
             type->data.array_const.dim = dim_size_number;
-            Ake_Type* td2 = Ake_parse_type_dispatch(ps, n);
-            if (td2) {
-                type->data.array_const.type = td2;
+            Ake_Type* type2 = Ake_parse_type_dispatch(ps, n);
+            if (type2) {
+                type->data.array_const.type = type2;
             } else {
                 Zinc_error_list_set(ps->el, &n->loc, "expected array const element type");
                 n->kind = Ake_ast_type_error;
@@ -530,9 +530,9 @@ Ake_Type* Ake_parse_type_array(Ake_parse_state* ps, Ake_Ast* n)
         } else {
             Ake_TypeSet(type, AKE_TYPE_ARRAY);
             type->data.array.dim = dim_size_number;
-            Ake_Type* td2 = Ake_parse_type_dispatch(ps, n);
-            if (td2) {
-                type->data.array.type = td2;
+            Ake_Type* type2 = Ake_parse_type_dispatch(ps, n);
+            if (type2) {
+                type->data.array.type = type2;
             } else {
                 Zinc_error_list_set(ps->el, &n->loc, "expected array element type");
                 n->kind = Ake_ast_type_error;
@@ -540,9 +540,9 @@ Ake_Type* Ake_parse_type_array(Ake_parse_state* ps, Ake_Ast* n)
         }
     } else {
         Ake_TypeSet(type, AKE_TYPE_SLICE);
-        Ake_Type* td2 = Ake_parse_type_dispatch(ps, n);
+        Ake_Type* type2 = Ake_parse_type_dispatch(ps, n);
         if (type) {
-            type->data.slice.type = td2;
+            type->data.slice.type = type2;
         } else {
             Zinc_error_list_set(ps->el, &n->loc, "expected slice element type");
             n->kind = Ake_ast_type_error;
@@ -563,9 +563,9 @@ Ake_Type* Ake_parse_type_pointer(Ake_parse_state* ps, Ake_Ast* n)
     }
     Ake_token_destroy(ast);
     free(ast);
-    Ake_Type* td2 = Ake_parse_type_dispatch(ps, n);
-    if (td2) {
-        type->data.pointer.type = td2;
+    Ake_Type* type2 = Ake_parse_type_dispatch(ps, n);
+    if (type2) {
+        type->data.pointer.type = type2;
     } else {
         Zinc_error_list_set(ps->el, &n->loc, "expected pointer type");
         n->kind = Ake_ast_type_error;

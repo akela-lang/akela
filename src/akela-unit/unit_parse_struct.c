@@ -113,12 +113,12 @@ void AkeUnit_parse_struct_field_assign(Zinc_test* test)
     }
     Zinc_expect_int_equal(test, type_node2->kind, Ake_ast_type_type, "type type_node2");
 
-    Ake_Type* tu2 = type_node2->type;
-    if (!Zinc_expect_ptr(test, tu2, "ptr tu2")) {
+    Ake_Type* type2 = type_node2->type;
+    if (!Zinc_expect_ptr(test, type2, "ptr tu2")) {
         return Zinc_assert();
     }
-    Zinc_expect_int_equal(test, tu2->kind, AKE_TYPE_INTEGER, "integer td2");
-    Zinc_expect_string(test, &tu2->name, "Int32", "Int32 td2");
+    Zinc_expect_int_equal(test, type2->kind, AKE_TYPE_INTEGER, "integer td2");
+    Zinc_expect_string(test, &type2->name, "Int32", "Int32 td2");
 
     /* let */
     Ake_Ast* var = Ast_node_get(cu.root, 1);

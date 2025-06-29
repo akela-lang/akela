@@ -31,10 +31,10 @@ namespace Akela_llvm {
     }
 
     /* NOLINTNEXTLINE(misc-no-recursion) */
-    FunctionType *Get_function_type(Jit_data *jd, Ake_Type *tu) {
+    FunctionType *Get_function_type(Jit_data *jd, Ake_Type *type) {
         bool is_variadic = false;
         std::vector<Type *> param_types = std::vector<Type *>();
-        Ake_TypeParam* tp = tu->data.function.input_head;
+        Ake_TypeParam* tp = type->data.function.input_head;
         while (tp) {
             if (tp->kind == AKE_TYPE_PARAM_ELLIPSIS) {
                 is_variadic = true;
@@ -46,8 +46,8 @@ namespace Akela_llvm {
         }
 
         Type *ret_type;
-        if (tu->data.function.output) {
-            ret_type = Get_type_pointer(jd, tu->data.function.output);
+        if (type->data.function.output) {
+            ret_type = Get_type_pointer(jd, type->data.function.output);
         } else {
             ret_type = Type::getVoidTy(*jd->TheContext);
         }
@@ -56,24 +56,24 @@ namespace Akela_llvm {
     }
 
     /* NOLINTNEXTLINE(misc-no-recursion) */
-    Type *Get_scalar_type(Jit_data *jd, Ake_Type *tu) {
-        if (!tu) {
+    Type *Get_scalar_type(Jit_data *jd, Ake_Type *type) {
+        if (!type) {
             return Type::getVoidTy(*jd->TheContext);
         }
 
-        if (tu->kind == AKE_TYPE_FUNCTION) {
-            return Get_function_type(jd, tu);
+        if (type->kind == AKE_TYPE_FUNCTION) {
+            return Get_function_type(jd, type);
         }
 
-        if (tu->kind == AKE_TYPE_INTEGER) {
+        if (type->kind == AKE_TYPE_INTEGER) {
             Type *t;
-            if (tu->data.integer.bit_count == 64) {
+            if (type->data.integer.bit_count == 64) {
                 t = Type::getInt64Ty(*jd->TheContext);
-            } else if (tu->data.integer.bit_count == 32) {
+            } else if (type->data.integer.bit_count == 32) {
                 t = Type::getInt32Ty(*jd->TheContext);
-            } else if (tu->data.integer.bit_count == 16) {
+            } else if (type->data.integer.bit_count == 16) {
                 t = Type::getInt16Ty(*jd->TheContext);
-            } else if (tu->data.integer.bit_count == 8) {
+            } else if (type->data.integer.bit_count == 8) {
                 t = Type::getInt8Ty(*jd->TheContext);
             } else {
                 assert(false && "unsupported bit count");
@@ -81,15 +81,15 @@ namespace Akela_llvm {
             return t;
         }
 
-        if (tu->kind == AKE_TYPE_NATURAL) {
+        if (type->kind == AKE_TYPE_NATURAL) {
             Type *t;
-            if (tu->data.natural.bit_count == 64) {
+            if (type->data.natural.bit_count == 64) {
                 t = Type::getInt64Ty(*jd->TheContext);
-            } else if (tu->data.natural.bit_count == 32) {
+            } else if (type->data.natural.bit_count == 32) {
                 t = Type::getInt32Ty(*jd->TheContext);
-            } else if (tu->data.natural.bit_count == 16) {
+            } else if (type->data.natural.bit_count == 16) {
                 t = Type::getInt16Ty(*jd->TheContext);
-            } else if (tu->data.natural.bit_count == 8) {
+            } else if (type->data.natural.bit_count == 8) {
                 t = Type::getInt8Ty(*jd->TheContext);
             } else {
                 assert(false && "unsupported bit count");
@@ -97,24 +97,24 @@ namespace Akela_llvm {
             return t;
         }
 
-        if (tu->kind == AKE_TYPE_REAL) {
-            if (tu->data.real.bit_count == 64) {
+        if (type->kind == AKE_TYPE_REAL) {
+            if (type->data.real.bit_count == 64) {
                 return Type::getDoubleTy(*jd->TheContext);
-            } else if (tu->data.real.bit_count == 32) {
+            } else if (type->data.real.bit_count == 32) {
                 return Type::getFloatTy(*jd->TheContext);
-            } else if (tu->data.real.bit_count == 16) {
+            } else if (type->data.real.bit_count == 16) {
                 return Type::getHalfTy(*jd->TheContext);
             } else {
                 assert(false && "unsupported bit count");
             }
         }
 
-        if (tu->kind == AKE_TYPE_BOOLEAN) {
+        if (type->kind == AKE_TYPE_BOOLEAN) {
             return Type::getInt1Ty(*jd->TheContext);
         }
 
-        if (tu->kind == AKE_TYPE_STRUCT) {
-            return GetStructTypeFromType(jd, tu);
+        if (type->kind == AKE_TYPE_STRUCT) {
+            return GetStructTypeFromType(jd, type);
         }
 
         assert(false);
@@ -143,11 +143,11 @@ namespace Akela_llvm {
     }
 
     /* NOLINTNEXTLINE(misc-no-recursion) */
-    Type* Get_type_pointer(Jit_data *jd, Ake_Type *tu)
+    Type* Get_type_pointer(Jit_data *jd, Ake_Type *type)
     {
-        Type* t = Get_type(jd, tu);
-        if (tu) {
-            if (NeedPointer(tu->kind)) {
+        Type* t = Get_type(jd, type);
+        if (type) {
+            if (NeedPointer(type->kind)) {
                 //t = t->getPointerTo();
                 t = PointerType::get(t, 0);
             }
@@ -169,28 +169,28 @@ namespace Akela_llvm {
     }
 
     /* NOLINTNEXTLINE(misc-no-recursion) */
-    Type* Get_type(Jit_data* jd, Ake_Type* tu)
+    Type* Get_type(Jit_data* jd, Ake_Type* type)
     {
         Type *t;
-        if (tu && IsArray(tu->kind)) {
+        if (type && IsArray(type->kind)) {
             size_t dim = 0;
-            if (tu->kind == AKE_TYPE_ARRAY) {
-                dim = tu->data.array.dim;
+            if (type->kind == AKE_TYPE_ARRAY) {
+                dim = type->data.array.dim;
                 //t = ArrayType::get(Get_type(jd, tu->data.array.td), dim);
-                Ake_Type* tu2 = tu->data.array.type;
-                t = Get_type(jd, tu2);
-                if (tu2->kind == AKE_TYPE_FUNCTION) {
+                Ake_Type* type2 = type->data.array.type;
+                t = Get_type(jd, type2);
+                if (type2->kind == AKE_TYPE_FUNCTION) {
                     t = PointerType::get(t, 0);
                 }
                 t = ArrayType::get(t, dim);
-            } else if (tu->kind == AKE_TYPE_ARRAY_CONST) {
-                dim = tu->data.array_const.dim;
-                t = ArrayType::get(Get_type(jd, tu->data.array_const.type), dim);
+            } else if (type->kind == AKE_TYPE_ARRAY_CONST) {
+                dim = type->data.array_const.dim;
+                t = ArrayType::get(Get_type(jd, type->data.array_const.type), dim);
             } else {
                 assert(false && "unsupported array type");
             }
         } else {
-            return Get_scalar_type(jd, tu);
+            return Get_scalar_type(jd, type);
         }
 
         return t;
@@ -403,22 +403,22 @@ namespace Akela_llvm {
     /* NOLINTNEXTLINE(misc-no-recursion) */
     void Array_copy(
             Jit_data* jd,
-            Ake_Type* lhs_tu,
-            Ake_Type* rhs_tu,
+            Ake_Type* lhs_type,
+            Ake_Type* rhs_type,
             Value* lhs_ptr,
             Value* rhs_ptr)
     {
         size_t size = 0;
         Ake_Type* lhs_tu2 = NULL;
         Ake_Type* rhs_tu2 = NULL;
-        if (lhs_tu->kind == AKE_TYPE_ARRAY) {
-            size = lhs_tu->data.array.dim;
-            lhs_tu2 = lhs_tu->data.array.type;
-            rhs_tu2 = rhs_tu->data.array.type;
-        } else if (lhs_tu->kind == AKE_TYPE_ARRAY_CONST) {
-            size = lhs_tu->data.array_const.dim;
-            lhs_tu2 = lhs_tu->data.array_const.type;
-            rhs_tu2 = rhs_tu->data.array_const.type;
+        if (lhs_type->kind == AKE_TYPE_ARRAY) {
+            size = lhs_type->data.array.dim;
+            lhs_tu2 = lhs_type->data.array.type;
+            rhs_tu2 = rhs_type->data.array.type;
+        } else if (lhs_type->kind == AKE_TYPE_ARRAY_CONST) {
+            size = lhs_type->data.array_const.dim;
+            lhs_tu2 = lhs_type->data.array_const.type;
+            rhs_tu2 = rhs_type->data.array_const.type;
         } else {
             assert(false && "invalid type");
         }
