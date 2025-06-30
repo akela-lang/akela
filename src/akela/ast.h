@@ -138,7 +138,6 @@ typedef struct Ake_Ast {
 	Ake_AstKind kind;
 	Zinc_string value;
 	Ake_Type* type;
-    bool is_mut;
     Zinc_location loc;
 	Ake_Environment* env;
 	Ake_Ast* next;

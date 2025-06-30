@@ -18,7 +18,6 @@ void Ake_ast_init(Ake_Ast* n)
 	n->kind = Ake_ast_type_none;
 	Zinc_string_init(&n->value);
 	n->type = NULL;
-    n->is_mut = false;
     Zinc_location_init(&n->loc);
 	n->env = NULL;
 	n->next = NULL;
