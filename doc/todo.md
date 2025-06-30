@@ -8,6 +8,7 @@
 # Akela LLVM
 
 # Akela Parse Test
+* fully compare types
 * output types into constants
 * combine duplicate constants
 

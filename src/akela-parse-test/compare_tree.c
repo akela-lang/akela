@@ -16,27 +16,32 @@
 #include "compare_errors.h"
 
 bool Apt_compare_ast(Zinc_test* top_test, Zinc_test* case_test, Ake_Ast* n, Cent_value* value);
-bool Apt_compare_type_def(
+bool Apt_compare_type(
     Zinc_test* case_test,
     Ake_Ast* n,
     Ake_Type* type,
     Cent_value* value);
-bool Apt_compare_type_def_integer(
+bool Apt_compare_type_integer(
     Zinc_test* case_test,
     Ake_Ast* n,
     Ake_Type* type,
     Cent_value* value);
-bool Apt_compare_type_def_natural(
+bool Apt_compare_type_natural(
     Zinc_test* case_test,
     Ake_Ast* n,
     Ake_Type* type,
     Cent_value* value);
-bool Apt_compare_type_def_real(
+bool Apt_compare_type_real(
     Zinc_test* case_test,
     Ake_Ast* n,
     Ake_Type* type,
     Cent_value* value);
-bool Apt_compare_type_def_struct(
+bool Apt_compare_type_struct(
+    Zinc_test* case_test,
+    Ake_Ast* n,
+    Ake_Type* type,
+    Cent_value* value);
+bool Apt_compare_type_array(
     Zinc_test* case_test,
     Ake_Ast* n,
     Ake_Type* type,
@@ -258,7 +263,7 @@ bool Apt_compare_ast(Zinc_test* top_test, Zinc_test* case_test, Ake_Ast* n, Cent
 
     Ake_Type* type = n->type;
     Cent_value* tu_value = Cent_value_get_str(value, "tu");
-    pass = Apt_compare_type_def(case_test, n, type, tu_value) && pass;
+    pass = Apt_compare_type(case_test, n, type, tu_value) && pass;
 
     /* children */
     Ake_Ast* n2 = NULL;
@@ -283,7 +288,7 @@ bool Apt_compare_ast(Zinc_test* top_test, Zinc_test* case_test, Ake_Ast* n, Cent
 }
 
 /* NOLINTNEXTLINE(misc-no-recursion) */
-bool Apt_compare_type_def(
+bool Apt_compare_type(
     Zinc_test* case_test,
     Ake_Ast* n,
     Ake_Type* type,
@@ -354,40 +359,24 @@ bool Apt_compare_type_def(
         }
     }
 
-    Cent_value* type_value = Cent_value_get_str(value, "@tag");
-    if (!type_value) {
-        Zinc_spec_error_list_set(
-            &case_data->spec_errors,
-            case_test,
-            &n->loc,
-            &value_n->loc,
-            "type not set");
-    } else {
-        assert(type_value->type == Cent_value_type_enum);
-        if (type->kind != type_value->data.enumeration.enum_value->value) {
-            Zinc_spec_error_list_set(
-                &case_data->spec_errors,
-                case_test,
-                &n->loc,
-                &value_n->loc,
-                "type def type does not match (%d) (%d)",
-                type->kind,
-                type_value->data.enumeration.enum_value->value);
-            pass = false;
-        }
+    Cent_value* tag = Cent_value_get_str(value, "@tag");
+    if (Zinc_expect_size_t_equal(case_test, type->kind, tag->data.enumeration.number, "type tag")) {
+        return pass;
     }
 
     switch (type->kind) {
         case AKE_TYPE_INTEGER:
-            return Apt_compare_type_def_integer(case_test, n, type, value);
+            return Apt_compare_type_integer(case_test, n, type, value);
         case AKE_TYPE_NATURAL:
-            return Apt_compare_type_def_natural(case_test, n, type, value);
+            return Apt_compare_type_natural(case_test, n, type, value);
         case AKE_TYPE_REAL:
-            return Apt_compare_type_def_real(case_test, n, type, value);
+            return Apt_compare_type_real(case_test, n, type, value);
         case AKE_TYPE_BOOLEAN:
             break;
         case AKE_TYPE_STRUCT:
-            return Apt_compare_type_def_struct(case_test, n, type, value);
+            return Apt_compare_type_struct(case_test, n, type, value);
+        case AKE_TYPE_ARRAY:
+            return Apt_compare_type_array(case_test, n, type, value);
         default:
             assert(false && "invalid kind");
     }
@@ -395,7 +384,7 @@ bool Apt_compare_type_def(
     return pass;
 }
 
-bool Apt_compare_type_def_integer(
+bool Apt_compare_type_integer(
     Zinc_test* case_test,
     Ake_Ast* n,
     Ake_Type* type,
@@ -433,7 +422,7 @@ bool Apt_compare_type_def_integer(
     return pass;
 }
 
-bool Apt_compare_type_def_natural(
+bool Apt_compare_type_natural(
     Zinc_test* case_test,
     Ake_Ast* n,
     Ake_Type* type,
@@ -471,7 +460,7 @@ bool Apt_compare_type_def_natural(
     return pass;
 }
 
-bool Apt_compare_type_def_real(
+bool Apt_compare_type_real(
     Zinc_test* case_test,
     Ake_Ast* n,
     Ake_Type* type,
@@ -510,7 +499,7 @@ bool Apt_compare_type_def_real(
 }
 
 /* NOLINTNEXTLINE(misc-no-recursion) */
-bool Apt_compare_type_def_struct(
+bool Apt_compare_type_struct(
     Zinc_test* case_test,
     Ake_Ast* n,
     Ake_Type* type,
@@ -559,11 +548,31 @@ bool Apt_compare_type_def_struct(
             break;
         }
 
-        pass = Apt_compare_type_def(case_test, n, tf->type, type_value) && pass;
+        pass = Apt_compare_type(case_test, n, tf->type, type_value) && pass;
 
         tf = tf->next;
         field_value = field_value->next;
     }
 
     return pass;
+}
+
+/* NOLINTNEXTLINE(misc-no-recursion) */
+bool Apt_compare_type_array(
+    Zinc_test* case_test,
+    Ake_Ast* n,
+    Ake_Type* type,
+    Cent_value* value)
+{
+    bool pass = true;
+
+    Cent_value* dim_value = Cent_value_get_str(value, "dim");
+    pass = Zinc_expect_uint64_t_equal(
+        case_test,
+        type->data.array.dim,
+        dim_value->data.natural,
+        "dim") && pass;
+
+    Cent_value* type_value = Cent_value_get_str(value, "type");
+    return Apt_compare_type(case_test, n, type, type_value) && pass;
 }
