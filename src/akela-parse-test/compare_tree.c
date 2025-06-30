@@ -643,3 +643,45 @@ bool Apt_compare_type_pointer(
     Cent_value* type_value = Cent_value_get_str(value, "type");
     return Apt_compare_type(case_test, n, type->data.pointer.type, type_value) && pass;
 }
+
+/* NOLINTNEXTLINE(misc-no-recursion) */
+bool Apt_compare_type_function(
+    Zinc_test* case_test,
+    Ake_Ast* n,
+    Ake_Type* type,
+    Cent_value* value)
+{
+    bool pass = true;
+
+    Ake_TypeParam* tp = type->data.function.input_head;
+    Cent_value* input_value = Cent_value_get_str(value, "input");
+    Cent_value* tp_value = input_value->data.dag.head;
+    while (tp || tp_value) {
+        if (!Zinc_expect_ptr(case_test, tp, "expected type param")) {
+            pass = false;
+            break;
+        }
+        if (!Zinc_expect_ptr(case_test, tp_value, "expected type param")) {
+            pass = false;
+            break;
+        }
+
+        Cent_value* name_value = Cent_value_get_str(tp_value, "name");
+        pass = Zinc_expect_string(
+            case_test,
+            &tp->name,
+            Zinc_string_c_str(&name_value->data.string),
+            "name") && pass;
+
+        Cent_value* tp_type_value = Cent_value_get_str(tp_value, "type");
+        pass = Apt_compare_type(case_test, n, tp->type, tp_type_value) && pass;
+
+        tp = tp->next;
+        tp_value = tp_value->next;
+    }
+
+    Cent_value* output_value = Cent_value_get_str(value, "output");
+    pass = Apt_compare_type(case_test, n, type->data.function.output, output_value) && pass;
+
+    return pass;
+}

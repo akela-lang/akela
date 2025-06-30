@@ -192,6 +192,6 @@ element Input {
 element TypeParam {
     properties {
         name: String
-        tu: TypeDef
+        type: TypeDef
     }
 }
