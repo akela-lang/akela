@@ -28,17 +28,10 @@ namespace Akela_llvm {
                 Value* rhs_value = Dispatch(jd, rhs);
                 jd->Builder->CreateStore(rhs_value, lhs_value);
             } else {
-                if (IsArray(type->kind)) {
-                    Type *t = Get_type(jd, type);
-                    Zinc_string_finish(&lhs->value);
-                    AllocaInst* lhs_value = jd->Builder->CreateAlloca(t, nullptr, lhs->value.buf);
-                    sym->value = lhs_value;
-                } else {
-                    Type *t = Get_type_pointer(jd, type);
-                    Zinc_string_finish(&lhs->value);
-                    AllocaInst* lhs_value = jd->Builder->CreateAlloca(t, nullptr, lhs->value.buf);
-                    sym->reference = lhs_value;
-                }
+                Type *t = Get_type_pointer(jd, type);
+                Zinc_string_finish(&lhs->value);
+                AllocaInst* lhs_value = jd->Builder->CreateAlloca(t, nullptr, lhs->value.buf);
+                sym->reference = lhs_value;
             }
         } else if (IsArray(type->kind)) {
             if (rhs) {
