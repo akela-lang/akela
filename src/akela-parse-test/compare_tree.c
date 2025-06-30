@@ -51,6 +51,16 @@ bool Apt_compare_type_array_const(
     Ake_Ast* n,
     Ake_Type* type,
     Cent_value* value);
+bool Apt_compare_type_slice(
+    Zinc_test* case_test,
+    Ake_Ast* n,
+    Ake_Type* type,
+    Cent_value* value);
+bool Apt_compare_type_pointer(
+    Zinc_test* case_test,
+    Ake_Ast* n,
+    Ake_Type* type,
+    Cent_value* value);
 
 void Apt_suite_run(Zinc_test* suite_test)
 {
@@ -384,6 +394,10 @@ bool Apt_compare_type(
             return Apt_compare_type_array(case_test, n, type, value);
         case AKE_TYPE_ARRAY_CONST:
             return Apt_compare_type_array_const(case_test, n, type, value);
+        case AKE_TYPE_SLICE:
+            return Apt_compare_type_slice(case_test, n, type, value);
+        case AKE_TYPE_POINTER:
+            return Apt_compare_type_pointer(case_test, n, type, value);
         default:
             assert(false && "invalid kind");
     }
@@ -602,4 +616,30 @@ bool Apt_compare_type_array_const(
 
     Cent_value* type_value = Cent_value_get_str(value, "type");
     return Apt_compare_type(case_test, n, type->data.array_const.type, type_value) && pass;
+}
+
+/* NOLINTNEXTLINE(misc-no-recursion) */
+bool Apt_compare_type_slice(
+    Zinc_test* case_test,
+    Ake_Ast* n,
+    Ake_Type* type,
+    Cent_value* value)
+{
+    bool pass = true;
+
+    Cent_value* type_value = Cent_value_get_str(value, "type");
+    return Apt_compare_type(case_test, n, type->data.slice.type, type_value) && pass;
+}
+
+/* NOLINTNEXTLINE(misc-no-recursion) */
+bool Apt_compare_type_pointer(
+    Zinc_test* case_test,
+    Ake_Ast* n,
+    Ake_Type* type,
+    Cent_value* value)
+{
+    bool pass = true;
+
+    Cent_value* type_value = Cent_value_get_str(value, "type");
+    return Apt_compare_type(case_test, n, type->data.pointer.type, type_value) && pass;
 }
