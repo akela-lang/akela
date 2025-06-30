@@ -46,6 +46,11 @@ bool Apt_compare_type_array(
     Ake_Ast* n,
     Ake_Type* type,
     Cent_value* value);
+bool Apt_compare_type_array_const(
+    Zinc_test* case_test,
+    Ake_Ast* n,
+    Ake_Type* type,
+    Cent_value* value);
 
 void Apt_suite_run(Zinc_test* suite_test)
 {
@@ -377,6 +382,8 @@ bool Apt_compare_type(
             return Apt_compare_type_struct(case_test, n, type, value);
         case AKE_TYPE_ARRAY:
             return Apt_compare_type_array(case_test, n, type, value);
+        case AKE_TYPE_ARRAY_CONST:
+            return Apt_compare_type_array_const(case_test, n, type, value);
         default:
             assert(false && "invalid kind");
     }
@@ -574,5 +581,25 @@ bool Apt_compare_type_array(
         "dim") && pass;
 
     Cent_value* type_value = Cent_value_get_str(value, "type");
-    return Apt_compare_type(case_test, n, type, type_value) && pass;
+    return Apt_compare_type(case_test, n, type->data.array.type, type_value) && pass;
+}
+
+/* NOLINTNEXTLINE(misc-no-recursion) */
+bool Apt_compare_type_array_const(
+    Zinc_test* case_test,
+    Ake_Ast* n,
+    Ake_Type* type,
+    Cent_value* value)
+{
+    bool pass = true;
+
+    Cent_value* dim_value = Cent_value_get_str(value, "dim");
+    pass = Zinc_expect_uint64_t_equal(
+        case_test,
+        type->data.array_const.dim,
+        dim_value->data.natural,
+        "dim") && pass;
+
+    Cent_value* type_value = Cent_value_get_str(value, "type");
+    return Apt_compare_type(case_test, n, type->data.array_const.type, type_value) && pass;
 }
