@@ -1,17 +1,17 @@
-#include "type_matcher.h"
+#include "type_slot.h"
 
 bool Ake_TypeMatchExact(Ake_Type* a, Ake_Type* b);
 
-void Ake_TypeMatcherInit(Ake_TypeMatcher* matcher)
+void Ake_TypeSlotInit(Ake_TypeSlot* slot)
 {
-    Ake_TypeListInit(&matcher->list);
-    Zinc_vector_init(&matcher->index_list, sizeof(size_t));
+    Ake_TypeListInit(&slot->list);
+    Zinc_vector_init(&slot->index_list, sizeof(size_t));
 }
 
-void Ake_TypeMatcherProcess(Ake_TypeMatcher* matcher, Ake_Type* type)
+void Ake_TypeSlotProcess(Ake_TypeSlot* slot, Ake_Type* type)
 {
     bool found = false;
-    Ake_TypeNode* node = matcher->list.head;
+    Ake_TypeNode* node = slot->list.head;
     size_t index = 0;
     while (node) {
         if (Ake_TypeMatchExact(node->type, type)) {
@@ -23,10 +23,10 @@ void Ake_TypeMatcherProcess(Ake_TypeMatcher* matcher, Ake_Type* type)
     }
 
     if (found) {
-        Zinc_vector_add(&matcher->index_list, &index, 1);
+        Zinc_vector_add(&slot->index_list, &index, 1);
     } else {
-        Ake_TypeListAddType(&matcher->list, type);
-        Zinc_vector_add(&matcher->index_list, &index, 1);
+        Ake_TypeListAddType(&slot->list, type);
+        Zinc_vector_add(&slot->index_list, &index, 1);
     }
 }
 
