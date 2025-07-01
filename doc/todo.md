@@ -1,5 +1,4 @@
 # Akela
-* merge array and array const
 * new syntax tree
 * move checks into their own functions
 * run IR generation in same pass

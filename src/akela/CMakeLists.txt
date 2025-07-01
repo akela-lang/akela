@@ -19,6 +19,8 @@ set(lib_files
         ast_to_cent.c
         environment.c
         type.c
+        type_to_cent.c
+        type_list.c
 )
 
 add_library(akela STATIC ${lib_files})
