@@ -123,10 +123,11 @@ void AkeUnit_parse_string(Zinc_test* test)
 	if (!Zinc_expect_ptr(test, type, "ptr tu")) {
 		return Zinc_assert();
 	}
-    Zinc_expect_true(test, type->kind == AKE_TYPE_ARRAY_CONST, "is_array tu");
-    Zinc_expect_size_t_equal(test, type->data.array_const.dim, 6, "dim tu");
+    Zinc_expect_int_equal(test, type->kind, AKE_TYPE_ARRAY, "is_array tu");
+	Zinc_expect_true(test, type->data.array.is_const, "is_const type");
+    Zinc_expect_size_t_equal(test, type->data.array.dim, 6, "dim tu");
 
-	Ake_Type* type2 = type->data.array_const.type;
+	Ake_Type* type2 = type->data.array.type;
 	if (!Zinc_expect_ptr(test, type2, "ptr td")) {
 		return Zinc_assert();
 	}
@@ -1364,8 +1365,9 @@ void AkeUnit_parse_factor_array_element_const(Zinc_test* test)
 	if (!Zinc_expect_ptr(test, let_type, "ptr type")) {
 		return Zinc_assert();
 	}
-    Zinc_expect_true(test, let_type->kind == AKE_TYPE_ARRAY_CONST, "is_array type");
-    Zinc_expect_size_t_equal(test, let_type->data.array_const.dim, 4, "size let_type_dim");
+    Zinc_expect_int_equal(test, let_type->kind, AKE_TYPE_ARRAY, "is_array type");
+	Zinc_expect_true(test, let_type->data.array.is_const, "is_const let_type");
+    Zinc_expect_size_t_equal(test, let_type->data.array.dim, 4, "size let_type_dim");
 
     AkeUnit_parse_teardown(&cu);
 }

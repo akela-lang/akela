@@ -537,10 +537,11 @@ void AkeUnit_parse_stmts_type(Zinc_test* test)
 	if (!Zinc_expect_ptr(test, type, "ptr tu")) {
 		return Zinc_assert();
 	}
-	Zinc_expect_int_equal(test, type->kind, AKE_TYPE_ARRAY_CONST, "kind tu");
-	Zinc_expect_uint8_t_equal(test, type->data.array_const.dim, 6, "dim tu");
+	Zinc_expect_int_equal(test, type->kind, AKE_TYPE_ARRAY, "kind tu");
+	Zinc_expect_true(test, type->data.array.is_const, "is_const type");
+	Zinc_expect_uint8_t_equal(test, type->data.array.dim, 6, "dim tu");
 
-	Ake_Type* type2 = type->data.array_const.type;
+	Ake_Type* type2 = type->data.array.type;
 	if (!Zinc_expect_ptr(test, type2, "ptr td")) {
 		return Zinc_assert();
 	}

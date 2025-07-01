@@ -445,16 +445,18 @@ Ake_Ast* Ake_parse_literal(struct Ake_parse_state* ps)
             Zinc_error_list_set(ps->el, &n->loc, "expected a type");
             n->kind = Ake_ast_type_error;
         }
-        n->type = Ake_TypeClone(sym->td);
         Zinc_string_destroy(&bf);
 
         if (is_string) {
             Ake_Type* type = NULL;
             Ake_TypeCreate(&type);
-            type->kind = AKE_TYPE_ARRAY_CONST;
-            type->data.array_const.dim = n->value.size + 1;
-            type->data.array_const.type = n->type;
+            type->kind = AKE_TYPE_ARRAY;
+            type->data.array.is_const = true;
+            type->data.array.dim = n->value.size + 1;
+            type->data.array.type = Ake_TypeClone(sym->td);;
             n->type = type;
+        } else {
+            n->type = Ake_TypeClone(sym->td);
         }
 	}
 

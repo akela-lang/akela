@@ -2528,8 +2528,9 @@ void AkeUnit_parse_expr_array_subscript_3d(Zinc_test* test)
     if (!Zinc_expect_ptr(test, b_type, "ptr b_tu")) {
 		return Zinc_assert();
 	}
-    Zinc_expect_int_equal(test, b_type->kind, AKE_TYPE_ARRAY_CONST, "kind b_tu");
-    Zinc_expect_size_t_equal(test, b_type->data.array_const.dim, 4, "dim.count b_tu");
+    Zinc_expect_int_equal(test, b_type->kind, AKE_TYPE_ARRAY, "kind b_tu");
+	Zinc_expect_true(test, b_type->data.array.is_const, "is_const b_type");
+    Zinc_expect_size_t_equal(test, b_type->data.array.dim, 4, "dim.count b_tu");
 
     Ake_Ast* c = Ast_node_get(b, 0);
     if (!Zinc_expect_ptr(test, c, "ptr c")) {
@@ -2661,10 +2662,11 @@ void AkeUnit_parse_assign_string(Zinc_test* test)
     if (!Zinc_expect_ptr(test, type, "ptr type")) {
 		return Zinc_assert();
 	}
-    Zinc_expect_int_equal(test, type->kind, AKE_TYPE_ARRAY_CONST, "type type");
-    Zinc_expect_uint8_t_equal(test, type->data.array_const.dim, 6, "dim type");
+    Zinc_expect_int_equal(test, type->kind, AKE_TYPE_ARRAY, "type type");
+	Zinc_expect_true(test, type->data.array.is_const, "is_const type");
+    Zinc_expect_uint8_t_equal(test, type->data.array.dim, 6, "dim type");
 
-	Ake_Type* type2 = type->data.array_const.type;
+	Ake_Type* type2 = type->data.array.type;
 	if (!Zinc_expect_ptr(test, type2, "ptr type2")) {
 		return Zinc_assert();
 	}

@@ -127,10 +127,6 @@ namespace Akela_llvm {
             return true;
         }
 
-        if (kind == AKE_TYPE_ARRAY_CONST) {
-            return true;
-        }
-
         if (kind == AKE_TYPE_FUNCTION) {
             return true;
         }
@@ -161,10 +157,6 @@ namespace Akela_llvm {
             return true;
         }
 
-        if (kind == AKE_TYPE_ARRAY_CONST) {
-            return true;
-        }
-
         return false;
     }
 
@@ -183,9 +175,6 @@ namespace Akela_llvm {
                     t = PointerType::get(t, 0);
                 }
                 t = ArrayType::get(t, dim);
-            } else if (type->kind == AKE_TYPE_ARRAY_CONST) {
-                dim = type->data.array_const.dim;
-                t = ArrayType::get(Get_type(jd, type->data.array_const.type), dim);
             } else {
                 assert(false && "unsupported array type");
             }
@@ -214,8 +203,8 @@ namespace Akela_llvm {
             Ake_TypeKind kind = n->type->kind;
 
             if (IsArray(kind)) {
-                if (kind == AKE_TYPE_ARRAY_CONST) {
-                    Ake_Type* type = n->type->data.array_const.type;
+                if (n->type->data.array.is_const) {
+                    Ake_Type* type = n->type->data.array.type;
                     if (type->kind == AKE_TYPE_NATURAL && type->data.natural.bit_count == 8) {
                         char* (*fp)() = ExprSymbol.getAddress().toPtr<char*(*)()>();
                         char* v = fp();
@@ -415,10 +404,6 @@ namespace Akela_llvm {
             size = lhs_type->data.array.dim;
             lhs_type2 = lhs_type->data.array.type;
             rhs_type2 = rhs_type->data.array.type;
-        } else if (lhs_type->kind == AKE_TYPE_ARRAY_CONST) {
-            size = lhs_type->data.array_const.dim;
-            lhs_type2 = lhs_type->data.array_const.type;
-            rhs_type2 = rhs_type->data.array_const.type;
         } else {
             assert(false && "invalid type");
         }

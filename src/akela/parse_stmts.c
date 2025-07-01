@@ -440,7 +440,6 @@ void Ake_parse_for_iteration(struct Ake_parse_state* ps, Ake_Ast* parent)
 			/* test case: test_parse_for_iteration_error_no_value */
 		} else if (
 			list_type->kind != AKE_TYPE_ARRAY
-			&& list_type->kind != AKE_TYPE_ARRAY_CONST
 			&& list_type->kind != AKE_TYPE_SLICE) {
 			Zinc_error_list_set(ps->el, &list->loc, "iteration expression is not an array or slice");
             parent->kind = Ake_ast_type_error;
@@ -449,8 +448,6 @@ void Ake_parse_for_iteration(struct Ake_parse_state* ps, Ake_Ast* parent)
             Ake_Type* element_type2 = NULL;
 			if (list_type->kind == AKE_TYPE_ARRAY) {
 				element_type2 = Ake_TypeClone(list_type->data.array.type);
-			} else if (list_type->kind == AKE_TYPE_ARRAY_CONST) {
-				element_type2 = Ake_TypeClone(list_type->data.array_const.type);
 			} else if (list_type->kind == AKE_TYPE_SLICE) {
 				element_type2 = Ake_TypeClone(list_type->data.slice.type);
 			} else {

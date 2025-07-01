@@ -35,10 +35,7 @@ void Ake_TypeSet(Ake_Type* type, Ake_TypeKind kind)
             type->data.fields.tail = NULL;
             break;
         case AKE_TYPE_ARRAY:
-            type->data.array.dim = 0;
-            type->data.array.type = NULL;
-            break;
-        case AKE_TYPE_ARRAY_CONST:
+            type->data.array.is_const = false;
             type->data.array.dim = 0;
             type->data.array.type = NULL;
             break;
@@ -82,9 +79,6 @@ void Ake_TypeDestroy(Ake_Type* type)
                 break;
             case AKE_TYPE_ARRAY:
                 Ake_TypeDestroy(type->data.array.type);
-                break;
-            case AKE_TYPE_ARRAY_CONST:
-                Ake_TypeDestroy(type->data.array_const.type);
                 break;
             case AKE_TYPE_SLICE:
                 Ake_TypeDestroy(type->data.slice.type);
@@ -130,9 +124,11 @@ bool Ake_TypeIsNumeric(Ake_TypeKind kind)
 bool Ake_TypeMatch(Ake_Type* a, Ake_Type* b, bool* cast)
 {
     if (a->kind != b->kind) {
-        if (cast && a->kind == AKE_TYPE_ARRAY_CONST && b->kind == AKE_TYPE_ARRAY) {
-            if (!*cast) {
-                return true;
+        if (cast && a->kind == AKE_TYPE_ARRAY) {
+            if (a->data.array.is_const || !b->data.array.is_const) {
+                if (!*cast) {
+                    return true;
+                }
             }
         }
 
@@ -191,15 +187,13 @@ bool Ake_TypeMatch(Ake_Type* a, Ake_Type* b, bool* cast)
             }
             break;
         case AKE_TYPE_ARRAY:
-            if (a->data.array.dim != b->data.array.dim) {
+            if (!a->data.array.is_const && b->data.array.is_const) {
+                return false;
+            }
+            if (a->data.array.dim < b->data.array.dim) {
                 return false;
             }
             return Ake_TypeMatch(a->data.array.type, b->data.array.type, cast);
-        case AKE_TYPE_ARRAY_CONST:
-            if (a->data.array_const.dim < b->data.array_const.dim) {
-                return false;
-            }
-            return Ake_TypeMatch(a->data.array_const.type, b->data.array_const.type, cast);
         case AKE_TYPE_SLICE:
             return Ake_TypeMatch(a->data.slice.type, b->data.slice.type, NULL);
         case AKE_TYPE_POINTER:
@@ -263,12 +257,9 @@ Ake_Type* Ake_TypeClone(Ake_Type* type)
                 }
                 break;
             case AKE_TYPE_ARRAY:
+                new_type->data.array.is_const = type->data.array.is_const;
                 new_type->data.array.dim = type->data.array.dim;
                 new_type->data.array.type = Ake_TypeClone(type->data.array.type);
-                break;
-            case AKE_TYPE_ARRAY_CONST:
-                new_type->data.array_const.dim = type->data.array_const.dim;
-                new_type->data.array_const.type = Ake_TypeClone(type->data.array_const.type);
                 break;
             case AKE_TYPE_SLICE:
                 new_type->data.slice.type = Ake_TypeClone(type->data.slice.type);
@@ -323,12 +314,9 @@ void Ake_TypeCopy(Ake_Type* a, Ake_Type* b)
             }
             break;
         case AKE_TYPE_ARRAY:
+            b->data.array.is_const = a->data.array.is_const;
             b->data.array.dim = a->data.array.dim;
             b->data.array.type = Ake_TypeClone(a->data.array.type);
-            break;
-        case AKE_TYPE_ARRAY_CONST:
-            b->data.array_const.dim = a->data.array_const.dim;
-            b->data.array_const.type = Ake_TypeClone(a->data.array_const.type);
             break;
         case AKE_TYPE_SLICE:
             b->data.slice.type = Ake_TypeClone(a->data.slice.type);

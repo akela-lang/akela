@@ -27,7 +27,6 @@ Ake_Type* Ake_parse_type_id(Ake_parse_state* ps, Ake_Ast* n);
  * Parse a function prototype
  * @param ps
  * @param has_id
- * @param loc
  * @return struct ast_node*
  */
 /* NOLINTNEXTLINE(misc-no-recursion) */
@@ -177,7 +176,6 @@ void Ake_declare_params(Ake_parse_state* ps, Ake_Ast* proto, Ake_Type* struct_ty
 /**
  * Parse the prototype parameters
  * @param ps
- * @param loc
  * @return struct ast_node*
  */
 /* dseq -> declaration dseq' | e */
@@ -299,7 +297,6 @@ bool Ake_token_is_type(struct Ake_parse_state* ps, struct Ake_token* t)
  * Parse a declaration which consists of an id and type
  * @param ps
  * @param add_symbol
- * @param loc
  * @return struct ast_node*
  */
 /* declaration -> id :: type | e */
@@ -427,7 +424,6 @@ Ake_Ast* Ake_parse_declaration(
 /**
  * Parse a type
  * @param ps
- * @param loc
  * @return ast
  */
 /* type -> id | id { tseq } */
@@ -517,26 +513,15 @@ Ake_Type* Ake_parse_type_array(Ake_parse_state* ps, Ake_Ast* n)
     free(rsb);
 
     if (has_number) {
-        if (has_const) {
-            Ake_TypeSet(type, AKE_TYPE_ARRAY_CONST);
-            type->data.array_const.dim = dim_size_number;
-            Ake_Type* type2 = Ake_parse_type_dispatch(ps, n);
-            if (type2) {
-                type->data.array_const.type = type2;
-            } else {
-                Zinc_error_list_set(ps->el, &n->loc, "expected array const element type");
-                n->kind = Ake_ast_type_error;
-            }
+        Ake_TypeSet(type, AKE_TYPE_ARRAY);
+        type->data.array.is_const = has_const;
+        type->data.array.dim = dim_size_number;
+        Ake_Type* type2 = Ake_parse_type_dispatch(ps, n);
+        if (type2) {
+            type->data.array.type = type2;
         } else {
-            Ake_TypeSet(type, AKE_TYPE_ARRAY);
-            type->data.array.dim = dim_size_number;
-            Ake_Type* type2 = Ake_parse_type_dispatch(ps, n);
-            if (type2) {
-                type->data.array.type = type2;
-            } else {
-                Zinc_error_list_set(ps->el, &n->loc, "expected array element type");
-                n->kind = Ake_ast_type_error;
-            }
+            Zinc_error_list_set(ps->el, &n->loc, "expected array element type");
+            n->kind = Ake_ast_type_error;
         }
     } else {
         Ake_TypeSet(type, AKE_TYPE_SLICE);
@@ -552,6 +537,7 @@ Ake_Type* Ake_parse_type_array(Ake_parse_state* ps, Ake_Ast* n)
     return type;
 }
 
+/* NOLINTNEXTLINE(misc-no-recursion) */
 Ake_Type* Ake_parse_type_pointer(Ake_parse_state* ps, Ake_Ast* n)
 {
     Ake_Type* type = NULL;
@@ -573,6 +559,7 @@ Ake_Type* Ake_parse_type_pointer(Ake_parse_state* ps, Ake_Ast* n)
     return type;
 }
 
+/* NOLINTNEXTLINE(misc-no-recursion) */
 Ake_Type* Ake_parse_type_function(Ake_parse_state* ps, Ake_Ast* n)
 {
     Ake_Type* type = NULL;
@@ -643,12 +630,6 @@ Ake_Type* Ake_parse_type_id(Ake_parse_state* ps, Ake_Ast* n)
     return type;
 }
 
-/**
- * Check ID node and create symbol
- * @param ps parse state
- * @param n type node
- * @param id_node ID node
- */
 void Ake_create_variable_symbol(Ake_parse_state* ps, Zinc_string* name, Ake_Type* type, size_t seq, bool is_const)
 {
     Ake_symbol* new_sym = NULL;
@@ -818,12 +799,6 @@ void Ake_Override_rhs(Ake_Type* type, Ake_Ast* rhs)
                 Ake_Override_rhs(type->data.array.type, p);
                 p = p->next;
             }
-        } else if (type->kind == AKE_TYPE_ARRAY_CONST) {
-            Ake_Ast* p = rhs->head;
-            while (p) {
-                Ake_Override_rhs(type->data.array_const.type, p);
-                p = p->next;
-            }
         }
     }
 }
@@ -890,7 +865,7 @@ bool Ake_check_lvalue(Ake_parse_state* ps, Ake_Ast* n, Zinc_location* loc)
     if (n->kind != Ake_ast_type_error) {
         if (n->kind == Ake_ast_type_array_subscript) {
             Ake_Ast* left = n->head;
-            if (left->type->kind == AKE_TYPE_ARRAY_CONST) {
+            if (left->type->kind == AKE_TYPE_ARRAY && left->type->data.array.is_const) {
                 Zinc_error_list_set(ps->el, loc, "immutable variable changed in assignment");
                 n->kind = Ake_ast_type_error;
             }

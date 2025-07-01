@@ -378,23 +378,25 @@ void AkeUnit_TypeDefMatchArrayConstTrue(Zinc_test* test)
 
 	Ake_Type* td0 = NULL;
 	Ake_TypeCreate(&td0);
-	Ake_TypeSet(td0, AKE_TYPE_ARRAY_CONST);
+	Ake_TypeSet(td0, AKE_TYPE_ARRAY);
+	td0->data.array.is_const = true;
 
 	Ake_Type* td00 = NULL;
 	Ake_TypeCreate(&td00);
 	Ake_TypeSet(td00, AKE_TYPE_INTEGER);
 	td00->data.integer.bit_count = 32;
-	td0->data.array_const.type = td00;
+	td0->data.array.type = td00;
 
 	Ake_Type* td1 = NULL;
 	Ake_TypeCreate(&td1);
-	Ake_TypeSet(td1, AKE_TYPE_ARRAY_CONST);
+	Ake_TypeSet(td1, AKE_TYPE_ARRAY);
+	td1->data.array.is_const = true;
 
 	Ake_Type* td10 = NULL;
 	Ake_TypeCreate(&td10);
 	Ake_TypeSet(td10, AKE_TYPE_INTEGER);
 	td10->data.integer.bit_count = 32;
-	td1->data.array_const.type = td10;
+	td1->data.array.type = td10;
 
 	Zinc_expect_true(test, Ake_TypeMatch(td0, td1, NULL), "match");
 
@@ -412,23 +414,25 @@ void AkeUnit_TypeDefMatchArrayConstFalse(Zinc_test* test)
 
 	Ake_Type* td0 = NULL;
 	Ake_TypeCreate(&td0);
-	Ake_TypeSet(td0, AKE_TYPE_ARRAY_CONST);
+	Ake_TypeSet(td0, AKE_TYPE_ARRAY);
+	td0->data.array.is_const = true;
 
 	Ake_Type* td00 = NULL;
 	Ake_TypeCreate(&td00);
 	Ake_TypeSet(td00, AKE_TYPE_INTEGER);
 	td00->data.integer.bit_count = 32;
-	td0->data.array_const.type = td00;
+	td0->data.array.type = td00;
 
 	Ake_Type* td1 = NULL;
 	Ake_TypeCreate(&td1);
-	Ake_TypeSet(td1, AKE_TYPE_ARRAY_CONST);
+	Ake_TypeSet(td1, AKE_TYPE_ARRAY);
+	td1->data.array.is_const = true;
 
 	Ake_Type* td10 = NULL;
 	Ake_TypeCreate(&td10);
 	Ake_TypeSet(td10, AKE_TYPE_INTEGER);
 	td10->data.integer.bit_count = 64;
-	td1->data.array_const.type = td10;
+	td1->data.array.type = td10;
 
 	Zinc_expect_false(test, Ake_TypeMatch(td0, td1, NULL), "match");
 
@@ -958,8 +962,9 @@ void AkeUnit_TypeCloneArrayConst(Zinc_test* test)
 
 	Ake_Type* td0 = NULL;
 	Ake_TypeCreate(&td0);
-	Ake_TypeSet(td0, AKE_TYPE_ARRAY_CONST);
-	td0->data.array_const.dim = 10;
+	Ake_TypeSet(td0, AKE_TYPE_ARRAY);
+	td0->data.array.is_const = true;
+	td0->data.array.dim = 10;
 
 	Ake_Type* td00 = NULL;
 	Ake_TypeCreate(&td00);
@@ -1080,7 +1085,6 @@ void AkeUnit_TypeName(Zinc_test* test)
 	Zinc_expect_strcmp(test, Ake_TypeName(AKE_TYPE_BOOLEAN), "boolean", "boolean");
 	Zinc_expect_strcmp(test, Ake_TypeName(AKE_TYPE_STRUCT), "struct", "struct");
 	Zinc_expect_strcmp(test, Ake_TypeName(AKE_TYPE_ARRAY), "array", "array");
-	Zinc_expect_strcmp(test, Ake_TypeName(AKE_TYPE_ARRAY_CONST), "array-const", "array-const");
 	Zinc_expect_strcmp(test, Ake_TypeName(AKE_TYPE_SLICE), "slice", "slice");
 	Zinc_expect_strcmp(test, Ake_TypeName(AKE_TYPE_POINTER), "pointer", "pointer");
 	Zinc_expect_strcmp(test, Ake_TypeName(AKE_TYPE_FUNCTION), "function", "function");

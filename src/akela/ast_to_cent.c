@@ -311,17 +311,13 @@ void Ake_type_def_cent_print(Ake_Type* type, size_t level, bool is_property)
             break;
         case AKE_TYPE_ARRAY:
             Ake_indent_print(level);
+            printf(".is_const = %d\n", type->data.array.is_const);
+            Ake_indent_print(level);
             printf(".dim = %zu\n", type->data.array.dim);
             Ake_indent_print(level);
             printf(".td = ");
             Ake_type_def_cent_print(type->data.array.type, level, true);
             break;
-        case AKE_TYPE_ARRAY_CONST:
-            Ake_indent_print(level);
-            printf(".dim = %zu\n", type->data.array_const.dim);
-            Ake_indent_print(level);
-            printf(".td = ");
-            Ake_type_def_cent_print(type->data.array_const.type, level, true);
         case AKE_TYPE_SLICE:
             Ake_indent_print(level);
             printf(".td = ");
@@ -386,10 +382,6 @@ char* Ake_type_def_cent_name(Ake_TypeKind kind)
 
     if (kind == AKE_TYPE_ARRAY) {
         return "TypeDef::Array";
-    }
-
-    if (kind == AKE_TYPE_ARRAY_CONST) {
-        return "TypeDef::ArrayConst";
     }
 
     if (kind == AKE_TYPE_SLICE) {

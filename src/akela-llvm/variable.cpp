@@ -250,8 +250,6 @@ namespace Akela_llvm {
         size_t dim = 0;
         if (array->type->kind == AKE_TYPE_ARRAY) {
             dim = array->type->data.array.dim;
-        } else if (array->type->kind == AKE_TYPE_ARRAY_CONST) {
-            dim = array->type->data.array_const.dim;
         } else {
             assert(false && "expected an array");
         }

@@ -30,7 +30,6 @@ typedef enum Ake_TypeKind {
     AKE_TYPE_BOOLEAN,
     AKE_TYPE_STRUCT,
     AKE_TYPE_ARRAY,
-    AKE_TYPE_ARRAY_CONST,
     AKE_TYPE_SLICE,
     AKE_TYPE_POINTER,
     AKE_TYPE_FUNCTION,
@@ -49,7 +48,6 @@ static const char* Ake_TypeName(Ake_TypeKind kind)
         "boolean",
         "struct",
         "array",
-        "array-const",
         "slice",
         "pointer",
         "function",
@@ -65,8 +63,7 @@ struct Ake_Type {
         struct { uint8_t bit_count; } natural;
         struct { uint8_t bit_count; } real;
         struct { Ake_TypeField* head; Ake_TypeField* tail; } fields;
-        struct { size_t dim; Ake_Type* type; } array;
-        struct { size_t dim; Ake_Type* type; } array_const;
+        struct { bool is_const; size_t dim; Ake_Type* type; } array;
         struct { Ake_Type* type; } slice;
         struct { Ake_Type* type; } pointer;
         struct {
