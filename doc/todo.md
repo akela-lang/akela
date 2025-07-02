@@ -1,5 +1,4 @@
 # Akela
-* use hash table for type slots
 * store the type context as a field in the syntax tree: type_context (value or pointer)
 * wrap pointers
 * new syntax tree

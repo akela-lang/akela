@@ -36,7 +36,7 @@ element Error {
 element Ast(AstType) {
   properties {
     value: String
-    tu: TypeDef
+    type: Type
   }
   children {
     Ast
@@ -99,7 +99,7 @@ enum AstType {
   Var
 }
 
-enum TypeDefType {
+enum TypeKind {
   None
   Integer
   Natural
@@ -113,31 +113,31 @@ enum TypeDefType {
   Function
 }
 
-element TypeDef(TypeDefType) {
+element Type(TypeKind) {
   properties {
     name: String `required`
   }
 }
 
-variant TypeDef::Integer {
+variant Type::Integer {
     properties {
         bit_count: Natural
     }
 }
 
-variant TypeDef::Natural {
+variant Type::Natural {
     properties {
         bit_count: Natural
     }
 }
 
-variant TypeDef::Real {
+variant Type::Real {
     properties {
         bit_count: Natural
     }
 }
 
-variant TypeDef::Struct {
+variant Type::Struct {
     children {
         TypeField
     }
@@ -146,40 +146,40 @@ variant TypeDef::Struct {
 element TypeField {
     properties {
         name: String
-        tu: TypeDef
+        type: Type
     }
 }
 
-variant TypeDef::Array {
+variant Type::Array {
     properties {
         dim: Natural
-        td: TypeDef
+        type: Type
     }
 }
 
-variant TypeDef::ArrayConst {
+variant Type::ArrayConst {
     properties {
         dim: Natural
-        td: TypeDef
+        type: Type
     }
 }
 
-variant TypeDef::Slice {
+variant Type::Slice {
     properties {
-        td: TypeDef
+        type: Type
     }
 }
 
-variant TypeDef::Pointer {
+variant Type::Pointer {
     properties {
-        td: TypeDef
+        type: Type
     }
 }
 
-variant TypeDef::Function {
+variant Type::Function {
     properties {
         input: Input
-        output: TypeDef
+        output: Type
     }
 }
 
@@ -192,6 +192,6 @@ element Input {
 element TypeParam {
     properties {
         name: String
-        type: TypeDef
+        type: Type
     }
 }

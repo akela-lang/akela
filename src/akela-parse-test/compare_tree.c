@@ -103,7 +103,10 @@ void Apt_case_run(Zinc_test* case_test)
     Ake_comp_unit_destroy_input(ct->primary);
 
     if (case_data->snapshot) {
-        Ake_ast_cent_print(ct->primary->root, 0);
+        Zinc_string initial_line;
+        Zinc_string_init(&initial_line);
+        Zinc_string_add_str(&initial_line, "use lib::base::*");
+        Ake_tree_print(ct->primary->root, &initial_line);
     } else {
         Cent_comp_table* expected_ct = NULL;
         fp = fopen(Zinc_string_c_str(&suite_data->path), "r");
@@ -277,7 +280,7 @@ bool Apt_compare_ast(Zinc_test* top_test, Zinc_test* case_test, Ake_Ast* n, Cent
     }
 
     Ake_Type* type = n->type;
-    Cent_value* tu_value = Cent_value_get_str(value, "tu");
+    Cent_value* tu_value = Cent_value_get_str(value, "type");
     pass = Apt_compare_type(case_test, n, type, tu_value) && pass;
 
     /* children */
@@ -341,13 +344,13 @@ bool Apt_compare_type(
         return false;
     }
 
-    if (!Zinc_string_compare_str(&value->name, "TypeDef")) {
+    if (!Zinc_string_compare_str(&value->name, "Type")) {
         Zinc_spec_error_list_set(
         &case_data->spec_errors,
         case_test,
         &n->loc,
         &value_n->loc,
-        "expected type use value: %bf",
+        "expected Type value: %bf",
         &value->name);
         pass = false;
     }

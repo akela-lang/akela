@@ -1,15 +1,44 @@
 #include "ast.h"
 #include "type.h"
 #include <assert.h>
+#include "type_slots.h"
 
+void Ake_print_types(Ake_TypeSlots* slots);
+void Ake_ast_cent_print(Ake_Ast* n, size_t level, Ake_TypeSlots* slots);
 void Ake_indent_print(size_t level);
 char* Ake_ast_cent_name(Ake_AstKind type);
-void Ake_type_def_cent_print(Ake_Type* type, size_t level, bool is_property);
+void Ake_type_cent_print(Ake_Type* type, size_t level, bool is_property);
 char* Ake_type_def_cent_name(Ake_TypeKind kind);
 char* Ake_type_param_cent_name(Ake_TypeParamKind kind);
 
+void Ake_tree_print(Ake_Ast* n, Zinc_string* initial_line)
+{
+    printf("%s\n", Zinc_string_c_str(initial_line));
+
+    Ake_TypeSlots slots;
+    Ake_TypeSlotsInit(&slots);
+
+    Ake_TypeSlotsScan(&slots, n);
+    Ake_print_types(&slots);
+    Ake_ast_cent_print(n, 0, &slots);
+
+    Ake_TypeSlotsDestroy(&slots);
+ }
+
+void Ake_print_types(Ake_TypeSlots* slots)
+{
+    size_t i = 0;
+    Ake_TypeNode* node = slots->list.head;
+    while (node) {
+        printf("const type%zu = ", i);
+        Ake_type_cent_print(node->type, 0, true);
+        node = node->next;
+        i++;
+    }
+}
+
 /* NOLINTNEXTLINE(misc-no-recursion) */
-void Ake_ast_cent_print(Ake_Ast* n, size_t level)
+void Ake_ast_cent_print(Ake_Ast* n, size_t level, Ake_TypeSlots* slots)
 {
     if (n) {
         Ake_indent_print(level);
@@ -24,13 +53,13 @@ void Ake_ast_cent_print(Ake_Ast* n, size_t level)
 
         if (n->type) {
             Ake_indent_print(level);
-            printf(".tu = ");
-            Ake_type_def_cent_print(n->type, level, true);
+            size_t slot = Ake_TypeSlotsGetSlot(slots, n->type);
+            printf(".type = type%zu\n", slot);
         }
 
         Ake_Ast* p = n->head;
         while (p) {
-            Ake_ast_cent_print(p, level);
+            Ake_ast_cent_print(p, level, slots);
             p = p->next;
         }
 
@@ -264,7 +293,7 @@ char* Ake_ast_cent_name(Ake_AstKind type)
 }
 
 /* NOLINTNEXTLINE(misc-no-recursion) */
-void Ake_type_def_cent_print(Ake_Type* type, size_t level, bool is_property)
+void Ake_type_cent_print(Ake_Type* type, size_t level, bool is_property)
 {
     if (!is_property) {
         Ake_indent_print(level);
@@ -302,8 +331,8 @@ void Ake_type_def_cent_print(Ake_Type* type, size_t level, bool is_property)
                 Ake_indent_print(level);
                 printf(".name = \"%s\"\n", Zinc_string_c_str(&field->name));
                 Ake_indent_print(level);
-                printf(".td = ");
-                Ake_type_def_cent_print(field->type, level, true);
+                printf(".type = ");
+                Ake_type_cent_print(field->type, level, true);
                 level--;
                 Ake_indent_print(level);
                 printf("}\n");
@@ -315,17 +344,17 @@ void Ake_type_def_cent_print(Ake_Type* type, size_t level, bool is_property)
             Ake_indent_print(level);
             printf(".dim = %zu\n", type->data.array.dim);
             Ake_indent_print(level);
-            printf(".td = ");
-            Ake_type_def_cent_print(type->data.array.type, level, true);
+            printf(".type = ");
+            Ake_type_cent_print(type->data.array.type, level, true);
             break;
         case AKE_TYPE_SLICE:
             Ake_indent_print(level);
-            printf(".td = ");
-            Ake_type_def_cent_print(type->data.slice.type, level, true);
+            printf(".type = ");
+            Ake_type_cent_print(type->data.slice.type, level, true);
         case AKE_TYPE_POINTER:
             Ake_indent_print(level);
-            printf(".td = ");
-            Ake_type_def_cent_print(type->data.pointer.type, level, true);
+            printf(".type = ");
+            Ake_type_cent_print(type->data.pointer.type, level, true);
         case AKE_TYPE_FUNCTION:
             Ake_TypeParam* tp = type->data.function.input_head;
             while (tp) {
@@ -337,8 +366,8 @@ void Ake_type_def_cent_print(Ake_Type* type, size_t level, bool is_property)
                 Ake_indent_print(level);
                 printf(".name = \"%s\"\n", Zinc_string_c_str(&tp->name));
                 Ake_indent_print(level);
-                printf(".td = ");
-                Ake_type_def_cent_print(tp->type, level, true);
+                printf(".type = ");
+                Ake_type_cent_print(tp->type, level, true);
                 level--;
                 Ake_indent_print(level);
                 printf("}\n");
@@ -357,43 +386,43 @@ void Ake_type_def_cent_print(Ake_Type* type, size_t level, bool is_property)
 char* Ake_type_def_cent_name(Ake_TypeKind kind)
 {
     if (kind == AKE_TYPE_NONE) {
-        return "TypeDef::None";
+        return "Type::None";
     }
 
     if (kind == AKE_TYPE_INTEGER) {
-        return "TypeDef::Integer";
+        return "Type::Integer";
     }
 
     if (kind == AKE_TYPE_NATURAL) {
-        return "TypeDef::Natural";
+        return "Type::Natural";
     }
 
     if (kind == AKE_TYPE_REAL) {
-        return "TypeDef::Real";
+        return "Type::Real";
     }
 
     if (kind == AKE_TYPE_BOOLEAN) {
-        return "TypeDef::Boolean";
+        return "Type::Boolean";
     }
 
     if (kind == AKE_TYPE_STRUCT) {
-        return "TypeDef::Struct";
+        return "Type::Struct";
     }
 
     if (kind == AKE_TYPE_ARRAY) {
-        return "TypeDef::Array";
+        return "Type::Array";
     }
 
     if (kind == AKE_TYPE_SLICE) {
-        return "TypeDef::Slice";
+        return "Type::Slice";
     }
 
     if (kind == AKE_TYPE_POINTER) {
-        return "TypeDef::Pointer";
+        return "Type::Pointer";
     }
 
     if (kind == AKE_TYPE_FUNCTION) {
-        return "TypeDef::Function";
+        return "Type::Function";
     }
 
     assert(false && "unknown kind");

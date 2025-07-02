@@ -29,35 +29,27 @@ a
 
 ```cent
 use lib::base::*
+const type0 = Type::Integer {
+  .name = "Int32"
+  .bit_count = 32
+}
 Ast::Stmts {
-  .tu = TypeDef::Integer {
-    .name = "Int32"
-    .bit_count = 32
-  }
+  .type = type0
   Ast::Const {
     Ast::Id {
       .value = "a"
     }
     Ast::Type {
-      .tu = TypeDef::Integer {
-        .name = "Int32"
-        .bit_count = 32
-      }
+      .type = type0
     }
     Ast::Number {
       .value = "105"
-      .tu = TypeDef::Integer {
-        .name = "Int32"
-        .bit_count = 32
-      }
+      .type = type0
     }
   }
   Ast::Id {
     .value = "a"
-    .tu = TypeDef::Integer {
-      .name = "Int32"
-      .bit_count = 32
-    }
+    .type = type0
   }
 }
 ```
@@ -83,7 +75,7 @@ a
 ```cent
 use lib::base::*
 Ast::Stmts {
-  .tu = TypeDef::Real {
+  .type = Type::Real {
     .name = "Real64"
     .bit_count = 64
   }
@@ -92,14 +84,14 @@ Ast::Stmts {
       .value = "a"
     }
     Ast::Type {
-      .tu = TypeDef::Real {
+      .type = Type::Real {
         .name = "Real64"
         .bit_count = 64
       }
     }
     Ast::Number {
       .value = "1.5"
-      .tu = TypeDef::Real {
+      .type = Type::Real {
         .name = "Real64"
         .bit_count = 64
       }
@@ -107,7 +99,7 @@ Ast::Stmts {
   }
   Ast::Id {
     .value = "a"
-    .tu = TypeDef::Real {
+    .type = Type::Real {
       .name = "Real64"
       .bit_count = 64
     }

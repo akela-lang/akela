@@ -46,17 +46,17 @@ Test {
 ```cent
 use lib::base::*
 Ast::Stmts {
-  .tu = TypeDef::Integer {
+  .type = Type::Integer {
     .name = "Int32"
     .bit_count = 32
   }
   Ast::Plus {
-    .tu = TypeDef::Integer {
+    .type = Type::Integer {
       .name = "Int32"
       .bit_count = 32
     }
     Ast::Sign {
-      .tu = TypeDef::Integer {
+      .type = Type::Integer {
         .name = "Int32"
         .bit_count = 32
       }
@@ -64,14 +64,14 @@ Ast::Stmts {
       }
       Ast::Number {
         .value = "5"
-        .tu = TypeDef::Integer {
+        .type = Type::Integer {
           .name = "Int32"
           .bit_count = 32
         }
       }
     }
     Ast::Sign {
-      .tu = TypeDef::Integer {
+      .type = Type::Integer {
         .name = "Int32"
         .bit_count = 32
       }
@@ -79,7 +79,7 @@ Ast::Stmts {
       }
       Ast::Number {
         .value = "20"
-        .tu = TypeDef::Integer {
+        .type = Type::Integer {
           .name = "Int32"
           .bit_count = 32
         }

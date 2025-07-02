@@ -3,6 +3,6 @@
 
 #include "ast.h"
 
-void Ake_ast_cent_print(Ake_Ast* n, size_t level);
+void Ake_tree_print(Ake_Ast* n, Zinc_string* initial_line);
 
 #endif
