@@ -7,16 +7,6 @@
 #include <inttypes.h>
 #include <assert.h>
 
-typedef enum Ake_array_element_option {
-    Ake_array_element_default,
-    Ake_array_element_const,
-} Ake_array_element_option;
-
-typedef struct Ake_type_dimension {
-    size_t size;
-    Ake_array_element_option option;
-} Ake_type_dimension;
-
 typedef enum Ake_type_context {
     Ake_type_context_value,
     Ake_type_context_ptr,

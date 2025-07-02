@@ -2,7 +2,7 @@
 * store the type context as a field in the syntax tree: type_context (value or pointer)
 * wrap pointers
 * new syntax tree
-* move checks into their own functions
+* move type checks into their own functions
 * run IR generation in same pass
 * order independence of global variables
 * cast numerical values
@@ -10,9 +10,6 @@
 # Akela LLVM
 
 # Akela Parse Test
-* scan tree for types
-* output unique types
-* output tree with unique types
 
 # Akela Run Test
 * sub
