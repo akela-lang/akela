@@ -45,44 +45,30 @@ Test {
 
 ```cent
 use lib::base::*
+const type0 = Type::Integer {
+  .name = "Int32"
+  .bit_count = 32
+}
 Ast::Stmts {
-  .type = Type::Integer {
-    .name = "Int32"
-    .bit_count = 32
-  }
+  .type = type0
   Ast::Plus {
-    .type = Type::Integer {
-      .name = "Int32"
-      .bit_count = 32
-    }
+    .type = type0
     Ast::Sign {
-      .type = Type::Integer {
-        .name = "Int32"
-        .bit_count = 32
-      }
+      .type = type0
       Ast::Minus {
       }
       Ast::Number {
         .value = "5"
-        .type = Type::Integer {
-          .name = "Int32"
-          .bit_count = 32
-        }
+        .type = type0
       }
     }
     Ast::Sign {
-      .type = Type::Integer {
-        .name = "Int32"
-        .bit_count = 32
-      }
+      .type = type0
       Ast::Minus {
       }
       Ast::Number {
         .value = "20"
-        .type = Type::Integer {
-          .name = "Int32"
-          .bit_count = 32
-        }
+        .type = type0
       }
     }
   }
