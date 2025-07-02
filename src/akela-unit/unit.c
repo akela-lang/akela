@@ -14,6 +14,7 @@
 #include "unit_parse_struct.h"
 #include "unit_environment.h"
 #include "unit_type_list.h"
+#include "unit_type_slots.h"
 
 void AkeUnit(Zinc_test* test)
 {
@@ -38,6 +39,7 @@ void AkeUnit(Zinc_test* test)
         Zinc_test_register(test, AkeUnit_parse_struct);
         Zinc_test_register(test, AkeUnit_Environment);
         Zinc_test_register(test, AkeUnit_TypeList);
+        Zinc_test_register(test, AkeUnit_TypeSlots);
 
         return;
     }

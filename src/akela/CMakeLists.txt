@@ -19,7 +19,7 @@ set(lib_files
         ast_to_cent.c
         environment.c
         type.c
-        type_slot.c
+        type_slots.c
         type_list.c
 )
 

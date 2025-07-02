@@ -1,17 +1,23 @@
-#include "type_slot.h"
+#include "type_slots.h"
 
 bool Ake_TypeMatchExact(Ake_Type* a, Ake_Type* b);
 
-void Ake_TypeSlotInit(Ake_TypeSlot* slot)
+void Ake_TypeSlotsInit(Ake_TypeSlots* slots)
 {
-    Ake_TypeListInit(&slot->list);
-    Zinc_vector_init(&slot->index_list, sizeof(size_t));
+    Ake_TypeListInit(&slots->list);
+    Zinc_vector_init(&slots->index_list, sizeof(size_t));
 }
 
-void Ake_TypeSlotProcess(Ake_TypeSlot* slot, Ake_Type* type)
+void Ake_TypeSlotsDestroy(Ake_TypeSlots* slots)
+{
+    Ake_TypeListDestroy(&slots->list);
+    Zinc_vector_destroy(&slots->index_list);
+}
+
+void Ake_TypeSlotsProcess(Ake_TypeSlots* slots, Ake_Type* type)
 {
     bool found = false;
-    Ake_TypeNode* node = slot->list.head;
+    Ake_TypeNode* node = slots->list.head;
     size_t index = 0;
     while (node) {
         if (Ake_TypeMatchExact(node->type, type)) {
@@ -23,11 +29,45 @@ void Ake_TypeSlotProcess(Ake_TypeSlot* slot, Ake_Type* type)
     }
 
     if (found) {
-        Zinc_vector_add(&slot->index_list, &index, 1);
+        Zinc_vector_add(&slots->index_list, &index, 1);
     } else {
-        Ake_TypeListAddType(&slot->list, type);
-        Zinc_vector_add(&slot->index_list, &index, 1);
+        Ake_TypeListAddType(&slots->list, type);
+        Zinc_vector_add(&slots->index_list, &index, 1);
     }
+}
+
+size_t Ake_TypeSlotsCount(Ake_TypeSlots* slots)
+{
+    size_t count = 0;
+    Ake_TypeNode* node = slots->list.head;
+    while (node) {
+        count++;
+        node = node->next;
+    }
+
+    return count;
+}
+
+Ake_Type* Ake_TypeSlotsGet(Ake_TypeSlots* slots, size_t slot)
+{
+    size_t count = 0;
+    Ake_TypeNode* node = slots->list.head;
+    while (node) {
+        if (count == slot) {
+            return node->type;
+        }
+        count++;
+        node = node->next;
+    }
+
+    return NULL;
+}
+
+size_t Ake_TypeSlotsPosToSlot(Ake_TypeSlots* slots, size_t pos)
+{
+    assert(pos < slots->index_list.count);
+    size_t* slot = (size_t*)ZINC_VECTOR_PTR(&slots->index_list, pos);
+    return *slot;
 }
 
 /* NOLINTNEXTLINE(misc-no-recursion) */
