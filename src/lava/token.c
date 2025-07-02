@@ -16,5 +16,7 @@ void Lava_token_create(Lava_token** t)
 
 void Lava_token_destroy(Lava_token* t)
 {
-    Zinc_string_destroy(&t->text);
+    if (t) {
+        Zinc_string_destroy(&t->text);
+    }
 }
