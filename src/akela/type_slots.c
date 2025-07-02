@@ -1,4 +1,5 @@
 #include "type_slots.h"
+#include "ast.h"
 
 bool Ake_TypeMatchExact(Ake_Type* a, Ake_Type* b);
 
@@ -162,4 +163,17 @@ bool Ake_TypeMatchExact(Ake_Type* a, Ake_Type* b)
     }
 
     return true;
+}
+
+void Ake_TypeSlotsScan(Ake_TypeSlots* slots, Ake_Ast* ast)
+{
+    if (ast->type) {
+        Ake_TypeSlotsProcess(slots, ast->type);
+    }
+
+    Ake_Ast* p = ast->head;
+    while (p) {
+        Ake_TypeSlotsScan(slots, p);
+        p = p->next;
+    }
 }
