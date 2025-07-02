@@ -7,11 +7,6 @@
 #include <inttypes.h>
 #include <assert.h>
 
-typedef enum Ake_type_context {
-    Ake_type_context_value,
-    Ake_type_context_ptr,
-} Ake_type_context;
-
 typedef enum Ake_TypeKind {
     AKE_TYPE_NONE,
     AKE_TYPE_INTEGER,
@@ -62,7 +57,6 @@ struct Ake_Type {
             Ake_Type* output;
         } function;
     } data;
-    Ake_type_context context;
 };
 
 typedef enum Ake_TypeParamKind {

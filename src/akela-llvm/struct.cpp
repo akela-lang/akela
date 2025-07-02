@@ -57,7 +57,7 @@ namespace Akela_llvm {
         Ake_Type* left_type = left->type;
         assert(left_type);
         assert(left_type->kind == AKE_TYPE_STRUCT);
-        left->type->context = Ake_type_context_ptr;
+        left->type_context = Ake_type_context_ptr;
         Value* struct_value = Dispatch(jd, left);
 
         Ake_Ast* right = Ast_node_get(n, 1);
@@ -79,7 +79,7 @@ namespace Akela_llvm {
         assert(found);
         Value* gep_value = jd->Builder->CreateStructGEP(struct_type, struct_value, i);
 
-        if (n->type->context == Ake_type_context_ptr) {
+        if (n->type_context == Ake_type_context_ptr) {
             return gep_value;
         } else if (IsArray(dec_tu->kind)) {
             return gep_value;

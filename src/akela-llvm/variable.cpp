@@ -133,14 +133,14 @@ namespace Akela_llvm {
                 }
                 jd->Builder->CreateStore(rhs_value, lhs_value);
             } else if (lhs->kind == Ake_ast_type_array_subscript) {
-                lhs->type->context = Ake_type_context_ptr;
+                lhs->type_context = Ake_type_context_ptr;
                 Value* lhs_value = Dispatch(jd, lhs);
                 jd->Builder->CreateStore(rhs_value, lhs_value);
             } else {
                 assert(false);
             }
         } else if (IsArray(lhs->type->kind)) {
-            lhs->type->context = Ake_type_context_ptr;
+            lhs->type_context = Ake_type_context_ptr;
             Value* lhs_value = Dispatch(jd, lhs);
             Array_copy(jd, lhs->type, rhs->type, lhs_value, rhs_value);
         } else {
@@ -149,7 +149,7 @@ namespace Akela_llvm {
                 lhs_value = (AllocaInst*)sym->reference;
                 jd->Builder->CreateStore(rhs_value, lhs_value);
             } else {
-                lhs->type->context = Ake_type_context_ptr;
+                lhs->type_context = Ake_type_context_ptr;
                 Value* lhs_value = Dispatch(jd, lhs);
                 jd->Builder->CreateStore(rhs_value, lhs_value);
             }
@@ -241,7 +241,7 @@ namespace Akela_llvm {
 
         Ake_Ast* array = n->head;
         assert(IsArray(array->type->kind));
-        array->type->context = Ake_type_context_ptr;
+        array->type_context = Ake_type_context_ptr;
         Value* array_value = Dispatch(jd, array);
         assert(array_value);
 
@@ -287,7 +287,7 @@ namespace Akela_llvm {
         if (IsArray(n->type->kind)) {
             return element_ptr;
         } else {
-            if (n->type->context == Ake_type_context_ptr) {
+            if (n->type_context == Ake_type_context_ptr) {
                 return element_ptr;
             } else {
                 return jd->Builder->CreateLoad(element_type, element_ptr, "elementtmp");
