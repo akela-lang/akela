@@ -218,3 +218,46 @@ Test {
     }
   }
 ```
+
+## Test
+add mixed types
+
+```cent
+use lib::base::*
+Test {
+  .solo = false
+  .mute = false
+  .snapshot = false
+  .has_error = false
+}
+```
+
+```akela
+1 + 5.0
+```
+
+```cent
+use lib::base::*
+const type0 = Type::Integer {
+  .name = "Int32"
+  .bit_count = 32
+}
+const type1 = Type::Real {
+  .name = "Real64"
+  .bit_count = 64
+}
+Ast::Stmts {
+  .type = type0
+  Ast::Plus {
+    .type = type0
+    Ast::Number {
+      .value = "1"
+      .type = type0
+    }
+    Ast::Number {
+      .value = "5.0"
+      .type = type1
+    }
+  }
+}
+```

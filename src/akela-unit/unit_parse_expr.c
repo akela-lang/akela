@@ -8,60 +8,6 @@
 #include "zinc/test.h"
 #include "zinc/expect.h"
 
-void AkeUnit_parse_add_mixed_types(Zinc_test* test)
-{
-    if (test->dry_run) {
-        Zinc_string_add_str(&test->name, __func__);
-        test->mute = false;
-        test->solo = false;
-        return;
-    }
-    
-    struct Ake_comp_unit cu;
-
-    AkeUnit_parse_setup("1 + 5.0", &cu);
-    if (!Zinc_expect_no_errors(test, &cu.errors)) {
-		return Zinc_assert();
-	}
-    Zinc_expect_true(test, cu.valid, "valid");
-
-    if (!Zinc_expect_ptr(test, cu.root, "ptr cu.root")) {
-		return Zinc_assert();
-	}
-    if (!Zinc_expect_int_equal(test, cu.root->kind, Ake_ast_type_stmts, "parse_stmts cu.root")) {
-		return Zinc_assert();
-	}
-
-    Ake_Ast* add = Ake_ast_get(cu.root, 0);
-    if (!Zinc_expect_ptr(test, add, "ptr add")) {
-		return Zinc_assert();
-	}
-    Zinc_expect_int_equal(test, add->kind, Ake_ast_type_plus, "plus add");
-
-    Ake_Type* add_type = add->type;
-    if (!Zinc_expect_ptr(test, add_type, "ptr add_tu")) {
-		return Zinc_assert();
-	}
-    Zinc_expect_int_equal(test, add_type->kind, AKE_TYPE_INTEGER, "kind add_td");
-    Zinc_expect_string(test, &add_type->name, "Int32", "name add_td");
-
-    Ake_Ast* left = Ake_ast_get(add, 0);
-    if (!Zinc_expect_ptr(test, left, "left")) {
-		return Zinc_assert();
-	}
-    Zinc_expect_int_equal(test, left->kind, Ake_ast_type_number, "number left");
-    Zinc_expect_string(test, &left->value, "1", "1 left");
-
-    Ake_Ast* right = Ake_ast_get(add, 1);
-    if (!Zinc_expect_ptr(test, right, "right")) {
-		return Zinc_assert();
-	}
-    Zinc_expect_int_equal(test, right->kind, Ake_ast_type_number, "number");
-    Zinc_expect_string(test, &right->value, "5.0", "5.0 right");
-
-    AkeUnit_parse_teardown(&cu);
-}
-
 void AkeUnit_parse_add_positive(Zinc_test* test)
 {
     if (test->dry_run) {
@@ -3129,7 +3075,6 @@ void AkeUnit_parse_expression(Zinc_test* test)
         test->mute = false;
         test->solo = false;
 
-        Zinc_test_register(test, AkeUnit_parse_add_mixed_types);
         Zinc_test_register(test, AkeUnit_parse_add_positive);
         Zinc_test_register(test, AkeUnit_parse_add_negative);
         Zinc_test_register(test, AkeUnit_parse_sub);
