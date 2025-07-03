@@ -1199,3 +1199,30 @@ Errors {
   }
 }
 ```
+
+## Test
+power (error right not numeric)
+
+```cent
+use lib::base::*
+Test {
+  .solo = false
+  .mute = false
+  .snapshot = false
+  .has_error = true
+}
+```
+
+```akela
+5 ^ true
+```
+
+```cent
+Errors {
+  Error {
+    .message = "power on non-numeric operand"
+    .line = 1217
+    .col = 5
+  }
+}
+```
