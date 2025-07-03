@@ -827,3 +827,42 @@ Ast::Stmts {
   }
 }
 ```
+
+## Test
+divide
+
+```cent
+use lib::base::*
+Test {
+  .solo = false
+  .mute = false
+  .snapshot = false
+  .has_error = false
+}
+```
+
+```akela
+52 / 2
+```
+
+```cent
+use lib::base::*
+const type0 = Type::Integer {
+  .name = "Int32"
+  .bit_count = 32
+}
+Ast::Stmts {
+  .type = type0
+  Ast::Divide {
+    .type = type0
+    Ast::Number {
+      .value = "52"
+      .type = type0
+    }
+    Ast::Number {
+      .value = "2"
+      .type = type0
+    }
+  }
+}
+```
