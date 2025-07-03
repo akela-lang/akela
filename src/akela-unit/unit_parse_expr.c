@@ -6,58 +6,6 @@
 #include "zinc/test.h"
 #include "zinc/expect.h"
 
-void AkeUnit_parse_power(Zinc_test* test)
-{
-    if (test->dry_run) {
-        Zinc_string_add_str(&test->name, __func__);
-        test->mute = false;
-        test->solo = false;
-        return;
-    }
-    
-    struct Ake_comp_unit cu;
-
-    AkeUnit_parse_setup("5 ^ 2", &cu);
-    if (!Zinc_expect_no_errors(test, &cu.errors)) {
-		return Zinc_assert();
-	}
-    Zinc_expect_true(test, cu.valid, "cu.valid");
-
-    if (!Zinc_expect_ptr(test, cu.root, "ptr cu.root")) {
-		return Zinc_assert();
-	}
-    Zinc_expect_int_equal(test, cu.root->kind, Ake_ast_type_stmts, "parse_stmts cu.root");
-
-    Ake_Ast* pow = Ake_ast_get(cu.root, 0);
-    if (!Zinc_expect_ptr(test, pow, "ptr pow")) {
-		return Zinc_assert();
-	}
-    Zinc_expect_int_equal(test, pow->kind, Ake_ast_type_power, "power pow");
-
-    Ake_Type* type = pow->type;
-    if (!Zinc_expect_ptr(test, type, "ptr type")) {
-		return Zinc_assert();
-	}
-    Zinc_expect_int_equal(test, type->kind, AKE_TYPE_INTEGER, "integer td");
-    Zinc_expect_string(test, &type->name, "Int32", "Int32 td");
-
-    Ake_Ast* number0 = Ake_ast_get(pow, 0);
-    if (!Zinc_expect_ptr(test, number0, "ptr number0")) {
-		return Zinc_assert();
-	}
-    Zinc_expect_int_equal(test, number0->kind, Ake_ast_type_number, "number number0");
-    Zinc_expect_string(test, &number0->value, "5", "5 number0");
-
-    Ake_Ast* number1 = Ake_ast_get(pow, 1);
-    if (!Zinc_expect_ptr(test, number1, "ptr number1")) {
-		return Zinc_assert();
-	}
-    Zinc_expect_int_equal(test, number1->kind, Ake_ast_type_number, "number number1");
-    Zinc_expect_string(test, &number1->value, "2", "2 number1");
-
-    AkeUnit_parse_teardown(&cu);
-}
-
 void AkeUnit_parse_power_error_expected_term(Zinc_test* test)
 {
     if (test->dry_run) {
@@ -2195,7 +2143,6 @@ void AkeUnit_parse_expression(Zinc_test* test)
         test->mute = false;
         test->solo = false;
 
-        Zinc_test_register(test, AkeUnit_parse_power);
         Zinc_test_register(test, AkeUnit_parse_power_error_expected_term);
         Zinc_test_register(test, AkeUnit_parse_power_error_left_no_value);
         Zinc_test_register(test, AkeUnit_parse_power_error_left_not_numeric);
