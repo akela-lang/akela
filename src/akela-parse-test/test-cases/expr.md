@@ -1116,3 +1116,31 @@ Errors {
   }
 }
 ```
+
+## Test
+power (error left no value)
+
+```cent
+use lib::base::*
+Test {
+  .solo = false
+  .mute = false
+  .snapshot = false
+  .has_error = true
+}
+```
+
+```akela
+fn foo() end
+5 ^ foo()
+```
+
+```cent
+Errors {
+  Error {
+    .message = "power operand has no value"
+    .line = 1135
+    .col = 5
+  }
+}
+```
