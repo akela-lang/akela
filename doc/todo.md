@@ -1,4 +1,11 @@
 # Akela
+* parse tests
+  * expr []
+  * factor []
+  * function []
+  * stmts []
+  * struct []
+  * types []
 * wrap pointers
 * new syntax tree
 * move type checks into their own functions

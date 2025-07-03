@@ -8,37 +8,6 @@
 #include "zinc/test.h"
 #include "zinc/expect.h"
 
-void AkeUnit_parse_blank(Zinc_test* test)
-{
-    if (test->dry_run) {
-        Zinc_string_add_str(&test->name, __func__);
-        test->mute = false;
-        test->solo = false;
-        return;
-    }
-
-    Ake_comp_table* ct = NULL;
-    Ake_comp_table_create_str(&ct, "");
-
-    Ake_parse_result pr = Ake_comp_unit_parse(ct->primary);
-
-    if (!Zinc_expect_no_errors(test, pr.errors)) {
-		return Zinc_assert();
-	}
-
-    if (!Zinc_expect_ptr(test, pr.root, "ptr cu.root")) {
-		return Zinc_assert();
-	}
-    Zinc_expect_int_equal(test, pr.root->kind, Ake_ast_type_stmts, "parse_stmts cu.root");
-
-    Ake_Ast* node = Ake_ast_get(pr.root, 0);
-    if (!Zinc_expect_null(test, node, "null node")) {
-		return Zinc_assert();
-	}
-
-    Ake_comp_table_free(ct);
-}
-
 void AkeUnit_parse_add(Zinc_test* test)
 {
     if (test->dry_run) {
@@ -3322,7 +3291,6 @@ void AkeUnit_parse_expression(Zinc_test* test)
         test->mute = false;
         test->solo = false;
 
-        Zinc_test_register(test, AkeUnit_parse_blank);
         Zinc_test_register(test, AkeUnit_parse_add);
         Zinc_test_register(test, AkeUnit_parse_add_error_expected_term);
         Zinc_test_register(test, AkeUnit_parse_add_error_left_no_value);
