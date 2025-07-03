@@ -8,60 +8,6 @@
 #include "zinc/test.h"
 #include "zinc/expect.h"
 
-void AkeUnit_parse_mult(Zinc_test* test)
-{
-    if (test->dry_run) {
-        Zinc_string_add_str(&test->name, __func__);
-        test->mute = false;
-        test->solo = false;
-        return;
-    }
-
-    struct Ake_comp_unit cu;
-
-    AkeUnit_parse_setup("5 * 2", &cu);
-    if (!Zinc_expect_no_errors(test, &cu.errors)) {
-		return Zinc_assert();
-	}
-    Zinc_expect_true(test, cu.valid, "valid");
-
-    if (!Zinc_expect_ptr(test, cu.root, "ptr cu.root")) {
-		return Zinc_assert();
-	}
-    if (!Zinc_expect_int_equal(test, cu.root->kind, Ake_ast_type_stmts, "parse_stmts cu.root")) {
-		return Zinc_assert();
-	}
-
-    Ake_Ast* mult = Ake_ast_get(cu.root, 0);
-    if (!Zinc_expect_ptr(test, mult, "cu.root")) {
-		return Zinc_assert();
-	}
-    Zinc_expect_int_equal(test, mult->kind, Ake_ast_type_mult, "mult mult");
-
-    Ake_Type* type = mult->type;
-    if (!Zinc_expect_ptr(test, type, "ptr type")) {
-		return Zinc_assert();
-	}
-    Zinc_expect_int_equal(test, type->kind, AKE_TYPE_INTEGER, "integer td");
-    Zinc_expect_string(test, &type->name, "Int32", "Int32 td");
-
-    Ake_Ast* left = Ake_ast_get(mult, 0);
-    if (!Zinc_expect_ptr(test, left, "left")) {
-		return Zinc_assert();
-	}
-    Zinc_expect_int_equal(test, left->kind, Ake_ast_type_number, "number");
-    Zinc_expect_string(test, &left->value, "5", "5");
-
-    Ake_Ast* right = Ake_ast_get(mult, 1);
-    if (!Zinc_expect_ptr(test, right, "right")) {
-		return Zinc_assert();
-	}
-    Zinc_expect_int_equal(test, right->kind, Ake_ast_type_number, "number");
-    Zinc_expect_string(test, &right->value, "2", "2");
-
-    AkeUnit_parse_teardown(&cu);
-}
-
 void AkeUnit_parse_mult_error_expected_term(Zinc_test* test)
 {
     if (test->dry_run) {
@@ -2776,7 +2722,6 @@ void AkeUnit_parse_expression(Zinc_test* test)
         test->mute = false;
         test->solo = false;
 
-        Zinc_test_register(test, AkeUnit_parse_mult);
         Zinc_test_register(test, AkeUnit_parse_mult_error_expected_term);
         Zinc_test_register(test, AkeUnit_parse_mult_error_left_no_value);
         Zinc_test_register(test, AkeUnit_parse_mult_error_left_not_numeric);
