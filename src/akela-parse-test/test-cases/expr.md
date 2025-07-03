@@ -1,5 +1,5 @@
 # Test Suite
-expressions
+expression
 
 ```cent
 use lib::base::*
@@ -28,6 +28,57 @@ Test {
 ```cent
 use lib::base::*
 Ast::Stmts {
+}
+```
+
+## Test
+add
+
+```cent
+use lib::base::*
+Test {
+  .solo = false
+  .mute = false
+  .snapshot = false
+  .has_error = false
+}
+```
+
+```akela
+var speed: Int32 = 100; speed + 1
+```
+
+```cent
+use lib::base::*
+const type0 = Type::Integer {
+  .name = "Int32"
+  .bit_count = 32
+}
+Ast::Stmts {
+  .type = type0
+  Ast::Var {
+    Ast::Id {
+      .value = "speed"
+    }
+    Ast::Type {
+      .type = type0
+    }
+    Ast::Number {
+      .value = "100"
+      .type = type0
+    }
+  }
+  Ast::Plus {
+    .type = type0
+    Ast::Id {
+      .value = "speed"
+      .type = type0
+    }
+    Ast::Number {
+      .value = "1"
+      .type = type0
+    }
+  }
 }
 ```
 
