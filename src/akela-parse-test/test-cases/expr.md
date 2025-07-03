@@ -631,3 +631,30 @@ Errors {
   }
 }
 ```
+
+## Test
+mult (error left not numeric)
+
+```cent
+use lib::base::*
+Test {
+  .solo = false
+  .mute = false
+  .snapshot = false
+  .has_error = true
+}
+```
+
+```akela
+true * 1
+```
+
+```cent
+Errors {
+  Error {
+    .message = "multiplication on non-numeric operand"
+    .line = 649
+    .col = 1
+  }
+}
+```
