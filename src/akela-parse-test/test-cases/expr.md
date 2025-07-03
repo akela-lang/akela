@@ -658,3 +658,31 @@ Errors {
   }
 }
 ```
+
+## Test
+mult (error right no value)
+
+```cent
+use lib::base::*
+Test {
+  .solo = false
+  .mute = false
+  .snapshot = false
+  .has_error = true
+}
+```
+
+```akela
+fn foo() end
+1 * foo()
+```
+
+```cent
+Errors {
+  Error {
+    .message = "multiplication operand has no value"
+    .line = 677
+    .col = 5
+  }
+}
+```
