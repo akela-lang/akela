@@ -371,3 +371,55 @@ Ast::Stmts {
   }
 }
 ```
+
+## Test
+sub
+
+```cent
+use lib::base::*
+Test {
+  .solo = false
+  .mute = false
+  .snapshot = false
+  .has_error = false
+}
+```
+
+```akela
+const delta: Int32 = 3
+100 - delta
+```
+
+```cent
+use lib::base::*
+const type0 = Type::Integer {
+  .name = "Int32"
+  .bit_count = 32
+}
+Ast::Stmts {
+  .type = type0
+  Ast::Const {
+    Ast::Id {
+      .value = "delta"
+    }
+    Ast::Type {
+      .type = type0
+    }
+    Ast::Number {
+      .value = "3"
+      .type = type0
+    }
+  }
+  Ast::Minus {
+    .type = type0
+    Ast::Number {
+      .value = "100"
+      .type = type0
+    }
+    Ast::Id {
+      .value = "delta"
+      .type = type0
+    }
+  }
+}
+```
