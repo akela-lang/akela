@@ -2,6 +2,7 @@
 #include "zinc/error.h"
 #include "centipede/value.h"
 #include "data.h"
+#include "zinc/expect.h"
 
 bool Apt_check_error(
     Zinc_test* top_test,
@@ -114,45 +115,14 @@ bool Apt_check_error(
         e = e->next;
     }
 
-    if (found) {
-        if (line->data.natural != e->loc.line) {
-            Zinc_error_list_set(
-                &top_data->errors,
-                &n->loc,
-                "line does not match: (%zu), (%zu)",
-                e->loc.line,
-                line->data.natural);
-        }
-
-        if (col->data.natural != e->loc.col) {
-            Zinc_error_list_set(
-                &top_data->errors,
-                &n->loc,
-                "col does not match: (%zu) (%zu)",
-                e->loc.col,
-                col->data.natural);
-        }
-    } else {
-        Zinc_string s;
-        Zinc_string_init(&s);
-        Zinc_string_add_format(&s, "could not find error: %bf", &message->data.string);
-        Zinc_string_add_format(&s, "\n\tErrors:");
-        Zinc_error* e2 = errors->head;
-        while (e2) {
-            Zinc_string_add_format(
-                &s,
-                "\n\t(%zu,%zu): %bf",
-                e2->loc.line,
-                e2->loc.col,
-                &e2->message);
-            e2 = e2->next;
-        }
-        Zinc_error_list_set(
-            &top_data->errors,
-            &n->loc,
-            Zinc_string_c_str(&s));
-        Zinc_string_destroy(&s);
+    Zinc_string expect_message;
+    Zinc_string_init(&expect_message);
+    Zinc_string_add_format(&expect_message, "could not find error: %s", Zinc_string_c_str(&message->data.string));
+    if (Zinc_expect_true(case_test, found, Zinc_string_c_str(&expect_message))) {
+        Zinc_expect_size_t_equal(case_test, line->data.natural, e->loc.line, "incorrect line");
+        Zinc_expect_size_t_equal(case_test, col->data.natural, e->loc.col, "incorrect column");
     }
 
+    Zinc_string_destroy(&expect_message);
     return valid;
 }

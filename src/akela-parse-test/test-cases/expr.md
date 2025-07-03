@@ -82,3 +82,29 @@ Ast::Stmts {
 }
 ```
 
+## Test
+add (error expected term)
+
+```cent
+use lib::base::*
+Test {
+  .solo = false
+  .mute = false
+  .snapshot = false
+  .has_error = true
+}
+```
+
+```akela
+1 +
+```
+
+```cent
+  Errors {
+    Error {
+      .message = "expected term after additive operator"
+      .line = 100
+      .col = 1
+    }
+  }
+```

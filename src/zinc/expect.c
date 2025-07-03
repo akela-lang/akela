@@ -110,7 +110,7 @@ bool Zinc_expect_true(Zinc_test* test, bool value, const char* fmt, ...)
     test->check_failed++;
     test->pass = false;
     Zinc_test_print_unseen(test);
-    fprintf(stderr, "\tis true (%d): ", value);
+    fprintf(stderr, "\ttrue (%d): ", value);
 	va_list args;
 	va_start(args, fmt);
 	vfprintf(stderr, fmt, args);
