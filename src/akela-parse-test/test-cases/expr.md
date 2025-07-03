@@ -136,3 +136,30 @@ foo() + 1
     }
   }
 ```
+
+## Test
+add (error left not numeric)
+
+```cent
+use lib::base::*
+Test {
+  .solo = false
+  .mute = false
+  .snapshot = false
+  .has_error = true
+}
+```
+
+```akela
+true + 1
+```
+
+```cent
+  Errors {
+    Error {
+      .message = "addition on non-numeric operand"
+      .line = 154
+      .col = 1
+    }
+  }
+```
