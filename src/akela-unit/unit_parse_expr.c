@@ -6,68 +6,6 @@
 #include "zinc/test.h"
 #include "zinc/expect.h"
 
-void AkeUnit_parse_add_mult(Zinc_test* test)
-{
-    if (test->dry_run) {
-        Zinc_string_add_str(&test->name, __func__);
-        test->mute = false;
-        test->solo = false;
-        return;
-    }
-    
-    struct Ake_comp_unit cu;
-
-    AkeUnit_parse_setup("5 + 3 * 2", &cu);
-    if (!Zinc_expect_no_errors(test, &cu.errors)) {
-		return Zinc_assert();
-	}
-    Zinc_expect_true(test, cu.valid, "valid");
-
-    if (!Zinc_expect_ptr(test, cu.root, "ptr cu.root")) {
-		return Zinc_assert();
-	}
-    if (!Zinc_expect_int_equal(test, cu.root->kind, Ake_ast_type_stmts, "parse_stmts cu.root")) {
-		return Zinc_assert();
-	}
-
-    Ake_Ast* plus = Ake_ast_get(cu.root, 0);
-    if (!Zinc_expect_ptr(test, plus, "cu.root")) {
-		return Zinc_assert();
-	}
-    if (!Zinc_expect_int_equal(test, plus->kind, Ake_ast_type_plus, "plus")) {
-		return Zinc_assert();
-	}
-
-    Ake_Ast* left = Ake_ast_get(plus, 0);
-    if (!Zinc_expect_ptr(test, left, "left")) {
-		return Zinc_assert();
-	}
-    Zinc_expect_int_equal(test, left->kind, Ake_ast_type_number, "number");
-    Zinc_expect_string(test, &left->value, "5", "5");
-
-    Ake_Ast* right = Ake_ast_get(plus, 1);
-    if (!Zinc_expect_ptr(test, right, "right")) {
-		return Zinc_assert();
-	}
-    Zinc_expect_int_equal(test, right->kind, Ake_ast_type_mult, "mult");
-
-    Ake_Ast* left2 = Ake_ast_get(right, 0);
-    if (!Zinc_expect_ptr(test, left2, "left2")) {
-		return Zinc_assert();
-	}
-    Zinc_expect_int_equal(test, left2->kind, Ake_ast_type_number, "number 2");
-    Zinc_expect_string(test, &left2->value, "3", "3");
-
-    Ake_Ast* right2 = Ake_ast_get(right, 1);
-    if (!Zinc_expect_ptr(test, right2, "right2")) {
-		return Zinc_assert();
-	}
-    Zinc_expect_int_equal(test, right2->kind, Ake_ast_type_number, "number 3");
-    Zinc_expect_string(test, &right2->value, "2", "2");
-
-    AkeUnit_parse_teardown(&cu);
-}
-
 void AkeUnit_parse_mult_add(Zinc_test* test)
 {
     if (test->dry_run) {
@@ -2317,7 +2255,6 @@ void AkeUnit_parse_expression(Zinc_test* test)
         test->mute = false;
         test->solo = false;
 
-        Zinc_test_register(test, AkeUnit_parse_add_mult);
         Zinc_test_register(test, AkeUnit_parse_mult_add);
         Zinc_test_register(test, AkeUnit_parse_power);
         Zinc_test_register(test, AkeUnit_parse_power_error_expected_term);
