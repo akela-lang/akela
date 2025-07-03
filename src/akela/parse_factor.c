@@ -121,7 +121,7 @@ Ake_Ast* Ake_parse_function(struct Ake_parse_state* ps, bool is_method, Ake_Type
 
     if (n->kind != Ake_ast_type_error) {
         /* check return type */
-        Ake_Ast* dret = Ast_node_get(proto, 2);
+        Ake_Ast* dret = Ake_ast_get(proto, 2);
         if (!Ake_check_return_type(ps, proto, stmts_node, &dret->loc)) {
             n->kind = Ake_ast_type_error;
         }
@@ -129,7 +129,7 @@ Ake_Ast* Ake_parse_function(struct Ake_parse_state* ps, bool is_method, Ake_Type
 
     if (!is_method) {
         if (n->kind != Ake_ast_type_error) {
-            Ake_Ast* id_node = Ast_node_get(proto, 0);
+            Ake_Ast* id_node = Ake_ast_get(proto, 0);
             struct Ake_Symbol* new_sym = NULL;
             Zinc_malloc_safe((void**)&new_sym, sizeof(struct Ake_Symbol));
             Ake_SymbolInit(new_sym);
@@ -567,7 +567,7 @@ void Ake_find_missing_fields(Ake_parse_state* ps, Ake_Type* type, Ake_Ast* n) {
         bool found = false;
         Ake_Ast *field = n->head;
         while (field) {
-            Ake_Ast *id2 = Ast_node_get(field, 0);
+            Ake_Ast *id2 = Ake_ast_get(field, 0);
             if (Zinc_string_compare(&id2->value, &tf->name)) {
                 found = true;
                 break;

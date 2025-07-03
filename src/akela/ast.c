@@ -19,7 +19,6 @@ void Ake_ast_init(Ake_Ast* n)
 	Zinc_string_init(&n->value);
 	n->type = NULL;
     Zinc_location_init(&n->loc);
-    n->type_context = Ake_type_context_value;
 	n->env = NULL;
 	n->next = NULL;
 	n->prev = NULL;
@@ -74,7 +73,7 @@ void Ast_node_push(Ake_Ast* parent, Ake_Ast* child)
 	parent->head = child;
 }
 
-Ake_Ast* Ast_node_get(Ake_Ast* p, size_t pos)
+Ake_Ast* Ake_ast_get(Ake_Ast* p, size_t pos)
 {
 	int i = 0;
 	for (Ake_Ast* n = p->head; n; n = n->next) {

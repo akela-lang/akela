@@ -134,16 +134,10 @@ static char const* Ast_type_name(Ake_AstKind kind)
 	return "Invalid Ake_ast_type";
 }
 
-typedef enum Ake_type_context {
-	Ake_type_context_value,
-	Ake_type_context_ptr,
-} Ake_type_context;
-
 typedef struct Ake_Ast {
 	Ake_AstKind kind;
 	Zinc_string value;
 	Ake_Type* type;
-	Ake_type_context type_context;
     Zinc_location loc;
 	Ake_Environment* env;
 	Ake_Ast* next;
@@ -162,7 +156,7 @@ AKELA_API void Ake_ast_destroy(Ake_Ast* n);
 AKELA_API void Ake_ast_init(Ake_Ast* n);
 AKELA_API void Ake_ast_add(Ake_Ast* p, Ake_Ast* c);
 AKELA_API void Ast_node_push(Ake_Ast* parent, Ake_Ast* child);
-AKELA_API Ake_Ast* Ast_node_get(Ake_Ast* p, size_t pos);
+AKELA_API Ake_Ast* Ake_ast_get(Ake_Ast* p, size_t pos);
 AKELA_API void Ake_ast_print(Ake_Ast* n);
 AKELA_API void Ake_ast_print_pointers(Ake_Ast* root, struct Zinc_list* l);
 AKELA_API void Ake_ast_copy(Ake_Ast* src, Ake_Ast* dest);

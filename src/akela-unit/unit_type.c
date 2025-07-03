@@ -30,13 +30,13 @@ void AkeUnit_type_use1(Zinc_test* test)
 		return Zinc_assert();
 	}
 
-	Ake_Ast* n0 = Ast_node_get(n, 0);
+	Ake_Ast* n0 = Ake_ast_get(n, 0);
 	if (!Zinc_expect_ptr(test, n0, "ptr a")) {
 		return Zinc_assert();
 	}
 	Zinc_expect_ptr_equal(test, n0, a, "a");
 
-	Ake_Ast* n1 = Ast_node_get(n, 1);
+	Ake_Ast* n1 = Ake_ast_get(n, 1);
 	if (!Zinc_expect_ptr(test, n1, "ptr b")) {
 		return Zinc_assert();
 	}

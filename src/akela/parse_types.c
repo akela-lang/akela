@@ -153,11 +153,11 @@ Ake_Ast* Ake_parse_prototype(
  */
 void Ake_declare_params(Ake_parse_state* ps, Ake_Ast* proto, Ake_Type* struct_type)
 {
-    Ake_Ast* dseq = Ast_node_get(proto, 1);
+    Ake_Ast* dseq = Ake_ast_get(proto, 1);
     Ake_Ast* dec = dseq->head;
     while (dec) {
-        Ake_Ast* id_node = Ast_node_get(dec, 0);
-        Ake_Ast* type_node = Ast_node_get(dec, 1);
+        Ake_Ast* id_node = Ake_ast_get(dec, 0);
+        Ake_Ast* type_node = Ake_ast_get(dec, 1);
         if (dec->kind == Ake_ast_type_self) {
             if (struct_type) {
                 type_node->type = Ake_TypeClone(struct_type);
@@ -673,17 +673,17 @@ Ake_Type* Ake_Type_use_add_proto(
     Zinc_string_destroy(&bf);
     func->kind = AKE_TYPE_FUNCTION;
 
-    Ake_Ast* id = Ast_node_get(proto, 0);
-    Ake_Ast* dseq = Ast_node_get(proto, 1);
-    Ake_Ast* dret = Ast_node_get(proto, 2);
+    Ake_Ast* id = Ake_ast_get(proto, 0);
+    Ake_Ast* dseq = Ake_ast_get(proto, 1);
+    Ake_Ast* dret = Ake_ast_get(proto, 2);
 
     Zinc_string_copy(&id->value, &func->name);
 
     if (dseq->head) {
         Ake_Ast* dec = dseq->head;
         while (dec) {
-            Ake_Ast* id_node = Ast_node_get(dec, 0);
-            Ake_Ast* type_node = Ast_node_get(dec, 1);
+            Ake_Ast* id_node = Ake_ast_get(dec, 0);
+            Ake_Ast* type_node = Ake_ast_get(dec, 1);
 
             Ake_TypeParam* tp = NULL;
             Ake_TypeParamCreate(&tp);
@@ -704,7 +704,7 @@ Ake_Type* Ake_Type_use_add_proto(
         }
     }
 
-    Ake_Ast* ret_type_node = Ast_node_get(dret, 0);
+    Ake_Ast* ret_type_node = Ake_ast_get(dret, 0);
     if (ret_type_node) {
         func->data.function.output = Ake_TypeClone(ret_type_node->type);
     }
@@ -717,8 +717,8 @@ bool Ake_check_return_type(Ake_parse_state* ps, Ake_Ast* proto, Ake_Ast* stmts_n
     bool valid = true;
 
     if (proto->kind != Ake_ast_type_error && stmts_node->kind != Ake_ast_type_error) {
-        Ake_Ast *dret = Ast_node_get(proto, 2);
-        Ake_Ast *ret_type = Ast_node_get(dret, 0);
+        Ake_Ast *dret = Ake_ast_get(proto, 2);
+        Ake_Ast *ret_type = Ake_ast_get(dret, 0);
         if (ret_type) {
             if (!Ake_TypeMatch(ret_type->type, stmts_node->type, NULL)) {
                 valid = Zinc_error_list_set(ps->el, loc, "returned type does not match function return type");
@@ -777,7 +777,7 @@ bool Ake_check_input_type(
 void Ake_Override_rhs(Ake_Type* type, Ake_Ast* rhs)
 {
     if (rhs->kind == Ake_ast_type_sign) {
-        Ake_Ast* p = Ast_node_get(rhs, 1);
+        Ake_Ast* p = Ake_ast_get(rhs, 1);
         if (p->kind == Ake_ast_type_number) {
             Ake_TypeCopy(type, p->type);
             Ake_TypeCopy(type, rhs->type);

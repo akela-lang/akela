@@ -10,9 +10,9 @@ namespace Akela_llvm {
     /* NOLINTNEXTLINE(misc-no-recursion) */
     Value* Handle_variable_dec(Jit_data* jd, Ake_Ast* n)
     {
-        Ake_Ast* lhs = Ast_node_get(n, 0);
-        Ake_Ast* type_node = Ast_node_get(n, 1);
-        Ake_Ast* rhs = Ast_node_get(n, 2);
+        Ake_Ast* lhs = Ake_ast_get(n, 0);
+        Ake_Ast* type_node = Ake_ast_get(n, 1);
+        Ake_Ast* rhs = Ake_ast_get(n, 2);
         Ake_Type* type = type_node->type;
         Ake_Environment* env = Ake_get_current_env(type_node);
         Ake_symbol* sym = Ake_EnvironmentGet(env, &lhs->value, type_node->loc.start);
@@ -133,14 +133,12 @@ namespace Akela_llvm {
                 }
                 jd->Builder->CreateStore(rhs_value, lhs_value);
             } else if (lhs->kind == Ake_ast_type_array_subscript) {
-                lhs->type_context = Ake_type_context_ptr;
                 Value* lhs_value = Dispatch(jd, lhs);
                 jd->Builder->CreateStore(rhs_value, lhs_value);
             } else {
                 assert(false);
             }
         } else if (IsArray(lhs->type->kind)) {
-            lhs->type_context = Ake_type_context_ptr;
             Value* lhs_value = Dispatch(jd, lhs);
             Array_copy(jd, lhs->type, rhs->type, lhs_value, rhs_value);
         } else {
@@ -149,7 +147,6 @@ namespace Akela_llvm {
                 lhs_value = (AllocaInst*)sym->reference;
                 jd->Builder->CreateStore(rhs_value, lhs_value);
             } else {
-                lhs->type_context = Ake_type_context_ptr;
                 Value* lhs_value = Dispatch(jd, lhs);
                 jd->Builder->CreateStore(rhs_value, lhs_value);
             }
@@ -183,8 +180,8 @@ namespace Akela_llvm {
         Value* ptr;
         if (n->parent->kind == Ake_ast_type_const || n->parent->kind == Ake_ast_type_var) {
             Ake_Environment* env = Ake_get_current_env(n->parent);
-            Ake_Ast* lhs =  Ast_node_get(n->parent, 0);
-            Ake_Ast* type_node = Ast_node_get(n->parent, 1);
+            Ake_Ast* lhs =  Ake_ast_get(n->parent, 0);
+            Ake_Ast* type_node = Ake_ast_get(n->parent, 1);
             Ake_symbol* sym = Ake_EnvironmentGet(env, &lhs->value, type_node->loc.start);
             ptr = (Value*)sym->value;
         } else {
@@ -230,6 +227,26 @@ namespace Akela_llvm {
         }
     }
 
+    bool SubscriptIsTypeContextPointer(Ake_Ast* n)
+    {
+        if (IsArray(n->type->kind)) {
+            return true;
+        }
+
+        if (n->parent->kind == Ake_ast_type_assign) {
+            Ake_Ast* p0 = Ake_ast_get(n->parent, 0);
+            if (p0 == n) {
+                return true;
+            }
+        }
+
+        if (n->parent->kind == Ake_ast_type_array_subscript) {
+            return true;
+        }
+
+        return false;
+    }
+
     /* NOLINTNEXTLINE(misc-no-recursion) */
     Value* Handle_subscript(Jit_data* jd, Ake_Ast* n)
     {
@@ -241,7 +258,6 @@ namespace Akela_llvm {
 
         Ake_Ast* array = n->head;
         assert(IsArray(array->type->kind));
-        array->type_context = Ake_type_context_ptr;
         Value* array_value = Dispatch(jd, array);
         assert(array_value);
 
@@ -284,14 +300,10 @@ namespace Akela_llvm {
         list.push_back(subscript_value);
         Value* element_ptr = jd->Builder->CreateInBoundsGEP(element_type, array_value, list, "subscripttmp");
 
-        if (IsArray(n->type->kind)) {
+        if (SubscriptIsTypeContextPointer(n)) {
             return element_ptr;
-        } else {
-            if (n->type_context == Ake_type_context_ptr) {
-                return element_ptr;
-            } else {
-                return jd->Builder->CreateLoad(element_type, element_ptr, "elementtmp");
-            }
         }
+
+        return jd->Builder->CreateLoad(element_type, element_ptr, "elementtmp");
     }
 }

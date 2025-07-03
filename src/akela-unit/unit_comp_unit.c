@@ -33,7 +33,7 @@ void AkeUnit_comp_unit_compile(Zinc_test* test)
 	}
 	Zinc_expect_int_equal(test, root->kind, Ake_ast_type_stmts, "parse_stmts root");
 
-	Ake_Ast* number = Ast_node_get(root, 0);
+	Ake_Ast* number = Ake_ast_get(root, 0);
 	if (!Zinc_expect_ptr(test, number, "ptr number")) {
 		return Zinc_assert();
 	}

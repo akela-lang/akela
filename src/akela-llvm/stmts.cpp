@@ -8,7 +8,7 @@ namespace Akela_llvm {
     {
         Value* last_v = nullptr;
         Ake_Ast* last_n = nullptr;
-        Ake_Ast* stmt = Ast_node_get(n, 0);
+        Ake_Ast* stmt = Ake_ast_get(n, 0);
         while (stmt) {
             last_v = Dispatch(jd, stmt);
             last_n = stmt;
@@ -39,14 +39,14 @@ namespace Akela_llvm {
         BasicBlock* next_block = nullptr;
         int i = 0;
         while (true) {
-            Ake_Ast* branch = Ast_node_get(n, i);
+            Ake_Ast* branch = Ake_ast_get(n, i);
             if (!branch) {
                 break;
             }
 
             if (branch->kind == Ake_ast_type_conditional_branch) {
-                Ake_Ast* cond = Ast_node_get(branch, 0);
-                Ake_Ast* body = Ast_node_get(branch, 1);
+                Ake_Ast* cond = Ake_ast_get(branch, 0);
+                Ake_Ast* body = Ake_ast_get(branch, 1);
 
                 if (next_block) {
                     cond_block = next_block;
@@ -74,7 +74,7 @@ namespace Akela_llvm {
                 jd->Builder->SetInsertPoint(next_block);
 
             } else if (branch->kind == Ake_ast_type_default_branch) {
-                Ake_Ast* body = Ast_node_get(branch, 0);
+                Ake_Ast* body = Ake_ast_get(branch, 0);
 
                 Value* body_value = Handle_stmts(jd, body);
                 if (type) {

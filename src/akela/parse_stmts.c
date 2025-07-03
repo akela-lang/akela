@@ -164,7 +164,7 @@ Ake_Ast* Ake_parse_extern(struct Ake_parse_state* ps)
             n->kind = Ake_ast_type_error;
         }
 
-        Ake_Ast *id_node = Ast_node_get(proto, 0);
+        Ake_Ast *id_node = Ake_ast_get(proto, 0);
         struct Ake_Symbol *new_sym = NULL;
         Zinc_malloc_safe((void **) &new_sym, sizeof(struct Ake_Symbol));
         Ake_SymbolInit(new_sym);
@@ -175,7 +175,7 @@ Ake_Ast* Ake_parse_extern(struct Ake_parse_state* ps)
     }
 
     if (n->kind != Ake_ast_type_error) {
-        Ake_Ast* id = Ast_node_get(proto, 0);
+        Ake_Ast* id = Ake_ast_get(proto, 0);
         Zinc_string_list_add_bf(ps->extern_list, &id->value);
     }
 
@@ -429,8 +429,8 @@ void Ake_parse_for_iteration(struct Ake_parse_state* ps, Ake_Ast* parent)
     }
 
 	if (parent->kind != Ake_ast_type_error) {
-		Ake_Ast* element = Ast_node_get(parent, 0);
-		Ake_Ast* element_type_node = Ast_node_get(element, 1);
+		Ake_Ast* element = Ake_ast_get(parent, 0);
+		Ake_Ast* element_type_node = Ake_ast_get(element, 1);
 
 		Ake_Type* list_type = list->type;
 
@@ -590,7 +590,7 @@ Ake_Ast* Ake_parse_return(struct Ake_parse_state* ps)
 					/* test case: test_parse_return_error_outside_of_function */
                     n->kind = Ake_ast_type_error;
 				} else {
-                    Ake_Ast* proto = Ast_node_get(fd, 0);
+                    Ake_Ast* proto = Ake_ast_get(fd, 0);
                     if (!Ake_check_return_type(ps, proto, n, &ret->loc)) {
                         /* test case: test_parse_return_error_type_does_not_match */
                         n->kind = Ake_ast_type_error;
