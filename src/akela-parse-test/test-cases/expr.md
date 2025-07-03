@@ -108,3 +108,31 @@ Test {
     }
   }
 ```
+
+## Test
+add (error left no value)
+
+```cent
+use lib::base::*
+Test {
+  .solo = false
+  .mute = false
+  .snapshot = false
+  .has_error = true
+}
+```
+
+```akela
+fn foo() end
+foo() + 1
+```
+
+```cent
+  Errors {
+    Error {
+      .message = "addition operand has no value"
+      .line = 127
+      .col = 1
+    }
+  }
+```
