@@ -1089,3 +1089,30 @@ Ast::Stmts {
   }
 }
 ```
+
+## Test
+power (error expected term)
+
+```cent
+use lib::base::*
+Test {
+  .solo = false
+  .mute = false
+  .snapshot = false
+  .has_error = true
+}
+```
+
+```akela
+5 ^
+```
+
+```cent
+Errors {
+  Error {
+    .message = "expected term after caret"
+    .line = 1108
+    .col = 1
+  }
+}
+```
