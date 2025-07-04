@@ -78,12 +78,15 @@ void Ake_TypeDestroy(Ake_Type* type)
                 break;
             case AKE_TYPE_ARRAY:
                 Ake_TypeDestroy(type->data.array.type);
+                free(type->data.array.type);
                 break;
             case AKE_TYPE_SLICE:
                 Ake_TypeDestroy(type->data.slice.type);
+                free(type->data.slice.type);
                 break;
             case AKE_TYPE_POINTER:
                 Ake_TypeDestroy(type->data.pointer.type);
+                free(type->data.pointer.type);
                 break;
             case AKE_TYPE_FUNCTION:
                 Ake_TypeParam* tp = type->data.function.input_head;
@@ -95,6 +98,7 @@ void Ake_TypeDestroy(Ake_Type* type)
                 }
 
                 Ake_TypeDestroy(type->data.function.output);
+                free(type->data.function.output);
                 break;
             default:
                 assert(false && "invalid kind");
@@ -388,6 +392,7 @@ void Ake_TypeParamDestroy(Ake_TypeParam* tp)
 {
     Zinc_string_destroy(&tp->name);
     Ake_TypeDestroy(tp->type);
+    free(tp->type);
 }
 
 void Ake_TypeFieldInit(Ake_TypeField* tf)
@@ -409,4 +414,5 @@ void Ake_TypeFieldDestroy(Ake_TypeField* tf)
 {
     Zinc_string_destroy(&tf->name);
     Ake_TypeDestroy(tf->type);
+    free(tf->type);
 }

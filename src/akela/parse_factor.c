@@ -792,7 +792,7 @@ Ake_Ast* Ake_parse_array_literal(struct Ake_parse_state* ps)
             Ake_TypeCreate(&type);
             Ake_TypeSet(type, AKE_TYPE_ARRAY);
             type->data.array.dim = count;
-            type->data.array.type = Ake_TypeClone(tu_first);
+            type->data.array.type = tu_first;
             n->type = type;
         }
     }
