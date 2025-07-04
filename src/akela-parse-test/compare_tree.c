@@ -127,6 +127,10 @@ void Apt_case_run(Zinc_test* case_test)
         Cent_comp_unit_parse(expected_ct->primary);
         Cent_comp_unit_build(expected_ct->primary);
 
+        if (expected_ct->primary->errors.head) {
+            Zinc_error_list_print(&expected_ct->primary->errors);
+        }
+
         if (case_data->has_error) {
             case_test->pass = Apt_check_errors(
                 top_test,

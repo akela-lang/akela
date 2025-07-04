@@ -1778,7 +1778,7 @@ comparison (error no term)
 ```cent
 use lib::base::*
 Test {
-  .solo = true
+  .solo = false
   .mute = false
   .snapshot = false
   .has_error = true
