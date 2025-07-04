@@ -7,14 +7,11 @@ bool Ake_TypeMatchExact(Ake_Type* a, Ake_Type* b);
 void Ake_TypeSlotsInit(Ake_TypeSlots* slots)
 {
     Ake_TypeListInit(&slots->list);
-    Zinc_vector_init(&slots->index_list, sizeof(size_t));
-    Zinc_hash_map_size_t_init(&slots->map, AKE_TYPE_SLOT_MAP_SIZE);
 }
 
 void Ake_TypeSlotsDestroy(Ake_TypeSlots* slots)
 {
     Ake_TypeListDestroy(&slots->list);
-    Zinc_hash_map_size_t_destroy(&slots->map);
 }
 
 void Ake_TypeSlotsProcess(Ake_TypeSlots* slots, Ake_Type* type)
@@ -34,12 +31,6 @@ void Ake_TypeSlotsProcess(Ake_TypeSlots* slots, Ake_Type* type)
     if (!found) {
         Ake_TypeListAddType(&slots->list, type);
     }
-    size_t pos = slots->index_list.count;
-    Zinc_vector_add(&slots->index_list, &index, 1);
-    Zinc_hash_map_size_t_add(
-        &slots->map,
-        (size_t)type,
-        ZINC_VECTOR_PTR(&slots->index_list, pos));
 }
 
 size_t Ake_TypeSlotsCount(Ake_TypeSlots* slots)
@@ -54,25 +45,19 @@ size_t Ake_TypeSlotsCount(Ake_TypeSlots* slots)
     return count;
 }
 
-Ake_Type* Ake_TypeSlotsGetType(Ake_TypeSlots* slots, size_t slot)
+size_t Ake_TypeSlotsGetSlot(Ake_TypeSlots* slots, Ake_Type* type)
 {
     size_t count = 0;
     Ake_TypeNode* node = slots->list.head;
     while (node) {
-        if (count == slot) {
-            return node->type;
+        if (Ake_TypeMatchExact(type, node->type)) {
+            return count;
         }
         count++;
         node = node->next;
     }
 
-    return NULL;
-}
-
-size_t Ake_TypeSlotsGetSlot(Ake_TypeSlots* slots, Ake_Type* type)
-{
-    size_t* slot = Zinc_hash_map_size_t_get(&slots->map, (size_t)type);
-    return *slot;
+    assert(false && "invalid type");
 }
 
 /* NOLINTNEXTLINE(misc-no-recursion) */

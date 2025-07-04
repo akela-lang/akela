@@ -1580,3 +1580,144 @@ Ast::Stmts {
   }
 }
 ```
+
+## Test
+paren mult mult 2
+
+```cent
+use lib::base::*
+Test {
+  .solo = false
+  .mute = false
+  .snapshot = false
+  .has_error = false
+}
+```
+
+```akela
+(1 * 2) * 3
+```
+
+```cent
+use lib::base::*
+const type0 = Type::Integer {
+  .name = "Int32"
+  .bit_count = 32
+}
+Ast::Stmts {
+  .type = type0
+  Ast::Mult {
+    .type = type0
+    Ast::Parenthesis {
+      .type = type0
+      Ast::Mult {
+        .type = type0
+        Ast::Number {
+          .value = "1"
+          .type = type0
+        }
+        Ast::Number {
+          .value = "2"
+          .type = type0
+        }
+      }
+    }
+    Ast::Number {
+      .value = "3"
+      .type = type0
+    }
+  }
+}
+```
+
+## Test
+comparison
+
+```cent
+use lib::base::*
+Test {
+  .solo = false
+  .mute = false
+  .snapshot = false
+  .has_error = false
+}
+```
+
+```akela
+var count: Int32 = 5
+count == 10
+count != 11.1
+count <= 12
+count >= 13
+```
+
+```cent
+use lib::base::*
+const type0 = Type::Integer {
+  .name = "Int32"
+  .bit_count = 32
+}
+const type1 = Type::Real {
+  .name = "Real64"
+  .bit_count = 64
+}
+Ast::Stmts {
+  .type = type0
+  Ast::Var {
+    Ast::Id {
+      .value = "count"
+    }
+    Ast::Type {
+      .type = type0
+    }
+    Ast::Number {
+      .value = "5"
+      .type = type0
+    }
+  }
+  Ast::Equality {
+    .type = type0
+    Ast::Id {
+      .value = "count"
+      .type = type0
+    }
+    Ast::Number {
+      .value = "10"
+      .type = type0
+    }
+  }
+  Ast::NotEqual {
+    .type = type0
+    Ast::Id {
+      .value = "count"
+      .type = type0
+    }
+    Ast::Number {
+      .value = "11.1"
+      .type = type1
+    }
+  }
+  Ast::LessThanOrEqual {
+    .type = type0
+    Ast::Id {
+      .value = "count"
+      .type = type0
+    }
+    Ast::Number {
+      .value = "12"
+      .type = type0
+    }
+  }
+  Ast::GreaterThanOrEqual {
+    .type = type0
+    Ast::Id {
+      .value = "count"
+      .type = type0
+    }
+    Ast::Number {
+      .value = "13"
+      .type = type0
+    }
+  }
+}
+```
