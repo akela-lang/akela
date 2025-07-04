@@ -6,48 +6,6 @@
 #include "zinc/test.h"
 #include "zinc/expect.h"
 
-void AkeUnit_parse_comparison_identity(Zinc_test* test)
-{
-    if (test->dry_run) {
-        Zinc_string_add_str(&test->name, __func__);
-        test->mute = false;
-        test->solo = false;
-        return;
-    }
-
-    struct Ake_comp_unit cu;
-
-    AkeUnit_parse_setup("true == true; true != true", &cu);
-    Zinc_expect_no_errors(test, &cu.errors);
-    Zinc_expect_true(test, cu.valid, "valid");
-
-    if (!Zinc_expect_ptr(test, cu.root, "ptr cu.root")) {
-		return Zinc_assert();
-	}
-
-    Ake_Ast* comp0 = Ake_ast_get(cu.root, 0);
-    if (!Zinc_expect_ptr(test, comp0, "ptr comp0")) {
-		return Zinc_assert();
-	}
-    if (!Zinc_expect_ptr(test, comp0->type, "ptr comp0->tu")) {
-		return Zinc_assert();
-	}
-    Zinc_expect_int_equal(test, comp0->type->kind, AKE_TYPE_BOOLEAN, "boolean comp0->tu->td->type");
-    Zinc_expect_string(test, &comp0->type->name, "Bool", "Bool comp0->tu->td->name");
-
-    Ake_Ast* comp1 = Ake_ast_get(cu.root, 1);
-    if (!Zinc_expect_ptr(test, comp1, "ptr comp1")) {
-		return Zinc_assert();
-	}
-    if (!Zinc_expect_ptr(test, comp1->type, "ptr comp->tu1")) {
-		return Zinc_assert();
-	}
-    Zinc_expect_int_equal(test, comp1->type->kind, AKE_TYPE_BOOLEAN, "boolean comp1->tu->td->type");
-    Zinc_expect_string(test, &comp1->type->name, "Bool", "Bool comp1->tu->td->name");
-
-    AkeUnit_parse_teardown(&cu);
-}
-
 void AkeUnit_parse_comparison_error_no_term(Zinc_test* test)
 {
     if (test->dry_run) {
@@ -1446,7 +1404,6 @@ void AkeUnit_parse_expression(Zinc_test* test)
         test->mute = false;
         test->solo = false;
 
-        Zinc_test_register(test, AkeUnit_parse_comparison_identity);
         Zinc_test_register(test, AkeUnit_parse_comparison_error_no_term);
         Zinc_test_register(test, AkeUnit_parse_comparison_error_left_no_value);
         Zinc_test_register(test, AkeUnit_parse_comparison_error_right_no_value);

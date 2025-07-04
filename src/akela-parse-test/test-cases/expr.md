@@ -1721,3 +1721,53 @@ Ast::Stmts {
   }
 }
 ```
+
+## Test
+comparison identity
+
+```cent
+use lib::base::*
+Test {
+  .solo = false
+  .mute = false
+  .snapshot = false
+  .has_error = false
+}
+```
+
+```akela
+true == true
+true != true
+```
+
+```cent
+use lib::base::*
+const type0 = Type::Boolean {
+  .name = "Bool"
+}
+Ast::Stmts {
+  .type = type0
+  Ast::Equality {
+    .type = type0
+    Ast::Boolean {
+      .value = "true"
+      .type = type0
+    }
+    Ast::Boolean {
+      .value = "true"
+      .type = type0
+    }
+  }
+  Ast::NotEqual {
+    .type = type0
+    Ast::Boolean {
+      .value = "true"
+      .type = type0
+    }
+    Ast::Boolean {
+      .value = "true"
+      .type = type0
+    }
+  }
+}
+```
