@@ -1826,3 +1826,31 @@ Errors {
   }
 }
 ```
+
+## Test
+comparison (error right no value)
+
+```cent
+use lib::base::*
+Test {
+  .solo = false
+  .mute = false
+  .snapshot = false
+  .has_error = true
+}
+```
+
+```akela
+fn foo() end
+100 < foo()
+```
+
+```cent
+Errors {
+  Error {
+    .message = "operand has no value"
+    .line = 1845
+    .col = 7
+  }
+}
+```
