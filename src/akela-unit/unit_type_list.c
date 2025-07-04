@@ -37,6 +37,7 @@ void AkeUnit_TypeListAdd(Zinc_test* test)
     Zinc_expect_ptr_equal(test, tl->tail, n2, "tail tl");
 
     Ake_TypeListDestroy(tl);
+    free(tl);
 }
 
 void AkeUnit_TypeList(Zinc_test* test)

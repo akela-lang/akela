@@ -78,6 +78,14 @@ void AkeUnit_TypeSlotsProcess(Zinc_test* test)
     Zinc_expect_size_t_equal(test, slot3, 1, "4 3 index");
 
     Ake_TypeSlotsDestroy(&slots);
+    Ake_TypeDestroy(t0);
+    free(t0);
+    Ake_TypeDestroy(t1);
+    free(t1);
+    Ake_TypeDestroy(t2);
+    free(t2);
+    Ake_TypeDestroy(t3);
+    free(t3);
 }
 
 void AkeUnit_TypeSlots(Zinc_test* test)

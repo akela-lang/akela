@@ -459,6 +459,7 @@ void Ake_parse_for_iteration(struct Ake_parse_state* ps, Ake_Ast* parent)
 				/* test case: test_parse_for_iteration_error_cannot_cast */
 			}
             Ake_TypeDestroy(element_type2);
+			free(element_type2);
 		}
 	}
 

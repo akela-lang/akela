@@ -67,6 +67,9 @@ void AkeUnit_TypeDefMatchIntegerTrue(Zinc_test* test)
 	Zinc_expect_true(test, Ake_TypeMatch(td0, td1, NULL), "true");
 
 	Ake_TypeDestroy(td0);
+	free(td0);
+	Ake_TypeDestroy(td1);
+	free(td1);
 }
 
 void AkeUnit_TypeDefMatchIntegerFalse(Zinc_test* test)
@@ -91,6 +94,9 @@ void AkeUnit_TypeDefMatchIntegerFalse(Zinc_test* test)
 	Zinc_expect_false(test, Ake_TypeMatch(td0, td1, NULL), "true");
 
 	Ake_TypeDestroy(td0);
+	free(td0);
+	Ake_TypeDestroy(td1);
+	free(td1);
 }
 
 void AkeUnit_TypeDefMatchNaturalTrue(Zinc_test* test)
@@ -115,6 +121,9 @@ void AkeUnit_TypeDefMatchNaturalTrue(Zinc_test* test)
 	Zinc_expect_true(test, Ake_TypeMatch(td0, td1, NULL), "true");
 
 	Ake_TypeDestroy(td0);
+	free(td0);
+	Ake_TypeDestroy(td1);
+	free(td1);
 }
 
 void AkeUnit_TypeDefMatchNaturalFalse(Zinc_test* test)
@@ -139,6 +148,9 @@ void AkeUnit_TypeDefMatchNaturalFalse(Zinc_test* test)
 	Zinc_expect_false(test, Ake_TypeMatch(td0, td1, NULL), "false");
 
 	Ake_TypeDestroy(td0);
+	free(td0);
+	Ake_TypeDestroy(td1);
+	free(td1);
 }
 
 void AkeUnit_TypeDefMatchRealTrue(Zinc_test* test)
@@ -163,6 +175,9 @@ void AkeUnit_TypeDefMatchRealTrue(Zinc_test* test)
 	Zinc_expect_true(test, Ake_TypeMatch(td0, td1, NULL), "true");
 
 	Ake_TypeDestroy(td0);
+	free(td0);
+	Ake_TypeDestroy(td1);
+	free(td1);
 }
 
 void AkeUnit_TypeDefMatchRealFalse(Zinc_test* test)
@@ -187,6 +202,9 @@ void AkeUnit_TypeDefMatchRealFalse(Zinc_test* test)
 	Zinc_expect_false(test, Ake_TypeMatch(td0, td1, NULL), "false");
 
 	Ake_TypeDestroy(td0);
+	free(td0);
+	Ake_TypeDestroy(td1);
+	free(td1);
 }
 
 void AkeUnit_TypeDefMatchBoolean(Zinc_test* test)
@@ -209,6 +227,9 @@ void AkeUnit_TypeDefMatchBoolean(Zinc_test* test)
 	Zinc_expect_true(test, Ake_TypeMatch(td0, td1, NULL), "true");
 
 	Ake_TypeDestroy(td0);
+	free(td0);
+	Ake_TypeDestroy(td1);
+	free(td1);
 }
 
 void AkeUnit_TypeDefMatchStructTrue(Zinc_test* test)
@@ -253,6 +274,9 @@ void AkeUnit_TypeDefMatchStructTrue(Zinc_test* test)
 	Zinc_expect_true(test, Ake_TypeMatch(td0, td1, NULL), "true");
 
 	Ake_TypeDestroy(td0);
+	free(td0);
+	Ake_TypeDestroy(td1);
+	free(td1);
 }
 
 void AkeUnit_TypeDefMatchStructFalse(Zinc_test* test)
@@ -297,6 +321,9 @@ void AkeUnit_TypeDefMatchStructFalse(Zinc_test* test)
 	Zinc_expect_false(test, Ake_TypeMatch(td0, td1, NULL), "false");
 
 	Ake_TypeDestroy(td0);
+	free(td0);
+	Ake_TypeDestroy(td1);
+	free(td1);
 }
 
 void AkeUnit_TypeDefMatchArrayTrue(Zinc_test* test)
@@ -331,6 +358,9 @@ void AkeUnit_TypeDefMatchArrayTrue(Zinc_test* test)
 	Zinc_expect_true(test, Ake_TypeMatch(td0, td1, NULL), "true");
 
 	Ake_TypeDestroy(td0);
+	free(td0);
+	Ake_TypeDestroy(td1);
+	free(td1);
 }
 
 void AkeUnit_TypeDefMatchArrayFalse(Zinc_test* test)
@@ -365,6 +395,9 @@ void AkeUnit_TypeDefMatchArrayFalse(Zinc_test* test)
 	Zinc_expect_false(test, Ake_TypeMatch(td0, td1, NULL), "false");
 
 	Ake_TypeDestroy(td0);
+	free(td0);
+	Ake_TypeDestroy(td1);
+	free(td1);
 }
 
 void AkeUnit_TypeDefMatchArrayConstTrue(Zinc_test* test)
@@ -401,6 +434,9 @@ void AkeUnit_TypeDefMatchArrayConstTrue(Zinc_test* test)
 	Zinc_expect_true(test, Ake_TypeMatch(td0, td1, NULL), "match");
 
 	Ake_TypeDestroy(td0);
+	free(td0);
+	Ake_TypeDestroy(td1);
+	free(td1);
 }
 
 void AkeUnit_TypeDefMatchArrayConstFalse(Zinc_test* test)
@@ -437,6 +473,9 @@ void AkeUnit_TypeDefMatchArrayConstFalse(Zinc_test* test)
 	Zinc_expect_false(test, Ake_TypeMatch(td0, td1, NULL), "match");
 
 	Ake_TypeDestroy(td0);
+	free(td0);
+	Ake_TypeDestroy(td1);
+	free(td1);
 }
 
 void AkeUnit_TypeDefMatchSliceTrue(Zinc_test* test)
@@ -471,6 +510,9 @@ void AkeUnit_TypeDefMatchSliceTrue(Zinc_test* test)
 	Zinc_expect_true(test, Ake_TypeMatch(td0, td1, NULL), "match");
 
 	Ake_TypeDestroy(td0);
+	free(td0);
+	Ake_TypeDestroy(td1);
+	free(td1);
 }
 
 void AkeUnit_TypeDefMatchSliceFalse(Zinc_test* test)
@@ -505,6 +547,9 @@ void AkeUnit_TypeDefMatchSliceFalse(Zinc_test* test)
 	Zinc_expect_false(test, Ake_TypeMatch(td0, td1, NULL), "match");
 
 	Ake_TypeDestroy(td0);
+	free(td0);
+	Ake_TypeDestroy(td1);
+	free(td1);
 }
 
 void AkeUnit_TypeDefMatchPointerTrue(Zinc_test* test)
@@ -539,6 +584,9 @@ void AkeUnit_TypeDefMatchPointerTrue(Zinc_test* test)
 	Zinc_expect_true(test, Ake_TypeMatch(td0, td1, NULL), "match");
 
 	Ake_TypeDestroy(td0);
+	free(td0);
+	Ake_TypeDestroy(td1);
+	free(td1);
 }
 
 void AkeUnit_TypeDefMatchPointerFalse(Zinc_test* test)
@@ -573,6 +621,9 @@ void AkeUnit_TypeDefMatchPointerFalse(Zinc_test* test)
 	Zinc_expect_false(test, Ake_TypeMatch(td0, td1, NULL), "match");
 
 	Ake_TypeDestroy(td0);
+	free(td0);
+	Ake_TypeDestroy(td1);
+	free(td1);
 }
 
 void AkeUnit_TypeDefMatchFunctionTrue(Zinc_test* test)
@@ -627,6 +678,9 @@ void AkeUnit_TypeDefMatchFunctionTrue(Zinc_test* test)
 	Zinc_expect_true(test, Ake_TypeMatch(f0, f1, NULL), "match");
 
 	Ake_TypeDestroy(f0);
+	free(f0);
+	Ake_TypeDestroy(f1);
+	free(f1);
 }
 
 void AkeUnit_TypeDefMatchFunctionFalse(Zinc_test* test)
@@ -681,6 +735,9 @@ void AkeUnit_TypeDefMatchFunctionFalse(Zinc_test* test)
 	Zinc_expect_false(test, Ake_TypeMatch(f0, f1, NULL), "match");
 
 	Ake_TypeDestroy(f0);
+	free(f0);
+	Ake_TypeDestroy(f1);
+	free(f1);
 }
 
 void AkeUnit_TypeDefMatchCastTrue(Zinc_test* test)
@@ -707,6 +764,9 @@ void AkeUnit_TypeDefMatchCastTrue(Zinc_test* test)
 	Zinc_expect_false(test, cast, "cast");
 
 	Ake_TypeDestroy(td0);
+	free(td0);
+	Ake_TypeDestroy(td1);
+	free(td1);
 }
 
 void AkeUnit_TypeDefMatchCastTrue2(Zinc_test* test)
@@ -733,6 +793,9 @@ void AkeUnit_TypeDefMatchCastTrue2(Zinc_test* test)
 	Zinc_expect_true(test, cast, "cast");
 
 	Ake_TypeDestroy(td0);
+	free(td0);
+	Ake_TypeDestroy(td1);
+	free(td1);
 }
 
 void AkeUnit_TypeDefMatchCastTrue3(Zinc_test* test)
@@ -759,6 +822,9 @@ void AkeUnit_TypeDefMatchCastTrue3(Zinc_test* test)
 	Zinc_expect_true(test, cast, "cast");
 
 	Ake_TypeDestroy(td0);
+	free(td0);
+	Ake_TypeDestroy(td1);
+	free(td1);
 }
 
 void AkeUnit_TypeDefMatchCastTrue4(Zinc_test* test)
@@ -785,6 +851,9 @@ void AkeUnit_TypeDefMatchCastTrue4(Zinc_test* test)
 	Zinc_expect_true(test, cast, "cast");
 
 	Ake_TypeDestroy(td0);
+	free(td0);
+	Ake_TypeDestroy(td1);
+	free(td1);
 }
 
 void AkeUnit_TypeDefMatchCastTrue5(Zinc_test* test)
@@ -811,6 +880,9 @@ void AkeUnit_TypeDefMatchCastTrue5(Zinc_test* test)
 	Zinc_expect_true(test, cast, "cast");
 
 	Ake_TypeDestroy(td0);
+	free(td0);
+	Ake_TypeDestroy(td1);
+	free(td1);
 }
 
 void AkeUnit_TypeCloneInteger(Zinc_test* test)
@@ -830,6 +902,11 @@ void AkeUnit_TypeCloneInteger(Zinc_test* test)
 	Ake_Type* td1 = Ake_TypeClone(td0);
 
 	Zinc_expect_true(test, Ake_TypeMatch(td0, td1, NULL), "clone");
+
+	Ake_TypeDestroy(td0);
+	free(td0);
+	Ake_TypeDestroy(td1);
+	free(td1);
 }
 
 void AkeUnit_TypeCloneNatural(Zinc_test* test)
@@ -849,6 +926,11 @@ void AkeUnit_TypeCloneNatural(Zinc_test* test)
 	Ake_Type* td1 = Ake_TypeClone(td0);
 
 	Zinc_expect_true(test, Ake_TypeMatch(td0, td1, NULL), "clone");
+
+	Ake_TypeDestroy(td0);
+	free(td0);
+	Ake_TypeDestroy(td1);
+	free(td1);
 }
 
 void AkeUnit_TypeCloneReal(Zinc_test* test)
@@ -868,6 +950,11 @@ void AkeUnit_TypeCloneReal(Zinc_test* test)
 	Ake_Type* td1 = Ake_TypeClone(td0);
 
 	Zinc_expect_true(test, Ake_TypeMatch(td0, td1, NULL), "clone");
+
+	Ake_TypeDestroy(td0);
+	free(td0);
+	Ake_TypeDestroy(td1);
+	free(td1);
 }
 
 void AkeUnit_TypeCloneBoolean(Zinc_test* test)
@@ -886,6 +973,11 @@ void AkeUnit_TypeCloneBoolean(Zinc_test* test)
 	Ake_Type* td1 = Ake_TypeClone(td0);
 
 	Zinc_expect_true(test, Ake_TypeMatch(td0, td1, NULL), "clone");
+
+	Ake_TypeDestroy(td0);
+	free(td0);
+	Ake_TypeDestroy(td1);
+	free(td1);
 }
 
 void AkeUnit_TypeCloneStruct(Zinc_test* test)
@@ -924,6 +1016,11 @@ void AkeUnit_TypeCloneStruct(Zinc_test* test)
 	Ake_Type* td1 = Ake_TypeClone(td0);
 
 	Zinc_expect_true(test, Ake_TypeMatch(td0, td1, NULL), "clone");
+
+	Ake_TypeDestroy(td0);
+	free(td0);
+	Ake_TypeDestroy(td1);
+	free(td1);
 }
 
 void AkeUnit_TypeCloneArray(Zinc_test* test)
@@ -949,6 +1046,11 @@ void AkeUnit_TypeCloneArray(Zinc_test* test)
 	Ake_Type* td1 = Ake_TypeClone(td0);
 
 	Zinc_expect_true(test, Ake_TypeMatch(td0, td1, NULL), "clone");
+
+	Ake_TypeDestroy(td0);
+	free(td0);
+	Ake_TypeDestroy(td1);
+	free(td1);
 }
 
 void AkeUnit_TypeCloneArrayConst(Zinc_test* test)
@@ -975,6 +1077,11 @@ void AkeUnit_TypeCloneArrayConst(Zinc_test* test)
 	Ake_Type* td1 = Ake_TypeClone(td0);
 
 	Zinc_expect_true(test, Ake_TypeMatch(td0, td1, NULL), "clone");
+
+	Ake_TypeDestroy(td0);
+	free(td0);
+	Ake_TypeDestroy(td1);
+	free(td1);
 }
 
 void AkeUnit_TypeCloneSlice(Zinc_test* test)
@@ -999,6 +1106,11 @@ void AkeUnit_TypeCloneSlice(Zinc_test* test)
 	Ake_Type* td1 = Ake_TypeClone(td0);
 
 	Zinc_expect_true(test, Ake_TypeMatch(td0, td1, NULL), "clone");
+
+	Ake_TypeDestroy(td0);
+	free(td0);
+	Ake_TypeDestroy(td1);
+	free(td1);
 }
 
 void AkeUnit_TypeClonePointer(Zinc_test* test)
@@ -1023,6 +1135,11 @@ void AkeUnit_TypeClonePointer(Zinc_test* test)
 	Ake_Type* td1 = Ake_TypeClone(td0);
 
 	Zinc_expect_true(test, Ake_TypeMatch(td0, td1, NULL), "clone");
+
+	Ake_TypeDestroy(td0);
+	free(td0);
+	Ake_TypeDestroy(td1);
+	free(td1);
 }
 
 void AkeUnit_TypeCloneFunction(Zinc_test* test)
@@ -1067,6 +1184,11 @@ void AkeUnit_TypeCloneFunction(Zinc_test* test)
 	Ake_Type* td1 = Ake_TypeClone(td0);
 
 	Zinc_expect_true(test, Ake_TypeMatch(td0, td1, NULL), "clone");
+
+	Ake_TypeDestroy(td0);
+	free(td0);
+	Ake_TypeDestroy(td1);
+	free(td1);
 }
 
 void AkeUnit_TypeName(Zinc_test* test)

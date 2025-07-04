@@ -57,7 +57,7 @@ void Ake_TypeListDestroy(Ake_TypeList* list)
     while (node) {
         Ake_TypeNode* temp = node;
         node = node->next;
-        Ake_TypeNodeDestroy(temp);
+        //Ake_TypeNodeDestroy(temp);
         free(temp);
     }
 }
