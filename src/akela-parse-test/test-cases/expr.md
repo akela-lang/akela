@@ -1771,3 +1771,30 @@ Ast::Stmts {
   }
 }
 ```
+
+## Test
+comparison (error no term)
+
+```cent
+use lib::base::*
+Test {
+  .solo = true
+  .mute = false
+  .snapshot = false
+  .has_error = true
+}
+```
+
+```akela
+100 <
+```
+
+```cent
+Errors {
+  Error {
+    .message = "expected term after comparison operator"
+    .line = 1790
+    .col = 1
+  }
+}
+```
