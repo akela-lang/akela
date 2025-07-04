@@ -40,6 +40,7 @@ void Ake_ast_destroy(Ake_Ast* n)
 
         Zinc_string_destroy(&n->value);
         Ake_TypeDestroy(n->type);
+    	free(n->type);
 
     	Ake_EnvironmentDestroy(n->env);
     	free(n->env);

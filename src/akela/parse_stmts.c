@@ -643,6 +643,8 @@ Ake_Ast* Ake_parse_let(struct Ake_parse_state* ps)
 	id_node->kind = Ake_ast_type_id;
 	if (id) {
 		Zinc_string_add_string(&id_node->value, &id->value);
+		Ake_token_destroy(id);
+		free(id);
 	}
     Ake_ast_add(n, id_node);
 
