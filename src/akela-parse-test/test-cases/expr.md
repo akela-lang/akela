@@ -2761,3 +2761,31 @@ Ast::Stmts {
   }
 }
 ```
+
+## Test
+array subscript 4
+
+```cent
+use lib::base::*
+Test {
+  .solo = false
+  .mute = false
+  .snapshot = false
+  .has_error = true
+}
+```
+
+```akela
+fn foo() end;
+foo()[1]
+```
+
+```cent
+Errors {
+  Error {
+    .message = "expression has subscript but has no value"
+    .line = 2780
+    .col = 1
+  }
+}
+```
