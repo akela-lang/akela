@@ -1881,3 +1881,30 @@ Errors {
   }
 }
 ```
+
+## Test
+comparison (error right not numeric)
+
+```cent
+use lib::base::*
+Test {
+  .solo = false
+  .mute = false
+  .snapshot = false
+  .has_error = true
+}
+```
+
+```akela
+100 < true
+```
+
+```cent
+Errors {
+  Error {
+    .message = "comparison operand is not numeric"
+    .line = 1899
+    .col = 7
+  }
+}
+```
