@@ -2191,3 +2191,30 @@ Errors {
   }
 }
 ```
+
+## Test
+boolean (error right not boolean)
+
+```cent
+use lib::base::*
+Test {
+  .solo = false
+  .mute = false
+  .snapshot = false
+  .has_error = true
+}
+```
+
+```akela
+true && 1
+```
+
+```cent
+Errors {
+  Error {
+    .message = "expression of boolean operator is not boolean"
+    .line = 2209
+    .col = 9
+  }
+}
+```
