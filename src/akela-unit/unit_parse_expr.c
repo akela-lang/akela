@@ -6,58 +6,6 @@
 #include "zinc/test.h"
 #include "zinc/expect.h"
 
-void AkeUnit_parse_or(Zinc_test* test)
-{
-    if (test->dry_run) {
-        Zinc_string_add_str(&test->name, __func__);
-        test->mute = false;
-        test->solo = false;
-        return;
-    }
-
-    struct Ake_comp_unit cu;
-
-    AkeUnit_parse_setup("const a: Bool; const b: Bool; a || b", &cu);
-    if (!Zinc_expect_no_errors(test, &cu.errors)) {
-		return Zinc_assert();
-	}
-    Zinc_expect_true(test, cu.valid, "valid");
-
-    if (!Zinc_expect_ptr(test, cu.root, "ptr cu.root")) {
-		return Zinc_assert();
-	}
-    Zinc_expect_int_equal(test, cu.root->kind, Ake_ast_type_stmts, "parse_stmts cu.root");
-
-    Ake_Ast* or = Ake_ast_get(cu.root, 2);
-    if (!Zinc_expect_ptr(test, or, "ptr or")) {
-		return Zinc_assert();
-	}
-    Zinc_expect_int_equal(test, or->kind, Ake_ast_type_or, "or or");
-
-    Ake_Type* type = or->type;
-    if (!Zinc_expect_ptr(test, type, "ptr type")) {
-		return Zinc_assert();
-	}
-    Zinc_expect_int_equal(test, type->kind, AKE_TYPE_BOOLEAN, "boolean tu");
-    Zinc_expect_string(test, &type->name, "Bool", "Bool tu");
-
-    Ake_Ast* a = Ake_ast_get(or, 0);
-    if (!Zinc_expect_ptr(test, a, "ptr a")) {
-		return Zinc_assert();
-	}
-    Zinc_expect_int_equal(test, a->kind, Ake_ast_type_id, "id a");
-    Zinc_expect_string(test, &a->value, "a", "a a");
-
-    Ake_Ast* b = Ake_ast_get(or, 1);
-    if (!Zinc_expect_ptr(test, b, "ptr b")) {
-		return Zinc_assert();
-	}
-    Zinc_expect_int_equal(test, b->kind, Ake_ast_type_id, "id b");
-    Zinc_expect_string(test, &b->value, "b", "b b");
-
-    AkeUnit_parse_teardown(&cu);
-}
-
 void AkeUnit_parse_or_or(Zinc_test* test)
 {
     if (test->dry_run) {
@@ -1265,7 +1213,6 @@ void AkeUnit_parse_expression(Zinc_test* test)
         test->mute = false;
         test->solo = false;
 
-        Zinc_test_register(test, AkeUnit_parse_or);
         Zinc_test_register(test, AkeUnit_parse_or_or);
         Zinc_test_register(test, AkeUnit_parse_boolean_error_expected_term);
         Zinc_test_register(test, AkeUnit_parse_boolean_error_left_no_value);

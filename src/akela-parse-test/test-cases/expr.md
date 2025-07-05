@@ -1972,3 +1972,67 @@ Ast::Stmts {
   }
 }
 ```
+
+## Test
+or
+
+```cent
+use lib::base::*
+Test {
+  .solo = false
+  .mute = false
+  .snapshot = false
+  .has_error = false
+}
+```
+
+```akela
+const a: Bool = true
+const b: Bool = false
+a || b
+```
+
+```cent
+use lib::base::*
+const type0 = Type::Boolean {
+  .name = "Bool"
+}
+Ast::Stmts {
+  .type = type0
+  Ast::Const {
+    Ast::Id {
+      .value = "a"
+    }
+    Ast::Type {
+      .type = type0
+    }
+    Ast::Boolean {
+      .value = "true"
+      .type = type0
+    }
+  }
+  Ast::Const {
+    Ast::Id {
+      .value = "b"
+    }
+    Ast::Type {
+      .type = type0
+    }
+    Ast::Boolean {
+      .value = "false"
+      .type = type0
+    }
+  }
+  Ast::Or {
+    .type = type0
+    Ast::Id {
+      .value = "a"
+      .type = type0
+    }
+    Ast::Id {
+      .value = "b"
+      .type = type0
+    }
+  }
+}
+```
