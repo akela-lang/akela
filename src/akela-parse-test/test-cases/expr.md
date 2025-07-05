@@ -2524,3 +2524,240 @@ Ast::Stmts {
   }
 }
 ```
+
+## Test
+array subscript 4
+
+```cent
+use lib::base::*
+Test {
+  .solo = false
+  .mute = false
+  .snapshot = false
+  .has_error = false
+}
+```
+
+```akela
+const x: [2][3][4 const]Int32 =
+  [
+    [
+      [1, 2, 3, 4],
+      [5, 6, 7, 8],
+      [9, 10, 11, 12]
+    ],
+    [
+      [13, 14, 15, 16],
+      [17, 18, 19, 20],
+      [21, 22, 23, 24]
+    ]
+  ]
+x[0][1][2]
+```
+
+```cent
+use lib::base::*
+const type0 = Type::Integer {
+  .name = "Int32"
+  .bit_count = 32
+}
+const type1 = Type::Array {
+  .is_const = false
+  .dim = 2
+  .type = Type::Array {
+    .is_const = false
+    .dim = 3
+    .type = Type::Array {
+      .is_const = true
+      .dim = 4
+      .type = Type::Integer {
+        .name = "Int32"
+        .bit_count = 32
+      }
+    }
+  }
+}
+const type2 = Type::Array {
+  .is_const = false
+  .dim = 3
+  .type = Type::Array {
+    .is_const = true
+    .dim = 4
+    .type = Type::Integer {
+      .name = "Int32"
+      .bit_count = 32
+    }
+  }
+}
+const type3 = Type::Array {
+  .is_const = true
+  .dim = 4
+  .type = Type::Integer {
+    .name = "Int32"
+    .bit_count = 32
+  }
+}
+const type4 = Type::Natural {
+  .name = "Nat64"
+  .bit_count = 64
+}
+Ast::Stmts {
+  .type = type0
+  Ast::Const {
+    Ast::Id {
+      .value = "x"
+    }
+    Ast::Type {
+      .type = type1
+    }
+    Ast::ArrayLiteral {
+      .type = type1
+      Ast::ArrayLiteral {
+        .type = type2
+        Ast::ArrayLiteral {
+          .type = type3
+          Ast::Number {
+            .value = "1"
+            .type = type0
+          }
+          Ast::Number {
+            .value = "2"
+            .type = type0
+          }
+          Ast::Number {
+            .value = "3"
+            .type = type0
+          }
+          Ast::Number {
+            .value = "4"
+            .type = type0
+          }
+        }
+        Ast::ArrayLiteral {
+          .type = type3
+          Ast::Number {
+            .value = "5"
+            .type = type0
+          }
+          Ast::Number {
+            .value = "6"
+            .type = type0
+          }
+          Ast::Number {
+            .value = "7"
+            .type = type0
+          }
+          Ast::Number {
+            .value = "8"
+            .type = type0
+          }
+        }
+        Ast::ArrayLiteral {
+          .type = type3
+          Ast::Number {
+            .value = "9"
+            .type = type0
+          }
+          Ast::Number {
+            .value = "10"
+            .type = type0
+          }
+          Ast::Number {
+            .value = "11"
+            .type = type0
+          }
+          Ast::Number {
+            .value = "12"
+            .type = type0
+          }
+        }
+      }
+      Ast::ArrayLiteral {
+        .type = type2
+        Ast::ArrayLiteral {
+          .type = type3
+          Ast::Number {
+            .value = "13"
+            .type = type0
+          }
+          Ast::Number {
+            .value = "14"
+            .type = type0
+          }
+          Ast::Number {
+            .value = "15"
+            .type = type0
+          }
+          Ast::Number {
+            .value = "16"
+            .type = type0
+          }
+        }
+        Ast::ArrayLiteral {
+          .type = type3
+          Ast::Number {
+            .value = "17"
+            .type = type0
+          }
+          Ast::Number {
+            .value = "18"
+            .type = type0
+          }
+          Ast::Number {
+            .value = "19"
+            .type = type0
+          }
+          Ast::Number {
+            .value = "20"
+            .type = type0
+          }
+        }
+        Ast::ArrayLiteral {
+          .type = type3
+          Ast::Number {
+            .value = "21"
+            .type = type0
+          }
+          Ast::Number {
+            .value = "22"
+            .type = type0
+          }
+          Ast::Number {
+            .value = "23"
+            .type = type0
+          }
+          Ast::Number {
+            .value = "24"
+            .type = type0
+          }
+        }
+      }
+    }
+  }
+  Ast::ArraySubscript {
+    .type = type0
+    Ast::ArraySubscript {
+      .type = type3
+      Ast::ArraySubscript {
+        .type = type2
+        Ast::Id {
+          .value = "x"
+          .type = type1
+        }
+        Ast::Number {
+          .value = "0"
+          .type = type4
+        }
+      }
+      Ast::Number {
+        .value = "1"
+        .type = type4
+      }
+    }
+    Ast::Number {
+      .value = "2"
+      .type = type4
+    }
+  }
+}
+```

@@ -6,114 +6,6 @@
 #include "zinc/test.h"
 #include "zinc/expect.h"
 
-void AkeUnit_parse_expr_array_subscript_3d(Zinc_test* test)
-{
-    if (test->dry_run) {
-        Zinc_string_add_str(&test->name, __func__);
-        test->mute = false;
-        test->solo = false;
-        return;
-    }
-
-    Ake_comp_unit cu;
-
-    AkeUnit_parse_setup("const x: [2][3][4 const]Int32 = \n"
-               "[\n"
-               "  [\n"
-               "    [1, 2, 3, 4],\n"
-               "    [5, 6, 7, 8],\n"
-               "    [9, 10, 11, 12]\n"
-               "  ],\n"
-               "  [\n"
-               "    [13, 14, 15, 16],\n"
-               "    [17, 18, 19, 20],\n"
-               "    [21, 22, 23, 24]\n"
-               "  ]\n"
-               "]\n"
-               "x[1][1][3]\n",
-               &cu);
-    if (!Zinc_expect_no_errors(test, &cu.errors)) {
-		return Zinc_assert();
-	}
-    Zinc_expect_true(test, cu.valid, "valid");
-
-    Ake_Ast* const_ = Ake_ast_get(cu.root, 0);
-    if (!Zinc_expect_ptr(test, const_, "per const_")) {
-		return Zinc_assert();
-	}
-    Zinc_expect_int_equal(test, const_->kind, Ake_ast_type_const, "type const_");
-
-    Ake_Ast* const_type = Ake_ast_get(const_, 1);
-    if (!Zinc_expect_ptr(test, const_type, "ptr const_type")) {
-		return Zinc_assert();
-	}
-    Zinc_expect_int_equal(test, const_type->kind, Ake_ast_type_type, "type const_type");
-
-    Ake_Ast* a = Ake_ast_get(cu.root, 1);
-    if (!Zinc_expect_ptr(test, a, "ptr a")) {
-		return Zinc_assert();
-	}
-    if (!Zinc_expect_int_equal(test, a->kind, Ake_ast_type_array_subscript, "type a")) {
-		return Zinc_assert();
-	}
-
-    Ake_Type* a_type = a->type;
-    if (!Zinc_expect_ptr(test, a_type, "ptr a_tu")) {
-		return Zinc_assert();
-	}
-    Zinc_expect_int_equal(test, a_type->kind, AKE_TYPE_INTEGER, "kind a_tu");
-    Zinc_expect_uint8_t_equal(test, a_type->data.integer.bit_count, 32, "bit_count a_tu");
-	Zinc_expect_string(test, &a_type->name, "Int32", "name a_tu");
-
-    Ake_Ast* b = Ake_ast_get(a, 0);
-    if (!Zinc_expect_ptr(test, b, "ptr b")) {
-		return Zinc_assert();
-	}
-    Zinc_expect_int_equal(test, b->kind, Ake_ast_type_array_subscript, "type b");
-
-    Ake_Type* b_type = b->type;
-    if (!Zinc_expect_ptr(test, b_type, "ptr b_tu")) {
-		return Zinc_assert();
-	}
-    Zinc_expect_int_equal(test, b_type->kind, AKE_TYPE_ARRAY, "kind b_tu");
-	Zinc_expect_true(test, b_type->data.array.is_const, "is_const b_type");
-    Zinc_expect_size_t_equal(test, b_type->data.array.dim, 4, "dim.count b_tu");
-
-    Ake_Ast* c = Ake_ast_get(b, 0);
-    if (!Zinc_expect_ptr(test, c, "ptr c")) {
-		return Zinc_assert();
-	}
-    Zinc_expect_int_equal(test, c->kind, Ake_ast_type_array_subscript, "type c");
-
-    Ake_Type* c_type = c->type;
-    if (!Zinc_expect_ptr(test, c_type, "ptr c_tu")) {
-		return Zinc_assert();
-	}
-    Zinc_expect_true(test, c_type->kind == AKE_TYPE_ARRAY, "is_mut c_tu");
-    Zinc_expect_size_t_equal(test, c_type->data.array.dim, 3, "dim.count c_tu");
-
-    Ake_Ast* d = Ake_ast_get(c, 0);
-    if (!Zinc_expect_ptr(test, d, "ptr d")) {
-		return Zinc_assert();
-	}
-    Zinc_expect_int_equal(test, d->kind, Ake_ast_type_id, "type d");
-
-    Ake_Type* d_type = d->type;
-    if (!Zinc_expect_ptr(test, d_type, "ptr d_tu")) {
-		return Zinc_assert();
-	}
-    Zinc_expect_true(test, d_type->kind == AKE_TYPE_ARRAY, "is_mut d_tu");
-    Zinc_expect_size_t_equal(test, d_type->data.array.dim, 2, "dim.count d_tu");
-
-    Ake_Ast* e = Ake_ast_get(c, 1);
-    if (!Zinc_expect_ptr(test, e, "ptr e")) {
-		return Zinc_assert();
-	}
-    Zinc_expect_int_equal(test, e->kind, Ake_ast_type_number, "type e");
-
-    AkeUnit_parse_teardown(&cu);
-}
-
 void AkeUnit_parse_subscript_error_no_type(Zinc_test* test)
 {
     if (test->dry_run) {
@@ -869,7 +761,6 @@ void AkeUnit_parse_expression(Zinc_test* test)
         test->mute = false;
         test->solo = false;
 
-        Zinc_test_register(test, AkeUnit_parse_expr_array_subscript_3d);
         Zinc_test_register(test, AkeUnit_parse_subscript_error_no_type);
         Zinc_test_register(test, AkeUnit_parse_subscript_error_not_array);
         Zinc_test_register(test, AkeUnit_parse_subscript_error_expected_right_square_bracket);
