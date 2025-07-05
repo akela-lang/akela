@@ -2081,3 +2081,30 @@ Ast::Stmts {
   }
 }
 ```
+
+## Test
+boolean (error expected term)
+
+```cent
+use lib::base::*
+Test {
+  .solo = false
+  .mute = false
+  .snapshot = false
+  .has_error = true
+}
+```
+
+```akela
+true &&
+```
+
+```cent
+Errors {
+  Error {
+    .message = "expected term after && or ||"
+    .line = 2100
+    .col = 1
+  }
+}
+```
