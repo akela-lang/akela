@@ -2164,3 +2164,30 @@ Errors {
   }
 }
 ```
+
+## Test
+boolean (error left not boolean)
+
+```cent
+use lib::base::*
+Test {
+  .solo = false
+  .mute = false
+  .snapshot = false
+  .has_error = true
+}
+```
+
+```akela
+1 && true
+```
+
+```cent
+Errors {
+  Error {
+    .message = "left-side expression of boolean operator is not boolean"
+    .line = 2182
+    .col = 1
+  }
+}
+```
