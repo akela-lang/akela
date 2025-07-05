@@ -6,47 +6,6 @@
 #include "zinc/test.h"
 #include "zinc/expect.h"
 
-void AkeUnit_parse_array_subscript3(Zinc_test* test)
-{
-    if (test->dry_run) {
-        Zinc_string_add_str(&test->name, __func__);
-        test->mute = false;
-        test->solo = false;
-        return;
-    }
-
-    Ake_comp_unit cu;
-
-    AkeUnit_parse_setup("const a: [5]Int32; const b: Int32; a[b]", &cu);
-    if (!Zinc_expect_no_errors(test, &cu.errors)) {
-		return Zinc_assert();
-	}
-    Zinc_expect_true(test, cu.valid, "valid");
-
-    Ake_Ast* a = Ake_ast_get(cu.root, 2);
-    if (!Zinc_expect_ptr(test, a, "ptr a")) {
-		return Zinc_assert();
-	}
-    Zinc_expect_int_equal(test, a->kind, Ake_ast_type_array_subscript, "type a");
-
-    Ake_Type* type = a->type;
-    if (!Zinc_expect_ptr(test, type, "ptr type")) {
-		return Zinc_assert();
-	}
-    Zinc_expect_int_equal(test, type->kind, AKE_TYPE_INTEGER, "integer tu");
-    Zinc_expect_string(test, &type->name, "Int32", "Int32 tu");
-
-    Ake_Ast* b = Ake_ast_get(a, 0);
-    Zinc_expect_int_equal(test, b->kind, Ake_ast_type_id, "type b");
-    Zinc_expect_string(test, &b->value, "a", "a b");
-
-    Ake_Ast* c = Ake_ast_get(a, 1);
-    Zinc_expect_int_equal(test, c->kind, Ake_ast_type_id, "type c");
-    Zinc_expect_string(test, &c->value, "b", "value c");
-
-    AkeUnit_parse_teardown(&cu);
-}
-
 void AkeUnit_parse_expr_array_subscript_3d(Zinc_test* test)
 {
     if (test->dry_run) {
@@ -910,7 +869,6 @@ void AkeUnit_parse_expression(Zinc_test* test)
         test->mute = false;
         test->solo = false;
 
-        Zinc_test_register(test, AkeUnit_parse_array_subscript3);
         Zinc_test_register(test, AkeUnit_parse_expr_array_subscript_3d);
         Zinc_test_register(test, AkeUnit_parse_subscript_error_no_type);
         Zinc_test_register(test, AkeUnit_parse_subscript_error_not_array);

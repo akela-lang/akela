@@ -2220,7 +2220,7 @@ Errors {
 ```
 
 ## Test
-array declare
+array subscript
 
 ```cent
 use lib::base::*
@@ -2303,7 +2303,7 @@ Ast::Stmts {
 ```
 
 ## Test
-array declare
+array subscript 2
 
 ```cent
 use lib::base::*
@@ -2428,6 +2428,98 @@ Ast::Stmts {
     Ast::Number {
       .value = "1"
       .type = type3
+    }
+  }
+}
+```
+
+## Test
+array subscript 3
+
+```cent
+use lib::base::*
+Test {
+  .solo = false
+  .mute = false
+  .snapshot = false
+  .has_error = false
+}
+```
+
+```akela
+const a: [4]Int32 = [0, 1, 2, 3]
+const b: Nat64 = 1
+a[b]
+```
+
+```cent
+use lib::base::*
+const type0 = Type::Integer {
+  .name = "Int32"
+  .bit_count = 32
+}
+const type1 = Type::Array {
+  .is_const = false
+  .dim = 4
+  .type = Type::Integer {
+    .name = "Int32"
+    .bit_count = 32
+  }
+}
+const type2 = Type::Natural {
+  .name = "Nat64"
+  .bit_count = 64
+}
+Ast::Stmts {
+  .type = type0
+  Ast::Const {
+    Ast::Id {
+      .value = "a"
+    }
+    Ast::Type {
+      .type = type1
+    }
+    Ast::ArrayLiteral {
+      .type = type1
+      Ast::Number {
+        .value = "0"
+        .type = type0
+      }
+      Ast::Number {
+        .value = "1"
+        .type = type0
+      }
+      Ast::Number {
+        .value = "2"
+        .type = type0
+      }
+      Ast::Number {
+        .value = "3"
+        .type = type0
+      }
+    }
+  }
+  Ast::Const {
+    Ast::Id {
+      .value = "b"
+    }
+    Ast::Type {
+      .type = type2
+    }
+    Ast::Number {
+      .value = "1"
+      .type = type2
+    }
+  }
+  Ast::ArraySubscript {
+    .type = type0
+    Ast::Id {
+      .value = "a"
+      .type = type1
+    }
+    Ast::Id {
+      .value = "b"
+      .type = type2
     }
   }
 }
