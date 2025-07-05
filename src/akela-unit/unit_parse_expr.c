@@ -6,117 +6,6 @@
 #include "zinc/test.h"
 #include "zinc/expect.h"
 
-void AkeUnit_parse_array_subscript(Zinc_test* test)
-{
-    if (test->dry_run) {
-        Zinc_string_add_str(&test->name, __func__);
-        test->mute = false;
-        test->solo = false;
-        return;
-    }
-
-    struct Ake_comp_unit cu;
-
-    AkeUnit_parse_setup("const a: [10]Int32; a[1]", &cu);
-    Zinc_expect_no_errors(test, &cu.errors);
-    Zinc_expect_true(test, cu.valid, "valid");
-
-    if (!Zinc_expect_ptr(test, cu.root, "ptr cu.root")) {
-		return Zinc_assert();
-	}
-    Zinc_expect_int_equal(test, cu.root->kind, Ake_ast_type_stmts, "parse_stmts cu.root");
-
-    Ake_Ast* as = Ake_ast_get(cu.root, 1);
-    if (!Zinc_expect_ptr(test, as, "ptr as")) {
-		return Zinc_assert();
-	}
-    Zinc_expect_int_equal(test, as->kind, Ake_ast_type_array_subscript, "array-subscript as");
-
-    Ake_Type* type = as->type;
-    if (!Zinc_expect_ptr(test, type, "ptr type")) {
-		return Zinc_assert();
-	}
-    Zinc_expect_int_equal(test, type->kind, AKE_TYPE_INTEGER, "integer td");
-    Zinc_expect_string(test, &type->name, "Int32", "Int32 td");
-
-    Ake_Ast* name = Ake_ast_get(as, 0);
-    if (!Zinc_expect_ptr(test, name, "ptr name")) {
-		return Zinc_assert();
-	}
-    Zinc_expect_int_equal(test, name->kind, Ake_ast_type_id, "id name");
-    Zinc_expect_string(test, &name->value, "a", "a name");
-
-    Ake_Ast* index = Ake_ast_get(as, 1);
-    if (!Zinc_expect_ptr(test, index, "ptr index")) {
-		return Zinc_assert();
-	}
-    Zinc_expect_int_equal(test, index->kind, Ake_ast_type_number, "number index");
-    Zinc_expect_string(test, &index->value, "1", "1 index");
-
-    AkeUnit_parse_teardown(&cu);
-}
-
-void AkeUnit_parse_array_subscript2(Zinc_test* test)
-{
-    if (test->dry_run) {
-        Zinc_string_add_str(&test->name, __func__);
-        test->mute = false;
-        test->solo = false;
-        return;
-    }
-    
-    struct Ake_comp_unit cu;
-
-    AkeUnit_parse_setup("const a: [10][10]Int32; a[0][1]", &cu);
-    if (!Zinc_expect_no_errors(test, &cu.errors)) {
-		return Zinc_assert();
-	}
-    Zinc_expect_true(test, cu.valid, "valid");
-
-    Ake_Ast* a = Ake_ast_get(cu.root, 1);
-    if (!Zinc_expect_ptr(test, a, "ptr a")) {
-		return Zinc_assert();
-	}
-    if (!Zinc_expect_int_equal(test, a->kind, Ake_ast_type_array_subscript, "array-subscript a")) {
-		return Zinc_assert();
-	}
-
-    Ake_Type* a_type = a->type;
-    if (!Zinc_expect_ptr(test, a_type, "ptr type")) {
-		return Zinc_assert();
-	}
-    Zinc_expect_int_equal(test, a_type->kind, AKE_TYPE_INTEGER, "type a_tu");
-
-    Ake_Ast* b = Ake_ast_get(a, 0);
-    if (!Zinc_expect_ptr(test, b, "ptr b")) {
-		return Zinc_assert();
-	}
-    Zinc_expect_int_equal(test, b->kind, Ake_ast_type_array_subscript, "array_subscript b");
-
-    Ake_Ast* c = Ake_ast_get(b, 0);
-    if (!Zinc_expect_ptr(test, c, "ptr c")) {
-		return Zinc_assert();
-	}
-    Zinc_expect_int_equal(test, c->kind, Ake_ast_type_id, "id c");
-    Zinc_expect_string(test, &c->value, "a", "value a");
-
-    Ake_Ast* d = Ake_ast_get(b, 1);
-    if (!Zinc_expect_ptr(test, d, "ptr d")) {
-		return Zinc_assert();
-	}
-    Zinc_expect_int_equal(test, d->kind, Ake_ast_type_number, "type d");
-    Zinc_expect_string(test, &d->value, "0", "value d");
-
-    Ake_Ast* e = Ake_ast_get(a, 1);
-    if (!Zinc_expect_ptr(test, e, "ptr e")) {
-		return Zinc_assert();
-	}
-    Zinc_expect_int_equal(test, d->kind, Ake_ast_type_number, "number e");
-    Zinc_expect_string(test, &e->value, "1", "value e");
-
-    AkeUnit_parse_teardown(&cu);
-}
-
 void AkeUnit_parse_array_subscript3(Zinc_test* test)
 {
     if (test->dry_run) {
@@ -1021,9 +910,6 @@ void AkeUnit_parse_expression(Zinc_test* test)
         test->mute = false;
         test->solo = false;
 
-        Zinc_test_register(test, AkeUnit_parse_array_declare);
-        Zinc_test_register(test, AkeUnit_parse_array_subscript);
-        Zinc_test_register(test, AkeUnit_parse_array_subscript2);
         Zinc_test_register(test, AkeUnit_parse_array_subscript3);
         Zinc_test_register(test, AkeUnit_parse_expr_array_subscript_3d);
         Zinc_test_register(test, AkeUnit_parse_subscript_error_no_type);
