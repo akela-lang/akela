@@ -152,6 +152,7 @@ element TypeField {
 
 variant Type::Array {
     properties {
+        is_const: Bool
         dim: Natural
         type: Type
     }

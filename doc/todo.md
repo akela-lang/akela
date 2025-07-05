@@ -6,6 +6,19 @@
   * stmts []
   * struct []
   * types []
+* run tests
+* modules
+* print function
+  * integer []
+  * natural []
+  * real []
+  * boolean []
+  * string []
+  * struct []
+  * pointer []
+  * array []
+  * slice []
+  * function []
 * wrap pointers
 * new syntax tree
 * move type checks into their own functions

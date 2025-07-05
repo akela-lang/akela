@@ -340,7 +340,7 @@ void Ake_type_cent_print(Ake_Type* type, size_t level, bool is_property)
             break;
         case AKE_TYPE_ARRAY:
             Ake_indent_print(level);
-            printf(".is_const = %d\n", type->data.array.is_const);
+            printf(".is_const = %s\n", type->data.array.is_const ? "true" : "false");
             Ake_indent_print(level);
             printf(".dim = %zu\n", type->data.array.dim);
             Ake_indent_print(level);

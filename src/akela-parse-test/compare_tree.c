@@ -388,7 +388,7 @@ bool Apt_compare_type(
     }
 
     Cent_value* name_value = Cent_value_get_str(value, "name");
-    if (!name_value) {
+    if ((type->name.size > 0) && !name_value) {
         Zinc_expect_failed(case_test);
         Zinc_spec_error_list_set(
             &case_data->spec_errors,
@@ -397,7 +397,7 @@ bool Apt_compare_type(
             &value_n->loc,
             "name not set");
     } else {
-        if (!Zinc_string_compare(&type->name, &name_value->data.string)) {
+        if (name_value && !Zinc_string_compare(&type->name, &name_value->data.string)) {
             Cent_ast* name_n = name_value->n;
             Zinc_spec_error_list_set(
                 &case_data->spec_errors,
