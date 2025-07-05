@@ -2136,3 +2136,31 @@ Errors {
   }
 }
 ```
+
+## Test
+boolean (error right no value)
+
+```cent
+use lib::base::*
+Test {
+  .solo = false
+  .mute = false
+  .snapshot = false
+  .has_error = true
+}
+```
+
+```akela
+fn foo() end
+true && foo()
+```
+
+```cent
+Errors {
+  Error {
+    .message = "operand of boolean operator has no type"
+    .line = 2155
+    .col = 9
+  }
+}
+```
