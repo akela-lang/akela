@@ -8,7 +8,6 @@
 
 void Zinc_assert();
 
-void Zinc_expect_check(Zinc_test* test);
 void Zinc_expect_passed(Zinc_test* test);
 void Zinc_expect_failed(Zinc_test* test);
 bool Zinc_expect_result(Zinc_test* test, Zinc_result r, const char* message);

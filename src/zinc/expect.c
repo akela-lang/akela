@@ -14,18 +14,15 @@ void Zinc_assert()
 	fprintf(stderr, "Exiting because of assertion error.\n");
 }
 
-void Zinc_expect_check(Zinc_test* test)
-{
-	test->check_count++;
-}
-
 void Zinc_expect_passed(Zinc_test* test)
 {
+	test->check_count++;
 	test->check_passed++;
 }
 
 void Zinc_expect_failed(Zinc_test* test)
 {
+	test->check_count++;
 	test->check_failed++;
 	test->pass = false;
 }

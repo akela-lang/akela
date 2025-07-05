@@ -197,6 +197,7 @@ bool Apt_compare_ast(Zinc_test* top_test, Zinc_test* case_test, Ake_Ast* n, Cent
     }
 
     if (n && !value) {
+        Zinc_expect_failed(case_test);
         Zinc_spec_error_list_set(
             &case_data->spec_errors,
             case_test,
@@ -204,11 +205,14 @@ bool Apt_compare_ast(Zinc_test* top_test, Zinc_test* case_test, Ake_Ast* n, Cent
             NULL,
             "value is null");
         return false;
+    } else {
+        Zinc_expect_passed(case_test);
     }
 
     Cent_ast* value_n = value->n;
 
     if (!n && value) {
+        Zinc_expect_failed(case_test);
         Zinc_spec_error_list_set(
             &case_data->spec_errors,
             case_test,
@@ -216,9 +220,12 @@ bool Apt_compare_ast(Zinc_test* top_test, Zinc_test* case_test, Ake_Ast* n, Cent
             &value_n->loc,
             "node is null");
         return false;
+    } else {
+        Zinc_expect_passed(case_test);
     }
 
     if (!Zinc_string_compare_str(&value->name, "Ast")) {
+        Zinc_expect_failed(case_test);
         Zinc_spec_error_list_set(
             &case_data->spec_errors,
             case_test,
@@ -227,12 +234,15 @@ bool Apt_compare_ast(Zinc_test* top_test, Zinc_test* case_test, Ake_Ast* n, Cent
             "expected AST value: %bf",
             &value->name);
         pass = false;
+    } else {
+        Zinc_expect_passed(case_test);
     }
 
     /* properties */
     Cent_value* tag = Cent_value_get_str(value, "@tag");
     assert(tag);
     if (n->kind != tag->data.enumeration.enum_value->value) {
+        Zinc_expect_failed(case_test);
         Zinc_spec_error_list_set(
             &case_data->spec_errors,
             case_test,
@@ -244,11 +254,14 @@ bool Apt_compare_ast(Zinc_test* top_test, Zinc_test* case_test, Ake_Ast* n, Cent
             tag->data.enumeration.enum_value->value,
             &tag->data.enumeration.enum_value->display);
         pass = false;
+    } else {
+        Zinc_expect_passed(case_test);
     }
 
     Cent_value* value_prop = Cent_value_get_str(value, "value");
     if (n->value.size > 0) {
         if (!value_prop) {
+            Zinc_expect_failed(case_test);
             Zinc_spec_error_list_set(
                 &case_data->spec_errors,
                 case_test,
@@ -257,6 +270,7 @@ bool Apt_compare_ast(Zinc_test* top_test, Zinc_test* case_test, Ake_Ast* n, Cent
                 "value not expected");
                 pass = false;
         } else {
+            Zinc_expect_failed(case_test);
             assert(value_prop->type == Cent_value_type_string);
             if (!Zinc_string_compare(&n->value, &value_prop->data.string)) {
                 Cent_ast* prop_n = value_prop->n;
@@ -269,10 +283,13 @@ bool Apt_compare_ast(Zinc_test* top_test, Zinc_test* case_test, Ake_Ast* n, Cent
                     &n->value,
                     &value_prop->data.string);
                 pass = false;
+            } else {
+                Zinc_expect_passed(case_test);
             }
         }
     } else {
         if (value_prop && value_prop->data.string.size > 0) {
+            Zinc_expect_failed(case_test);
             Zinc_spec_error_list_set(
                 &case_data->spec_errors,
                 case_test,
@@ -280,6 +297,8 @@ bool Apt_compare_ast(Zinc_test* top_test, Zinc_test* case_test, Ake_Ast* n, Cent
                 &value_n->loc,
                 "value expected");
             pass = false;
+        } else {
+            Zinc_expect_passed(case_test);
         }
     }
 
@@ -325,6 +344,7 @@ bool Apt_compare_type(
     Apt_case_data* case_data = case_test->data;
 
     if (type && !value) {
+        Zinc_expect_failed(case_test);
         Zinc_spec_error_list_set(
             &case_data->spec_errors,
             case_test,
@@ -334,11 +354,14 @@ bool Apt_compare_type(
             n->kind,
             Ast_type_name(n->kind));
         return false;
+    } else {
+        Zinc_expect_passed(case_test);
     }
 
     Ake_Ast* value_n = value->n;
 
     if (!type && value) {
+        Zinc_expect_failed(case_test);
         Zinc_spec_error_list_set(
             &case_data->spec_errors,
             case_test,
@@ -346,9 +369,12 @@ bool Apt_compare_type(
             &value_n->loc,
             "type use node is null: %d-%s");
         return false;
+    } else {
+        Zinc_expect_passed(case_test);
     }
 
     if (!Zinc_string_compare_str(&value->name, "Type")) {
+        Zinc_expect_failed(case_test);
         Zinc_spec_error_list_set(
         &case_data->spec_errors,
         case_test,
@@ -357,10 +383,13 @@ bool Apt_compare_type(
         "expected Type value: %bf",
         &value->name);
         pass = false;
+    } else {
+        Zinc_expect_passed(case_test);
     }
 
     Cent_value* name_value = Cent_value_get_str(value, "name");
     if (!name_value) {
+        Zinc_expect_failed(case_test);
         Zinc_spec_error_list_set(
             &case_data->spec_errors,
             case_test,
@@ -369,6 +398,7 @@ bool Apt_compare_type(
             "name not set");
     } else {
         if (!Zinc_string_compare(&type->name, &name_value->data.string)) {
+            Cent_ast* name_n = name_value->n;
             Zinc_spec_error_list_set(
                 &case_data->spec_errors,
                 case_test,
@@ -378,12 +408,17 @@ bool Apt_compare_type(
                 &type->name,
                 &name_value->data.string);
             pass = false;
+        } else {
+            Zinc_expect_passed(case_test);
         }
     }
 
     Cent_value* tag = Cent_value_get_str(value, "@tag");
     if (Zinc_expect_size_t_equal(case_test, type->kind, tag->data.enumeration.number, "type tag")) {
+        Zinc_expect_passed(case_test);
         return pass;
+    } else {
+        Zinc_expect_failed(case_test);
     }
 
     switch (type->kind) {
@@ -425,6 +460,7 @@ bool Apt_compare_type_integer(
     if (bit_count_value) {
         assert(bit_count_value->type == Cent_value_type_natural);
         if (type->data.integer.bit_count != bit_count_value->data.natural) {
+            Zinc_expect_failed(case_test);
             Zinc_spec_error_list_set(
                 &case_data->spec_errors,
                 case_test,
@@ -434,8 +470,11 @@ bool Apt_compare_type_integer(
                 type->data.integer.bit_count,
                 bit_count_value->data.integer);
             pass = false;
+        } else {
+            Zinc_expect_passed(case_test);
         }
     } else if (type->data.integer.bit_count > 0) {
+        Zinc_expect_failed(case_test);
         Zinc_spec_error_list_set(
             &case_data->spec_errors,
             case_test,
@@ -443,6 +482,8 @@ bool Apt_compare_type_integer(
             &value_n->loc,
             "bit_count not set");
         pass = false;
+    } else {
+        Zinc_expect_passed(case_test);
     }
 
     return pass;
@@ -463,6 +504,7 @@ bool Apt_compare_type_natural(
     if (bit_count_value) {
         assert(bit_count_value->type == Cent_value_type_natural);
         if (type->data.natural.bit_count != bit_count_value->data.natural) {
+            Zinc_expect_failed(case_test);
             Zinc_spec_error_list_set(
                 &case_data->spec_errors,
                 case_test,
@@ -472,8 +514,11 @@ bool Apt_compare_type_natural(
                 type->data.natural.bit_count,
                 bit_count_value->data.natural);
             pass = false;
+        } else {
+            Zinc_expect_passed(case_test);
         }
     } else if (type->data.natural.bit_count > 0) {
+        Zinc_expect_failed(case_test);
         Zinc_spec_error_list_set(
             &case_data->spec_errors,
             case_test,
@@ -481,6 +526,8 @@ bool Apt_compare_type_natural(
             &value_n->loc,
             "bit_count not set");
         pass = false;
+    } else {
+        Zinc_expect_passed(case_test);
     }
 
     return pass;
@@ -501,6 +548,7 @@ bool Apt_compare_type_real(
     if (bit_count_value) {
         assert(bit_count_value->type == Cent_value_type_natural);
         if (type->data.real.bit_count != bit_count_value->data.natural) {
+            Zinc_expect_failed(case_test);
             Zinc_spec_error_list_set(
                 &case_data->spec_errors,
                 case_test,
@@ -510,8 +558,11 @@ bool Apt_compare_type_real(
                 type->data.real.bit_count,
                 bit_count_value->data.real);
             pass = false;
+        } else {
+            Zinc_expect_passed(case_test);
         }
     } else if (type->data.real.bit_count > 0) {
+        Zinc_expect_failed(case_test);
         Zinc_spec_error_list_set(
             &case_data->spec_errors,
             case_test,
@@ -519,6 +570,8 @@ bool Apt_compare_type_real(
             &value_n->loc,
             "bit_count not set");
         pass = false;
+    } else {
+        Zinc_expect_passed(case_test);
     }
 
     return pass;
