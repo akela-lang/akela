@@ -2789,3 +2789,31 @@ Errors {
   }
 }
 ```
+
+## Test
+array subscript (error not array)
+
+```cent
+use lib::base::*
+Test {
+  .solo = false
+  .mute = false
+  .snapshot = false
+  .has_error = true
+}
+```
+
+```akela
+const a: Int32 = 0
+a[1]
+```
+
+```cent
+Errors {
+  Error {
+    .message = "expression has subscript but is not an array or slice"
+    .line = 2808
+    .col = 1
+  }
+}
+```

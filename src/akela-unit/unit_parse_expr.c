@@ -6,27 +6,6 @@
 #include "zinc/test.h"
 #include "zinc/expect.h"
 
-void AkeUnit_parse_subscript_error_not_array(Zinc_test* test)
-{
-    if (test->dry_run) {
-        Zinc_string_add_str(&test->name, __func__);
-        test->mute = false;
-        test->solo = false;
-        return;
-    }
-
-    struct Ake_comp_unit cu;
-
-    AkeUnit_parse_setup("const a: Int32; a[1]", &cu);
-    if (!Zinc_expect_has_errors(test, &cu.errors)) {
-		return Zinc_assert();
-	}
-    Zinc_expect_false(test, cu.valid, "valid");
-    Zinc_expect_source_error(test, &cu.errors, "expression has subscript but is not an array or slice");
-
-    AkeUnit_parse_teardown(&cu);
-}
-
 void AkeUnit_parse_subscript_error_expected_right_square_bracket(Zinc_test* test)
 {
     if (test->dry_run) {
@@ -740,7 +719,6 @@ void AkeUnit_parse_expression(Zinc_test* test)
         test->mute = false;
         test->solo = false;
 
-        Zinc_test_register(test, AkeUnit_parse_subscript_error_not_array);
         Zinc_test_register(test, AkeUnit_parse_subscript_error_expected_right_square_bracket);
         Zinc_test_register(test, AkeUnit_parse_assign_string);
         Zinc_test_register(test, AkeUnit_parse_assign_multiple);
