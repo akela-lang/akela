@@ -41,9 +41,9 @@ has a handwritten lexer and recursive decent parser
 * Centipede - The parser for Akela object notation which feels like a light-weight mix of JSON and XML.
 It is used for configuration and to describe DAGs (syntax trees)
 * Lava - A parser of a subset of markdown which is used for testing scripts (automated testing)
-* Akela Parse Test - The automated parsing integration tests which kept in markdown test scripts
+* Akela Parse Test - The automated parsing integration tests which are kept in markdown test scripts
 * Akela Run Test - The automated LLVM and end-to-end tests which are kept in markdown test scripts
-* Test - all tests including unit, integration and end-to-end tests are executed by this
+* Test - The test runner which runs all tests including unit, integration and end-to-end tests
 
 The Cobble, Dataframe, JSON, Centipede, and Lava subprojects are very useful for the
 automated testing of the Akela compiler. When these subprojects are re-written in Akela
