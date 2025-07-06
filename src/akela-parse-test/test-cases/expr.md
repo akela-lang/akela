@@ -2817,3 +2817,31 @@ Errors {
   }
 }
 ```
+
+## Test
+array subscript (error expected right square bracket)
+
+```cent
+use lib::base::*
+Test {
+  .solo = false
+  .mute = false
+  .snapshot = false
+  .has_error = true
+}
+```
+
+```akela
+const a: [10]Int32
+a[1
+```
+
+```cent
+Errors {
+  Error {
+    .message = "expected right-square-bracket"
+    .line = 2837
+    .col = 1
+  }
+}
+```
