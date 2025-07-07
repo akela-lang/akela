@@ -2888,3 +2888,77 @@ Ast::Stmts {
   }
 }
 ```
+
+## Test
+assign multiple
+
+```cent
+use lib::base::*
+Test {
+  .solo = false
+  .mute = false
+  .snapshot = false
+  .has_error = false
+}
+```
+
+```akela
+var a: Int32
+var b: Int32
+var c: Int32
+a = b = c = 0
+```
+
+```cent
+use lib::base::*
+const type0 = Type::Integer {
+  .name = "Int32"
+  .bit_count = 32
+}
+Ast::Stmts {
+  .type = type0
+  Ast::Var {
+    Ast::Id {
+      .value = "a"
+    }
+    Ast::Type {
+      .type = type0
+    }
+  }
+  Ast::Var {
+    Ast::Id {
+      .value = "b"
+    }
+    Ast::Type {
+      .type = type0
+    }
+  }
+  Ast::Var {
+    Ast::Id {
+      .value = "c"
+    }
+    Ast::Type {
+      .type = type0
+    }
+  }
+  Ast::Assign {
+    .type = type0
+    Ast::Id {
+      .value = "a"
+      .type = type0
+    }
+    Ast::Id {
+      .value = "b"
+      .type = type0
+    }
+    Ast::Id {
+      .value = "c"
+      .type = type0
+    }
+    Ast::Number {
+      .value = "0"
+      .type = type0
+    }
+  }
+}
+```
