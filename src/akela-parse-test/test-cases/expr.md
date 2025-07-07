@@ -2962,3 +2962,33 @@ Ast::Stmts {
   }
 }
 ```
+
+## Test
+assignment (error eseq count)
+
+```cent
+use lib::base::*
+Test {
+  .solo = false
+  .mute = false
+  .snapshot = false
+  .has_error = true
+}
+```
+
+```akela
+var a: Int32
+var b: Int32
+var c: Int32
+a, b, c = 1, 2
+```
+
+```cent
+Errors {
+  Error {
+    .message = "assignment sequence counts do not match"
+    .line = 2983
+    .col = 11
+  }
+}
+```
