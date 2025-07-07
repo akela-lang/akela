@@ -3047,3 +3047,30 @@ Errors {
   }
 }
 ```
+
+## Test
+assign (error not compatible)
+
+```cent
+use lib::base::*
+Test {
+  .solo = false
+  .mute = false
+  .snapshot = false
+  .has_error = true
+}
+```
+
+```akela
+const x: Int32 = true
+```
+
+```cent
+Errors {
+  Error {
+    .message = "values in assignment are not compatible"
+    .line = 3065
+    .col = 18
+  }
+}
+```
