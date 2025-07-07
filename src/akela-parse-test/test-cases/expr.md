@@ -3019,3 +3019,31 @@ Errors {
   }
 }
 ```
+
+## Test
+assign (error no value right)
+
+```cent
+use lib::base::*
+Test {
+  .solo = false
+  .mute = false
+  .snapshot = false
+  .has_error = true
+}
+```
+
+```akela
+fn foo() end
+const a: [10]Nat8 = foo()
+```
+
+```cent
+Errors {
+  Error {
+    .message = "cannot assign with operand that has no value"
+    .line = 3038
+    .col = 21
+  }
+}
+```
