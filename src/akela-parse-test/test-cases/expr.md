@@ -2845,3 +2845,46 @@ Errors {
   }
 }
 ```
+
+## Test
+assign string
+
+```cent
+use lib::base::*
+Test {
+  .solo = false
+  .mute = false
+  .snapshot = false
+  .has_error = false
+}
+```
+
+```akela
+var a: [6 const]Nat8 = "hello"
+```
+
+```cent
+use lib::base::*
+const type0 = Type::Array {
+  .is_const = true
+  .dim = 6
+  .type = Type::Natural {
+    .name = "Nat8"
+    .bit_count = 8
+  }
+}
+Ast::Stmts {
+  Ast::Var {
+    Ast::Id {
+      .value = "a"
+    }
+    Ast::Type {
+      .type = type0
+    }
+    Ast::String {
+      .value = "hello"
+      .type = type0
+    }
+  }
+}
+```

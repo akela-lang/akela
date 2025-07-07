@@ -6,66 +6,6 @@
 #include "zinc/test.h"
 #include "zinc/expect.h"
 
-void AkeUnit_parse_assign_string(Zinc_test* test)
-{
-    if (test->dry_run) {
-        Zinc_string_add_str(&test->name, __func__);
-        test->mute = false;
-        test->solo = false;
-        return;
-    }
-
-    struct Ake_comp_unit cu;
-
-    AkeUnit_parse_setup("var a: [6 const]Nat8; a = \"hello\"", &cu);
-    if (!Zinc_expect_no_errors(test, &cu.errors)) {
-		return Zinc_assert();
-	}
-    Zinc_expect_true(test, cu.valid, "valid");
-
-    if (!Zinc_expect_ptr(test, cu.root, "ptr root")) {
-		return Zinc_assert();
-	}
-    Zinc_expect_int_equal(test, cu.root->kind, Ake_ast_type_stmts, "parse_stmts root");
-
-    Ake_Ast* assign = Ake_ast_get(cu.root, 1);
-    if (!Zinc_expect_ptr(test, assign, "ptr assign")) {
-		return Zinc_assert();
-	}
-    Zinc_expect_int_equal(test, assign->kind, Ake_ast_type_assign, "assign assign");
-
-    Ake_Type* type = assign->type;
-    if (!Zinc_expect_ptr(test, type, "ptr type")) {
-		return Zinc_assert();
-	}
-    Zinc_expect_int_equal(test, type->kind, AKE_TYPE_ARRAY, "type type");
-	Zinc_expect_true(test, type->data.array.is_const, "is_const type");
-    Zinc_expect_uint8_t_equal(test, type->data.array.dim, 6, "dim type");
-
-	Ake_Type* type2 = type->data.array.type;
-	if (!Zinc_expect_ptr(test, type2, "ptr type2")) {
-		return Zinc_assert();
-	}
-	Zinc_expect_int_equal(test, type2->kind, AKE_TYPE_NATURAL, "kind type2");
-	Zinc_expect_string(test, &type2->name, "Nat8", "name type2");
-
-    Ake_Ast* lhv = Ake_ast_get(assign, 0);
-    if (!Zinc_expect_ptr(test, lhv, "ptr lhv")) {
-		return Zinc_assert();
-	}
-    Zinc_expect_int_equal(test, lhv->kind, Ake_ast_type_id, "id lhv");
-    Zinc_expect_string(test, &lhv->value, "a", "a lhv");
-
-    Ake_Ast* rhv = Ake_ast_get(assign, 1);
-    if (!Zinc_expect_ptr(test, rhv, "ptr rhv")) {
-		return Zinc_assert();
-	}
-    Zinc_expect_int_equal(test, rhv->kind, Ake_ast_type_string, "string rhv");
-    Zinc_expect_string(test, &rhv->value, "hello", "hello rhv");
-
-    AkeUnit_parse_teardown(&cu);
-}
-
 void AkeUnit_parse_assign_multiple(Zinc_test* test)
 {
     if (test->dry_run) {
@@ -698,7 +638,6 @@ void AkeUnit_parse_expression(Zinc_test* test)
         test->mute = false;
         test->solo = false;
 
-        Zinc_test_register(test, AkeUnit_parse_assign_string);
         Zinc_test_register(test, AkeUnit_parse_assign_multiple);
         Zinc_test_register(test, AkeUnit_parse_expr_assignment_eseq_error_eseq_count);
         Zinc_test_register(test, AkeUnit_parse_const_assign_error_term);
