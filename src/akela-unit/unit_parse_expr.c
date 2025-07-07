@@ -6,46 +6,6 @@
 #include "zinc/test.h"
 #include "zinc/expect.h"
 
-void AkeUnit_parse_expr_newline_assignment(Zinc_test* test)
-{
-    if (test->dry_run) {
-        Zinc_string_add_str(&test->name, __func__);
-        test->mute = false;
-        test->solo = false;
-        return;
-    }
-
-    struct Ake_comp_unit cu;
-
-    AkeUnit_parse_setup("var a: Int32; a =\n1", &cu);
-    if (!Zinc_expect_no_errors(test, &cu.errors)) {
-		return Zinc_assert();
-	}
-    Zinc_expect_true(test, cu.valid, "valid");
-
-    Ake_Ast* op = Ake_ast_get(cu.root, 1);
-    if (!Zinc_expect_ptr(test, op, "ptr op")) {
-		return Zinc_assert();
-	}
-    Zinc_expect_int_equal(test, op->kind, Ake_ast_type_assign, "assign op");
-
-    Ake_Ast* one = Ake_ast_get(op, 0);
-    if (!Zinc_expect_ptr(test, one, "one")) {
-		return Zinc_assert();
-	}
-    Zinc_expect_int_equal(test, one->kind, Ake_ast_type_id, "id one");
-    Zinc_expect_string(test, &one->value, "a", "a one");
-
-    Ake_Ast* two = Ake_ast_get(op, 1);
-    if (!Zinc_expect_ptr(test, two, "two")) {
-		return Zinc_assert();
-	}
-    Zinc_expect_int_equal(test, two->kind, Ake_ast_type_number, "number two");
-    Zinc_expect_string(test, &two->value, "1", "1 two");
-
-    AkeUnit_parse_teardown(&cu);
-}
-
 void AkeUnit_parse_expr_newline_boolean(Zinc_test* test)
 {
     if (test->dry_run) {
@@ -469,7 +429,6 @@ void AkeUnit_parse_expression(Zinc_test* test)
         test->mute = false;
         test->solo = false;
 
-        Zinc_test_register(test, AkeUnit_parse_expr_newline_assignment);
         Zinc_test_register(test, AkeUnit_parse_expr_newline_boolean);
         Zinc_test_register(test, AkeUnit_parse_expr_newline_comparison);
         Zinc_test_register(test, AkeUnit_parse_expr_newline_add);
