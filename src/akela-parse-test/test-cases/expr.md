@@ -2992,3 +2992,30 @@ Errors {
   }
 }
 ```
+
+## Test
+assignment (error no rhs)
+
+```cent
+use lib::base::*
+Test {
+  .solo = false
+  .mute = false
+  .snapshot = false
+  .has_error = true
+}
+```
+
+```akela
+const a: Bool =
+```
+
+```cent
+Errors {
+  Error {
+    .message = "expected expression"
+    .line = 3011
+    .col = 1
+  }
+}
+```
