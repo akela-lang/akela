@@ -81,6 +81,7 @@ void Zinc_test_stat_init(Zinc_test_stat* stat)
 /* NOLINTNEXTLINE(misc-no-recursion) */
 void Zinc_test_count(Zinc_test* test, Zinc_test_stat* stat)
 {
+    assert(test->check_count == test->check_passed);
     if (test->head) {
         Zinc_test* p = test->head;
         while (p) {

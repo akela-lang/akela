@@ -1251,7 +1251,6 @@ void CobUnit_compile_coverage_line(Zinc_test* test)
     Cob_re re = Cob_compile_str("\\s*(\\-):\\s*(\\d+):Source:(.+)");
 
     Zinc_expect_no_errors(test, re.errors);
-    Zinc_expect_no_errors(test, re.errors);
     Zinc_expect_size_t_equal(test, re.group_count, 4, "group_count");
 
     if (!Zinc_expect_ptr(test, re.root, "ptr root")) {

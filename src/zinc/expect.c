@@ -394,24 +394,29 @@ bool Zinc_expect_error_message(Zinc_test* test, const char* s)
 
 bool Zinc_expect_utf8_char_str(Zinc_test* test, char a[4], int num, char* b, char* message)
 {
-	test->check_count++;
 	int count_a = ZINC_NUM_BYTES(a[0]);
 	int count_b = ZINC_NUM_BYTES(b[0]);
 	size_t len = strlen(b);
+	test->check_count++;
 	if (num == count_a && num == count_b && num == len) {
+		test->check_passed++;
 		for (int i = 0; i < num; i++) {
+			test->check_count++;
 			if (a[i] != b[i]) {
 				test->check_failed++;
 			    test->pass = false;
 			    Zinc_test_print_unseen(test);
 				fprintf(stderr, "\tutf8 chars not equal: %s\n", message);
 				return false;
+			} else {
+				test->check_passed++;
 			}
 		}
 		return true;
+	} else {
+		test->check_failed++;
+		test->pass = false;
 	}
-	test->check_failed++;
-    test->pass = false;
     Zinc_test_print_unseen(test);
 	fprintf(stderr, "\tutf8 chars not equal: %s\n", message);
 	return false;

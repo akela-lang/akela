@@ -275,7 +275,7 @@ bool Apt_compare_ast(Zinc_test* top_test, Zinc_test* case_test, Ake_Ast* n, Cent
                 "value not expected");
                 pass = false;
         } else {
-            Zinc_expect_failed(case_test);
+            Zinc_expect_passed(case_test);
             assert(value_prop->type == Cent_value_type_string);
             if (!Zinc_string_compare(&n->value, &value_prop->data.string)) {
                 Cent_ast* prop_n = value_prop->n;
