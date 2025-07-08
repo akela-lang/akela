@@ -7,47 +7,6 @@
 #include "zinc/test.h"
 #include "zinc/expect.h"
 
-void AkeUnit_parse_number_float(Zinc_test* test)
-{
-	if (test->dry_run) {
-		Zinc_string_add_str(&test->name, __func__);
-		test->mute = false;
-		test->solo = false;
-		return;
-	}
-
-	Ake_comp_unit cu;
-
-    AkeUnit_parse_setup("5.0e0", &cu);
-	if (!Zinc_expect_no_errors(test, &cu.errors)) {
-		return Zinc_assert();
-	}
-	Zinc_expect_true(test, cu.valid, "AkeUnit_parse_setup valid");
-
-	if (!Zinc_expect_ptr(test, cu.root, "ptr cu.root")) {
-		return Zinc_assert();
-	}
-	if (!Zinc_expect_int_equal(test, cu.root->kind, Ake_ast_type_stmts, "parse_stmts cu.root")) {
-		return Zinc_assert();
-	}
-
-	Ake_Ast* number = Ake_ast_get(cu.root, 0);
-	if (!Zinc_expect_ptr(test, number, "ptr num")) {
-		return Zinc_assert();
-	}
-	Zinc_expect_int_equal(test, number->kind, Ake_ast_type_number, "number number");
-	Zinc_expect_string(test, &number->value, "5.0e0", "5.0e0 number");
-
-	Ake_Type* type = number->type;
-	if (!Zinc_expect_ptr(test, type, "ptr tu")) {
-		return Zinc_assert();
-	}
-	Zinc_expect_int_equal(test, type->kind, AKE_TYPE_REAL, "integer td");
-	Zinc_expect_string(test, &type->name, "Real64", "str td");
-
-    AkeUnit_parse_teardown(&cu);
-}
-
 void AkeUnit_parse_string(Zinc_test* test)
 {
 	if (test->dry_run) {
@@ -1357,7 +1316,6 @@ void AkeUnit_parse_factor(Zinc_test* test)
 		test->mute = false;
 		test->solo = false;
 
-		Zinc_test_register(test, AkeUnit_parse_number_float);
 		Zinc_test_register(test, AkeUnit_parse_string);
 		Zinc_test_register(test, AkeUnit_parse_boolean_true);
 		Zinc_test_register(test, AkeUnit_parse_boolean_false);

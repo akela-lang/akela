@@ -27,3 +27,30 @@ Ast::Stmts {
   }
 }
 ```
+
+## Test
+number real
+
+```cent
+Test {
+}
+```
+
+```akela
+5.0e0
+```
+
+```cent
+use lib::base::*
+const type0 = Type::Real {
+  .name = "Real64"
+  .bit_count = 64
+}
+Ast::Stmts {
+  .type = type0
+  Ast::Number {
+    .value = "5.0e0"
+    .type = type0
+  }
+}
+```
