@@ -6,59 +6,6 @@
 #include "zinc/test.h"
 #include "zinc/expect.h"
 
-void AkeUnit_parse_expr_newline_function_call(Zinc_test* test)
-{
-    if (test->dry_run) {
-        Zinc_string_add_str(&test->name, __func__);
-        test->mute = false;
-        test->solo = false;
-        return;
-    }
-
-    struct Ake_comp_unit cu;
-
-    AkeUnit_parse_setup("fn foo(a: Int32, b: Int32)->Int32 a+b end; foo(\n1,\n2\n)", &cu);
-    if (!Zinc_expect_no_errors(test, &cu.errors)) {
-		return Zinc_assert();
-	}
-    Zinc_expect_true(test, cu.valid, "valid");
-
-    Ake_Ast* call = Ake_ast_get(cu.root, 1);
-    if (!Zinc_expect_ptr(test, call, "ptr call")) {
-		return Zinc_assert();
-	}
-    Zinc_expect_int_equal(test, call->kind, Ake_ast_type_call, "call call");
-
-    Ake_Ast* foo = Ake_ast_get(call, 0);
-    if (!Zinc_expect_ptr(test, foo, "ptr foo")) {
-		return Zinc_assert();
-	}
-    Zinc_expect_int_equal(test, foo->kind, Ake_ast_type_id, "id foo");
-    Zinc_expect_string(test, &foo->value, "foo", "foo");
-
-    Ake_Ast* cseq = Ake_ast_get(call, 1);
-    if (!Zinc_expect_ptr(test, cseq, "ptr cseq")) {
-		return Zinc_assert();
-	}
-    Zinc_expect_int_equal(test, cseq->kind, Ake_ast_type_cseq, "cseq cseq");
-
-    Ake_Ast* one = Ake_ast_get(cseq, 0);
-    if (!Zinc_expect_ptr(test, one, "ptr one")) {
-		return Zinc_assert();
-	}
-    Zinc_expect_int_equal(test, one->kind, Ake_ast_type_number, "number one");
-    Zinc_expect_string(test, &one->value, "1", "1");
-
-    Ake_Ast* two = Ake_ast_get(cseq, 1);
-    if (!Zinc_expect_ptr(test, two, "ptr two")) {
-		return Zinc_assert();
-	}
-    Zinc_expect_int_equal(test, two->kind, Ake_ast_type_number, "number two");
-    Zinc_expect_string(test, &two->value, "2", "2");
-
-    AkeUnit_parse_teardown(&cu);
-}
-
 void AkeUnit_parse_expr_assign_eseq(Zinc_test* test)
 {
     if (test->dry_run) {
@@ -189,7 +136,6 @@ void AkeUnit_parse_expression(Zinc_test* test)
         test->mute = false;
         test->solo = false;
 
-        Zinc_test_register(test, AkeUnit_parse_expr_newline_function_call);
         Zinc_test_register(test, AkeUnit_parse_expr_assign_eseq);
         Zinc_test_register(test, AkeUnit_parse_expr_error_lvalue);
         Zinc_test_register(test, AkeUnit_parse_expr_error_eseq_lvalue);

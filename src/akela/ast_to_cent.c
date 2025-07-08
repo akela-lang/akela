@@ -126,11 +126,11 @@ char* Ake_ast_cent_name(Ake_AstKind type)
     }
 
     if (type == Ake_ast_type_dseq) {
-        return "Ast::DSeq";
+        return "Ast::Dseq";
     }
 
     if (type == Ake_ast_type_dret) {
-        return "Ast::DRet";
+        return "Ast::Dret";
     }
 
     if (type == Ake_ast_type_call) {
@@ -138,7 +138,7 @@ char* Ake_ast_cent_name(Ake_AstKind type)
     }
 
     if (type == Ake_ast_type_cseq) {
-        return "Ast::CSeq";
+        return "Ast::Cseq";
     }
 
     if (type == Ake_ast_type_if) {
@@ -356,13 +356,14 @@ void Ake_type_cent_print(Ake_Type* type, size_t level, bool is_property)
             printf(".type = ");
             Ake_type_cent_print(type->data.pointer.type, level, true);
         case AKE_TYPE_FUNCTION:
+            Ake_indent_print(level);
+            printf(".input = Input {\n");
+            level++;
             Ake_TypeParam* tp = type->data.function.input_head;
             while (tp) {
                 Ake_indent_print(level);
-                printf("TypeParam {\n");
+                printf("%s {\n", Ake_type_param_cent_name(tp->kind));
                 level++;
-                Ake_indent_print(level);
-                printf(".kind = %s\n", Ake_type_param_cent_name(tp->kind));
                 Ake_indent_print(level);
                 printf(".name = \"%s\"\n", Zinc_string_c_str(&tp->name));
                 Ake_indent_print(level);
@@ -373,6 +374,14 @@ void Ake_type_cent_print(Ake_Type* type, size_t level, bool is_property)
                 printf("}\n");
                 tp = tp->next;
             }
+            level--;
+            Ake_indent_print(level);
+            printf("}\n");
+
+            Ake_indent_print(level);
+            printf(".output = ");
+            Ake_type_cent_print(type->data.function.output, level, true);
+            break;
         default:
             assert(false && "invalid kind");
     }
@@ -431,15 +440,15 @@ char* Ake_type_def_cent_name(Ake_TypeKind kind)
 char* Ake_type_param_cent_name(Ake_TypeParamKind kind)
 {
     if (kind == AKE_TYPE_PARAM_REGULAR) {
-        return "Param::Regular";
+        return "TypeParam::Regular";
     }
 
     if (kind == AKE_TYPE_PARAM_SELF) {
-        return "Param::Self";
+        return "TypeParam::Self";
     }
 
     if (kind == AKE_TYPE_PARAM_ELLIPSIS) {
-        return "Param::Ellipsis";
+        return "TypeParam::Ellipsis";
     }
 
     assert(false && "unknown kind");

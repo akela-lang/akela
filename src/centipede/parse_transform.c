@@ -312,7 +312,7 @@ void Cent_parse_transform_variant_type(Cent_parse_data* pd, Cent_parse_result* p
     }
 
     if (!found) {
-        Zinc_error_list_set(pr->errors, &n->loc, "invalid element tag: %bf::%bf", &kind->text);
+        Zinc_error_list_set(pr->errors, &n->loc, "invalid element tag: %bf::%bf", &en->name, &kind->text);
         n->has_error = true;
         return;
     }

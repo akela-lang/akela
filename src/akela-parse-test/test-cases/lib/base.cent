@@ -107,7 +107,6 @@ enum TypeKind {
   Boolean
   Struct
   Array
-  ArrayConst
   Slice
   Pointer
   Function
@@ -158,13 +157,6 @@ variant Type::Array {
     }
 }
 
-variant Type::ArrayConst {
-    properties {
-        dim: Natural
-        type: Type
-    }
-}
-
 variant Type::Slice {
     properties {
         type: Type
@@ -190,9 +182,15 @@ element Input {
     }
 }
 
-element TypeParam {
+element TypeParam(TypeParamKind) {
     properties {
         name: String
         type: Type
     }
+}
+
+enum TypeParamKind {
+    Regular
+    Self
+    Ellipsis
 }

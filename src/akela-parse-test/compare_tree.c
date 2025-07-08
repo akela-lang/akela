@@ -61,6 +61,11 @@ bool Apt_compare_type_pointer(
     Ake_Ast* n,
     Ake_Type* type,
     Cent_value* value);
+bool Apt_compare_type_function(
+    Zinc_test* case_test,
+    Ake_Ast* n,
+    Ake_Type* type,
+    Cent_value* value);
 
 void Apt_suite_run(Zinc_test* suite_test)
 {
@@ -438,6 +443,8 @@ bool Apt_compare_type(
             return Apt_compare_type_slice(case_test, n, type, value);
         case AKE_TYPE_POINTER:
             return Apt_compare_type_pointer(case_test, n, type, value);
+        case AKE_TYPE_FUNCTION:
+            return Apt_compare_type_function(case_test, n, type, value);
         default:
             assert(false && "invalid kind");
     }

@@ -126,7 +126,7 @@ bool Ake_TypeMatchExact(Ake_Type* a, Ake_Type* b)
                     return false;
                 }
 
-                if (Zinc_string_compare(&a_tp->name, &b_tp->name)) {
+                if (!Zinc_string_compare(&a_tp->name, &b_tp->name)) {
                     return false;
                 }
 
