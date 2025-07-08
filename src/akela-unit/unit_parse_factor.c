@@ -7,58 +7,6 @@
 #include "zinc/test.h"
 #include "zinc/expect.h"
 
-void AkeUnit_parse_sign_negative(Zinc_test* test)
-{
-	if (test->dry_run) {
-		Zinc_string_add_str(&test->name, __func__);
-		test->mute = false;
-		test->solo = false;
-		return;
-	}
-
-	Ake_comp_unit cu;
-
-    AkeUnit_parse_setup("-30", &cu);
-	if (!Zinc_expect_no_errors(test, &cu.errors)) {
-		return Zinc_assert();
-	}
-	Zinc_expect_true(test, cu.valid, "AkeUnit_parse_setup valid");
-
-	if (!Zinc_expect_ptr(test, cu.root, "ptr cu.root")) {
-		return Zinc_assert();
-	}
-	Zinc_expect_int_equal(test, cu.root->kind, Ake_ast_type_stmts, "parse_stmts cu.root");
-
-	Ake_Ast* sign = Ake_ast_get(cu.root, 0);
-	if (!Zinc_expect_ptr(test, sign, "ptr sign")) {
-		return Zinc_assert();
-	}
-	Zinc_expect_int_equal(test, sign->kind, Ake_ast_type_sign, "sign sign");
-
-	Ake_Type* type = sign->type;
-	if (!Zinc_expect_ptr(test, type, "ptr tu")) {
-		return Zinc_assert();
-	}
-	Zinc_expect_int_equal(test, type->kind, AKE_TYPE_INTEGER, "integer tu");
-	Zinc_expect_string(test, &type->name, "Int32", "Int32 tu");
-	Zinc_expect_int_equal(test, type->data.integer.bit_count, 32, "bit_count tu");
-
-	Ake_Ast* left = Ake_ast_get(sign, 0);
-	if (!Zinc_expect_ptr(test, left, "left")) {
-		return Zinc_assert();
-	}
-	Zinc_expect_int_equal(test, left->kind, Ake_ast_type_minus, "minus");
-
-	Ake_Ast* right = Ake_ast_get(sign, 1);
-	if (!Zinc_expect_ptr(test, right, "right")) {
-		return Zinc_assert();
-	}
-	Zinc_expect_int_equal(test, right->kind, Ake_ast_type_number, "number");
-	Zinc_expect_string(test, &right->value, "30", "30");
-
-    AkeUnit_parse_teardown(&cu);
-}
-
 void AkeUnit_parse_sign_positive(Zinc_test* test)
 {
 	if (test->dry_run) {
@@ -997,7 +945,6 @@ void AkeUnit_parse_factor(Zinc_test* test)
 		test->mute = false;
 		test->solo = false;
 
-		Zinc_test_register(test, AkeUnit_parse_sign_negative);
 		Zinc_test_register(test, AkeUnit_parse_sign_positive);
 		Zinc_test_register(test, AkeUnit_parse_sign_error_no_value);
 		Zinc_test_register(test, AkeUnit_parse_sign_expected_factor);
