@@ -668,3 +668,26 @@ Ast::Stmts {
   }
 }
 ```
+
+## Test
+array literal mixed (error)
+
+```cent
+Test {
+  .has_error = true
+}
+```
+
+```akela
+[1,true,3]
+```
+
+```cent
+Errors {
+  Error {
+    .message = "array elements not the same type"
+    .line = 682
+    .col = 2
+  }
+}
+```
