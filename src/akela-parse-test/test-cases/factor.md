@@ -572,3 +572,49 @@ Ast::Stmts {
   }
 }
 ```
+
+## Test
+array literal real
+
+```cent
+Test {
+}
+```
+
+```akela
+[1.0,2.5,3.2]
+```
+
+```cent
+use lib::base::*
+const type0 = Type::Array {
+  .is_const = false
+  .dim = 3
+  .type = Type::Real {
+    .name = "Real64"
+    .bit_count = 64
+  }
+}
+const type1 = Type::Real {
+  .name = "Real64"
+  .bit_count = 64
+}
+Ast::Stmts {
+  .type = type0
+  Ast::ArrayLiteral {
+    .type = type0
+    Ast::Number {
+      .value = "1.0"
+      .type = type1
+    }
+    Ast::Number {
+      .value = "2.5"
+      .type = type1
+    }
+    Ast::Number {
+      .value = "3.2"
+      .type = type1
+    }
+  }
+}
+```
