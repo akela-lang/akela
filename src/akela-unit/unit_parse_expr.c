@@ -6,46 +6,6 @@
 #include "zinc/test.h"
 #include "zinc/expect.h"
 
-void AkeUnit_parse_expr_newline_subscript(Zinc_test* test)
-{
-    if (test->dry_run) {
-        Zinc_string_add_str(&test->name, __func__);
-        test->mute = false;
-        test->solo = false;
-        return;
-    }
-
-    struct Ake_comp_unit cu;
-
-    AkeUnit_parse_setup("const a: [1]Int32; a[\n0\n]", &cu);
-    if (!Zinc_expect_no_errors(test, &cu.errors)) {
-		return Zinc_assert();
-	}
-    Zinc_expect_true(test, cu.valid, "valid");
-
-    Ake_Ast* subscript = Ake_ast_get(cu.root, 1);
-    if (!Zinc_expect_ptr(test, subscript, "ptr subscript")) {
-		return Zinc_assert();
-	}
-    Zinc_expect_int_equal(test, subscript->kind, Ake_ast_type_array_subscript, "array_subscript subscript");
-
-    Ake_Ast* array = Ake_ast_get(subscript, 0);
-    if (!Zinc_expect_ptr(test, array, "array")) {
-		return Zinc_assert();
-	}
-    Zinc_expect_int_equal(test, array->kind, Ake_ast_type_id, "id array");
-    Zinc_expect_string(test, &array->value, "a", "a");
-
-    Ake_Ast* zero = Ake_ast_get(subscript, 1);
-    if (!Zinc_expect_ptr(test, zero, "zero")) {
-		return Zinc_assert();
-	}
-    Zinc_expect_int_equal(test, zero->kind, Ake_ast_type_number, "number zero");
-    Zinc_expect_string(test, &zero->value, "0", "0");
-
-    AkeUnit_parse_teardown(&cu);
-}
-
 void AkeUnit_parse_expr_newline_function_call(Zinc_test* test)
 {
     if (test->dry_run) {
@@ -229,7 +189,6 @@ void AkeUnit_parse_expression(Zinc_test* test)
         test->mute = false;
         test->solo = false;
 
-        Zinc_test_register(test, AkeUnit_parse_expr_newline_subscript);
         Zinc_test_register(test, AkeUnit_parse_expr_newline_function_call);
         Zinc_test_register(test, AkeUnit_parse_expr_assign_eseq);
         Zinc_test_register(test, AkeUnit_parse_expr_error_lvalue);

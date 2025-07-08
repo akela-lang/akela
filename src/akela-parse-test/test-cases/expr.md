@@ -3349,3 +3349,80 @@ Ast::Stmts {
   }
 }
 ```
+
+## Test
+subscript newline
+
+```cent
+use lib::base::*
+Test {
+  .solo = false
+  .mute = false
+  .snapshot = false
+  .has_error = false
+}
+```
+
+```akela
+const a: [3]Int32 = [100,200,300]
+a[
+0
+]
+```
+
+```cent
+use lib::base::*
+const type0 = Type::Integer {
+  .name = "Int32"
+  .bit_count = 32
+}
+const type1 = Type::Array {
+  .is_const = false
+  .dim = 3
+  .type = Type::Integer {
+    .name = "Int32"
+    .bit_count = 32
+  }
+}
+const type2 = Type::Natural {
+  .name = "Nat64"
+  .bit_count = 64
+}
+Ast::Stmts {
+  .type = type0
+  Ast::Const {
+    Ast::Id {
+      .value = "a"
+    }
+    Ast::Type {
+      .type = type1
+    }
+    Ast::ArrayLiteral {
+      .type = type1
+      Ast::Number {
+        .value = "100"
+        .type = type0
+      }
+      Ast::Number {
+        .value = "200"
+        .type = type0
+      }
+      Ast::Number {
+        .value = "300"
+        .type = type0
+      }
+    }
+  }
+  Ast::ArraySubscript {
+    .type = type0
+    Ast::Id {
+      .value = "a"
+      .type = type1
+    }
+    Ast::Number {
+      .value = "0"
+      .type = type2
+    }
+  }
+}
+```
