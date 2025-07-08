@@ -34,7 +34,7 @@ software engineers more than dynamically typed or gradually typed
 has a handwritten lexer and recursive decent parser
 * Akela-LLVM - The Akela LLVM IR code generation library
 * Zinc - A no-dependency library for basic C programming tools 
-* Cobble - Regular expression library used for parsing coverage files
+* Cobble - Regular expression library used for parsing file extensions, coverage data, and test data
 * Dataframe - For doing vector math and writing and reading vectors to and from CSV files
 * JSON - A JSON parser and stringify library
 * Coverage - Generate and analyze code coverage of tests
