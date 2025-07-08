@@ -3309,3 +3309,43 @@ Ast::Stmts {
   }
 }
 ```
+
+## Test
+power newline
+
+```cent
+use lib::base::*
+Test {
+  .solo = false
+  .mute = false
+  .snapshot = false
+  .has_error = false
+}
+```
+
+```akela
+1 ^
+2
+```
+
+```cent
+use lib::base::*
+const type0 = Type::Integer {
+  .name = "Int32"
+  .bit_count = 32
+}
+Ast::Stmts {
+  .type = type0
+  Ast::Power {
+    .type = type0
+    Ast::Number {
+      .value = "1"
+      .type = type0
+    }
+    Ast::Number {
+      .value = "2"
+      .type = type0
+    }
+  }
+}
+```
