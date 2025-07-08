@@ -352,3 +352,35 @@ Ast::Stmts {
   }
 }
 ```
+
+## Test
+sign positive
+
+```cent
+Test {
+}
+```
+
+```akela
++30
+```
+
+```cent
+use lib::base::*
+const type0 = Type::Integer {
+  .name = "Int32"
+  .bit_count = 32
+}
+Ast::Stmts {
+  .type = type0
+  Ast::Sign {
+    .type = type0
+    Ast::Plus {
+    }
+    Ast::Number {
+      .value = "30"
+      .type = type0
+    }
+  }
+}
+```
