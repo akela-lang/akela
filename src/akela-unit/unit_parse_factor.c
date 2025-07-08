@@ -7,40 +7,6 @@
 #include "zinc/test.h"
 #include "zinc/expect.h"
 
-void AkeUnit_parse_id2(Zinc_test* test)
-{
-	if (test->dry_run) {
-		Zinc_string_add_str(&test->name, __func__);
-		test->mute = false;
-		test->solo = false;
-		return;
-	}
-
-	Ake_comp_unit cu;
-
-    AkeUnit_parse_setup("const _a23: Int64; _a23", &cu);
-	if (!Zinc_expect_no_errors(test, &cu.errors)) {
-		return Zinc_assert();
-	}
-	Zinc_expect_true(test, cu.valid, "AkeUnit_parse_setup valid");
-
-	if (!Zinc_expect_ptr(test, cu.root, "ptr cu.root")) {
-		return Zinc_assert();
-	}
-	if (!Zinc_expect_int_equal(test, cu.root->kind, Ake_ast_type_stmts, "parse_stmts cu.root")) {
-		return Zinc_assert();
-	}
-
-	Ake_Ast* id = Ake_ast_get(cu.root, 1);
-	if (!Zinc_expect_ptr(test, id, "ptr id")) {
-		return Zinc_assert();
-	}
-	Zinc_expect_int_equal(test, id->kind, Ake_ast_type_id, "id id");
-	Zinc_expect_string(test, &id->value, "_a23", "_a23 id");
-
-    AkeUnit_parse_teardown(&cu);
-}
-
 void AkeUnit_parse_id3(Zinc_test* test)
 {
 	if (test->dry_run) {
@@ -1127,7 +1093,6 @@ void AkeUnit_parse_factor(Zinc_test* test)
 		test->mute = false;
 		test->solo = false;
 
-		Zinc_test_register(test, AkeUnit_parse_id2);
 		Zinc_test_register(test, AkeUnit_parse_id3);
 		Zinc_test_register(test, AkeUnit_parse_id_greek);
 		Zinc_test_register(test, AkeUnit_parse_id_cyrillic);
