@@ -384,3 +384,27 @@ Ast::Stmts {
   }
 }
 ```
+
+## Test
+sign (error no value)
+
+```cent
+Test {
+  .has_error = true
+}
+```
+
+```akela
+fn foo() end
+-foo()
+```
+
+```cent
+Errors {
+  Error {
+    .message = "negative operator was used on expression with no value"
+    .line = 399
+    .col = 1
+  }
+}
+```
