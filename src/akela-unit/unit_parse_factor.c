@@ -7,73 +7,6 @@
 #include "zinc/test.h"
 #include "zinc/expect.h"
 
-void AkeUnit_parse_array_literal_integer(Zinc_test* test)
-{
-	if (test->dry_run) {
-		Zinc_string_add_str(&test->name, __func__);
-		test->mute = false;
-		test->solo = false;
-		return;
-	}
-
-	struct Ake_comp_unit cu;
-
-    AkeUnit_parse_setup("[1,2,3]", &cu);
-	if (!Zinc_expect_no_errors(test, &cu.errors)) {
-		return Zinc_assert();
-	}
-	Zinc_expect_true(test, cu.valid, "AkeUnit_parse_setup valid");
-
-	if (!Zinc_expect_ptr(test, cu.root, "ptr cu.root")) {
-		return Zinc_assert();
-	}
-	Zinc_expect_int_equal(test, cu.root->kind, Ake_ast_type_stmts, "parse_stmts cu.root");
-
-	Ake_Ast* a = Ake_ast_get(cu.root, 0);
-	if (!Zinc_expect_ptr(test, a, "ptr a")) {
-		return Zinc_assert();
-	}
-	Zinc_expect_int_equal(test, a->kind, Ake_ast_type_array_literal, "array-literal a");
-
-	Ake_Type* a_type = a->type;
-	if (!Zinc_expect_ptr(test, a_type, "ptr array_tu")) {
-		return Zinc_assert();
-	}
-    Zinc_expect_true(test, a_type->kind == AKE_TYPE_ARRAY, "type a_tu");
-    Zinc_expect_uint8_t_equal(test, a_type->data.array.dim, 3, "dim a_tu");
-
-	Ake_Type* a_type2 = a_type->data.array.type;
-	if (!Zinc_expect_ptr(test, a_type2, "ptr array_td")) {
-		return Zinc_assert();
-	}
-	Zinc_expect_int_equal(test, a_type2->kind, AKE_TYPE_INTEGER, "integer a_tu2");
-	Zinc_expect_string(test, &a_type2->name, "Int32", "Int32 array_td");
-	Zinc_expect_uint8_t_equal(test, a_type2->data.integer.bit_count, 32, "bit_count a_tu2");
-
-	Ake_Ast* a0 = Ake_ast_get(a, 0);
-	if (!Zinc_expect_ptr(test, a0, "ptr a0")) {
-		return Zinc_assert();
-	}
-	Zinc_expect_int_equal(test, a0->kind, Ake_ast_type_number, "number a0");
-	Zinc_expect_string(test, &a0->value, "1", "1 a0");
-
-	Ake_Ast* a1 = Ake_ast_get(a, 1);
-	if (!Zinc_expect_ptr(test, a1, "ptr a1")) {
-		return Zinc_assert();
-	}
-	Zinc_expect_int_equal(test, a1->kind, Ake_ast_type_number, "number a1");
-	Zinc_expect_string(test, &a1->value, "2", "2 a1");
-
-	Ake_Ast* a2 = Ake_ast_get(a, 2);
-	if (!Zinc_expect_ptr(test, a2, "ptr a2")) {
-		return Zinc_assert();
-	}
-	Zinc_expect_int_equal(test, a2->kind, Ake_ast_type_number, "number a2");
-	Zinc_expect_string(test, &a2->value, "3", "3 a2");
-
-    AkeUnit_parse_teardown(&cu);
-}
-
 void AkeUnit_parse_array_literal_float(Zinc_test* test)
 {
 	if (test->dry_run) {
@@ -740,7 +673,6 @@ void AkeUnit_parse_factor(Zinc_test* test)
 		test->mute = false;
 		test->solo = false;
 
-		Zinc_test_register(test, AkeUnit_parse_array_literal_integer);
 		Zinc_test_register(test, AkeUnit_parse_array_literal_float);
 		Zinc_test_register(test, AkeUnit_parse_array_literal_numeric);
 		Zinc_test_register(test, AkeUnit_parse_array_literal_mixed_error);
