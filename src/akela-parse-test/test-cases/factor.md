@@ -735,3 +735,26 @@ Ast::Stmts {
   }
 }
 ```
+
+## Test
+array literal empty error
+
+```cent
+Test {
+  .has_error = true
+}
+```
+
+```akela
+[]
+```
+
+```cent
+Errors {
+  Error {
+    .message = "array literal has no elements"
+    .line = 749
+    .col = 2
+  }
+}
+```
