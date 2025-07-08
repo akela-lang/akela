@@ -45,7 +45,7 @@ It is used for configuration and to describe DAGs (syntax trees)
 * Akela Run Test - The automated LLVM and end-to-end tests which are kept in markdown test scripts
 * Test - The test runner which runs all tests including unit, integration and end-to-end tests
 
-The Cobble, Dataframe, JSON, Centipede, and Lava subprojects are very useful for the
+The Cobble, Coverage, Dataframe, JSON, Centipede, and Lava subprojects are very useful for the
 automated testing of the Akela compiler. When these subprojects are re-written in Akela
 they will be useful as a comparison to the C versions.
 
