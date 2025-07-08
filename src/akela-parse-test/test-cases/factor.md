@@ -408,3 +408,26 @@ Errors {
   }
 }
 ```
+
+## Test
+sign (error expected factor)
+
+```cent
+Test {
+  .has_error = true
+}
+```
+
+```akela
+-
+```
+
+```cent
+Errors {
+  Error {
+    .message = "expected parse_factor after sign"
+    .line = 423
+    .col = 1
+  }
+}
+```
