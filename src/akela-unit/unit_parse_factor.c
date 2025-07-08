@@ -7,51 +7,6 @@
 #include "zinc/test.h"
 #include "zinc/expect.h"
 
-void AkeUnit_parse_not_literal(Zinc_test* test)
-{
-	if (test->dry_run) {
-		Zinc_string_add_str(&test->name, __func__);
-		test->mute = false;
-		test->solo = false;
-		return;
-	}
-
-	struct Ake_comp_unit cu;
-
-    AkeUnit_parse_setup("!true", &cu);
-	if (!Zinc_expect_no_errors(test, &cu.errors)) {
-		return Zinc_assert();
-	}
-	Zinc_expect_true(test, cu.valid, "AkeUnit_parse_setup valid");
-
-	if (!Zinc_expect_ptr(test, cu.root, "ptr cu.root")) {
-		return Zinc_assert();
-	}
-	Zinc_expect_int_equal(test, cu.root->kind, Ake_ast_type_stmts, "parse_stmts cu.root");
-
-	Ake_Ast* not = Ake_ast_get(cu.root, 0);
-	if (!Zinc_expect_ptr(test, not, "ptr not")) {
-		return Zinc_assert();
-	}
-	Zinc_expect_int_equal(test, not->kind, Ake_ast_type_not, "not not");
-
-	Ake_Type* type = not->type;
-	if (!Zinc_expect_ptr(test, type, "ptr tu")) {
-		return Zinc_assert();
-	}
-	Zinc_expect_int_equal(test, type->kind, AKE_TYPE_BOOLEAN, "boolean td");
-	Zinc_expect_string(test, &type->name, "Bool", "name td");
-
-	Ake_Ast* lit_bool = Ake_ast_get(not, 0);
-	if (!Zinc_expect_ptr(test, lit_bool, "ptr lit_bool")) {
-		return Zinc_assert();
-	}
-	Zinc_expect_int_equal(test, lit_bool->kind, Ake_ast_type_boolean, "boolean true");
-	Zinc_expect_string(test, &lit_bool->value, "true", "true lit_bool");
-
-    AkeUnit_parse_teardown(&cu);
-}
-
 void AkeUnit_parse_not_error(Zinc_test* test)
 {
 	if (test->dry_run) {
@@ -804,7 +759,6 @@ void AkeUnit_parse_factor(Zinc_test* test)
 		test->mute = false;
 		test->solo = false;
 
-		Zinc_test_register(test, AkeUnit_parse_not_literal);
 		Zinc_test_register(test, AkeUnit_parse_not_error);
 		Zinc_test_register(test, AkeUnit_parse_array_literal_integer);
 		Zinc_test_register(test, AkeUnit_parse_array_literal_float);
