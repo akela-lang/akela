@@ -7,25 +7,6 @@
 #include "zinc/test.h"
 #include "zinc/expect.h"
 
-void AkeUnit_parse_not_error(Zinc_test* test)
-{
-	if (test->dry_run) {
-		Zinc_string_add_str(&test->name, __func__);
-		test->mute = false;
-		test->solo = false;
-		return;
-	}
-
-	struct Ake_comp_unit cu;
-
-    AkeUnit_parse_setup("fn foo() end; !foo()", &cu);
-	Zinc_expect_has_errors(test, &cu.errors);
-	Zinc_expect_false(test, cu.valid, "AkeUnit_parse_setup valid");
-	Zinc_expect_source_error(test, &cu.errors, "! operator used on parse_factor with no value");
-
-    AkeUnit_parse_teardown(&cu);
-}
-
 void AkeUnit_parse_array_literal_integer(Zinc_test* test)
 {
 	if (test->dry_run) {
@@ -759,7 +740,6 @@ void AkeUnit_parse_factor(Zinc_test* test)
 		test->mute = false;
 		test->solo = false;
 
-		Zinc_test_register(test, AkeUnit_parse_not_error);
 		Zinc_test_register(test, AkeUnit_parse_array_literal_integer);
 		Zinc_test_register(test, AkeUnit_parse_array_literal_float);
 		Zinc_test_register(test, AkeUnit_parse_array_literal_numeric);

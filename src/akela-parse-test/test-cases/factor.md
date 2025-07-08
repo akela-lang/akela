@@ -502,3 +502,27 @@ Ast::Stmts {
   }
 }
 ```
+
+## Test
+not (error not value)
+
+```cent
+Test {
+  .has_error = true
+}
+```
+
+```akela
+fn foo() end
+!foo()
+```
+
+```cent
+Errors {
+  Error {
+    .message = "! operator used on parse_factor with no value"
+    .line = 517
+    .col = 1
+  }
+}
+```
