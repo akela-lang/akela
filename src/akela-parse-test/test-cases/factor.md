@@ -691,3 +691,47 @@ Errors {
   }
 }
 ```
+
+## Test
+array literal bool
+
+```cent
+Test {
+}
+```
+
+```akela
+[false,true,false]
+```
+
+```cent
+use lib::base::*
+const type0 = Type::Array {
+  .is_const = false
+  .dim = 3
+  .type = Type::Boolean {
+    .name = "Bool"
+  }
+}
+const type1 = Type::Boolean {
+  .name = "Bool"
+}
+Ast::Stmts {
+  .type = type0
+  Ast::ArrayLiteral {
+    .type = type0
+    Ast::Boolean {
+      .value = "false"
+      .type = type1
+    }
+    Ast::Boolean {
+      .value = "true"
+      .type = type1
+    }
+    Ast::Boolean {
+      .value = "false"
+      .type = type1
+    }
+  }
+}
+```
