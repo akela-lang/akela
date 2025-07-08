@@ -54,3 +54,34 @@ Ast::Stmts {
   }
 }
 ```
+
+## Test
+string
+
+```cent
+Test {
+}
+```
+
+```akela
+"hello"
+```
+
+```cent
+use lib::base::*
+const type0 = Type::Array {
+  .is_const = true
+  .dim = 6
+  .type = Type::Natural {
+    .name = "Nat8"
+    .bit_count = 8
+  }
+}
+Ast::Stmts {
+  .type = type0
+  Ast::String {
+    .value = "hello"
+    .type = type0
+  }
+}
+```
