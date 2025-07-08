@@ -257,3 +257,43 @@ Ast::Stmts {
   }
 }
 ```
+
+## Test
+id greek
+
+```cent
+Test {
+}
+```
+
+```akela
+const αβγ: Int64 = 1
+αβγ
+```
+
+```cent
+use lib::base::*
+const type0 = Type::Integer {
+  .name = "Int64"
+  .bit_count = 64
+}
+Ast::Stmts {
+  .type = type0
+  Ast::Const {
+    Ast::Id {
+      .value = "αβγ"
+    }
+    Ast::Type {
+      .type = type0
+    }
+    Ast::Number {
+      .value = "1"
+      .type = type0
+    }
+  }
+  Ast::Id {
+    .value = "αβγ"
+    .type = type0
+  }
+}
+```
