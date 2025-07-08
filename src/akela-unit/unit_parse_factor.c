@@ -7,69 +7,6 @@
 #include "zinc/test.h"
 #include "zinc/expect.h"
 
-void AkeUnit_parse_id(Zinc_test* test)
-{
-	if (test->dry_run) {
-		Zinc_string_add_str(&test->name, __func__);
-		test->mute = false;
-		test->solo = false;
-		return;
-	}
-
-	Ake_comp_unit cu;
-
-    AkeUnit_parse_setup("const x: Int64; x", &cu);
-	if (!Zinc_expect_no_errors(test, &cu.errors)) {
-		return Zinc_assert();
-	}
-	Zinc_expect_true(test, cu.valid, "AkeUnit_parse_setup valid");
-
-	if (!Zinc_expect_ptr(test, cu.root, "ptr cu.root")) {
-		return Zinc_assert();
-	}
-	if (!Zinc_expect_int_equal(test, cu.root->kind, Ake_ast_type_stmts, "parse_stmts cu.root")) {
-		return Zinc_assert();
-	}
-
-	Ake_Ast* let = Ake_ast_get(cu.root, 0);
-	if (!Zinc_expect_ptr(test, let, "ptr let")) {
-		return Zinc_assert();
-	}
-	if (!Zinc_expect_int_equal(test, let->kind, Ake_ast_type_const, "type let")) {
-		return Zinc_assert();
-	}
-
-	Ake_Ast* id = Ake_ast_get(let, 0);
-	if (!Zinc_expect_ptr(test, id, "ptr id")) {
-		return Zinc_assert();
-	}
-	Zinc_expect_int_equal(test, id->kind, Ake_ast_type_id, "id id");
-	Zinc_expect_string(test, &id->value, "x", "x");
-
-	Ake_Ast* _type_ = Ake_ast_get(let, 1);
-	if (!Zinc_expect_ptr(test, _type_, "ptr type")) {
-		return Zinc_assert();
-	}
-	Zinc_expect_int_equal(test, _type_->kind, Ake_ast_type_type, "type type");
-
-	Ake_Ast* id2 = Ake_ast_get(cu.root, 1);
-	if (!Zinc_expect_ptr(test, id2, "ptr id2")) {
-		return Zinc_assert();
-	}
-	Zinc_expect_int_equal(test, id2->kind, Ake_ast_type_id, "id id2");
-	Zinc_expect_string(test, &id2->value, "x", "x id2");
-
-	Ake_Type* type = id2->type;
-	if (!Zinc_expect_ptr(test, type, "ptr tu")) {
-		return Zinc_assert();
-	}
-	Zinc_expect_int_equal(test, type->kind, AKE_TYPE_INTEGER, "integer td");
-	Zinc_expect_string(test, &type->name, "Int64", "name td");
-	Zinc_expect_size_t_equal(test, type->data.integer.bit_count, 64, "bit_count tu");
-
-    AkeUnit_parse_teardown(&cu);
-}
-
 void AkeUnit_parse_id2(Zinc_test* test)
 {
 	if (test->dry_run) {
@@ -1190,7 +1127,6 @@ void AkeUnit_parse_factor(Zinc_test* test)
 		test->mute = false;
 		test->solo = false;
 
-		Zinc_test_register(test, AkeUnit_parse_id);
 		Zinc_test_register(test, AkeUnit_parse_id2);
 		Zinc_test_register(test, AkeUnit_parse_id3);
 		Zinc_test_register(test, AkeUnit_parse_id_greek);
