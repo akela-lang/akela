@@ -297,3 +297,26 @@ Ast::Stmts {
   }
 }
 ```
+
+## Test
+id cyrillic (error)
+
+```cent
+Test {
+  .has_error = true
+}
+```
+
+```akela
+const я: Int32
+я
+```
+```cent
+Errors {
+  Error {
+    .message = "Unrecognized character: я"
+    .line = 311
+    .col = 7
+  }
+}
+```

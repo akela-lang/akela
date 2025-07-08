@@ -7,34 +7,6 @@
 #include "zinc/test.h"
 #include "zinc/expect.h"
 
-void AkeUnit_parse_id_cyrillic(Zinc_test* test)
-{
-	if (test->dry_run) {
-		Zinc_string_add_str(&test->name, __func__);
-		test->mute = false;
-		test->solo = false;
-		return;
-	}
-
-	Ake_comp_unit cu;
-
-    AkeUnit_parse_setup("const я: Int32; я", &cu);
-    Zinc_expect_false(test, cu.valid, "AkeUnit_parse_setup valid");
-    if (!Zinc_expect_has_errors(test, &cu.errors)) {
-		return Zinc_assert();
-	}
-    Zinc_error* e = Zinc_expect_source_error(test, &cu.errors, "Unrecognized character: я");
-    if (!Zinc_expect_ptr(test, e, "ptr e")) {
-	    return Zinc_assert();
-    }
-    Zinc_expect_size_t_equal(test, e->loc.start, 6, "start_pos");
-    Zinc_expect_size_t_equal(test, e->loc.end, 8, "size");
-    Zinc_expect_size_t_equal(test, e->loc.line, 1, "line");
-    Zinc_expect_size_t_equal(test, e->loc.col, 7, "col");
-
-    AkeUnit_parse_teardown(&cu);
-}
-
 void AkeUnit_parse_sign_negative(Zinc_test* test)
 {
 	if (test->dry_run) {
@@ -1025,7 +997,6 @@ void AkeUnit_parse_factor(Zinc_test* test)
 		test->mute = false;
 		test->solo = false;
 
-		Zinc_test_register(test, AkeUnit_parse_id_cyrillic);
 		Zinc_test_register(test, AkeUnit_parse_sign_negative);
 		Zinc_test_register(test, AkeUnit_parse_sign_positive);
 		Zinc_test_register(test, AkeUnit_parse_sign_error_no_value);
