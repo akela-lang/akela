@@ -431,3 +431,45 @@ Errors {
   }
 }
 ```
+
+## Test
+id not
+
+```cent
+Test {
+}
+```
+
+```akela
+const a: Bool = true
+!a
+```
+
+```cent
+use lib::base::*
+const type0 = Type::Boolean {
+  .name = "Bool"
+}
+Ast::Stmts {
+  .type = type0
+  Ast::Const {
+    Ast::Id {
+      .value = "a"
+    }
+    Ast::Type {
+      .type = type0
+    }
+    Ast::Boolean {
+      .value = "true"
+      .type = type0
+    }
+  }
+  Ast::Not {
+    .type = type0
+    Ast::Id {
+      .value = "a"
+      .type = type0
+    }
+  }
+}
+```
