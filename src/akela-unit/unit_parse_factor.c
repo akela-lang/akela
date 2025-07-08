@@ -7,45 +7,6 @@
 #include "zinc/test.h"
 #include "zinc/expect.h"
 
-void AkeUnit_parse_boolean_false(Zinc_test* test)
-{
-	if (test->dry_run) {
-		Zinc_string_add_str(&test->name, __func__);
-		test->mute = false;
-		test->solo = false;
-		return;
-	}
-
-	Ake_comp_unit cu;
-
-    AkeUnit_parse_setup("false", &cu);
-	if (!Zinc_expect_no_errors(test, &cu.errors)) {
-		return Zinc_assert();
-	}
-	Zinc_expect_true(test, cu.valid, "AkeUnit_parse_setup valid");
-
-	if (!Zinc_expect_ptr(test, cu.root, "ptr cu.root")) {
-		return Zinc_assert();
-	}
-	Zinc_expect_int_equal(test, cu.root->kind, Ake_ast_type_stmts, "parse_stmts cu.root");
-
-	Ake_Ast* false_node = Ake_ast_get(cu.root, 0);
-	if (!Zinc_expect_ptr(test, false_node, "ptr false_node")) {
-		return Zinc_assert();
-	}
-	Zinc_expect_int_equal(test, false_node->kind, Ake_ast_type_boolean, "boolean false_node");
-	Zinc_expect_string(test, &false_node->value, "false", "false false_node");
-
-	Ake_Type* type = false_node->type;
-	if (!Zinc_expect_ptr(test, type, "ptr tu")) {
-		return Zinc_assert();
-	}
-	Zinc_expect_int_equal(test, type->kind, AKE_TYPE_BOOLEAN, "boolean td");
-	Zinc_expect_string(test, &type->name, "Bool", "name td");
-
-    AkeUnit_parse_teardown(&cu);
-}
-
 void AkeUnit_parse_id(Zinc_test* test)
 {
 	if (test->dry_run) {
@@ -1229,7 +1190,6 @@ void AkeUnit_parse_factor(Zinc_test* test)
 		test->mute = false;
 		test->solo = false;
 
-		Zinc_test_register(test, AkeUnit_parse_boolean_false);
 		Zinc_test_register(test, AkeUnit_parse_id);
 		Zinc_test_register(test, AkeUnit_parse_id2);
 		Zinc_test_register(test, AkeUnit_parse_id3);

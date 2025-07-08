@@ -111,3 +111,29 @@ Ast::Stmts {
   }
 }
 ```
+
+## Test
+boolean false
+
+```cent
+Test {
+}
+```
+
+```akela
+false
+```
+
+```cent
+use lib::base::*
+const type0 = Type::Boolean {
+  .name = "Bool"
+}
+Ast::Stmts {
+  .type = type0
+  Ast::Boolean {
+    .value = "false"
+    .type = type0
+  }
+}
+```
