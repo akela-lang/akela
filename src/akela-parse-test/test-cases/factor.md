@@ -217,3 +217,43 @@ Ast::Stmts {
   }
 }
 ```
+
+## Test
+id 3
+
+```cent
+Test {
+}
+```
+
+```akela
+const a2: Int64 = 1
+a2
+```
+
+```cent
+use lib::base::*
+const type0 = Type::Integer {
+  .name = "Int64"
+  .bit_count = 64
+}
+Ast::Stmts {
+  .type = type0
+  Ast::Const {
+    Ast::Id {
+      .value = "a2"
+    }
+    Ast::Type {
+      .type = type0
+    }
+    Ast::Number {
+      .value = "1"
+      .type = type0
+    }
+  }
+  Ast::Id {
+    .value = "a2"
+    .type = type0
+  }
+}
+```
