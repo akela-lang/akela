@@ -1,6 +1,6 @@
 # Akela
 * parse tests
-  * expr []
+  * expr [x]
   * factor []
   * function []
   * stmts []

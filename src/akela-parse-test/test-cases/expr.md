@@ -3654,3 +3654,170 @@ Errors {
   }
 }
 ```
+
+## Test
+assign (error eseq l-value)
+
+```cent
+use lib::base::*
+Test {
+  .solo = false
+  .mute = false
+  .snapshot = false
+  .has_error = true
+}
+```
+
+```akela
+1,2,3 = 1,2,3
+```
+
+```cent
+Errors {
+  Error {
+    .message = "invalid lvalue"
+    .line = 3672
+    .col = 1
+  }
+}
+```
+
+## Test
+array string return
+
+```cent
+use lib::base::*
+Test {
+  .solo = false
+  .mute = false
+  .snapshot = false
+  .has_error = false
+}
+```
+
+```akela
+fn foo(a: Int32, b: Int32, c: Int32)->[6 const]Nat8
+  "hello"
+end
+foo(1, 2, 3)
+```
+
+```cent
+use lib::base::*
+const type0 = Type::Array {
+  .is_const = true
+  .dim = 6
+  .type = Type::Natural {
+    .name = "Nat8"
+    .bit_count = 8
+  }
+}
+const type1 = Type::Function {
+  .name = "foo"
+  .input = Input {
+    TypeParam::Regular {
+      .name = "a"
+      .type = Type::Integer {
+        .name = "Int32"
+        .bit_count = 32
+      }
+    }
+    TypeParam::Regular {
+      .name = "b"
+      .type = Type::Integer {
+        .name = "Int32"
+        .bit_count = 32
+      }
+    }
+    TypeParam::Regular {
+      .name = "c"
+      .type = Type::Integer {
+        .name = "Int32"
+        .bit_count = 32
+      }
+    }
+  }
+  .output = Type::Array {
+    .is_const = true
+    .dim = 6
+    .type = Type::Natural {
+      .name = "Nat8"
+      .bit_count = 8
+    }
+  }
+}
+const type2 = Type::Integer {
+  .name = "Int32"
+  .bit_count = 32
+}
+Ast::Stmts {
+  .type = type0
+  Ast::Function {
+    .type = type1
+    Ast::Prototype {
+      Ast::Id {
+        .value = "foo"
+      }
+      Ast::Dseq {
+        Ast::Declaration {
+          Ast::Id {
+            .value = "a"
+          }
+          Ast::Type {
+            .type = type2
+          }
+        }
+        Ast::Declaration {
+          Ast::Id {
+            .value = "b"
+          }
+          Ast::Type {
+            .type = type2
+          }
+        }
+        Ast::Declaration {
+          Ast::Id {
+            .value = "c"
+          }
+          Ast::Type {
+            .type = type2
+          }
+        }
+      }
+      Ast::Dret {
+        Ast::Type {
+          .type = type0
+        }
+      }
+    }
+    Ast::Stmts {
+      .type = type0
+      Ast::String {
+        .value = "hello"
+        .type = type0
+      }
+    }
+  }
+  Ast::Call {
+    .type = type0
+    Ast::Id {
+      .value = "foo"
+      .type = type1
+    }
+    Ast::Cseq {
+      Ast::Number {
+        .value = "1"
+        .type = type2
+      }
+      Ast::Number {
+        .value = "2"
+        .type = type2
+      }
+      Ast::Number {
+        .value = "3"
+        .type = type2
+      }
+    }
+  }
+}
+```

@@ -1,5 +1,4 @@
 #include "unit_lex.h"
-#include "unit_parse_expr.h"
 #include "unit_parse_stmts.h"
 #include "unit_ast.h"
 #include "unit_symbol_table.h"
@@ -29,7 +28,6 @@ void AkeUnit(Zinc_test* test)
         Zinc_test_register(test, AkeUnit_ast);
         Zinc_test_register(test, AkeUnit_type);
         Zinc_test_register(test, AkeUnit_parse_factor);
-        Zinc_test_register(test, AkeUnit_parse_expression);
         Zinc_test_register(test, AkeUnit_parse_statements);
         Zinc_test_register(test, AkeUnit_parse_function);
         Zinc_test_register(test, AkeUnit_symbol_table);
