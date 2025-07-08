@@ -3627,3 +3627,30 @@ Ast::Stmts {
   }
 }
 ```
+
+## Test
+assign (error l-value)
+
+```cent
+use lib::base::*
+Test {
+  .solo = false
+  .mute = false
+  .snapshot = false
+  .has_error = true
+}
+```
+
+```akela
+1 = 1
+```
+
+```cent
+Errors {
+  Error {
+    .message = "invalid lvalue"
+    .line = 3645
+    .col = 1
+  }
+}
+```
