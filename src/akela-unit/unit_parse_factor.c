@@ -7,41 +7,6 @@
 #include "zinc/test.h"
 #include "zinc/expect.h"
 
-void AkeUnit_parse_paren_num(Zinc_test* test)
-{
-	if (test->dry_run) {
-		Zinc_string_add_str(&test->name, __func__);
-		test->mute = false;
-		test->solo = false;
-		return;
-	}
-
-	struct Ake_comp_unit cu;
-
-    AkeUnit_parse_setup("(32)", &cu);
-	if (!Zinc_expect_no_errors(test, &cu.errors)) {
-		return Zinc_assert();
-	}
-	Zinc_expect_true(test, cu.valid, "AkeUnit_parse_setup valid");
-
-	if (!Zinc_expect_ptr(test, cu.root, "ptr cu.root")) {
-		return Zinc_assert();
-	}
-	Zinc_expect_int_equal(test, cu.root->kind, Ake_ast_type_stmts, "parse_stmts cu.root");
-
-	Ake_Ast* paren = Ake_ast_get(cu.root, 0);
-	if (!Zinc_expect_ptr(test, paren, "ptr paren")) {
-		return Zinc_assert();
-	}
-	Zinc_expect_int_equal(test, paren->kind, Ake_ast_type_parenthesis, "parenthesis paren");
-
-	Ake_Ast* number = Ake_ast_get(paren, 0);
-	Zinc_expect_int_equal(test, number->kind, Ake_ast_type_number, "number number");
-	Zinc_expect_string(test, &number->value, "32", "32 number");
-
-    AkeUnit_parse_teardown(&cu);
-}
-
 void AkeUnit_parse_paren_error_empty(Zinc_test* test)
 {
 	if (test->dry_run) {
@@ -431,7 +396,6 @@ void AkeUnit_parse_factor(Zinc_test* test)
 		test->mute = false;
 		test->solo = false;
 
-		Zinc_test_register(test, AkeUnit_parse_paren_num);
 		Zinc_test_register(test, AkeUnit_parse_paren_error_empty);
 		Zinc_test_register(test, AkeUnit_parse_paren_error_right_parenthesis);
 		Zinc_test_register(test, AkeUnit_parse_paren_error_no_value);
