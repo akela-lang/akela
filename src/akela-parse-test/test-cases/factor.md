@@ -904,3 +904,26 @@ Errors {
   }
 }
 ```
+
+## Test
+not (error expected expression)
+
+```cent
+Test {
+  .has_error = true
+}
+```
+
+```akela
+!
+```
+
+```cent
+Errors {
+  Error {
+    .message = "expected parse_factor after !"
+    .line = 919
+    .col = 1
+  }
+}
+```
