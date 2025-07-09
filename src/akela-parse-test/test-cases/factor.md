@@ -834,3 +834,26 @@ Ast::Stmts {
   }
 }
 ```
+
+## Test
+paren (error no expression)
+
+```cent
+Test {
+  .has_error = true
+}
+```
+
+```akela
+()
+```
+
+```cent
+Errors {
+  Error {
+    .message = "empty parenthesis"
+    .line = 848
+    .col = 2
+  }
+}
+```
