@@ -7,57 +7,6 @@
 #include "zinc/test.h"
 #include "zinc/expect.h"
 
-void AkeUnit_parse_factor_newline_array_literal(Zinc_test* test)
-{
-	if (test->dry_run) {
-		Zinc_string_add_str(&test->name, __func__);
-		test->mute = false;
-		test->solo = false;
-		return;
-	}
-
-    struct Ake_comp_unit cu;
-
-    AkeUnit_parse_setup("[\n1,\n2,\n3\n]", &cu);
-    Zinc_expect_true(test, cu.valid, "AkeUnit_parse_setup valid");
-    Zinc_expect_no_errors(test, &cu.errors);
-
-    Ake_Ast* stmts = cu.root;
-    if (!Zinc_expect_ptr(test, stmts, "ptr parse_stmts")) {
-	    return Zinc_assert();
-    }
-    Zinc_expect_int_equal(test, stmts->kind, Ake_ast_type_stmts, "parse_stmts stmts");
-
-    Ake_Ast* al = Ake_ast_get(stmts, 0);
-    if (!Zinc_expect_ptr(test, al, "ptr al")) {
-	    return Zinc_assert();
-    }
-    Zinc_expect_int_equal(test, al->kind, Ake_ast_type_array_literal, "array_literal al");
-
-    Ake_Ast* one = Ake_ast_get(al, 0);
-    if (!Zinc_expect_ptr(test, one, "ptr one")) {
-	    return Zinc_assert();
-    }
-    Zinc_expect_int_equal(test, one->kind, Ake_ast_type_number, "number one");
-    Zinc_expect_string(test, &one->value, "1", "1");
-
-    Ake_Ast* two = Ake_ast_get(al, 1);
-    if (!Zinc_expect_ptr(test, two, "ptr two")) {
-	    return Zinc_assert();
-    }
-    Zinc_expect_int_equal(test, two->kind, Ake_ast_type_number, "number two");
-    Zinc_expect_string(test, &two->value, "2", "2");
-
-    Ake_Ast* three = Ake_ast_get(al, 2);
-    if (!Zinc_expect_ptr(test, three, "ptr three")) {
-	    return Zinc_assert();
-    }
-    Zinc_expect_int_equal(test, three->kind, Ake_ast_type_number, "number three");
-    Zinc_expect_string(test, &three->value, "3", "3");
-
-    AkeUnit_parse_teardown(&cu);
-}
-
 void AkeUnit_parse_factor_newline_array_parenthesis(Zinc_test* test)
 {
 	if (test->dry_run) {
@@ -161,7 +110,6 @@ void AkeUnit_parse_factor(Zinc_test* test)
 		test->mute = false;
 		test->solo = false;
 
-		Zinc_test_register(test, AkeUnit_parse_factor_newline_array_literal);
 		Zinc_test_register(test, AkeUnit_parse_factor_newline_array_parenthesis);
 		Zinc_test_register(test, AkeUnit_parse_factor_array_element_const);
 		Zinc_test_register(test, AkeUnit_parse_factor_array_element_const_error);

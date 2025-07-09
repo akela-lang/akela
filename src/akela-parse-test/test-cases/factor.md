@@ -1109,3 +1109,53 @@ Ast::Stmts {
   }
 }
 ```
+
+## Test
+newline array literal
+
+```cent
+Test {
+}
+```
+
+```akela
+[
+1,
+2,
+3
+]
+```
+
+```cent
+use lib::base::*
+const type0 = Type::Array {
+  .is_const = false
+  .dim = 3
+  .type = Type::Integer {
+    .name = "Int32"
+    .bit_count = 32
+  }
+}
+const type1 = Type::Integer {
+  .name = "Int32"
+  .bit_count = 32
+}
+Ast::Stmts {
+  .type = type0
+  Ast::ArrayLiteral {
+    .type = type0
+    Ast::Number {
+      .value = "1"
+      .type = type1
+    }
+    Ast::Number {
+      .value = "2"
+      .type = type1
+    }
+    Ast::Number {
+      .value = "3"
+      .type = type1
+    }
+  }
+}
+```
