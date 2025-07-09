@@ -1,7 +1,7 @@
 # Akela
 * parse tests
   * expr [x]
-  * factor []
+  * factor [x]
   * function []
   * stmts []
   * struct []

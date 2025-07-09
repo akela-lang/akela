@@ -1265,3 +1265,25 @@ Ast::Stmts {
   }
 }
 ```
+
+## Test
+array element const (error)
+
+```cent
+Test {
+  .has_error = true
+}
+```
+
+```akela
+const a: [4 const]Int32 = [1, 2, 3, 4]
+a[0] = 10
+```
+
+```cent
+Error {
+  .message = "immutable variable changed in assignment"
+  .line = 1280
+  .col = 1
+}
+```
