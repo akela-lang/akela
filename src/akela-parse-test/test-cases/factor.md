@@ -859,7 +859,7 @@ Errors {
 ```
 
 ## Test
-paren (error right paren)
+paren (error expected right paren)
 
 ```cent
 Test {
