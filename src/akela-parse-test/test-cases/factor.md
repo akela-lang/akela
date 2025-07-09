@@ -781,3 +781,26 @@ Errors {
   }
 }
 ```
+
+## Test
+array literal (error expected expression)
+
+```cent
+Test {
+  .has_error = true
+}
+```
+
+```akela
+[1,]
+```
+
+```cent
+Errors {
+  Error {
+    .message = "expected expr after comma"
+    .line = 795
+    .col = 4
+  }
+}
+```
