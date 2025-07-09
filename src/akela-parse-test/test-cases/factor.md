@@ -880,3 +880,27 @@ Errors {
   }
 }
 ```
+
+## Test
+paren (error no value)
+
+```cent
+Test {
+  .has_error = true
+}
+```
+
+```akela
+fn foo() end
+(foo())
+```
+
+```cent
+Errors {
+  Error {
+    .message = "parenthesis on expression that has no value"
+    .line = 895
+    .col = 2
+  }
+}
+```
