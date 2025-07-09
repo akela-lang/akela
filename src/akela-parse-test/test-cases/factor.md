@@ -943,11 +943,9 @@ fn foo() end
 ```
 
 ```cent
-Errors {
-  Error {
-    .message = "! operator used on parse_factor with no value"
-    .line = 942
-    .col = 1
-  }
+Error {
+  .message = "! operator used on parse_factor with no value"
+  .line = 942
+  .col = 1
 }
 ```

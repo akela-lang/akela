@@ -26,31 +26,42 @@ bool Apt_check_errors(
 
     Cent_ast* n = expected->n;
 
-    if (!Zinc_string_compare_str(&expected->name, "Errors")) {
-        Zinc_spec_error_list_set(
-            &case_data->spec_errors,
-            case_test,
-            NULL,
-            &n->loc,
-            "expected Errors");
-        return false;
-    }
-
-    if (expected->type != Cent_value_type_dag) {
-        Zinc_spec_error_list_set(
-            &case_data->spec_errors,
-            case_test,
-            NULL,
-            &n->loc,
-            "expected Dict");
-        return false;
-    }
-
     bool pass = true;
-    Cent_value* expected_error = expected->data.dag.head;
-    while (expected_error) {
-        pass = Apt_check_error(top_test, case_test, errors, expected_error) && pass;
-        expected_error = expected_error->next;
+
+    if (Zinc_string_compare_str(&expected->name, "Errors")) {
+        if (expected->type != Cent_value_type_dag) {
+            Zinc_spec_error_list_set(
+                &case_data->spec_errors,
+                case_test,
+                NULL,
+                &n->loc,
+                "expected Dict");
+            return false;
+        }
+        Cent_value* expected_error = expected->data.dag.head;
+        while (expected_error) {
+            pass = Apt_check_error(top_test, case_test, errors, expected_error) && pass;
+            expected_error = expected_error->next;
+        }
+    } else if (Zinc_string_compare_str(&expected->name, "Error")) {
+        if (expected->type != Cent_value_type_dag) {
+            Zinc_spec_error_list_set(
+                &case_data->spec_errors,
+                case_test,
+                NULL,
+                &n->loc,
+                "expected Dict");
+            return false;
+        }
+        pass = Apt_check_error(top_test, case_test, errors, expected);
+    } else {
+        Zinc_spec_error_list_set(
+            &case_data->spec_errors,
+            case_test,
+            NULL,
+            &n->loc,
+            "expected Errors or Error");
+        return false;
     }
 
     return pass;
