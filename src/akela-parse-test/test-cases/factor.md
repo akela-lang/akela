@@ -857,3 +857,26 @@ Errors {
   }
 }
 ```
+
+## Test
+paren (error right paren)
+
+```cent
+Test {
+  .has_error = true
+}
+```
+
+```akela
+(1
+```
+
+```cent
+Errors {
+  Error {
+    .message = "expected right parenthesis"
+    .line = 872
+    .col = 1
+  }
+}
+```
