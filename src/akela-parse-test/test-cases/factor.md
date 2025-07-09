@@ -927,3 +927,27 @@ Errors {
   }
 }
 ```
+
+## Test
+not (error not an expression)
+
+```cent
+Test {
+  .has_error = true
+}
+```
+
+```akela
+fn foo() end
+!foo()
+```
+
+```cent
+Errors {
+  Error {
+    .message = "! operator used on parse_factor with no value"
+    .line = 942
+    .col = 1
+  }
+}
+```

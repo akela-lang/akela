@@ -19,6 +19,7 @@
   * array []
   * slice []
   * function []
+* insert error context lines related to current check; used for line and col numbers
 * wrap pointers
 * new syntax tree
 * move type checks into their own functions
