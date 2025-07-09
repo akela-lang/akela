@@ -949,3 +949,24 @@ Error {
   .col = 1
 }
 ```
+
+## Test
+not (error not boolean)
+
+```cent
+Test {
+  .has_error = true
+}
+```
+
+```akela
+!1
+```
+
+```cent
+Error {
+  .message = "not operator used on non-boolean"
+  .line = 963
+  .col = 1
+}
+```
