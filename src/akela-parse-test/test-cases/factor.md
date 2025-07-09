@@ -758,3 +758,26 @@ Errors {
   }
 }
 ```
+
+## Test
+array literal (error right square bracket)
+
+```cent
+Test {
+  .has_error = true
+}
+```
+
+```akela
+[1,2
+```
+
+```cent
+Errors {
+  Error {
+    .message = "expected right square bracket"
+    .line = 773
+    .col = 1
+  }
+}
+```
