@@ -882,6 +882,9 @@ Ake_Ast* Ake_parse_parenthesis(struct Ake_parse_state* ps)
 		/* test case: test_parse_paren_error_empty */
 	}
 
+    if (!Ake_consume_newline(ps, n)) {
+        n->kind = Ake_ast_type_error;
+    }
 	struct Ake_token* rp = NULL;
 	if (!Ake_match(ps, Ake_token_right_paren, "expected right parenthesis", &rp, n)) {
         n->kind = Ake_ast_type_error;

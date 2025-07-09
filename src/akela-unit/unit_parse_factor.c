@@ -7,42 +7,6 @@
 #include "zinc/test.h"
 #include "zinc/expect.h"
 
-void AkeUnit_parse_factor_newline_array_parenthesis(Zinc_test* test)
-{
-	if (test->dry_run) {
-		Zinc_string_add_str(&test->name, __func__);
-		test->mute = false;
-		test->solo = false;
-		return;
-	}
-
-    struct Ake_comp_unit cu;
-
-    AkeUnit_parse_setup("(\n1+2)", &cu);
-    Zinc_expect_true(test, cu.valid, "AkeUnit_parse_setup valid");
-    Zinc_expect_no_errors(test, &cu.errors);
-
-    Ake_Ast* stmts = cu.root;
-    if (!Zinc_expect_ptr(test, stmts, "ptr parse_stmts")) {
-	    return Zinc_assert();
-    }
-    Zinc_expect_int_equal(test, stmts->kind, Ake_ast_type_stmts, "parse_stmts stmts");
-
-    Ake_Ast* paren = Ake_ast_get(stmts, 0);
-    if (!Zinc_expect_ptr(test, paren, "ptr paren")) {
-	    return Zinc_assert();
-    }
-    Zinc_expect_int_equal(test, paren->kind, Ake_ast_type_parenthesis, " parenthesis paren");
-
-    Ake_Ast* plus = Ake_ast_get(paren, 0);
-    if (!Zinc_expect_ptr(test, plus, "ptr plus")) {
-	    return Zinc_assert();
-    }
-    Zinc_expect_int_equal(test, plus->kind, Ake_ast_type_plus, "plus plus");
-
-    AkeUnit_parse_teardown(&cu);
-}
-
 void AkeUnit_parse_factor_array_element_const(Zinc_test* test)
 {
 	if (test->dry_run) {
@@ -110,7 +74,6 @@ void AkeUnit_parse_factor(Zinc_test* test)
 		test->mute = false;
 		test->solo = false;
 
-		Zinc_test_register(test, AkeUnit_parse_factor_newline_array_parenthesis);
 		Zinc_test_register(test, AkeUnit_parse_factor_array_element_const);
 		Zinc_test_register(test, AkeUnit_parse_factor_array_element_const_error);
 

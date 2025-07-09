@@ -108,6 +108,10 @@ void Apt_case_run(Zinc_test* case_test)
     Ake_comp_unit_destroy_input(ct->primary);
 
     if (case_data->snapshot) {
+        if (ct->primary->errors.head) {
+            Zinc_error_list_print(&ct->primary->errors);
+        }
+
         Zinc_string initial_line;
         Zinc_string_init(&initial_line);
         Zinc_string_add_str(&initial_line, "use lib::base::*");
