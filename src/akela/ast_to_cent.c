@@ -356,31 +356,36 @@ void Ake_type_cent_print(Ake_Type* type, size_t level, bool is_property)
             printf(".type = ");
             Ake_type_cent_print(type->data.pointer.type, level, true);
         case AKE_TYPE_FUNCTION:
-            Ake_indent_print(level);
-            printf(".input = Input {\n");
-            level++;
-            Ake_TypeParam* tp = type->data.function.input_head;
-            while (tp) {
+
+            if (type->data.function.input_head) {
                 Ake_indent_print(level);
-                printf("%s {\n", Ake_type_param_cent_name(tp->kind));
+                printf(".input = Input {\n");
                 level++;
-                Ake_indent_print(level);
-                printf(".name = \"%s\"\n", Zinc_string_c_str(&tp->name));
-                Ake_indent_print(level);
-                printf(".type = ");
-                Ake_type_cent_print(tp->type, level, true);
+                Ake_TypeParam* tp = type->data.function.input_head;
+                while (tp) {
+                    Ake_indent_print(level);
+                    printf("%s {\n", Ake_type_param_cent_name(tp->kind));
+                    level++;
+                    Ake_indent_print(level);
+                    printf(".name = \"%s\"\n", Zinc_string_c_str(&tp->name));
+                    Ake_indent_print(level);
+                    printf(".type = ");
+                    Ake_type_cent_print(tp->type, level, true);
+                    level--;
+                    Ake_indent_print(level);
+                    printf("}\n");
+                    tp = tp->next;
+                }
                 level--;
                 Ake_indent_print(level);
                 printf("}\n");
-                tp = tp->next;
             }
-            level--;
-            Ake_indent_print(level);
-            printf("}\n");
 
-            Ake_indent_print(level);
-            printf(".output = ");
-            Ake_type_cent_print(type->data.function.output, level, true);
+            if (type->data.function.output) {
+                Ake_indent_print(level);
+                printf(".output = ");
+                Ake_type_cent_print(type->data.function.output, level, true);
+            }
             break;
         default:
             assert(false && "invalid kind");

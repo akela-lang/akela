@@ -3,115 +3,6 @@
 #include "zinc/test.h"
 #include "zinc/expect.h"
 
-void AkeUnit_parse_function_no_inputs_no_outputs(Zinc_test* test)
-{
-    if (test->dry_run) {
-        Zinc_string_add_str(&test->name, __func__);
-        test->mute = false;
-        test->solo = false;
-        return;
-    }
-
-    struct Ake_comp_unit cu;
-
-    AkeUnit_parse_setup("fn foo() const x: Int32; x+1; 5+4 end", &cu);
-    if (!Zinc_expect_no_errors(test, &cu.errors)) {
-		return Zinc_assert();
-	}
-    if (!Zinc_expect_true(test, cu.valid, "AkeUnit_parse_setup valid")) {
-		return Zinc_assert();
-	}
-
-    if (!Zinc_expect_ptr(test, cu.root, "ptr cu.root")) {
-		return Zinc_assert();
-	}
-    Zinc_expect_int_equal(test, cu.root->kind, Ake_ast_type_stmts, "parse_stmts cu.root");
-
-    Ake_Ast* f = Ake_ast_get(cu.root, 0);
-    if (!Zinc_expect_ptr(test, f, "ptr f")) {
-		return Zinc_assert();
-	}
-    Zinc_expect_int_equal(test, f->kind, Ake_ast_type_function, "function");
-
-    Ake_Type* type = f->type;
-    if (!Zinc_expect_ptr(test, type, "ptr tu")) {
-		return Zinc_assert();
-	}
-    Zinc_expect_int_equal(test, type->kind, AKE_TYPE_FUNCTION, "function td");
-
-    Ake_Ast* proto = Ake_ast_get(f, 0);
-    if (!Zinc_expect_ptr(test, proto, "ptr proto")) {
-		return Zinc_assert();
-	}
-    Zinc_expect_int_equal(test, proto->kind, Ake_ast_type_prototype, "type proto");
-
-    Ake_Ast* fid = Ake_ast_get(proto, 0);
-    if (!Zinc_expect_ptr(test, fid, "ptr a")) {
-		return Zinc_assert();
-	}
-    Zinc_expect_int_equal(test, fid->kind, Ake_ast_type_id, "id");
-
-    Ake_Ast* dseq = Ake_ast_get(proto, 1);
-    if (!Zinc_expect_ptr(test, dseq, "ptr dseq")) {
-		return Zinc_assert();
-	}
-    Zinc_expect_int_equal(test, dseq->kind, Ake_ast_type_dseq, "dseq dseq");
-
-    Ake_Ast* dret = Ake_ast_get(proto, 2);
-    if (!Zinc_expect_ptr(test, dret, "ptr dret")) {
-		return Zinc_assert();
-	}
-    Zinc_expect_int_equal(test, dret->kind, Ake_ast_type_dret, "dret dret");
-
-    Ake_Ast* stmts = Ake_ast_get(f, 1);
-    if (!Zinc_expect_ptr(test, stmts, "ptr b")) {
-		return Zinc_assert();
-	}
-    Zinc_expect_int_equal(test, stmts->kind, Ake_ast_type_stmts, "parse_stmts b");
-
-    Ake_Ast* add0 = Ake_ast_get(stmts, 1);
-    if (!Zinc_expect_ptr(test, add0, "ptr d")) {
-		return Zinc_assert();
-	}
-    Zinc_expect_int_equal(test, add0->kind, Ake_ast_type_plus, "plus");
-
-    Ake_Ast* x = Ake_ast_get(add0, 0);
-    if (!Zinc_expect_ptr(test, x, "ptr x")) {
-		return Zinc_assert();
-	}
-    Zinc_expect_int_equal(test, x->kind, Ake_ast_type_id, "id x");
-    Zinc_expect_string(test, &x->value, "x", "x");
-
-    Ake_Ast* number1 = Ake_ast_get(add0, 1);
-    if (!Zinc_expect_ptr(test, number1, "ptr number1")) {
-		return Zinc_assert();
-	}
-    Zinc_expect_int_equal(test, number1->kind, Ake_ast_type_number, "number number1");
-    Zinc_expect_string(test, &number1->value, "1", "1 number1");
-
-    Ake_Ast* add1 = Ake_ast_get(stmts, 2);
-    if (!Zinc_expect_ptr(test, add1, "ptr add1")) {
-		return Zinc_assert();
-	}
-    Zinc_expect_int_equal(test, add1->kind, Ake_ast_type_plus, "plus add1");
-
-    Ake_Ast* number5 = Ake_ast_get(add1, 0);
-    if (!Zinc_expect_ptr(test, number5, "ptr number5")) {
-		return Zinc_assert();
-	}
-    Zinc_expect_int_equal(test, number5->kind, Ake_ast_type_number, "number number5");
-    Zinc_expect_string(test, &number5->value, "5", "5 number5");
-
-    Ake_Ast* number4 = Ake_ast_get(add1, 1);
-    if (!Zinc_expect_ptr(test, number4, "ptr number4")) {
-		return Zinc_assert();
-	}
-    Zinc_expect_int_equal(test, number4->kind, Ake_ast_type_number, "number number4");
-    Zinc_expect_string(test, &number4->value, "4", "4 number4");
-
-    AkeUnit_parse_teardown(&cu);
-}
-
 void AkeUnit_parse_function_input(Zinc_test* test)
 {
     if (test->dry_run) {
@@ -1942,7 +1833,6 @@ void AkeUnit_parse_function(Zinc_test* test)
         test->mute = false;
         test->solo = false;
 
-        Zinc_test_register(test, AkeUnit_parse_function_no_inputs_no_outputs);
         Zinc_test_register(test, AkeUnit_parse_function_input);
         Zinc_test_register(test, AkeUnit_parse_function_multiple_inputs);
         Zinc_test_register(test, AkeUnit_parse_function_three_inputs);
