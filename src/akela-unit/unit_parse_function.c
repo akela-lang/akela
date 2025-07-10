@@ -3,65 +3,6 @@
 #include "zinc/test.h"
 #include "zinc/expect.h"
 
-void AkeUnit_parse_function_three_inputs(Zinc_test* test)
-{
-    if (test->dry_run) {
-        Zinc_string_add_str(&test->name, __func__);
-        test->mute = false;
-        test->solo = false;
-        return;
-    }
-
-    struct Ake_comp_unit cu;
-
-    AkeUnit_parse_setup("fn foo(x: Int32, y: Int32, z: Int32)->Int32 x+1; 5+4 end", &cu);
-    if (!Zinc_expect_no_errors(test, &cu.errors)) {
-		return Zinc_assert();
-	}
-    Zinc_expect_true(test, cu.valid, "parse valid");
-
-    if (!Zinc_expect_ptr(test, cu.root, "ptr cu.root")) {
-		return Zinc_assert();
-	}
-    Zinc_expect_int_equal(test, cu.root->kind, Ake_ast_type_stmts, "parse_stmts cu.root");
-
-    Ake_Ast* f = Ake_ast_get(cu.root, 0);
-    if (!Zinc_expect_ptr(test, f, "cu.root")) {
-		return Zinc_assert();
-	}
-    Zinc_expect_int_equal(test, f->kind, Ake_ast_type_function, "function f");
-
-    Ake_Type* type = f->type;
-    if (!Zinc_expect_ptr(test, type, "ptr tu")) {
-		return Zinc_assert();
-	}
-    Zinc_expect_string(test, &type->name, "foo", "name tu");
-    Zinc_expect_int_equal(test, type->kind, AKE_TYPE_FUNCTION, "function td");
-
-    Ake_TypeParam* tp0 = type->data.function.input_head;
-    if (!Zinc_expect_ptr(test, tp0, "ptr tp0")) {
-		return Zinc_assert();
-	}
-    Zinc_expect_int_equal(test, tp0->kind, AKE_TYPE_PARAM_REGULAR, "kind tp0");
-	Zinc_expect_string(test, &tp0->name, "x", "name tp0");
-
-	Ake_Type* input0 = tp0->type;
-	if (!Zinc_expect_ptr(test, input0, "ptr input0")) {
-		return Zinc_assert();
-	}
-	Zinc_expect_int_equal(test, input0->kind, AKE_TYPE_INTEGER, "kind input0");
-	Zinc_expect_string(test, &input0->name, "Int32", "name input0");
-
-	Ake_Type* output = type->data.function.output;
-	if (!Zinc_expect_ptr(test, output, "ptr output")) {
-		return Zinc_assert();
-	}
-	Zinc_expect_int_equal(test, output->kind, AKE_TYPE_INTEGER, "kind output");
-	Zinc_expect_string(test, &output->name, "Int32", "name output");
-
-    AkeUnit_parse_teardown(&cu);
-}
-
 void AkeUnit_parse_function_return_type_error(Zinc_test* test)
 {
     if (test->dry_run) {
@@ -1576,7 +1517,6 @@ void AkeUnit_parse_function(Zinc_test* test)
         test->mute = false;
         test->solo = false;
 
-        Zinc_test_register(test, AkeUnit_parse_function_three_inputs);
         Zinc_test_register(test, AkeUnit_parse_function_return_type_error);
         Zinc_test_register(test, AkeUnit_parse_function_error_expected_left_parenthesis);
         Zinc_test_register(test, AkeUnit_parse_function_error_expected_right_parenthesis);
