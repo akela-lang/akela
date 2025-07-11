@@ -429,3 +429,24 @@ Error {
   .col = 1
 }
 ```
+
+## Test
+(error expected right parenthesis)
+
+```cent
+Test {
+  .has_error = true
+}
+```
+
+```akela
+fn foo(
+```
+
+```cent
+Error {
+  .message = "expected right parenthesis"
+  .line = 444
+  .col = 1
+}
+```
