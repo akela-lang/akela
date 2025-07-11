@@ -408,3 +408,24 @@ Error {
   .col = 19
 }
 ```
+
+## Test
+(error expected left parenthesis)
+
+```cent
+Test {
+  .has_error = true
+}
+```
+
+```akela
+fn foo
+```
+
+```cent
+Error {
+  .message = "expected left parenthesis"
+  .line = 423
+  .col = 1
+}
+```
