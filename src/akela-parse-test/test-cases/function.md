@@ -385,3 +385,26 @@ Ast::Stmts {
   }
 }
 ```
+
+## Test
+return type (error)
+
+```cent
+Test {
+  .has_error = true
+}
+```
+
+```akela
+fn foo(x: Int32)->Int32
+    true    
+end
+```
+
+```cent
+Error {
+  .message = "returned type does not match function return type"
+  .line = 399
+  .col = 19
+}
+```

@@ -3,25 +3,6 @@
 #include "zinc/test.h"
 #include "zinc/expect.h"
 
-void AkeUnit_parse_function_return_type_error(Zinc_test* test)
-{
-    if (test->dry_run) {
-        Zinc_string_add_str(&test->name, __func__);
-        test->mute = false;
-        test->solo = false;
-        return;
-    }
-
-    struct Ake_comp_unit cu;
-
-    AkeUnit_parse_setup("fn foo(x: Int32)->Int32 true end", &cu);
-    Zinc_expect_has_errors(test, &cu.errors);
-    Zinc_expect_false(test, cu.valid, "parse valid");
-    Zinc_expect_source_error(test, &cu.errors, "returned type does not match function return type");
-
-    AkeUnit_parse_teardown(&cu);
-}
-
 void AkeUnit_parse_function_error_expected_left_parenthesis(Zinc_test* test)
 {
     if (test->dry_run) {
@@ -1517,7 +1498,6 @@ void AkeUnit_parse_function(Zinc_test* test)
         test->mute = false;
         test->solo = false;
 
-        Zinc_test_register(test, AkeUnit_parse_function_return_type_error);
         Zinc_test_register(test, AkeUnit_parse_function_error_expected_left_parenthesis);
         Zinc_test_register(test, AkeUnit_parse_function_error_expected_right_parenthesis);
         Zinc_test_register(test, AkeUnit_parse_function_error_expected_end);
