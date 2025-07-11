@@ -471,3 +471,46 @@ Error {
   .col = 1
 }
 ```
+## Test
+return type does not match (error)
+
+```cent
+Test {
+  .has_error = true
+}
+```
+
+```akela
+fn foo()->Int32
+    return true
+end
+```
+
+```cent
+Error {
+  .message = "returned type does not match function return type"
+  .line = 485
+  .col = 5
+}
+```
+
+## Test
+return outside of function (error)
+
+```cent
+Test {
+  .has_error = true
+}
+```
+
+```akela
+return true
+```
+
+```cent
+Error {
+  .message = "return statement outside of function"
+  .line = 507
+  .col = 1
+}
+```

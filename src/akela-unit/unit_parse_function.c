@@ -3,54 +3,6 @@
 #include "zinc/test.h"
 #include "zinc/expect.h"
 
-void AkeUnit_parse_return_error_outside_of_function(Zinc_test* test)
-{
-    if (test->dry_run) {
-        Zinc_string_add_str(&test->name, __func__);
-        test->mute = false;
-        test->solo = false;
-        return;
-    }
-
-    struct Ake_comp_unit cu;
-
-    AkeUnit_parse_setup("return true", &cu);
-    Zinc_expect_has_errors(test, &cu.errors);
-    Zinc_expect_false(test, cu.valid, "valid");
-    Zinc_expect_source_error(test, &cu.errors, "return statement outside of function");
-
-    if (!Zinc_expect_ptr(test, cu.root, "ptr cu.root")) {
-		return Zinc_assert();
-	}
-    Zinc_expect_int_equal(test, cu.root->kind, Ake_ast_type_error, "stmts cu.root");
-
-    AkeUnit_parse_teardown(&cu);
-}
-
-void AkeUnit_parse_return_error_type_does_not_match(Zinc_test* test)
-{
-    if (test->dry_run) {
-        Zinc_string_add_str(&test->name, __func__);
-        test->mute = false;
-        test->solo = false;
-        return;
-    }
-
-    struct Ake_comp_unit cu;
-
-    AkeUnit_parse_setup("fn foo()->Int32 return true end", &cu);
-    Zinc_expect_has_errors(test, &cu.errors);
-    Zinc_expect_false(test, cu.valid, "valid");
-    Zinc_expect_source_error(test, &cu.errors, "returned type does not match function return type");
-
-    if (!Zinc_expect_ptr(test, cu.root, "ptr cu.root")) {
-		return Zinc_assert();
-	}
-    Zinc_expect_int_equal(test, cu.root->kind, Ake_ast_type_error, "stmts cu.root");
-
-    AkeUnit_parse_teardown(&cu);
-}
-
 void AkeUnit_parse_stmts_newline_function(Zinc_test* test)
 {
     if (test->dry_run) {
@@ -1443,8 +1395,6 @@ void AkeUnit_parse_function(Zinc_test* test)
 
         Zinc_test_register(test, AkeUnit_parse_return);
         Zinc_test_register(test, AkeUnit_parse_return_error_no_value);
-        Zinc_test_register(test, AkeUnit_parse_return_error_outside_of_function);
-        Zinc_test_register(test, AkeUnit_parse_return_error_type_does_not_match);
         Zinc_test_register(test, AkeUnit_parse_stmts_newline_function);
         Zinc_test_register(test, AkeUnit_parse_anonymous_function);
         Zinc_test_register(test, AkeUnit_parse_anonymous_function2);
