@@ -450,3 +450,24 @@ Error {
   .col = 1
 }
 ```
+
+## Test
+(error expected end)
+
+```cent
+Test {
+  .has_error = true
+}
+```
+
+```akela
+fn foo()
+```
+
+```cent
+Error {
+  .message = "expected end"
+  .line = 465
+  .col = 1
+}
+```
