@@ -3,29 +3,6 @@
 #include "zinc/test.h"
 #include "zinc/expect.h"
 
-void AkeUnit_parse_return(Zinc_test* test)
-{
-    if (test->dry_run) {
-        Zinc_string_add_str(&test->name, __func__);
-        test->mute = false;
-        test->solo = false;
-        return;
-    }
-
-    struct Ake_comp_unit cu;
-
-    AkeUnit_parse_setup("fn foo()->Int32 return 1 end", &cu);
-    Zinc_expect_no_errors(test, &cu.errors);
-    Zinc_expect_true(test, cu.valid, "valid");
-
-    if (!Zinc_expect_ptr(test, cu.root, "ptr cu.root")) {
-		return Zinc_assert();
-	}
-    Zinc_expect_int_equal(test, cu.root->kind, Ake_ast_type_stmts, "parse_stmts cu.root");
-
-    AkeUnit_parse_teardown(&cu);
-}
-
 void AkeUnit_parse_return_error_no_value(Zinc_test* test)
 {
     if (test->dry_run) {
@@ -1375,7 +1352,6 @@ void AkeUnit_parse_function(Zinc_test* test)
         test->mute = false;
         test->solo = false;
 
-        Zinc_test_register(test, AkeUnit_parse_return);
         Zinc_test_register(test, AkeUnit_parse_return_error_no_value);
         Zinc_test_register(test, AkeUnit_parse_anonymous_function);
         Zinc_test_register(test, AkeUnit_parse_anonymous_function2);
