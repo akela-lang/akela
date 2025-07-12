@@ -514,3 +514,93 @@ Error {
   .col = 1
 }
 ```
+
+## Test
+newline
+
+```cent
+Test {
+}
+```
+
+```akela
+fn
+foo
+(
+a: Int32,
+b: Int32
+)->
+Int32 1 end
+```
+
+```cent
+use lib::base::*
+const type0 = Type::Function {
+  .name = "foo"
+  .input = Input {
+    TypeParam::Regular {
+      .name = "a"
+      .type = Type::Integer {
+        .name = "Int32"
+        .bit_count = 32
+      }
+    }
+    TypeParam::Regular {
+      .name = "b"
+      .type = Type::Integer {
+        .name = "Int32"
+        .bit_count = 32
+      }
+    }
+  }
+  .output = Type::Integer {
+    .name = "Int32"
+    .bit_count = 32
+  }
+}
+const type1 = Type::Integer {
+  .name = "Int32"
+  .bit_count = 32
+}
+Ast::Stmts {
+  .type = type0
+  Ast::Function {
+    .type = type0
+    Ast::Prototype {
+      Ast::Id {
+        .value = "foo"
+      }
+      Ast::Dseq {
+        Ast::Declaration {
+          Ast::Id {
+            .value = "a"
+          }
+          Ast::Type {
+            .type = type1
+          }
+        }
+        Ast::Declaration {
+          Ast::Id {
+            .value = "b"
+          }
+          Ast::Type {
+            .type = type1
+          }
+        }
+      }
+      Ast::Dret {
+        Ast::Type {
+          .type = type1
+        }
+      }
+    }
+    Ast::Stmts {
+      .type = type1
+      Ast::Number {
+        .value = "1"
+        .type = type1
+      }
+    }
+  }
+}
+```
