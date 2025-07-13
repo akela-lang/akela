@@ -1158,3 +1158,26 @@ Ast::Stmts {
   }
 }
 ```
+
+## Test
+type check (error not compatible)
+
+```cent
+Test {
+  .has_error = true
+}
+```
+
+```akela
+const foo: fn (a: Bool)->Int32 = fn (a: Int32)->Int32
+    a + 1
+end
+```
+
+```cent
+Error {
+  .message = "values in assignment are not compatible"
+  .line = 1172
+  .col = 1
+}
+```
