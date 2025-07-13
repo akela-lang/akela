@@ -1037,3 +1037,24 @@ Error {
   .col = 1
 }
 ```
+
+## Test
+(error expected end)
+
+```cent
+Test {
+  .has_error = true
+}
+```
+
+```akela
+fn ()
+```
+
+```cent
+Error {
+  .message = "expected end"
+  .line = 1052
+  .col = 1
+}
+```
