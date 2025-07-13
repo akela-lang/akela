@@ -974,3 +974,24 @@ Ast::Stmts {
   }
 }
 ```
+
+## Test
+assignment (type error)
+
+```cent
+Test {
+  .has_error = true
+}
+```
+
+```akela
+const a: fn(Bool) = fn(x: Int32) end
+```
+
+```cent
+Error {
+  .message = "values in assignment are not compatible"
+  .line = 988
+  .col = 21
+}
+```
