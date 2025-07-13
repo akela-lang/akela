@@ -3,49 +3,6 @@
 #include "zinc/test.h"
 #include "zinc/expect.h"
 
-void AkeUnit_parse_call_return_type(Zinc_test* test)
-{
-    if (test->dry_run) {
-        Zinc_string_add_str(&test->name, __func__);
-        test->mute = false;
-        test->solo = false;
-        return;
-    }
-
-    struct Ake_comp_unit cu;
-
-    AkeUnit_parse_setup("fn foo()->Int32 1 end; foo() + 2", &cu);
-    if (!Zinc_expect_no_errors(test, &cu.errors)) {
-		return Zinc_assert();
-	}
-    Zinc_expect_true(test, cu.valid, "AkeUnit_parse_setup valid");
-
-    if (!Zinc_expect_ptr(test, cu.root, "ptr cu.root")) {
-		return Zinc_assert();
-	}
-    Zinc_expect_int_equal(test, cu.root->kind, Ake_ast_type_stmts, "parse_stmts cu.root");
-
-    Ake_Ast* f = Ake_ast_get(cu.root, 0);
-    if (!Zinc_expect_ptr(test, f, "ptr f")) {
-		return Zinc_assert();
-	}
-
-    Ake_Ast* add = Ake_ast_get(cu.root, 1);
-    if (!Zinc_expect_ptr(test, add, "ptr add")) {
-		return Zinc_assert();
-	}
-    Zinc_expect_int_equal(test, add->kind, Ake_ast_type_plus, "plus add");
-
-    Ake_Type* add_type = add->type;
-    if (!Zinc_expect_ptr(test, add_type, "patr add_tu")) {
-		return Zinc_assert();
-	}
-	Zinc_expect_int_equal(test, add_type->kind, AKE_TYPE_INTEGER, "integer add_td");
-    Zinc_expect_string(test, &add_type->name, "Int32", "Int32 add_td");
-
-    AkeUnit_parse_teardown(&cu);
-}
-
 void AkeUnit_parse_call_return_type_error(Zinc_test* test)
 {
     if (test->dry_run) {
@@ -783,7 +740,6 @@ void AkeUnit_parse_function(Zinc_test* test)
         test->mute = false;
         test->solo = false;
 
-        Zinc_test_register(test, AkeUnit_parse_call_return_type);
         Zinc_test_register(test, AkeUnit_parse_call_return_type_error);
         Zinc_test_register(test, AkeUnit_parse_call2);
         Zinc_test_register(test, AkeUnit_parse_call3);

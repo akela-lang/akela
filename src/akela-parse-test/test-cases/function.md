@@ -1254,3 +1254,72 @@ Ast::Stmts {
   }
 }
 ```
+
+## Test
+call return type 2
+
+```cent
+Test {
+}
+```
+
+```akela
+fn foo()->Int32 1 end
+foo() + 2
+```
+
+```cent
+use lib::base::*
+const type0 = Type::Integer {
+  .name = "Int32"
+  .bit_count = 32
+}
+const type1 = Type::Function {
+  .name = "foo"
+  .output = Type::Integer {
+    .name = "Int32"
+    .bit_count = 32
+  }
+}
+Ast::Stmts {
+  .type = type0
+  Ast::Function {
+    .type = type1
+    Ast::Prototype {
+      Ast::Id {
+        .value = "foo"
+      }
+      Ast::Dseq {
+      }
+      Ast::Dret {
+        Ast::Type {
+          .type = type0
+        }
+      }
+    }
+    Ast::Stmts {
+      .type = type0
+      Ast::Number {
+        .value = "1"
+        .type = type0
+      }
+    }
+  }
+  Ast::Plus {
+    .type = type0
+    Ast::Call {
+      .type = type0
+      Ast::Id {
+        .value = "foo"
+        .type = type1
+      }
+      Ast::Cseq {
+      }
+    }
+    Ast::Number {
+      .value = "2"
+      .type = type0
+    }
+  }
+}
+```
