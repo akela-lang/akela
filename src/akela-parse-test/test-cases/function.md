@@ -995,3 +995,24 @@ Error {
   .col = 21
 }
 ```
+
+## Test
+return (error type does not match)
+
+```cent
+Test {
+  .has_error = true
+}
+```
+
+```akela
+const f: fn()->Int32 = fn()->Int32 true end
+```
+
+```cent
+Error {
+  .message = "returned type does not match function return type"
+  .line = 1009
+  .col = 30
+}
+```
