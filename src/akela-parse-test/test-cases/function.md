@@ -1058,3 +1058,103 @@ Error {
   .col = 1
 }
 ```
+
+## Test
+function proto
+
+```cent
+Test {
+}
+```
+
+```akela
+var foo: fn (Int32)->Int32 = fn (a: Int32)->Int32
+    a + 1
+end
+```
+
+```cent
+use lib::base::*
+const type0 = Type::Function {
+  .input = Input {
+    TypeParam::Regular {
+      .name = ""
+      .type = Type::Integer {
+        .name = "Int32"
+        .bit_count = 32
+      }
+    }
+  }
+  .output = Type::Integer {
+    .name = "Int32"
+    .bit_count = 32
+  }
+}
+const type1 = Type::Function {
+  .name = "__anonymous_function_0"
+  .input = Input {
+    TypeParam::Regular {
+      .name = "a"
+      .type = Type::Integer {
+        .name = "Int32"
+        .bit_count = 32
+      }
+    }
+  }
+  .output = Type::Integer {
+    .name = "Int32"
+    .bit_count = 32
+  }
+}
+const type2 = Type::Integer {
+  .name = "Int32"
+  .bit_count = 32
+}
+Ast::Stmts {
+  Ast::Var {
+    Ast::Id {
+      .value = "foo"
+    }
+    Ast::Type {
+      .type = type0
+    }
+    Ast::Function {
+      .type = type1
+      Ast::Prototype {
+        Ast::Id {
+          .value = "__anonymous_function_0"
+        }
+        Ast::Dseq {
+          Ast::Declaration {
+            Ast::Id {
+              .value = "a"
+            }
+            Ast::Type {
+              .type = type2
+            }
+          }
+        }
+        Ast::Dret {
+          Ast::Type {
+            .type = type2
+          }
+        }
+      }
+      Ast::Stmts {
+        .type = type2
+        Ast::Plus {
+          .type = type2
+          Ast::Id {
+            .value = "a"
+            .type = type2
+          }
+          Ast::Number {
+            .value = "1"
+            .type = type2
+          }
+        }
+      }
+    }
+  }
+}
+```

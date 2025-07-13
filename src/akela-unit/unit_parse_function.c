@@ -3,59 +3,6 @@
 #include "zinc/test.h"
 #include "zinc/expect.h"
 
-void AkeUnit_parse_function_proto(Zinc_test* test)
-{
-    if (test->dry_run) {
-        Zinc_string_add_str(&test->name, __func__);
-        test->mute = false;
-        test->solo = false;
-        return;
-    }
-
-    struct Ake_comp_unit cu;
-    AkeUnit_parse_setup("var foo: fn (a: Int32)->Int32\n"
-                "foo = fn (a: Int32)->Int32\n"
-                "  a + 1\n"
-                "end\n",
-                &cu);
-    Zinc_expect_true(test, cu.valid, "valid");
-    Zinc_expect_no_errors(test, &cu.errors);
-
-    /* const */
-    Ake_Ast* _const_ = Ake_ast_get(cu.root, 0);
-    if (!Zinc_expect_ptr(test, _const_, "ptr const_")) {
-		return Zinc_assert();
-	}
-    Zinc_expect_int_equal(test, _const_->kind, Ake_ast_type_var, "type const_");
-
-    Ake_Ast* id_node = Ake_ast_get(_const_, 0);
-    if (!Zinc_expect_ptr(test, id_node, "ptr id_node")) {
-		return Zinc_assert();
-	}
-    Zinc_expect_int_equal(test, id_node->kind, Ake_ast_type_id, "type id_node");
-
-    Ake_Ast* let_type_node = Ake_ast_get(_const_, 1);
-    if (!Zinc_expect_ptr(test, let_type_node, "ptr let_type")) {
-		return Zinc_assert();
-	}
-    Zinc_expect_int_equal(test, let_type_node->kind, Ake_ast_type_type, "type let_type");
-
-    Ake_Type* let_type = let_type_node->type;
-    if (!Zinc_expect_ptr(test, let_type, "ptr let_tu")) {
-		return Zinc_assert();
-	}
-    Zinc_expect_int_equal(test, let_type->kind, AKE_TYPE_FUNCTION, "type let_td");
-
-    /* assign */
-    Ake_Ast* assign = Ake_ast_get(cu.root, 1);
-    if (!Zinc_expect_ptr(test, assign, "ptr assign")) {
-		return Zinc_assert();
-	}
-    Zinc_expect_int_equal(test, assign->kind, Ake_ast_type_assign, "type assign");
-
-    AkeUnit_parse_teardown(&cu);
-}
-
 void AkeUnit_parse_function_error_let_assign(Zinc_test* test)
 {
     if (test->dry_run) {
@@ -956,7 +903,6 @@ void AkeUnit_parse_function(Zinc_test* test)
         test->mute = false;
         test->solo = false;
 
-        Zinc_test_register(test, AkeUnit_parse_function_proto);
         Zinc_test_register(test, AkeUnit_parse_function_error_let_assign);
         Zinc_test_register(test, AkeUnit_parse_function_error_assign);
         Zinc_test_register(test, AkeUnit_parse_call);
