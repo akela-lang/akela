@@ -683,3 +683,143 @@ Error {
   .col = 10
 }
 ```
+
+## Test
+anonymous function
+
+```cent
+Test {
+}
+```
+
+```akela
+const a: fn(Int32, Int32, Int32) = fn (x: Int32, y: Int32, z: Int32)
+  x + y + z
+end
+```
+
+```cent
+use lib::base::*
+const type0 = Type::Function {
+  .input = Input {
+    TypeParam::Regular {
+      .name = ""
+      .type = Type::Integer {
+        .name = "Int32"
+        .bit_count = 32
+      }
+    }
+    TypeParam::Regular {
+      .name = ""
+      .type = Type::Integer {
+        .name = "Int32"
+        .bit_count = 32
+      }
+    }
+    TypeParam::Regular {
+      .name = ""
+      .type = Type::Integer {
+        .name = "Int32"
+        .bit_count = 32
+      }
+    }
+  }
+}
+const type1 = Type::Function {
+  .name = "__anonymous_function_0"
+  .input = Input {
+    TypeParam::Regular {
+      .name = "x"
+      .type = Type::Integer {
+        .name = "Int32"
+        .bit_count = 32
+      }
+    }
+    TypeParam::Regular {
+      .name = "y"
+      .type = Type::Integer {
+        .name = "Int32"
+        .bit_count = 32
+      }
+    }
+    TypeParam::Regular {
+      .name = "z"
+      .type = Type::Integer {
+        .name = "Int32"
+        .bit_count = 32
+      }
+    }
+  }
+}
+const type2 = Type::Integer {
+  .name = "Int32"
+  .bit_count = 32
+}
+Ast::Stmts {
+  Ast::Const {
+    Ast::Id {
+      .value = "a"
+    }
+    Ast::Type {
+      .type = type0
+    }
+    Ast::Function {
+      .type = type1
+      Ast::Prototype {
+        Ast::Id {
+          .value = "__anonymous_function_0"
+        }
+        Ast::Dseq {
+          Ast::Declaration {
+            Ast::Id {
+              .value = "x"
+            }
+            Ast::Type {
+              .type = type2
+            }
+          }
+          Ast::Declaration {
+            Ast::Id {
+              .value = "y"
+            }
+            Ast::Type {
+              .type = type2
+            }
+          }
+          Ast::Declaration {
+            Ast::Id {
+              .value = "z"
+            }
+            Ast::Type {
+              .type = type2
+            }
+          }
+        }
+        Ast::Dret {
+        }
+      }
+      Ast::Stmts {
+        .type = type2
+        Ast::Plus {
+          .type = type2
+          Ast::Plus {
+            .type = type2
+            Ast::Id {
+              .value = "x"
+              .type = type2
+            }
+            Ast::Id {
+              .value = "y"
+              .type = type2
+            }
+          }
+          Ast::Id {
+            .value = "z"
+            .type = type2
+          }
+        }
+      }
+    }
+  }
+}
+```
