@@ -1181,3 +1181,24 @@ Error {
   .col = 1
 }
 ```
+
+## Test
+assign (error type)
+
+```cent
+Test {
+  .has_error = true
+}
+```
+
+```akela
+const a: Int32 = true
+```
+
+```cent
+Error {
+  .message = "values in assignment are not compatible"
+  .line = 1195
+  .col = 18
+}
+```

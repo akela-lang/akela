@@ -132,6 +132,13 @@ bool Apt_check_error(
     if (Zinc_expect_true(case_test, found, Zinc_string_c_str(&expect_message))) {
         Zinc_expect_size_t_equal(case_test, line->data.natural, e->loc.line, "incorrect line");
         Zinc_expect_size_t_equal(case_test, col->data.natural, e->loc.col, "incorrect column");
+    } else {
+        fprintf(stderr, "\tErrors:\n");
+        Zinc_error* e = errors->head;
+        while (e) {
+            fprintf(stderr, "\t%s\n", Zinc_string_c_str(&e->message));
+            e = e->next;
+        }
     }
 
     Zinc_string_destroy(&expect_message);
