@@ -659,3 +659,27 @@ Ast::Stmts {
   }
 }
 ```
+
+## Test
+return (error no value)
+
+```cent
+Test {
+  .has_error = true
+}
+```
+
+```akela
+fn bar() end
+fn foo()->Int32
+  return bar()
+end
+```
+
+```cent
+Error {
+  .message = "return expression has no value"
+  .line = 675
+  .col = 10
+}
+```
