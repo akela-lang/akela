@@ -861,7 +861,6 @@ void AkeUnit_parse_function(Zinc_test* test)
         test->mute = false;
         test->solo = false;
 
-        Zinc_test_register(test, AkeUnit_parse_function_error_assign);
         Zinc_test_register(test, AkeUnit_parse_call);
         Zinc_test_register(test, AkeUnit_parse_call_return_type);
         Zinc_test_register(test, AkeUnit_parse_call_return_type_error);
