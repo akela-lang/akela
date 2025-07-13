@@ -1016,3 +1016,24 @@ Error {
   .col = 30
 }
 ```
+
+## Test
+right paren (error)
+
+```cent
+Test {
+  .has_error = true
+}
+```
+
+```akela
+fn (
+```
+
+```cent
+Error {
+  .message = "expected right parenthesis"
+  .line = 1031
+  .col = 1
+}
+```
