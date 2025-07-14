@@ -1323,3 +1323,25 @@ Ast::Stmts {
   }
 }
 ```
+
+## Test
+return (error 2)
+
+```cent
+Test {
+  .has_error = true
+}
+```
+
+```akela
+fn foo()->Bool true end
+foo() + 2
+```
+
+```cent
+Error {
+  .message = "addition on non-numeric operand"
+  .line = 1338
+  .col = 1
+}
+```
