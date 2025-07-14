@@ -3,121 +3,6 @@
 #include "zinc/test.h"
 #include "zinc/expect.h"
 
-void AkeUnit_parse_call2(Zinc_test* test)
-{
-    if (test->dry_run) {
-        Zinc_string_add_str(&test->name, __func__);
-        test->mute = false;
-        test->solo = false;
-        return;
-    }
-
-    struct Ake_comp_unit cu;
-
-    AkeUnit_parse_setup("fn foo(arg1: Int32) arg1 end; foo(2)", &cu);
-    if (!Zinc_expect_no_errors(test, &cu.errors)) {
-		return Zinc_assert();
-	}
-    if (!Zinc_expect_true(test, cu.valid, "AkeUnit_parse_setup valid")) {
-		return Zinc_assert();
-	}
-
-    if (!Zinc_expect_ptr(test, cu.root, "ptr cu.root")) {
-		return Zinc_assert();
-	}
-    Zinc_expect_int_equal(test, cu.root->kind, Ake_ast_type_stmts, "parse_stmts cu.root");
-
-    Ake_Ast* fd = Ake_ast_get(cu.root, 0);
-    if (!Zinc_expect_ptr(test, fd, "ptr fd")) {
-		return Zinc_assert();
-	}
-    Zinc_expect_int_equal(test, fd->kind, Ake_ast_type_function, "function fd");
-
-    Ake_Ast* proto = Ake_ast_get(fd, 0);
-    if (!Zinc_expect_ptr(test, proto, "ptr proto")) {
-		return Zinc_assert();
-	}
-    Zinc_expect_int_equal(test, proto->kind, Ake_ast_type_prototype, "type proto");
-
-    Ake_Ast* fname = Ake_ast_get(proto, 0);
-    if (!Zinc_expect_ptr(test, fname, "ptr fname")) {
-		return Zinc_assert();
-	}
-    Zinc_expect_int_equal(test, fname->kind, Ake_ast_type_id, "id fname");
-    Zinc_expect_string(test, &fname->value, "foo", "foo fname");
-
-    Ake_Ast* dseq = Ake_ast_get(proto, 1);
-    if (!Zinc_expect_ptr(test, dseq, "ptr dseq")) {
-		return Zinc_assert();
-	}
-    Zinc_expect_int_equal(test, dseq->kind, Ake_ast_type_dseq, "dseq dseq");
-
-    Ake_Ast* dparam0 = Ake_ast_get(dseq, 0);
-    if (!Zinc_expect_ptr(test, dparam0, "ptr dparam0")) {
-		return Zinc_assert();
-	}
-    Zinc_expect_int_equal(test, dparam0->kind, Ake_ast_type_declaration, "declaration dparam0");
-
-    Ake_Ast* param0_name = Ake_ast_get(dparam0, 0);
-    if (!Zinc_expect_ptr(test, param0_name, "ptr param0_name")) {
-		return Zinc_assert();
-	}
-    Zinc_expect_int_equal(test, param0_name->kind, Ake_ast_type_id, "id param0_name");
-    Zinc_expect_string(test, &param0_name->value, "arg1", "arg1");
-
-    Ake_Ast* type_node = Ake_ast_get(dparam0, 1);
-    if (!Zinc_expect_ptr(test, type_node, "ptr type_node")) {
-		return Zinc_assert();
-	}
-
-    Ake_Type* type = type_node->type;
-    if (!Zinc_expect_ptr(test, type, "ptr tu")) {
-		return Zinc_assert();
-	}
-    Zinc_expect_int_equal(test, type->kind, AKE_TYPE_INTEGER, "integer td");
-    Zinc_expect_string(test, &type->name, "Int32", "Int32 td");
-
-    Ake_Ast* dret = Ake_ast_get(proto, 2);
-    if (!Zinc_expect_ptr(test, dret, "ptr dret")) {
-		return Zinc_assert();
-	}
-    Zinc_expect_int_equal(test, dret->kind, Ake_ast_type_dret, "dret dret");
-
-    Ake_Ast* f_stmts = Ake_ast_get(fd, 1);
-    if (!Zinc_expect_ptr(test, f_stmts, "ptr f_stmts")) {
-		return Zinc_assert();
-	}
-    Zinc_expect_int_equal(test, f_stmts->kind, Ake_ast_type_stmts, "parse_stmts f_stmts");
-
-    Ake_Ast* a = Ake_ast_get(cu.root, 1);
-    if (!Zinc_expect_ptr(test, a, "ptr a")) {
-		return Zinc_assert();
-	}
-    Zinc_expect_int_equal(test, a->kind, Ake_ast_type_call, "call");
-
-    Ake_Ast* b = Ake_ast_get(a, 0);
-    if (!Zinc_expect_ptr(test, b, "ptr b")) {
-		return Zinc_assert();
-	}
-    Zinc_expect_int_equal(test, b->kind, Ake_ast_type_id, "id");
-    Zinc_expect_string(test, &b->value, "foo", "foo");
-
-    Ake_Ast* cseq = Ake_ast_get(a, 1);
-    if (!Zinc_expect_ptr(test, cseq, "ptr cseq")) {
-		return Zinc_assert();
-	}
-    Zinc_expect_int_equal(test, cseq->kind, Ake_ast_type_cseq, "cseq");
-
-    Ake_Ast* cseq_a = Ake_ast_get(cseq, 0);
-    if (!Zinc_expect_ptr(test, cseq_a, "ptr cseq_a")) {
-		return Zinc_assert();
-	}
-    Zinc_expect_int_equal(test, cseq_a->kind, Ake_ast_type_number, "cseq_a");
-    Zinc_expect_string(test, &cseq_a->value, "2", "2 cseq_a");
-
-    AkeUnit_parse_teardown(&cu);
-}
-
 void AkeUnit_parse_call3(Zinc_test* test)
 {
     if (test->dry_run) {
@@ -719,7 +604,6 @@ void AkeUnit_parse_function(Zinc_test* test)
         test->mute = false;
         test->solo = false;
 
-        Zinc_test_register(test, AkeUnit_parse_call2);
         Zinc_test_register(test, AkeUnit_parse_call3);
         Zinc_test_register(test, AkeUnit_parse_call4);
         Zinc_test_register(test, AkeUnit_parse_call_missing_arguments);

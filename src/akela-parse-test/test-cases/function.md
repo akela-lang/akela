@@ -1345,3 +1345,77 @@ Error {
   .col = 1
 }
 ```
+
+## Test
+call 2
+
+```cent
+Test {
+}
+```
+
+```akela
+fn foo(arg1: Int32) arg1 end
+foo(2)
+```
+
+```cent
+use lib::base::*
+const type0 = Type::Function {
+  .name = "foo"
+  .input = Input {
+    TypeParam::Regular {
+      .name = "arg1"
+      .type = Type::Integer {
+        .name = "Int32"
+        .bit_count = 32
+      }
+    }
+  }
+}
+const type1 = Type::Integer {
+  .name = "Int32"
+  .bit_count = 32
+}
+Ast::Stmts {
+  Ast::Function {
+    .type = type0
+    Ast::Prototype {
+      Ast::Id {
+        .value = "foo"
+      }
+      Ast::Dseq {
+        Ast::Declaration {
+          Ast::Id {
+            .value = "arg1"
+          }
+          Ast::Type {
+            .type = type1
+          }
+        }
+      }
+      Ast::Dret {
+      }
+    }
+    Ast::Stmts {
+      .type = type1
+      Ast::Id {
+        .value = "arg1"
+        .type = type1
+      }
+    }
+  }
+  Ast::Call {
+    Ast::Id {
+      .value = "foo"
+      .type = type0
+    }
+    Ast::Cseq {
+      Ast::Number {
+        .value = "2"
+        .type = type1
+      }
+    }
+  }
+}
+```
