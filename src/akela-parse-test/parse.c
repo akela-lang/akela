@@ -106,7 +106,7 @@ void Apt_parse_suite(
 
     Lava_dom* header = pr.root;
 
-    if (header->data.LAVA_DOM_HEADER.level != 1) {
+    if (header->data.header.level != 1) {
         Zinc_error_list_set(pr.errors, &pr.root->loc, "expected level 1 header");
         fprintf(stderr, "%s\n", Zinc_string_c_str(path));
         Zinc_error_list_print(pr.errors);
@@ -114,7 +114,7 @@ void Apt_parse_suite(
         return;
     }
 
-    Zinc_string_slice title = Zinc_string_get_slice(&header->data.LAVA_DOM_HEADER.title);
+    Zinc_string_slice title = Zinc_string_get_slice(&header->data.header.title);
     title = Zinc_trim(title);
     Zinc_string_slice test_suite_slice = Zinc_string_slice_from_str("Test Suite");
 
@@ -129,15 +129,15 @@ void Apt_parse_suite(
     if (pr.root->kind == LAVA_DOM_HEADER) {
         Zinc_string_add_string(&suite_data->name, path);
 
-        Lava_dom* item = header->data.LAVA_DOM_HEADER.head;
+        Lava_dom* item = header->data.header.head;
         while (item) {
             if (item->kind == LAVA_DOM_TEXT) {
                 if (suite_data->description.size > 0) {
                     Zinc_string_add_char(&suite_data->description, '\n');
                 }
-                Zinc_string_add_string(&suite_data->description, &item->data.LAVA_DOM_TEXT);
+                Zinc_string_add_string(&suite_data->description, &item->data.text);
             } else if (item->kind == LAVA_DOM_BACKQUOTE) {
-                Zinc_string_slice format = Zinc_string_get_slice(&item->data.LAVA_DOM_BACKQUOTE.format);
+                Zinc_string_slice format = Zinc_string_get_slice(&item->data.backquote.format);
                 format = Zinc_trim(format);
                 Zinc_string_slice cent = Zinc_string_slice_from_str("cent");
                 if (!Zinc_string_slice_compare(&format, &cent)) {
@@ -150,7 +150,7 @@ void Apt_parse_suite(
                 Cent_comp_table* ct = NULL;
                 fp = fopen(Zinc_string_c_str(path), "r");
                 Cent_comp_table_create_fp(&ct, test_cases_path, name, fp);
-                Cent_comp_unit_set_bounds(ct->primary, &item->data.LAVA_DOM_BACKQUOTE.bounds);
+                Cent_comp_unit_set_bounds(ct->primary, &item->data.backquote.bounds);
                 Cent_comp_unit_parse(ct->primary);
                 Cent_comp_unit_build(ct->primary);
                 if (ct->primary->errors.head) {
@@ -162,12 +162,12 @@ void Apt_parse_suite(
                 Cent_comp_table_destroy(ct);
                 free(ct);
             } else if (item->kind == LAVA_DOM_HEADER) {
-                Zinc_string_slice test_title = Zinc_string_get_slice(&item->data.LAVA_DOM_HEADER.title);
+                Zinc_string_slice test_title = Zinc_string_get_slice(&item->data.header.title);
                 test_title = Zinc_trim(test_title);
                 Zinc_string_slice expected_title = Zinc_string_slice_from_str("Test");
                 if (!Zinc_string_slice_compare(&test_title, &expected_title)) {
                     Zinc_error_list_set(&top_data->errors, &item->loc, "expected Test");
-                } else if (item->data.LAVA_DOM_HEADER.level != 2) {
+                } else if (item->data.header.level != 2) {
                     Zinc_error_list_set(&top_data->errors, &item->loc, "expected level 2");
                 } else {
                     Apt_parse_case(top_test, path, suite_test, item, name);
@@ -253,21 +253,21 @@ void Apt_parse_case(
 
     bool seen_meta = false;
 
-    Lava_dom* item = dom->data.LAVA_DOM_HEADER.head;
+    Lava_dom* item = dom->data.header.head;
     while (item) {
         if (item->kind == LAVA_DOM_TEXT) {
             if (case_data->description.size > 0) {
                 Zinc_string_add_char(&case_data->description, '\n');
             }
-            Zinc_string_add_string(&case_data->description, &item->data.LAVA_DOM_TEXT);
+            Zinc_string_add_string(&case_data->description, &item->data.text);
         } else if (item->kind == LAVA_DOM_BACKQUOTE) {
-            if (Zinc_string_compare_str(&item->data.LAVA_DOM_BACKQUOTE.format, "cent")) {
+            if (Zinc_string_compare_str(&item->data.backquote.format, "cent")) {
                 if (!seen_meta) {
                     seen_meta = true;
                     Cent_comp_table* ct = NULL;
                     FILE* fp = fopen(Zinc_string_c_str(path), "r");
                     Cent_comp_table_create_fp(&ct, &top_data->dir_path, name, fp);
-                    Cent_comp_unit_set_bounds(ct->primary, &item->data.LAVA_DOM_BACKQUOTE.bounds);
+                    Cent_comp_unit_set_bounds(ct->primary, &item->data.backquote.bounds);
                     Cent_comp_unit_parse(ct->primary);
                     if (!ct->primary->errors.head) {
                         Cent_comp_unit_build(ct->primary);
@@ -285,10 +285,10 @@ void Apt_parse_case(
                     Cent_comp_table_destroy(ct);
                     free(ct);
                 } else {
-                    case_data->ast_bounds = item->data.LAVA_DOM_BACKQUOTE.bounds;
+                    case_data->ast_bounds = item->data.backquote.bounds;
                 }
-            } else if (Zinc_string_compare_str(&item->data.LAVA_DOM_BACKQUOTE.format, "akela")) {
-                case_data->source_bounds = item->data.LAVA_DOM_BACKQUOTE.bounds;
+            } else if (Zinc_string_compare_str(&item->data.backquote.format, "akela")) {
+                case_data->source_bounds = item->data.backquote.bounds;
             }
         }
 

@@ -70,7 +70,7 @@ Lava_result Lava_parse(Lava_parse_data* pd)
     Lava_result result;
 
     Lava_dom* root = Lava_parse_header(pd);
-    if (root->data.LAVA_DOM_HEADER.level != 1) {
+    if (root->data.header.level != 1) {
         Zinc_error_list_set(pd->errors, &root->loc, "expected top level header");
     }
 
@@ -102,7 +102,7 @@ Lava_dom* Lava_parse_header(Lava_parse_data* pd)
     Lava_match(pd, Lava_token_kind_header, "expected header", &hdr, n);
 
     if (hdr) {
-        n->data.LAVA_DOM_HEADER.level = (int)hdr->text.size;
+        n->data.header.level = (int)hdr->text.size;
         Lava_token_destroy(hdr);
         free(hdr);
     }
@@ -111,7 +111,7 @@ Lava_dom* Lava_parse_header(Lava_parse_data* pd)
     Lava_match(pd, Lava_token_kind_text, "expected header title", &title, n);
 
     if (title) {
-        Zinc_string_add_string(&n->data.LAVA_DOM_HEADER.title, &title->text);
+        Zinc_string_add_string(&n->data.header.title, &title->text);
         Lava_token_destroy(title);
         free(title);
     }
@@ -124,13 +124,13 @@ Lava_dom* Lava_parse_header(Lava_parse_data* pd)
     while (true) {
         Lava_lookahead(pd);
         if (pd->lookahead->kind == Lava_token_kind_header) {
-            if (pd->lookahead->text.size <= n->data.LAVA_DOM_HEADER.level) {
+            if (pd->lookahead->text.size <= n->data.header.level) {
                 break;
             }
 
             Lava_dom* dom = Lava_parse_header(pd);
-            int level = dom->data.LAVA_DOM_HEADER.level;
-            int current_level = n->data.LAVA_DOM_HEADER.level;
+            int level = dom->data.header.level;
+            int current_level = n->data.header.level;
             if (level > current_level + 1) {
                 Zinc_error_list_set(pd->errors, &dom->loc, "level is too high: %d", level);
             } else if (level == current_level + 1) {
@@ -169,7 +169,7 @@ Lava_dom* Lava_parse_text(Lava_parse_data* pd)
         assert(false && "not possible");
     }
 
-    Zinc_string_add_string(&n->data.LAVA_DOM_TEXT, &txt->text);
+    Zinc_string_add_string(&n->data.text, &txt->text);
     Lava_token_destroy(txt);
     free(txt);
 
@@ -200,7 +200,7 @@ Lava_dom* Lava_parse_text(Lava_parse_data* pd)
             if (!Lava_match(pd, Lava_token_kind_text, "expected text", &txt, n)) {
                 assert(false && "not possible");
             }
-            Zinc_string_add_format(&n->data.LAVA_DOM_TEXT, " %bf", &txt->text);
+            Zinc_string_add_format(&n->data.text, " %bf", &txt->text);
             Lava_token_destroy(txt);
             free(txt);
         }
@@ -230,7 +230,7 @@ Lava_dom* Lava_parse_backquote(Lava_parse_data* pd)
         if (!Lava_match(pd, Lava_token_kind_text, "expected text", &txt, n)) {
             assert(false && "not possible");
         }
-        Zinc_string_add_string(&n->data.LAVA_DOM_BACKQUOTE.format, &txt->text);
+        Zinc_string_add_string(&n->data.backquote.format, &txt->text);
         Lava_token_destroy(txt);
         free(txt);
     }
@@ -241,13 +241,13 @@ Lava_dom* Lava_parse_backquote(Lava_parse_data* pd)
     free(nl);
 
     Lava_lookahead(pd);
-    n->data.LAVA_DOM_BACKQUOTE.bounds.loc = pd->lookahead->loc;
+    n->data.backquote.bounds.loc = pd->lookahead->loc;
     if (pd->lookahead->kind == Lava_token_kind_text) {
         if (!Lava_match(pd, Lava_token_kind_text, "expected text", &txt, n)) {
             assert(false && "not possible");
         }
         if (txt) {
-            Zinc_string_add_string(&n->data.LAVA_DOM_BACKQUOTE.text, &txt->text);
+            Zinc_string_add_string(&n->data.backquote.text, &txt->text);
             Lava_token_destroy(txt);
             free(txt);
         }
@@ -257,7 +257,7 @@ Lava_dom* Lava_parse_backquote(Lava_parse_data* pd)
     while (pd->lookahead->kind == Lava_token_kind_newline) {
         nl = NULL;
         Lava_match(pd, Lava_token_kind_newline, "expected newline", &nl, n);
-        Zinc_string_add_char(&n->data.LAVA_DOM_BACKQUOTE.text, '\n');
+        Zinc_string_add_char(&n->data.backquote.text, '\n');
         Lava_token_destroy(nl);
         free(nl);
 
@@ -266,7 +266,7 @@ Lava_dom* Lava_parse_backquote(Lava_parse_data* pd)
             if (!Lava_match(pd, Lava_token_kind_text, "expected text", &txt, n)) {
                 assert(false && "not possible");
             }
-            Zinc_string_add_string(&n->data.LAVA_DOM_BACKQUOTE.text, &txt->text);
+            Zinc_string_add_string(&n->data.backquote.text, &txt->text);
             Lava_token_destroy(txt);
             free(txt);
         }
@@ -274,7 +274,7 @@ Lava_dom* Lava_parse_backquote(Lava_parse_data* pd)
     }
 
     Lava_lookahead(pd);
-    n->data.LAVA_DOM_BACKQUOTE.bounds.end = pd->lookahead->loc.start;
+    n->data.backquote.bounds.end = pd->lookahead->loc.start;
     Lava_match(pd, Lava_token_kind_backquote, "expected backquote", &bq, n);
     Lava_token_destroy(bq);
     free(bq);

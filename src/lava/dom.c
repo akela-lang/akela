@@ -7,18 +7,18 @@ void Lava_dom_init(Lava_dom* dom, Lava_dom_kind kind)
     dom->kind = kind;
     switch (kind) {
     case LAVA_DOM_HEADER:
-        Zinc_string_init(&dom->data.LAVA_DOM_HEADER.title);
-        dom->data.LAVA_DOM_HEADER.level = 0;
-        dom->data.LAVA_DOM_HEADER.head = NULL;
-        dom->data.LAVA_DOM_HEADER.tail = NULL;
+        Zinc_string_init(&dom->data.header.title);
+        dom->data.header.level = 0;
+        dom->data.header.head = NULL;
+        dom->data.header.tail = NULL;
         break;
     case LAVA_DOM_TEXT:
-        Zinc_string_init(&dom->data.LAVA_DOM_TEXT);
+        Zinc_string_init(&dom->data.text);
         break;
     case LAVA_DOM_BACKQUOTE:
-        Zinc_string_init(&dom->data.LAVA_DOM_BACKQUOTE.format);
-        Zinc_string_init(&dom->data.LAVA_DOM_BACKQUOTE.text);
-        Zinc_input_bounds_init(&dom->data.LAVA_DOM_BACKQUOTE.bounds);
+        Zinc_string_init(&dom->data.backquote.format);
+        Zinc_string_init(&dom->data.backquote.text);
+        Zinc_input_bounds_init(&dom->data.backquote.bounds);
         break;
     default:
         assert(false && "not possible");
@@ -39,8 +39,8 @@ void Lava_dom_destroy(Lava_dom* dom)
 {
     switch (dom->kind) {
     case LAVA_DOM_HEADER:
-        Zinc_string_destroy(&dom->data.LAVA_DOM_HEADER.title);
-        Lava_dom* p = dom->data.LAVA_DOM_HEADER.head;
+        Zinc_string_destroy(&dom->data.header.title);
+        Lava_dom* p = dom->data.header.head;
         while (p) {
             Lava_dom* temp = p;
             p = p->next;
@@ -49,11 +49,11 @@ void Lava_dom_destroy(Lava_dom* dom)
         }
         break;
     case LAVA_DOM_TEXT:
-        Zinc_string_destroy(&dom->data.LAVA_DOM_TEXT);
+        Zinc_string_destroy(&dom->data.text);
         break;
     case LAVA_DOM_BACKQUOTE:
-        Zinc_string_destroy(&dom->data.LAVA_DOM_BACKQUOTE.format);
-        Zinc_string_destroy(&dom->data.LAVA_DOM_BACKQUOTE.text);
+        Zinc_string_destroy(&dom->data.backquote.format);
+        Zinc_string_destroy(&dom->data.backquote.text);
         break;
     default:
         assert(false && "not possible");
@@ -63,13 +63,13 @@ void Lava_dom_destroy(Lava_dom* dom)
 void Lava_dom_add(Lava_dom* header, Lava_dom* child)
 {
     assert(header->kind == LAVA_DOM_HEADER);
-    if (header->data.LAVA_DOM_HEADER.head && header->data.LAVA_DOM_HEADER.tail) {
-        header->data.LAVA_DOM_HEADER.tail->next = child;
-        child->prev = header->data.LAVA_DOM_HEADER.tail;
-        header->data.LAVA_DOM_HEADER.tail = child;
+    if (header->data.header.head && header->data.header.tail) {
+        header->data.header.tail->next = child;
+        child->prev = header->data.header.tail;
+        header->data.header.tail = child;
     } else {
-        header->data.LAVA_DOM_HEADER.head = child;
-        header->data.LAVA_DOM_HEADER.tail = child;
+        header->data.header.head = child;
+        header->data.header.tail = child;
     }
 }
 
@@ -77,7 +77,7 @@ size_t Lava_dom_count(Lava_dom* header)
 {
     assert(header->kind == LAVA_DOM_HEADER);
     size_t count = 0;
-    Lava_dom* p = header->data.LAVA_DOM_HEADER.head;
+    Lava_dom* p = header->data.header.head;
     while (p) {
         count++;
         p = p->next;
@@ -89,7 +89,7 @@ Lava_dom* Lava_dom_get(Lava_dom* header, size_t index)
 {
     assert(header->kind == LAVA_DOM_HEADER);
     size_t count = 0;
-    Lava_dom* p = header->data.LAVA_DOM_HEADER.head;
+    Lava_dom* p = header->data.header.head;
     while (p) {
         if (count == index) {
             return p;

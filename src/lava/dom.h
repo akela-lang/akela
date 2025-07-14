@@ -21,13 +21,13 @@ struct Lava_dom {
             int level;
             Lava_dom* head;
             Lava_dom* tail;
-        } LAVA_DOM_HEADER;
-        Zinc_string LAVA_DOM_TEXT;
+        } header;
+        Zinc_string text;
         struct {
             Zinc_string format;
             Zinc_string text;
             Zinc_input_bounds bounds;
-        } LAVA_DOM_BACKQUOTE;
+        } backquote;
     } data;
     Zinc_location loc;
     Lava_dom* next;

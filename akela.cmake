@@ -1,10 +1,6 @@
 set(PROJECT_VERSION 0.0.0)
 
-if(DEFINED LLVM_SEARCH)
-    set(AKELA_AVAILABLE_COMPONENTS zinc json cobble centipede coverage dataframe akela akela-llvm)
-else()
-    set(AKELA_AVAILABLE_COMPONENTS zinc json cobble centipede coverage dataframe akela)
-endif()
+set(AKELA_AVAILABLE_COMPONENTS zinc lava json cobble centipede coverage dataframe akela akela-llvm)
 
 foreach(comp IN LISTS AKELA_AVAILABLE_COMPONENTS)
     install(TARGETS ${comp}
