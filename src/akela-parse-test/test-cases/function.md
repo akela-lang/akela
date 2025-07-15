@@ -1808,3 +1808,24 @@ Error {
   .col = 1
 }
 ```
+
+## Test
+call (error no declared)
+
+```cent
+Test {
+  .has_error = true
+}
+```
+
+```akela
+foo()
+```
+
+```cent
+Error {
+  .message = "variable not declared: foo"
+  .line = 1822
+  .col = 1
+}
+```
