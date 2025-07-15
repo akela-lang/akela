@@ -1873,3 +1873,124 @@ Error {
   .col = 7
 }
 ```
+
+## Test
+newline anonymous function
+
+```cent
+Test {
+}
+```
+
+```akela
+fn
+(
+a: Int32,
+b: Int32,
+c: Int32
+)->
+Int32
+  a+b+c
+end
+```
+
+```cent
+use lib::base::*
+const type0 = Type::Function {
+  .name = "__anonymous_function_0"
+  .input = Input {
+    TypeParam::Regular {
+      .name = "a"
+      .type = Type::Integer {
+        .name = "Int32"
+        .bit_count = 32
+      }
+    }
+    TypeParam::Regular {
+      .name = "b"
+      .type = Type::Integer {
+        .name = "Int32"
+        .bit_count = 32
+      }
+    }
+    TypeParam::Regular {
+      .name = "c"
+      .type = Type::Integer {
+        .name = "Int32"
+        .bit_count = 32
+      }
+    }
+  }
+  .output = Type::Integer {
+    .name = "Int32"
+    .bit_count = 32
+  }
+}
+const type1 = Type::Integer {
+  .name = "Int32"
+  .bit_count = 32
+}
+Ast::Stmts {
+  .type = type0
+  Ast::Function {
+    .type = type0
+    Ast::Prototype {
+      Ast::Id {
+        .value = "__anonymous_function_0"
+      }
+      Ast::Dseq {
+        Ast::Declaration {
+          Ast::Id {
+            .value = "a"
+          }
+          Ast::Type {
+            .type = type1
+          }
+        }
+        Ast::Declaration {
+          Ast::Id {
+            .value = "b"
+          }
+          Ast::Type {
+            .type = type1
+          }
+        }
+        Ast::Declaration {
+          Ast::Id {
+            .value = "c"
+          }
+          Ast::Type {
+            .type = type1
+          }
+        }
+      }
+      Ast::Dret {
+        Ast::Type {
+          .type = type1
+        }
+      }
+    }
+    Ast::Stmts {
+      .type = type1
+      Ast::Plus {
+        .type = type1
+        Ast::Plus {
+          .type = type1
+          Ast::Id {
+            .value = "a"
+            .type = type1
+          }
+          Ast::Id {
+            .value = "b"
+            .type = type1
+          }
+        }
+        Ast::Id {
+          .value = "c"
+          .type = type1
+        }
+      }
+    }
+  }
+}
+```
