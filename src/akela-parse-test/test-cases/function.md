@@ -1419,3 +1419,133 @@ Ast::Stmts {
   }
 }
 ```
+
+## Test
+call 3
+
+```cent
+Test {
+}
+```
+
+```akela
+fn foo(arg1: Int32, arg2: Int32)->Int32
+  1
+end
+const x: Int32 = 1
+const y: Int32 = 2
+foo(x,y)
+```
+
+```cent
+use lib::base::*
+const type0 = Type::Integer {
+  .name = "Int32"
+  .bit_count = 32
+}
+const type1 = Type::Function {
+  .name = "foo"
+  .input = Input {
+    TypeParam::Regular {
+      .name = "arg1"
+      .type = Type::Integer {
+        .name = "Int32"
+        .bit_count = 32
+      }
+    }
+    TypeParam::Regular {
+      .name = "arg2"
+      .type = Type::Integer {
+        .name = "Int32"
+        .bit_count = 32
+      }
+    }
+  }
+  .output = Type::Integer {
+    .name = "Int32"
+    .bit_count = 32
+  }
+}
+Ast::Stmts {
+  .type = type0
+  Ast::Function {
+    .type = type1
+    Ast::Prototype {
+      Ast::Id {
+        .value = "foo"
+      }
+      Ast::Dseq {
+        Ast::Declaration {
+          Ast::Id {
+            .value = "arg1"
+          }
+          Ast::Type {
+            .type = type0
+          }
+        }
+        Ast::Declaration {
+          Ast::Id {
+            .value = "arg2"
+          }
+          Ast::Type {
+            .type = type0
+          }
+        }
+      }
+      Ast::Dret {
+        Ast::Type {
+          .type = type0
+        }
+      }
+    }
+    Ast::Stmts {
+      .type = type0
+      Ast::Number {
+        .value = "1"
+        .type = type0
+      }
+    }
+  }
+  Ast::Const {
+    Ast::Id {
+      .value = "x"
+    }
+    Ast::Type {
+      .type = type0
+    }
+    Ast::Number {
+      .value = "1"
+      .type = type0
+    }
+  }
+  Ast::Const {
+    Ast::Id {
+      .value = "y"
+    }
+    Ast::Type {
+      .type = type0
+    }
+    Ast::Number {
+      .value = "2"
+      .type = type0
+    }
+  }
+  Ast::Call {
+    .type = type0
+    Ast::Id {
+      .value = "foo"
+      .type = type1
+    }
+    Ast::Cseq {
+      Ast::Id {
+        .value = "x"
+        .type = type0
+      }
+      Ast::Id {
+        .value = "y"
+        .type = type0
+      }
+    }
+  }
+}
+```
