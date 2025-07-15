@@ -1720,3 +1720,25 @@ Error {
   .col = 6
 }
 ```
+
+## Test
+call (error to many arguments)
+
+```cent
+Test {
+  .has_error = true
+}
+```
+
+```akela
+fn foo(a: Int32) end
+foo(1, 2)
+```
+
+```cent
+Error {
+  .message = "too many arguments in function call"
+  .line = 1735
+  .col = 9
+}
+```
