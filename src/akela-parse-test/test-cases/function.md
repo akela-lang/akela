@@ -1742,3 +1742,25 @@ Error {
   .col = 9
 }
 ```
+
+## Test
+call (error argument type)
+
+```cent
+Test {
+  .has_error = true
+}
+```
+
+```akela
+fn foo(a: Int32) end
+foo(true)
+```
+
+```cent
+Error {
+  .message = "parameter and arguments types do not match"
+  .line = 1757
+  .col = 5
+}
+```

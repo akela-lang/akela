@@ -271,7 +271,7 @@ void AkeUnit_parse_types_error_param(Zinc_test* test)
 
     AkeUnit_parse_setup("fn foo(a: Int32) true end; foo(true)", &cu);
 	Zinc_expect_has_errors(test, &cu.errors);
-	Zinc_expect_source_error(test, &cu.errors, "parameter and aguments types do not match");
+	Zinc_expect_source_error(test, &cu.errors, "parameter and arguments types do not match");
 	Zinc_expect_false(test, cu.valid, "valid");
 
     AkeUnit_parse_teardown(&cu);

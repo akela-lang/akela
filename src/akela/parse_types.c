@@ -760,7 +760,7 @@ bool Ake_check_input_type(
 			if (call_tu0) {
 			    bool cast = false;
 				if (!Ake_TypeMatch(tu0, call_tu0, &cast)) {
-					valid = Zinc_error_list_set(ps->el, &a->loc, "parameter and aguments types do not match");
+					valid = Zinc_error_list_set(ps->el, &a->loc, "parameter and arguments types do not match");
 					/* test case: test_parse_types_error_param */
 				}
 			} else {
