@@ -13,7 +13,6 @@ element Test {
     mute: Bool      # exclude this test from running
     snapshot: Bool  # output snapshot
     has_error: Bool `required`
-    errors: Errors
   }
 }
 
