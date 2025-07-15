@@ -1851,3 +1851,25 @@ Error {
   .col = 1
 }
 ```
+
+## Test
+call (error expected expression)
+
+```cent
+Test {
+  .has_error = true
+}
+```
+
+```akela
+fn foo(x: Int32) end
+foo(1,)
+```
+
+```cent
+Error {
+  .message = "expected expression after comma"
+  .line = 1866
+  .col = 7
+}
+```
