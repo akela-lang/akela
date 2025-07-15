@@ -1764,3 +1764,25 @@ Error {
   .col = 5
 }
 ```
+
+## Test
+anonymous function call (error function type)
+
+```cent
+Test {
+  .has_error = true
+}
+```
+
+```akela
+const foo: fn (a: Int32) = fn (a: Int32) end
+foo(true)
+```
+
+```cent
+Error {
+  .message = "parameter and arguments types do not match"
+  .line = 1779
+  .col = 5
+}
+```
