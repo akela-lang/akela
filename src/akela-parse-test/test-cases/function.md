@@ -1698,3 +1698,25 @@ Ast::Stmts {
   }
 }
 ```
+
+## Test
+call (error missing arguments)
+
+```cent
+Test {
+  .has_error = true
+}
+```
+
+```akela
+fn foo(a: Int32, b: Int32) end
+foo(1)
+```
+
+```cent
+Error {
+  .message = "not enough arguments in function call"
+  .line = 1713
+  .col = 6
+}
+```
