@@ -1829,3 +1829,25 @@ Error {
   .col = 1
 }
 ```
+
+## Test
+call (error not a function)
+
+```cent
+Test {
+  .has_error = true
+}
+```
+
+```akela
+const foo: Int32 = 1
+foo()
+```
+
+```cent
+Error {
+  .message = "not a function type"
+  .line = 1844
+  .col = 1
+}
+```
