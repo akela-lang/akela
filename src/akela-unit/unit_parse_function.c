@@ -3,33 +3,6 @@
 #include "zinc/test.h"
 #include "zinc/expect.h"
 
-void AkeUnit_parse_factor_newline_anonymous_function_const(Zinc_test* test)
-{
-    if (test->dry_run) {
-        Zinc_string_add_str(&test->name, __func__);
-        test->mute = false;
-        test->solo = false;
-        return;
-    }
-
-    struct Ake_comp_unit cu;
-
-    AkeUnit_parse_setup(
-            "const foo: fn (a: Int32, b: Int32, c: Int32)->Int32 = fn\n"
-            "(\n"
-            "a: Int32,\n"
-            "b: Int32,\n"
-            "c: Int32\n"
-            ")->\n"
-            "Int32\n"
-            "a+b+c\n"
-            "end", &cu);
-    Zinc_expect_true(test, cu.valid, "AkeUnit_parse_setup valid");
-    Zinc_expect_no_errors(test, &cu.errors);
-
-    AkeUnit_parse_teardown(&cu);
-}
-
 void AkeUnit_parse_function_error_input_type_non_numeric(Zinc_test* test)
 {
     if (test->dry_run) {
@@ -113,7 +86,6 @@ void AkeUnit_parse_function(Zinc_test* test)
         test->mute = false;
         test->solo = false;
 
-        Zinc_test_register(test, AkeUnit_parse_factor_newline_anonymous_function_const);
         Zinc_test_register(test, AkeUnit_parse_function_error_input_type_non_numeric);
         Zinc_test_register(test, AkeUnit_parse_function_error_output_type_non_numeric);
         Zinc_test_register(test, AkeUnit_parse_function_error_input_type_numeric);
