@@ -2151,3 +2151,24 @@ Ast::Stmts {
   }
 }
 ```
+
+## Test
+const assignment (error input type does not match)
+
+```cent
+Test {
+  .has_error = true
+}
+```
+
+```akela
+const a: fn(Int32) = fn(x: Bool) end
+```
+
+```cent
+Error {
+  .message = "values in assignment are not compatible"
+  .line = 2165
+  .col = 22
+}
+```
