@@ -170,3 +170,62 @@ Ast::Stmts {
   }
 }
 ```
+
+## Test
+multiple statements 2
+
+```cent
+Test {
+}
+```
+
+```akela
+const x: Int32 = 0
+x + 1
+5 - 4
+```
+
+```cent
+use lib::base::*
+const type0 = Type::Integer {
+  .name = "Int32"
+  .bit_count = 32
+}
+Ast::Stmts {
+  .type = type0
+  Ast::Const {
+    Ast::Id {
+      .value = "x"
+    }
+    Ast::Type {
+      .type = type0
+    }
+    Ast::Number {
+      .value = "0"
+      .type = type0
+    }
+  }
+  Ast::Plus {
+    .type = type0
+    Ast::Id {
+      .value = "x"
+      .type = type0
+    }
+    Ast::Number {
+      .value = "1"
+      .type = type0
+    }
+  }
+  Ast::Minus {
+    .type = type0
+    Ast::Number {
+      .value = "5"
+      .type = type0
+    }
+    Ast::Number {
+      .value = "4"
+      .type = type0
+    }
+  }
+}
+```
