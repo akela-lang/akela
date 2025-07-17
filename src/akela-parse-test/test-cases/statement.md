@@ -1043,3 +1043,24 @@ Ast::Stmts {
   }
 }
 ```
+
+## Test
+if (error expected expression)
+
+```cent
+Test {
+  .has_error = true
+}
+```
+
+```akela
+if end
+```
+
+```cent
+Error {
+  .message = "expected condition after if"
+  .line = 1057
+  .col = 4
+}
+```
