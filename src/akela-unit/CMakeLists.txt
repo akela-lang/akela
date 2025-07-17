@@ -13,7 +13,6 @@ set(akela_unit_files
         unit_type.c
         unit_comp_unit.c
         unit_comp_table.c
-        unit_parse_function.c
         unit_parse_struct.c
         unit_environment.c
         unit_type_list.c
