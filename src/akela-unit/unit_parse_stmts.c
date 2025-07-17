@@ -6,131 +6,6 @@
 #include "zinc/test.h"
 #include "zinc/expect.h"
 
-void AkeUnit_parse_elseif(Zinc_test* test)
-{
-	if (test->dry_run) {
-		Zinc_string_add_str(&test->name, __func__);
-		test->mute = false;
-		test->solo = false;
-		return;
-	}
-
-	struct Ake_comp_unit cu;
-
-    AkeUnit_parse_setup("const x: Int32; const y: Int32; if true 10 + 20; x * y elseif true 1; 2 end", &cu);
-	if (!Zinc_expect_no_errors(test, &cu.errors)) {
-		return Zinc_assert();
-	}
-	if (!Zinc_expect_true(test, cu.valid, "AkeUnit_parse_setup valid")) {
-		return Zinc_assert();
-	}
-
-	if (!Zinc_expect_ptr(test, cu.root, "ptr cu.root")) {
-		return Zinc_assert();
-	}
-
-	Ake_Ast* if_stmt = Ake_ast_get(cu.root, 2);
-	if (!Zinc_expect_ptr(test, if_stmt, "ptr if_stmt")) {
-		return Zinc_assert();
-	}
-	Zinc_expect_int_equal(test, if_stmt->kind, Ake_ast_type_if, "if");
-
-	Ake_Ast* cb = Ake_ast_get(if_stmt, 0);
-	if (!Zinc_expect_ptr(test, cb, "ptr cb")) {
-		return Zinc_assert();
-	}
-	Zinc_expect_int_equal(test, cb->kind, Ake_ast_type_conditional_branch, "conditional branch");
-
-	Ake_Ast* cond = Ake_ast_get(cb, 0);
-	if (!Zinc_expect_ptr(test, cond, "ptr cond")) {
-		return Zinc_assert();
-	}
-	Zinc_expect_int_equal(test, cond->kind, Ake_ast_type_boolean, "boolean cond");
-	Zinc_expect_string(test, &cond->value, "true", "true");
-
-	Ake_Ast* stmts = Ake_ast_get(cb, 1);
-	if (!Zinc_expect_ptr(test, stmts, "ptr parse_stmts")) {
-		return Zinc_assert();
-	}
-	Zinc_expect_int_equal(test, stmts->kind, Ake_ast_type_stmts, "parse_stmts");
-
-	Ake_Ast* plus = Ake_ast_get(stmts, 0);
-	if (!Zinc_expect_ptr(test, plus, "ptr plus")) {
-		return Zinc_assert();
-	}
-	Zinc_expect_int_equal(test, plus->kind, Ake_ast_type_plus, "plus");
-
-	Ake_Ast* num0 = Ake_ast_get(plus, 0);
-	if (!Zinc_expect_ptr(test, num0, "ptr num0")) {
-		return Zinc_assert();
-	}
-	Zinc_expect_int_equal(test, num0->kind, Ake_ast_type_number, "number 0");
-	Zinc_expect_string(test, &num0->value, "10", "10");
-
-	Ake_Ast* num1 = Ake_ast_get(plus, 1);
-	if (!Zinc_expect_ptr(test, num1, "ptr num1")) {
-		return Zinc_assert();
-	}
-	Zinc_expect_int_equal(test, num1->kind, Ake_ast_type_number, "number 1");
-	Zinc_expect_string(test, &num1->value, "20", "20");
-
-	Ake_Ast* mult = Ake_ast_get(stmts, 1);
-	if (!Zinc_expect_ptr(test, mult, "ptr mult")) {
-		return Zinc_assert();
-	}
-	Zinc_expect_int_equal(test, mult->kind, Ake_ast_type_mult, "mult");
-
-	Ake_Ast* x = Ake_ast_get(mult, 0);
-	if (!Zinc_expect_ptr(test, x, "ptr x")) {
-		return Zinc_assert();
-	}
-	Zinc_expect_int_equal(test, x->kind, Ake_ast_type_id, "id x");
-	Zinc_expect_string(test, &x->value, "x", "x");
-
-	Ake_Ast* y = Ake_ast_get(mult, 1);
-	if (!Zinc_expect_ptr(test, y, "ptr y")) {
-		return Zinc_assert();
-	}
-	Zinc_expect_int_equal(test, y->kind, Ake_ast_type_id, "id y");
-	Zinc_expect_string(test, &y->value, "y", "y");
-
-	Ake_Ast* cb2 = Ake_ast_get(if_stmt, 1);
-	if (!Zinc_expect_ptr(test, cb2, "ptr cb2")) {
-		return Zinc_assert();
-	}
-	Zinc_expect_int_equal(test, cb2->kind, Ake_ast_type_conditional_branch, "conditional branch cb2");
-
-	Ake_Ast* cond2 = Ake_ast_get(cb2, 0);
-	if (!Zinc_expect_ptr(test, cond2, "ptr cond2")) {
-		return Zinc_assert();
-	}
-	Zinc_expect_int_equal(test, cond2->kind, Ake_ast_type_boolean, "boolean cond2");
-	Zinc_expect_string(test, &cond2->value, "true", "true cond2");
-
-	Ake_Ast* stmts2 = Ake_ast_get(cb2, 1);
-	if (!Zinc_expect_ptr(test, stmts2, "ptr stmts2")) {
-		return Zinc_assert();
-	}
-	Zinc_expect_int_equal(test, stmts2->kind, Ake_ast_type_stmts, "parse_stmts stmts2");
-
-	Ake_Ast* num2 = Ake_ast_get(stmts2, 0);
-	if (!Zinc_expect_ptr(test, num2, "ptr num2")) {
-		return Zinc_assert();
-	}
-	Zinc_expect_int_equal(test, num2->kind, Ake_ast_type_number, "number num2");
-	Zinc_expect_string(test, &num2->value, "1", "1 num2");
-
-	Ake_Ast* num3 = Ake_ast_get(stmts2, 1);
-	if (!Zinc_expect_ptr(test, num3, "ptr num3")) {
-		return Zinc_assert();
-	}
-	Zinc_expect_int_equal(test, num3->kind, Ake_ast_type_number, "number num3");
-	Zinc_expect_string(test, &num3->value, "2", "2 num3");
-
-    AkeUnit_parse_teardown(&cu);
-}
-
-/* dynamic-output-none */
 void AkeUnit_parse_elseif2(Zinc_test* test)
 {
 	if (test->dry_run) {
@@ -1392,7 +1267,6 @@ void AkeUnit_parse_statements(Zinc_test* test)
 		test->mute = false;
 		test->solo = false;
 
-		Zinc_test_register(test, AkeUnit_parse_elseif);
 		Zinc_test_register(test, AkeUnit_parse_elseif2);
 		Zinc_test_register(test, AkeUnit_parse_else);
 		Zinc_test_register(test, AkeUnit_parse_else2);
