@@ -1085,3 +1085,24 @@ Error {
   .col = 1
 }
 ```
+
+## Test
+elseif (error expected expression)
+
+```cent
+Test {
+  .has_error = true
+}
+```
+
+```akela
+if true elseif end
+```
+
+```cent
+Error {
+  .message = "expected condition after elseif"
+  .line = 1099
+  .col = 16
+}
+```
