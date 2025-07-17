@@ -6,94 +6,6 @@
 #include "zinc/test.h"
 #include "zinc/expect.h"
 
-void AkeUnit_parse_stmts4(Zinc_test* test)
-{
-	if (test->dry_run) {
-		Zinc_string_add_str(&test->name, __func__);
-		test->mute = false;
-		test->solo = false;
-		return;
-	}
-
-	struct Ake_comp_unit cu;
-
-    AkeUnit_parse_setup("const x: Int32; const y: Int32; const z: Int32; x+1; 5-4; y+z", &cu);
-	if (!Zinc_expect_no_errors(test, &cu.errors)) {
-		return Zinc_assert();
-	}
-	if (!Zinc_expect_true(test, cu.valid, "AkeUnit_parse_setup valid")) {
-		return Zinc_assert();
-	}
-
-	if (!Zinc_expect_ptr(test, cu.root, "cu.root")) {
-		return Zinc_assert();
-	}
-	Zinc_expect_int_equal(test, cu.root->kind, Ake_ast_type_stmts, "parse_stmts");
-
-	Ake_Ast* a = Ake_ast_get(cu.root, 3);
-	if (!Zinc_expect_ptr(test, a, "ptr a")) {
-		return Zinc_assert();
-	}
-	Zinc_expect_int_equal(test, a->kind, Ake_ast_type_plus, "plus a");
-
-	Ake_Ast* b = Ake_ast_get(a, 0);
-	if (!Zinc_expect_ptr(test, b, "ptr b")) {
-		return Zinc_assert();
-	}
-	Zinc_expect_int_equal(test, b->kind, Ake_ast_type_id, "id b");
-	Zinc_expect_string(test, &b->value, "x", "x b");
-
-	Ake_Ast* c = Ake_ast_get(a, 1);
-	if (!Zinc_expect_ptr(test, c, "ptr c")) {
-		return Zinc_assert();
-	}
-	Zinc_expect_int_equal(test, c->kind, Ake_ast_type_number, "number c");
-	Zinc_expect_string(test, &c->value, "1", "1 c");
-
-	Ake_Ast* d = Ake_ast_get(cu.root, 4);
-	if (!Zinc_expect_ptr(test, d, "ptr d")) {
-		return Zinc_assert();
-	}
-	Zinc_expect_int_equal(test, d->kind, Ake_ast_type_minus, "minus d");
-
-	Ake_Ast* e = Ake_ast_get(d, 0);
-	if (!Zinc_expect_ptr(test, e, "ptr e")) {
-		return Zinc_assert();
-	}
-	Zinc_expect_int_equal(test, e->kind, Ake_ast_type_number, "number e");
-	Zinc_expect_string(test, &e->value, "5", "5 b");
-
-	Ake_Ast* f = Ake_ast_get(d, 1);
-	if (!Zinc_expect_ptr(test, f, "ptr f")) {
-		return Zinc_assert();
-	}
-	Zinc_expect_int_equal(test, f->kind, Ake_ast_type_number, "number f");
-	Zinc_expect_string(test, &f->value, "4", "4 c");
-
-	Ake_Ast* g = Ake_ast_get(cu.root, 5);
-	if (!Zinc_expect_ptr(test, g, "ptr g")) {
-		return Zinc_assert();
-	}
-	Zinc_expect_int_equal(test, g->kind, Ake_ast_type_plus, "plus g");
-
-	Ake_Ast* h = Ake_ast_get(g, 0);
-	if (!Zinc_expect_ptr(test, h, "ptr h")) {
-		return Zinc_assert();
-	}
-	Zinc_expect_int_equal(test, h->kind, Ake_ast_type_id, "id h");
-	Zinc_expect_string(test, &h->value, "y", "y h");
-
-	Ake_Ast* i = Ake_ast_get(g, 1);
-	if (!Zinc_expect_ptr(test, i, "ptr i")) {
-		return Zinc_assert();
-	}
-	Zinc_expect_int_equal(test, i->kind, Ake_ast_type_id, "id i");
-	Zinc_expect_string(test, &i->value, "z", "z c");
-
-    AkeUnit_parse_teardown(&cu);
-}
-
-/* dynamic-output-none */
 void AkeUnit_parse_stmts5(Zinc_test* test)
 {
 	if (test->dry_run) {
@@ -1699,7 +1611,6 @@ void AkeUnit_parse_statements(Zinc_test* test)
 		test->mute = false;
 		test->solo = false;
 
-		Zinc_test_register(test, AkeUnit_parse_stmts4);
 		Zinc_test_register(test, AkeUnit_parse_stmts5);
 		Zinc_test_register(test, AkeUnit_parse_stmts_type);
 		Zinc_test_register(test, AkeUnit_parse_if);

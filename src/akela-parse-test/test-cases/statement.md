@@ -326,3 +326,100 @@ Ast::Stmts {
   }
 }
 ```
+
+## Test
+multiple statements 4
+
+```cent
+Test {
+}
+```
+
+```akela
+const x: Int32 = 0
+const y: Int32 = 1
+const z: Int32 = 2
+x+1
+5-4
+y+z
+```
+
+```cent
+use lib::base::*
+const type0 = Type::Integer {
+  .name = "Int32"
+  .bit_count = 32
+}
+Ast::Stmts {
+  .type = type0
+  Ast::Const {
+    Ast::Id {
+      .value = "x"
+    }
+    Ast::Type {
+      .type = type0
+    }
+    Ast::Number {
+      .value = "0"
+      .type = type0
+    }
+  }
+  Ast::Const {
+    Ast::Id {
+      .value = "y"
+    }
+    Ast::Type {
+      .type = type0
+    }
+    Ast::Number {
+      .value = "1"
+      .type = type0
+    }
+  }
+  Ast::Const {
+    Ast::Id {
+      .value = "z"
+    }
+    Ast::Type {
+      .type = type0
+    }
+    Ast::Number {
+      .value = "2"
+      .type = type0
+    }
+  }
+  Ast::Plus {
+    .type = type0
+    Ast::Id {
+      .value = "x"
+      .type = type0
+    }
+    Ast::Number {
+      .value = "1"
+      .type = type0
+    }
+  }
+  Ast::Minus {
+    .type = type0
+    Ast::Number {
+      .value = "5"
+      .type = type0
+    }
+    Ast::Number {
+      .value = "4"
+      .type = type0
+    }
+  }
+  Ast::Plus {
+    .type = type0
+    Ast::Id {
+      .value = "y"
+      .type = type0
+    }
+    Ast::Id {
+      .value = "z"
+      .type = type0
+    }
+  }
+}
+```
