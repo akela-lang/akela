@@ -10,7 +10,10 @@ The Akela project wants to excel at finance.
 ## Status
 The Akela project is a work in progress. Most of the work has been focused on fast
 recursive decent parsing, type checking, and testing tools. Code generation has been
-lightly worked on. The focus is to pass tests right now not end-user functionality yet.
+lightly worked on.
+
+I am converting developer intensive parsing unit test cases (src/akela-unit)
+to the new script-based integration tests (src/akela-parse-test).
 
 ## Project Goals
 Many of the following goals are aspirational.
