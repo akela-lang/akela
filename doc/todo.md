@@ -2,7 +2,7 @@
 * parse tests
   * expr [x]
   * factor [x]
-  * function []
+  * function [x]
   * stmts []
   * struct []
   * types []
