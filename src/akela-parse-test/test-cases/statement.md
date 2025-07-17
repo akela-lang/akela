@@ -423,3 +423,56 @@ Ast::Stmts {
   }
 }
 ```
+
+## Test
+if
+
+```cent
+Test {
+}
+```
+
+```akela
+if true 1 else 2 end
+```
+
+```cent
+use lib::base::*
+const type0 = Type::Integer {
+  .name = "Int32"
+  .bit_count = 32
+}
+const type1 = Type::Boolean {
+  .name = "Bool"
+}
+Ast::Stmts {
+  .type = type0
+  Ast::If {
+    .type = type0
+    Ast::ConditionalBranch {
+      .type = type0
+      Ast::Boolean {
+        .value = "true"
+        .type = type1
+      }
+      Ast::Stmts {
+        .type = type0
+        Ast::Number {
+          .value = "1"
+          .type = type0
+        }
+      }
+    }
+    Ast::DefaultBranch {
+      .type = type0
+      Ast::Stmts {
+        .type = type0
+        Ast::Number {
+          .value = "2"
+          .type = type0
+        }
+      }
+    }
+  }
+}
+```
