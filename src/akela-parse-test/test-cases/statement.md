@@ -476,3 +476,51 @@ Ast::Stmts {
   }
 }
 ```
+
+## Test
+statement types
+
+```cent
+Test {
+}
+```
+
+```akela
+1
+true
+"hello"
+```
+
+```cent
+use lib::base::*
+const type0 = Type::Array {
+  .is_const = true
+  .dim = 6
+  .type = Type::Natural {
+    .name = "Nat8"
+    .bit_count = 8
+  }
+}
+const type1 = Type::Integer {
+  .name = "Int32"
+  .bit_count = 32
+}
+const type2 = Type::Boolean {
+  .name = "Bool"
+}
+Ast::Stmts {
+  .type = type0
+  Ast::Number {
+    .value = "1"
+    .type = type1
+  }
+  Ast::Boolean {
+    .value = "true"
+    .type = type2
+  }
+  Ast::String {
+    .value = "hello"
+    .type = type0
+  }
+}
+```

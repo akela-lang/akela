@@ -6,49 +6,6 @@
 #include "zinc/test.h"
 #include "zinc/expect.h"
 
-void AkeUnit_parse_stmts_type(Zinc_test* test)
-{
-	if (test->dry_run) {
-		Zinc_string_add_str(&test->name, __func__);
-		test->mute = false;
-		test->solo = false;
-		return;
-	}
-
-	Ake_comp_unit cu;
-
-    AkeUnit_parse_setup("1; true; \"hello\"", &cu);
-	if (!Zinc_expect_no_errors(test, &cu.errors)) {
-		return Zinc_assert();
-	}
-	if (!Zinc_expect_true(test, cu.valid, "AkeUnit_parse_setup valid")) {
-		return Zinc_assert();
-	}
-
-	if (!Zinc_expect_ptr(test, cu.root, "ptr cu.root")) {
-		return Zinc_assert();
-	}
-	Zinc_expect_int_equal(test, cu.root->kind, Ake_ast_type_stmts, "parse_stmts cu.root");
-
-	Ake_Type* type = cu.root->type;
-	if (!Zinc_expect_ptr(test, type, "ptr tu")) {
-		return Zinc_assert();
-	}
-	Zinc_expect_int_equal(test, type->kind, AKE_TYPE_ARRAY, "kind tu");
-	Zinc_expect_true(test, type->data.array.is_const, "is_const type");
-	Zinc_expect_uint8_t_equal(test, type->data.array.dim, 6, "dim tu");
-
-	Ake_Type* type2 = type->data.array.type;
-	if (!Zinc_expect_ptr(test, type2, "ptr td")) {
-		return Zinc_assert();
-	}
-	Zinc_expect_int_equal(test, type2->kind, AKE_TYPE_NATURAL, "type td");
-	Zinc_expect_string(test, &type2->name, "Nat8", "name td");
-
-    AkeUnit_parse_teardown(&cu);
-}
-
-/* dynamic-output-none */
 void AkeUnit_parse_if(Zinc_test* test)
 {
 	if (test->dry_run) {
@@ -1531,7 +1488,6 @@ void AkeUnit_parse_statements(Zinc_test* test)
 		test->mute = false;
 		test->solo = false;
 
-		Zinc_test_register(test, AkeUnit_parse_stmts_type);
 		Zinc_test_register(test, AkeUnit_parse_if);
 		Zinc_test_register(test, AkeUnit_parse_elseif);
 		Zinc_test_register(test, AkeUnit_parse_elseif2);
