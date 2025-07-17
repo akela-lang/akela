@@ -2172,3 +2172,24 @@ Error {
   .col = 22
 }
 ```
+
+## Test
+function (error output type does not match)
+
+```cent
+Test {
+  .has_error = true
+}
+```
+
+```akela
+const a: fn()->Int32 = fn()->Bool true end
+```
+
+```cent
+Error {
+  .message = "values in assignment are not compatible"
+  .line = 2186
+  .col = 24
+}
+```
