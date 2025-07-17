@@ -1144,3 +1144,24 @@ Ast::Stmts {
   }
 }
 ```
+
+## Test
+while (error expected expression)
+
+```cent
+Test {
+  .has_error = true
+}
+```
+
+```akela
+while end
+```
+
+```cent
+Error {
+  .message = "expected expression after while"
+  .line = 1158
+  .col = 7
+}
+```

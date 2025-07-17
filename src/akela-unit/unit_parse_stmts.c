@@ -6,27 +6,6 @@
 #include "zinc/test.h"
 #include "zinc/expect.h"
 
-void AkeUnit_parse_while_error_expected_expression(Zinc_test* test)
-{
-	if (test->dry_run) {
-		Zinc_string_add_str(&test->name, __func__);
-		test->mute = false;
-		test->solo = false;
-		return;
-	}
-
-	struct Ake_comp_unit cu;
-
-    AkeUnit_parse_setup("while end", &cu);
-	if (!Zinc_expect_has_errors(test, &cu.errors)) {
-		return Zinc_assert();
-	}
-	Zinc_expect_false(test, cu.valid, "AkeUnit_parse_setup valid");
-	Zinc_expect_source_error(test, &cu.errors, "expected expression after while");
-
-    AkeUnit_parse_teardown(&cu);
-}
-
 void AkeUnit_parse_while_error_expected_end(Zinc_test* test)
 {
 	if (test->dry_run) {
@@ -770,7 +749,6 @@ void AkeUnit_parse_statements(Zinc_test* test)
 		test->mute = false;
 		test->solo = false;
 
-		Zinc_test_register(test, AkeUnit_parse_while_error_expected_expression);
 		Zinc_test_register(test, AkeUnit_parse_while_error_expected_end);
 		Zinc_test_register(test, AkeUnit_parse_for_range);
 		Zinc_test_register(test, AkeUnit_parse_for_range_error_start_no_value);
