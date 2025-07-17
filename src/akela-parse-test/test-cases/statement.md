@@ -1106,3 +1106,41 @@ Error {
   .col = 16
 }
 ```
+
+## Test
+while
+
+```cent
+Test {
+}
+```
+
+```akela
+while true 1 end
+```
+
+```cent
+use lib::base::*
+const type0 = Type::Boolean {
+  .name = "Bool"
+}
+const type1 = Type::Integer {
+  .name = "Int32"
+  .bit_count = 32
+}
+Ast::Stmts {
+  Ast::While {
+    Ast::Boolean {
+      .value = "true"
+      .type = type0
+    }
+    Ast::Stmts {
+      .type = type1
+      Ast::Number {
+        .value = "1"
+        .type = type1
+      }
+    }
+  }
+}
+```
