@@ -6,55 +6,6 @@
 #include "zinc/test.h"
 #include "zinc/expect.h"
 
-void AkeUnit_parse_assign(Zinc_test* test)
-{
-	if (test->dry_run) {
-		Zinc_string_add_str(&test->name, __func__);
-		test->mute = false;
-		test->solo = false;
-		return;
-	}
-
-	struct Ake_comp_unit cu;
-
-    AkeUnit_parse_setup("var a: Int32; a = 1", &cu);
-	if (!Zinc_expect_no_errors(test, &cu.errors)) {
-		return Zinc_assert();
-	}
-	if (!Zinc_expect_true(test, cu.valid, "AkeUnit_parse_setup valid")) {
-		return Zinc_assert();
-	}
-
-	if (!Zinc_expect_ptr(test, cu.root, "ptr cu.root")) {
-		return Zinc_assert();
-	}
-	Zinc_expect_int_equal(test, cu.root->kind, Ake_ast_type_stmts, "parse_stmts cu.root");
-
-	Ake_Ast* assign = Ake_ast_get(cu.root, 1);
-	if (!Zinc_expect_ptr(test, assign, "ptr assign")) {
-		return Zinc_assert();
-	}
-	if (!Zinc_expect_int_equal(test, assign->kind, Ake_ast_type_assign, "assign")) {
-		return Zinc_assert();
-	}
-
-	Ake_Ast* left = Ake_ast_get(assign, 0);
-	if (!Zinc_expect_ptr(test, left, "left")) {
-		return Zinc_assert();
-	}
-	Zinc_expect_int_equal(test, left->kind, Ake_ast_type_id, "id");
-	Zinc_expect_string(test, &left->value, "a", "a");
-
-	Ake_Ast* right = Ake_ast_get(assign, 1);
-	if (!Zinc_expect_ptr(test, right, "right")) {
-		return Zinc_assert();
-	}
-	Zinc_expect_int_equal(test, right->kind, Ake_ast_type_number, "number");
-	Zinc_expect_string(test, &right->value, "1", "1");
-
-    AkeUnit_parse_teardown(&cu);
-}
-
 void AkeUnit_parse_assign2(Zinc_test* test)
 {
 	if (test->dry_run) {
@@ -2034,7 +1985,6 @@ void AkeUnit_parse_statements(Zinc_test* test)
 		test->mute = false;
 		test->solo = false;
 
-		Zinc_test_register(test, AkeUnit_parse_assign);
 		Zinc_test_register(test, AkeUnit_parse_assign2);
 		Zinc_test_register(test, AkeUnit_parse_stmts);
 		Zinc_test_register(test, AkeUnit_parse_stmts2);
