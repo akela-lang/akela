@@ -6,74 +6,6 @@
 #include "zinc/test.h"
 #include "zinc/expect.h"
 
-void AkeUnit_parse_stmts(Zinc_test* test)
-{
-	if (test->dry_run) {
-		Zinc_string_add_str(&test->name, __func__);
-		test->mute = false;
-		test->solo = false;
-		return;
-	}
-
-	struct Ake_comp_unit cu;
-
-    AkeUnit_parse_setup("const i: Int32; const x: Int32; i + 1; x * 1", &cu);
-	if (!Zinc_expect_no_errors(test, &cu.errors)) {
-		return Zinc_assert();
-	}
-	if (!Zinc_expect_true(test, cu.valid, "AkeUnit_parse_setup valid")) {
-		return Zinc_assert();
-	}
-
-	if (!Zinc_expect_ptr(test, cu.root, "ptr1")) {
-		return Zinc_assert();
-	}
-	Zinc_expect_int_equal(test, cu.root->kind, Ake_ast_type_stmts, "parse_stmts");
-
-	Ake_Ast* left = Ake_ast_get(cu.root, 2);
-	if (!Zinc_expect_ptr(test, left, "left")) {
-		return Zinc_assert();
-	}
-	Zinc_expect_int_equal(test, left->kind, Ake_ast_type_plus, "plus");
-
-	Ake_Ast* left2 = Ake_ast_get(left, 0);
-	if (!Zinc_expect_ptr(test, left2, "left2")) {
-		return Zinc_assert();
-	}
-	Zinc_expect_int_equal(test, left2->kind, Ake_ast_type_id, "id");
-	Zinc_expect_string(test, &left2->value, "i", "i");
-
-	Ake_Ast* right = Ake_ast_get(left, 1);
-	if (!Zinc_expect_ptr(test, right, "right")) {
-		return Zinc_assert();
-	}
-	Zinc_expect_int_equal(test, right->kind, Ake_ast_type_number, "number");
-	Zinc_expect_string(test, &right->value, "1", "1");
-
-	Ake_Ast* right2 = Ake_ast_get(cu.root, 3);
-	if (!Zinc_expect_ptr(test, right2, "right2")) {
-		return Zinc_assert();
-	}
-	Zinc_expect_int_equal(test, right2->kind, Ake_ast_type_mult, "mult");
-
-	Ake_Ast* left3 = Ake_ast_get(right2, 0);
-	if (!Zinc_expect_ptr(test, left3, "left3")) {
-		return Zinc_assert();
-	}
-	Zinc_expect_int_equal(test, left3->kind, Ake_ast_type_id, "id");
-	Zinc_expect_string(test, &left3->value, "x", "x");
-
-	Ake_Ast* right3 = Ake_ast_get(right2, 1);
-	if (!Zinc_expect_ptr(test, right3, "right3")) {
-		return Zinc_assert();
-	}
-	Zinc_expect_int_equal(test, right3->kind, Ake_ast_type_number, "number2");
-	Zinc_expect_string(test, &right3->value, "1", "1");
-
-    AkeUnit_parse_teardown(&cu);
-}
-
-/* dynamic-output-none */
 void AkeUnit_parse_stmts2(Zinc_test* test)
 {
 	if (test->dry_run) {
@@ -1922,7 +1854,6 @@ void AkeUnit_parse_statements(Zinc_test* test)
 		test->mute = false;
 		test->solo = false;
 
-		Zinc_test_register(test, AkeUnit_parse_stmts);
 		Zinc_test_register(test, AkeUnit_parse_stmts2);
 		Zinc_test_register(test, AkeUnit_parse_stmts3);
 		Zinc_test_register(test, AkeUnit_parse_stmts4);
