@@ -2193,3 +2193,24 @@ Error {
   .col = 24
 }
 ```
+
+## Test
+function assignment (error input type)
+
+```cent
+Test {
+  .has_error = true
+}
+```
+
+```akela
+const a: fn(Int64) = fn(x: Int32) end
+```
+
+```cent
+Error {
+  .message = "values in assignment are not compatible"
+  .line = 2207
+  .col = 22
+}
+```
