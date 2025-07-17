@@ -13,7 +13,8 @@ recursive decent parsing, type checking, and testing tools. Code generation has 
 lightly worked on.
 
 I am converting developer intensive parsing unit test cases (src/akela-unit)
-to the new script-based integration tests (src/akela-parse-test).
+to the new script-based integration tests (src/akela-parse-test). Check out
+the [todo](doc/todo.md).
 
 ## Project Goals
 Many of the following goals are aspirational.
