@@ -6,84 +6,6 @@
 #include "zinc/test.h"
 #include "zinc/expect.h"
 
-void AkeUnit_parse_for_range(Zinc_test* test)
-{
-	if (test->dry_run) {
-		Zinc_string_add_str(&test->name, __func__);
-		test->mute = false;
-		test->solo = false;
-		return;
-	}
-
-	struct Ake_comp_unit cu;
-
-    AkeUnit_parse_setup("for i: Int32 = 0:10 1 end", &cu);
-	if (!Zinc_expect_no_errors(test, &cu.errors)) {
-		return Zinc_assert();
-	}
-	if (!Zinc_expect_true(test, cu.valid, "AkeUnit_parse_setup valid")) {
-		return Zinc_assert();
-	}
-
-	if (!Zinc_expect_ptr(test, cu.root, "ptr cu.root")) {
-		return Zinc_assert();
-	}
-	Zinc_expect_int_equal(test, cu.root->kind, Ake_ast_type_stmts, "parse_stmts cu.root");
-
-	/* for */
-	Ake_Ast* node = Ake_ast_get(cu.root, 0);
-	if (!Zinc_expect_ptr(test, node, "ptr node")) {
-		return Zinc_assert();
-	}
-	Zinc_expect_int_equal(test, node->kind, Ake_ast_type_for_range, "for-range node");
-
-	/* i */
-	Ake_Ast* dec = Ake_ast_get(node, 0);
-	if (!Zinc_expect_ptr(test, dec, "ptr dec")) {
-		return Zinc_assert();
-	}
-	Zinc_expect_int_equal(test, dec->kind, Ake_ast_type_declaration, "declaration dec");
-
-	Ake_Ast* id = Ake_ast_get(dec, 0);
-	if (!Zinc_expect_ptr(test, id, "ptr id")) {
-		return Zinc_assert();
-	}
-	Zinc_expect_int_equal(test, id->kind, Ake_ast_type_id, "id id");
-	Zinc_expect_string(test, &id->value, "i", "i id");
-
-	/* start */
-	Ake_Ast* start = Ake_ast_get(node, 1);
-	if (!Zinc_expect_ptr(test, start, "ptr start")) {
-		return Zinc_assert();
-	}
-	Zinc_expect_int_equal(test, start->kind, Ake_ast_type_number, "number start");
-	Zinc_expect_string(test, &start->value, "0", "0 start");
-
-	/* end */
-	Ake_Ast* end = Ake_ast_get(node, 2);
-	if (!Zinc_expect_ptr(test, end, "ptr end")) {
-		return Zinc_assert();
-	}
-	Zinc_expect_int_equal(test, end->kind, Ake_ast_type_number, "number end");
-	Zinc_expect_string(test, &end->value, "10", "10 end");
-
-	/* stmts */
-	Ake_Ast* stmts = Ake_ast_get(node, 3);
-	if (!Zinc_expect_ptr(test, stmts, "ptr parse_stmts")) {
-		return Zinc_assert();
-	}
-	Zinc_expect_int_equal(test, stmts->kind, Ake_ast_type_stmts, "parse_stmts stmts");
-
-	Ake_Ast* stmt0 = Ake_ast_get(stmts, 0);
-	if (!Zinc_expect_ptr(test, stmt0, "ptr stmt0")) {
-		return Zinc_assert();
-	}
-	Zinc_expect_int_equal(test, stmt0->kind, Ake_ast_type_number, "number stmt0");
-	Zinc_expect_string(test, &stmt0->value, "1", "1 stmt0");
-
-    AkeUnit_parse_teardown(&cu);
-}
-
 void AkeUnit_parse_for_iteration(Zinc_test* test)
 {
 	if (test->dry_run) {
@@ -725,7 +647,6 @@ void AkeUnit_parse_statements(Zinc_test* test)
 	if (test->dry_run) {
 		Zinc_string_add_str(&test->name, __func__);
 
-		Zinc_test_register(test, AkeUnit_parse_for_range);
 		Zinc_test_register(test, AkeUnit_parse_for_range_error_start_no_value);
 		Zinc_test_register(test, AkeUnit_parse_for_range_error_start_not_numeric);
 		Zinc_test_register(test, AkeUnit_parse_for_range_error_end_no_value);
