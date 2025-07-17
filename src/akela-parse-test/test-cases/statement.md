@@ -1165,3 +1165,24 @@ Error {
   .col = 7
 }
 ```
+
+## Test
+while (error expected end)
+
+```cent
+Test {
+  .has_error = true
+}
+```
+
+```akela
+while true
+```
+
+```cent
+Error {
+  .message = "expected end"
+  .line = 1180
+  .col = 1
+}
+```
