@@ -6,25 +6,6 @@
 #include "zinc/test.h"
 #include "zinc/expect.h"
 
-void AkeUnit_parse_for_error_expected_colon(Zinc_test* test)
-{
-	if (test->dry_run) {
-		Zinc_string_add_str(&test->name, __func__);
-		test->mute = false;
-		test->solo = false;
-		return;
-	}
-
-	struct Ake_comp_unit cu;
-
-    AkeUnit_parse_setup("const list: [10]Int32; for i: Int32 = 1", &cu);
-	Zinc_expect_has_errors(test, &cu.errors);
-	Zinc_expect_false(test, cu.valid, "AkeUnit_parse_setup valid");
-	Zinc_expect_source_error(test, &cu.errors, "expected colon");
-
-    AkeUnit_parse_teardown(&cu);
-}
-
 void AkeUnit_parse_for_error_expected_range_end(Zinc_test* test)
 {
 	if (test->dry_run) {
@@ -457,7 +438,6 @@ void AkeUnit_parse_statements(Zinc_test* test)
 		Zinc_test_register(test, AkeUnit_parse_for_range_error_start_not_numeric);
 		Zinc_test_register(test, AkeUnit_parse_for_range_error_end_no_value);
 		Zinc_test_register(test, AkeUnit_parse_for_range_error_end_not_numeric);
-		Zinc_test_register(test, AkeUnit_parse_for_error_expected_colon);
 		Zinc_test_register(test, AkeUnit_parse_for_error_expected_range_end);
 		Zinc_test_register(test, AkeUnit_parse_for_error_expected_iteration_expression);
 		Zinc_test_register(test, AkeUnit_parse_stmts_newline_for_range);

@@ -1477,3 +1477,25 @@ Error {
   .col = 1
 }
 ```
+
+## Test
+for range (error expected colon)
+
+```cent
+Test {
+  .has_error = true
+}
+```
+
+```akela
+const list: [10]Int32
+for i: Int32 = 1
+```
+
+```cent
+Error {
+  .message = "expected colon"
+  .line = 1493
+  .col = 1
+}
+```
