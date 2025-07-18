@@ -1340,3 +1340,27 @@ Ast::Stmts {
   }
 }
 ```
+
+## Test
+for iteration (error list no value)
+
+```cent
+Test {
+  .has_error = true
+}
+```
+
+```akela
+fn list()
+end
+for i: Int32 in list()
+end
+```
+
+```cent
+Error {
+  .message = "iteration expression has no value"
+  .line = 1356
+  .col = 17
+}
+```
