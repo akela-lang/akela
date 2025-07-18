@@ -1565,3 +1565,26 @@ Error {
   .col = 16
 }
 ```
+
+## Test
+for range (error end no value)
+
+```cent
+Test {
+  .has_error = true
+}
+```
+
+```akela
+fn foo() end
+for i: Int32 = 1:foo()
+end
+```
+
+```cent
+Error {
+  .message = "end range expression has no value"
+  .line = 1580
+  .col = 18
+}
+```
