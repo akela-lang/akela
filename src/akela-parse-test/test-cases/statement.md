@@ -1433,3 +1433,25 @@ Error {
   .col = 1
 }
 ```
+
+## Test
+for (error expected end)
+
+```cent
+Test {
+  .has_error = true
+}
+```
+
+```akela
+const list: [10]Int32
+for i: Int32 = 1:10
+```
+
+```cent
+Error {
+  .message = "expected end"
+  .line = 1449
+  .col = 1
+}
+```
