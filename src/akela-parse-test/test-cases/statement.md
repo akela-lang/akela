@@ -1364,3 +1364,26 @@ Error {
   .col = 17
 }
 ```
+
+## Test
+function iteration (error not an array or slice)
+
+```cent
+Test {
+  .has_error = true
+}
+```
+
+```akela
+const list: Int32
+for i: Int32 in list
+end
+```
+
+```cent
+Error {
+  .message = "iteration expression is not an array or slice"
+  .line = 1379
+  .col = 17
+}
+```
