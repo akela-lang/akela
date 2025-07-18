@@ -1387,3 +1387,26 @@ Error {
   .col = 17
 }
 ```
+
+## Test
+for range (error no value)
+
+```cent
+Test {
+  .has_error = true
+}
+```
+
+```akela
+const list: [10]Bool = [false, true, true, false, true, true, false, true, true, false]
+for i: Int32 in list
+end
+```
+
+```cent
+Error {
+  .message = "cannot cast list element"
+  .line = 1402
+  .col = 17
+}
+```
