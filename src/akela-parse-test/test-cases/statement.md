@@ -1831,3 +1831,37 @@ Ast::Stmts {
   }
 }
 ```
+
+## Test
+const 2
+
+```cent
+Test {
+}
+```
+
+```akela
+const a: Int32 = 1
+```
+
+```cent
+use lib::base::*
+const type0 = Type::Integer {
+  .name = "Int32"
+  .bit_count = 32
+}
+Ast::Stmts {
+  Ast::Const {
+    Ast::Id {
+      .value = "a"
+    }
+    Ast::Type {
+      .type = type0
+    }
+    Ast::Number {
+      .value = "1"
+      .type = type0
+    }
+  }
+}
+```
