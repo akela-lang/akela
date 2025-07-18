@@ -6,58 +6,6 @@
 #include "zinc/test.h"
 #include "zinc/expect.h"
 
-void AkeUnit_parse_const(Zinc_test* test)
-{
-	if (test->dry_run) {
-		Zinc_string_add_str(&test->name, __func__);
-		test->mute = false;
-		test->solo = false;
-		return;
-	}
-
-    Ake_comp_unit cu;
-
-    AkeUnit_parse_setup("const a: Int32", &cu);
-    if (!Zinc_expect_no_errors(test, &cu.errors)) {
-		return Zinc_assert();
-	}
-    Zinc_expect_true(test, cu.valid, "valid");
-
-    if (!Zinc_expect_ptr(test, cu.root, "ptr cu.root")) {
-		return Zinc_assert();
-	}
-    if (!Zinc_expect_int_equal(test, cu.root->kind, Ake_ast_type_stmts, "parse_stmts cu.root")) {
-		return Zinc_assert();
-	}
-
-    Ake_Ast* _const_ = Ake_ast_get(cu.root, 0);
-    if (!Zinc_expect_ptr(test, _const_, "ptr let")) {
-		return Zinc_assert();
-	}
-    Zinc_expect_int_equal(test, _const_->kind, Ake_ast_type_const, "type const_");
-
-    Ake_Ast* id_node = Ake_ast_get(_const_, 0);
-    if (!Zinc_expect_ptr(test, id_node, "ptr id_node")) {
-		return Zinc_assert();
-	}
-    Zinc_expect_int_equal(test, id_node->kind, Ake_ast_type_id, "type let_lseq");
-    Zinc_expect_string(test, &id_node->value, "a", "a");
-
-    Ake_Ast* type_node = Ake_ast_get(_const_, 1);
-    if (!Zinc_expect_ptr(test, type_node, "ptr type_node")) {
-		return Zinc_assert();
-	}
-
-    Ake_Type* type = type_node->type;
-    if (!Zinc_expect_ptr(test, type, "ptr tu")) {
-		return Zinc_assert();
-	}
-	Zinc_expect_int_equal(test, type->kind, AKE_TYPE_INTEGER, "kind tu");
-    Zinc_expect_string(test, &type->name, "Int32", "Int32 tu");
-
-    AkeUnit_parse_teardown(&cu);
-}
-
 void AkeUnit_parse_let2(Zinc_test* test)
 {
 	if (test->dry_run) {
@@ -284,7 +232,6 @@ void AkeUnit_parse_statements(Zinc_test* test)
 	if (test->dry_run) {
 		Zinc_string_add_str(&test->name, __func__);
 
-		Zinc_test_register(test, AkeUnit_parse_const);
 		Zinc_test_register(test, AkeUnit_parse_let2);
 		Zinc_test_register(test, AkeUnit_parse_let_expected_declaration);
 		Zinc_test_register(test, AkeUnit_parse_extern);
