@@ -1499,3 +1499,25 @@ Error {
   .col = 1
 }
 ```
+
+## Test
+for range (error expected end)
+
+```cent
+Test {
+  .has_error = true
+}
+```
+
+```akela
+const list: [10]Int32
+for i: Int32 = 1:
+```
+
+```cent
+Error {
+  .message = "expected range end"
+  .line = 1515
+  .col = 1
+}
+```
