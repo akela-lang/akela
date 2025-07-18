@@ -1588,3 +1588,25 @@ Error {
   .col = 18
 }
 ```
+
+## Test
+for range (error end not numeric)
+
+```cent
+Test {
+  .has_error = true
+}
+```
+
+```akela
+for i: Int32 = 1:true
+end
+```
+
+```cent
+Error {
+  .message = "end range expression is not numeric"
+  .line = 1602
+  .col = 18
+}
+```
