@@ -1410,3 +1410,26 @@ Error {
   .col = 17
 }
 ```
+
+## Test
+for (error expected = or in)
+
+```cent
+Test {
+  .has_error = true
+}
+```
+
+```akela
+const list: [10]Int32
+for i: Int32
+end
+```
+
+```cent
+Error {
+  .message = "expected '=' or 'in' after for element declaration"
+  .line = 1426
+  .col = 1
+}
+```
