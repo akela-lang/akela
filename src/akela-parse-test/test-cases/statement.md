@@ -1544,3 +1544,24 @@ Error {
   .col = 16
 }
 ```
+
+## Test
+for range (error start not numeric)
+
+```cent
+Test {
+  .has_error = true
+}
+```
+
+```akela
+for i: Int32 = true:10 end
+```
+
+```cent
+Error {
+  .message = "start range expression is not numeric"
+  .line = 1558
+  .col = 16
+}
+```
