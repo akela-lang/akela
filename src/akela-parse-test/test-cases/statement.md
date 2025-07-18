@@ -1632,3 +1632,59 @@ Error {
   .col = 16
 }
 ```
+
+## Test
+for range newline
+
+```cent
+Test {
+}
+```
+
+```akela
+for
+i
+:
+Int32
+=
+0
+:
+10
+    i
+end
+```
+
+```cent
+use lib::base::*
+const type0 = Type::Integer {
+  .name = "Int32"
+  .bit_count = 32
+}
+Ast::Stmts {
+  Ast::ForRange {
+    Ast::Declaration {
+      Ast::Id {
+        .value = "i"
+      }
+      Ast::Type {
+        .type = type0
+      }
+    }
+    Ast::Number {
+      .value = "0"
+      .type = type0
+    }
+    Ast::Number {
+      .value = "10"
+      .type = type0
+    }
+    Ast::Stmts {
+      .type = type0
+      Ast::Id {
+        .value = "i"
+        .type = type0
+      }
+    }
+  }
+}
+```

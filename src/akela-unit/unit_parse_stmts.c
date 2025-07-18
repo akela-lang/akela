@@ -6,24 +6,6 @@
 #include "zinc/test.h"
 #include "zinc/expect.h"
 
-void AkeUnit_parse_stmts_newline_for_range(Zinc_test* test)
-{
-	if (test->dry_run) {
-		Zinc_string_add_str(&test->name, __func__);
-		test->mute = false;
-		test->solo = false;
-		return;
-	}
-
-    struct Ake_comp_unit cu;
-
-    AkeUnit_parse_setup("for\ni\n: \nInt32\n=\n0\n:\n10 i end", &cu);
-    Zinc_expect_no_errors(test, &cu.errors);
-    Zinc_expect_true(test, cu.valid, "valid");
-
-    AkeUnit_parse_teardown(&cu);
-}
-
 void AkeUnit_parse_stmts_newline_for_iteration(Zinc_test* test)
 {
 	if (test->dry_run) {
@@ -320,7 +302,6 @@ void AkeUnit_parse_statements(Zinc_test* test)
 	if (test->dry_run) {
 		Zinc_string_add_str(&test->name, __func__);
 
-		Zinc_test_register(test, AkeUnit_parse_stmts_newline_for_range);
 		Zinc_test_register(test, AkeUnit_parse_stmts_newline_for_iteration);
 		Zinc_test_register(test, AkeUnit_parse_const);
 		Zinc_test_register(test, AkeUnit_parse_let2);
