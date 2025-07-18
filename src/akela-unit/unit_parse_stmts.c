@@ -6,86 +6,6 @@
 #include "zinc/test.h"
 #include "zinc/expect.h"
 
-void AkeUnit_parse_for_iteration(Zinc_test* test)
-{
-	if (test->dry_run) {
-		Zinc_string_add_str(&test->name, __func__);
-		test->mute = false;
-		test->solo = false;
-		return;
-	}
-
-	struct Ake_comp_unit cu;
-
-    AkeUnit_parse_setup("const list: [10]Int32; for i: Int32 in list i end", &cu);
-	Zinc_expect_no_errors(test, &cu.errors);
-	Zinc_expect_true(test, cu.valid, "AkeUnit_parse_setup valid");
-
-	if (!Zinc_expect_ptr(test, cu.root, "ptr cu.root")) {
-		return Zinc_assert();
-	}
-	Zinc_expect_int_equal(test, cu.root->kind, Ake_ast_type_stmts, "parse_stmts cu.root");
-
-	/* for */
-	Ake_Ast* node = Ake_ast_get(cu.root, 1);
-	if (!Zinc_expect_ptr(test, node, "ptr node")) {
-		return Zinc_assert();
-	}
-	Zinc_expect_int_equal(test, node->kind, Ake_ast_type_for_iteration, "for-iteration node");
-
-	/* declaration */
-	Ake_Ast* dec = Ake_ast_get(node, 0);
-	if (!Zinc_expect_ptr(test, dec, "ptr dec")) {
-		return Zinc_assert();
-	}
-	Zinc_expect_int_equal(test, dec->kind, Ake_ast_type_declaration, "declaration dec");
-
-	/* id */
-	Ake_Ast* id = Ake_ast_get(dec, 0);
-	if (!Zinc_expect_ptr(test, id, "ptr id")) {
-		return Zinc_assert();
-	}
-	Zinc_expect_int_equal(test, id->kind, Ake_ast_type_id, "id id");
-	Zinc_expect_string(test, &id->value, "i", "i id");
-
-	Ake_Ast* i_type_node = Ake_ast_get(dec, 1);
-	if (!Zinc_expect_ptr(test, i_type_node, "ptr i_tu")) {
-		return Zinc_assert();
-	}
-
-    Ake_Type* i_type = i_type_node->type;
-    if (!Zinc_expect_ptr(test, i_type, "ptr i_tu")) {
-		return Zinc_assert();
-	}
-	Zinc_expect_int_equal(test, i_type->kind, AKE_TYPE_INTEGER, "integer i_td");
-	Zinc_expect_string(test, &i_type->name, "Int32", "Int32 i_td");
-
-	/* expr */
-	Ake_Ast* expr = Ake_ast_get(node, 1);
-	if (!Zinc_expect_ptr(test, expr, "ptr expr")) {
-		return Zinc_assert();
-	}
-	Zinc_expect_int_equal(test, expr->kind, Ake_ast_type_id, "id expr");
-	Zinc_expect_string(test, &expr->value, "list", "id list");
-
-	/* stmts */
-	Ake_Ast* stmts0 = Ake_ast_get(node, 2);
-	if (!Zinc_expect_ptr(test, stmts0, "ptr stmts0")) {
-		return Zinc_assert();
-	}
-	Zinc_expect_int_equal(test, stmts0->kind, Ake_ast_type_stmts, "parse_stmts stmts0");
-
-	/* i */
-	Ake_Ast* id2 = Ake_ast_get(stmts0, 0);
-	if (!Zinc_expect_ptr(test, id2, "ptr id2")) {
-		return Zinc_assert();
-	}
-	Zinc_expect_int_equal(test, id2->kind, Ake_ast_type_id, "id id2");
-	Zinc_expect_string(test, &id2->value, "i", "i id2");
-
-    AkeUnit_parse_teardown(&cu);
-}
-
 void AkeUnit_parse_for_iteration_error_no_value(Zinc_test* test)
 {
 	if (test->dry_run) {
@@ -651,7 +571,6 @@ void AkeUnit_parse_statements(Zinc_test* test)
 		Zinc_test_register(test, AkeUnit_parse_for_range_error_start_not_numeric);
 		Zinc_test_register(test, AkeUnit_parse_for_range_error_end_no_value);
 		Zinc_test_register(test, AkeUnit_parse_for_range_error_end_not_numeric);
-		Zinc_test_register(test, AkeUnit_parse_for_iteration);
 		Zinc_test_register(test, AkeUnit_parse_for_iteration_error_no_value);
 		Zinc_test_register(test, AkeUnit_parse_for_iteration_error_no_child_element);
 		Zinc_test_register(test, AkeUnit_parse_for_iteration_error_cannot_cast);

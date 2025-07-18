@@ -1235,3 +1235,108 @@ Ast::Stmts {
   }
 }
 ```
+
+## Test
+for iteration
+
+```cent
+Test {
+}
+```
+
+```akela
+const list: [10]Int32 = [1,2,3,4,5,6,7,8,9,10]
+for i: Int32 in list
+    i
+end
+```
+
+```cent
+use lib::base::*
+const type0 = Type::Array {
+  .is_const = false
+  .dim = 10
+  .type = Type::Integer {
+    .name = "Int32"
+    .bit_count = 32
+  }
+}
+const type1 = Type::Integer {
+  .name = "Int32"
+  .bit_count = 32
+}
+Ast::Stmts {
+  Ast::Const {
+    Ast::Id {
+      .value = "list"
+    }
+    Ast::Type {
+      .type = type0
+    }
+    Ast::ArrayLiteral {
+      .type = type0
+      Ast::Number {
+        .value = "1"
+        .type = type1
+      }
+      Ast::Number {
+        .value = "2"
+        .type = type1
+      }
+      Ast::Number {
+        .value = "3"
+        .type = type1
+      }
+      Ast::Number {
+        .value = "4"
+        .type = type1
+      }
+      Ast::Number {
+        .value = "5"
+        .type = type1
+      }
+      Ast::Number {
+        .value = "6"
+        .type = type1
+      }
+      Ast::Number {
+        .value = "7"
+        .type = type1
+      }
+      Ast::Number {
+        .value = "8"
+        .type = type1
+      }
+      Ast::Number {
+        .value = "9"
+        .type = type1
+      }
+      Ast::Number {
+        .value = "10"
+        .type = type1
+      }
+    }
+  }
+  Ast::ForIteration {
+    Ast::Declaration {
+      Ast::Id {
+        .value = "i"
+      }
+      Ast::Type {
+        .type = type1
+      }
+    }
+    Ast::Id {
+      .value = "list"
+      .type = type0
+    }
+    Ast::Stmts {
+      .type = type1
+      Ast::Id {
+        .value = "i"
+        .type = type1
+      }
+    }
+  }
+}
+```
