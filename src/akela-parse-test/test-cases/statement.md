@@ -1521,3 +1521,26 @@ Error {
   .col = 1
 }
 ```
+
+## Test
+for range (error start no value)
+
+```cent
+Test {
+  .has_error = true
+}
+```
+
+```akela
+fn foo() end
+for i: Int32 = foo():10
+end
+```
+
+```cent
+Error {
+  .message = "start range expression has no value"
+  .line = 1536
+  .col = 16
+}
+```
