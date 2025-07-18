@@ -1455,3 +1455,25 @@ Error {
   .col = 1
 }
 ```
+
+## Test
+for (error expected range start)
+
+```cent
+Test {
+  .has_error = true
+}
+```
+
+```akela
+const list: [2]Int32 = [0.1]
+for i: Int32 =
+```
+
+```cent
+Error {
+  .message = "expected range start"
+  .line = 1471
+  .col = 1
+}
+```
