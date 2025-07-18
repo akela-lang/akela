@@ -1610,3 +1610,25 @@ Error {
   .col = 18
 }
 ```
+
+## Test
+for iteration (error expected expression)
+
+```cent
+Test {
+  .has_error = true
+}
+```
+
+```akela
+const list: [10]Int32
+for i: Int32 in:
+```
+
+```cent
+Error {
+  .message = "expected for iteration expression"
+  .line = 1625
+  .col = 16
+}
+```
