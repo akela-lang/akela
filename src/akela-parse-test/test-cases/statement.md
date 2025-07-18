@@ -1865,3 +1865,24 @@ Ast::Stmts {
   }
 }
 ```
+
+## Test
+const (error expected declaration)
+
+```cent
+Test {
+  .has_error = true
+}
+```
+
+```akela
+const
+```
+
+```cent
+Error {
+  .message = "expected id"
+  .line = 1880
+  .col = 1
+}
+```
