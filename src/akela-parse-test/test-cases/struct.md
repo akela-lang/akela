@@ -329,3 +329,32 @@ Error {
   .col = 5
 }
 ```
+
+## Test
+(error missing field)
+
+```cent
+Test {
+  .has_error = true
+}
+```
+
+```akela
+struct Person
+    first_name: [100 const]Nat8
+    last_name: [100 const]Nat8
+    age: Int32
+end
+const p: Person = Person
+    first_name: "John"
+    age: 35
+end
+```
+
+```cent
+Error {
+  .message = "struct field missing: last_name"
+  .line = 348
+  .col = 5
+}
+```
