@@ -280,6 +280,8 @@ void Cent_check_value_types_child(Cent_parse_result* pr, Cent_value* object_valu
         bool found = false;
         if (value_sym->type == Cent_symbol_type_element) {
             Cent_element_type* value_element = value_sym->data.element;
+
+            // look for element children match
             Cent_types_node* p = object_element->children.head;
             while (p) {
                 if (p->type == Cent_types_element) {
@@ -289,6 +291,30 @@ void Cent_check_value_types_child(Cent_parse_result* pr, Cent_value* object_valu
                     }
                 }
                 p = p->next;
+            }
+
+            // look for variants
+            if (!found) {
+                Cent_value* tag = Cent_value_get_str(object_value, "@tag");
+                if (tag) {
+                    assert(tag->type == Cent_value_type_enum);
+                    Cent_variant_type* vt = object_element->variants.head;
+                    while (vt) {
+                        if (Zinc_string_compare(&vt->tag_name, &tag->data.enumeration.enum_value->display)) {
+                            Cent_types_node* node = vt->children.head;
+                            while (node) {
+                                if (node->type == Cent_types_element) {
+                                    if (node->data.et == value_element) {
+                                        found = true;
+                                    }
+                                }
+                                node = node->next;
+                            }
+                        }
+                        vt = vt->next;
+                    }
+
+                }
             }
         } else if (value_sym->type == Cent_symbol_type_enumerate) {
             Cent_enum_type* value_enum = value_sym->data.enumerate;
@@ -301,6 +327,28 @@ void Cent_check_value_types_child(Cent_parse_result* pr, Cent_value* object_valu
                     }
                 }
                 p = p->next;
+            }
+
+            if (!found) {
+                Cent_value* tag = Cent_value_get_str(object_value, "@tag");
+                if (tag) {
+                    assert(tag->type == Cent_value_type_enum);
+                    Cent_variant_type* vt = object_element->variants.head;
+                    while (vt) {
+                        if (Zinc_string_compare(&vt->tag_name, &tag->data.enumeration.enum_value->display)) {
+                            Cent_types_node* node = vt->children.head;
+                            while (node) {
+                                if (node->type == Cent_types_enum) {
+                                    if (node->data.en == value_enum) {
+                                        found = true;
+                                    }
+                                }
+                                node = node->next;
+                            }
+                        }
+                        vt = vt->next;
+                    }
+                }
             }
         }
 

@@ -336,6 +336,7 @@ void Ake_type_cent_print(Ake_Type* type, size_t level, bool is_property)
                 level--;
                 Ake_indent_print(level);
                 printf("}\n");
+                field = field->next;
             }
             break;
         case AKE_TYPE_ARRAY:
