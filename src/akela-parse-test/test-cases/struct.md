@@ -406,3 +406,24 @@ Error {
   .col = 8
 }
 ```
+
+## Test
+(error expected end)
+
+```cent
+Test {
+  .has_error = true
+}
+```
+
+```akela
+struct Person
+```
+
+```cent
+Error {
+  .message = "expected end"
+  .line = 421
+  .col = 1
+}
+```
