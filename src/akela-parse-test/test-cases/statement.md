@@ -2005,3 +2005,26 @@ Ast::Stmts {
   }
 }
 ```
+
+## Test
+const (error immutable changed)
+
+```cent
+Test {
+  .has_error = true
+}
+```
+
+```akela
+const x: Int32 = 10
+x = 5
+x
+```
+
+```cent
+Error {
+  .message = "immutable variable changed in assignment"
+  .line = 2020
+  .col = 1
+}
+```
