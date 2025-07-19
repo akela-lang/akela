@@ -1953,3 +1953,55 @@ Ast::Stmts {
   }
 }
 ```
+
+## Test
+var
+
+```cent
+Test {
+}
+```
+
+```akela
+var x: Int32 = 10
+x = 5
+x
+```
+
+```cent
+use lib::base::*
+const type0 = Type::Integer {
+  .name = "Int32"
+  .bit_count = 32
+}
+Ast::Stmts {
+  .type = type0
+  Ast::Var {
+    Ast::Id {
+      .value = "x"
+    }
+    Ast::Type {
+      .type = type0
+    }
+    Ast::Number {
+      .value = "10"
+      .type = type0
+    }
+  }
+  Ast::Assign {
+    .type = type0
+    Ast::Id {
+      .value = "x"
+      .type = type0
+    }
+    Ast::Number {
+      .value = "5"
+      .type = type0
+    }
+  }
+  Ast::Id {
+    .value = "x"
+    .type = type0
+  }
+}
+```
