@@ -1,12 +1,11 @@
 # Akela
-* parse tests
+* convert parse tests
   * expr [x]
   * factor [x]
   * function [x]
   * stmts [x]
   * struct []
   * types []
-* run tests
 * modules
 * print function
   * integer []
@@ -28,6 +27,14 @@
 * cast numerical values
 
 # Akela LLVM
+* convert run tests
+  * array []
+  * function []
+  * literal []
+  * operator []
+  * stmts []
+  * struct []
+  * variable []
 
 # Akela Parse Test
 
