@@ -14,7 +14,7 @@ lightly worked on.
 
 I am converting developer intensive parsing unit test cases (src/akela-unit)
 to the new script-based integration tests (src/akela-parse-test). Check out
-the [todo](doc/todo.md).
+the [todo](doc/todo.md) to see what I will be working on in the near term.
 
 ## Project Goals
 Many of the following goals are aspirational.

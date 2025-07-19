@@ -1886,3 +1886,70 @@ Error {
   .col = 1
 }
 ```
+
+## Test
+extern
+
+```cent
+Test {
+}
+```
+
+```akela
+extern foo(a: Int32)
+foo(1)
+```
+
+```cent
+use lib::base::*
+const type0 = Type::Function {
+  .name = "foo"
+  .input = Input {
+    TypeParam::Regular {
+      .name = "a"
+      .type = Type::Integer {
+        .name = "Int32"
+        .bit_count = 32
+      }
+    }
+  }
+}
+const type1 = Type::Integer {
+  .name = "Int32"
+  .bit_count = 32
+}
+Ast::Stmts {
+  Ast::Extern {
+    .type = type0
+    Ast::Prototype {
+      Ast::Id {
+        .value = "foo"
+      }
+      Ast::Dseq {
+        Ast::Declaration {
+          Ast::Id {
+            .value = "a"
+          }
+          Ast::Type {
+            .type = type1
+          }
+        }
+      }
+      Ast::Dret {
+      }
+    }
+  }
+  Ast::Call {
+    Ast::Id {
+      .value = "foo"
+      .type = type0
+    }
+    Ast::Cseq {
+      Ast::Number {
+        .value = "1"
+        .type = type1
+      }
+    }
+  }
+}
+```
