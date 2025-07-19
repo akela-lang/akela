@@ -358,3 +358,30 @@ Error {
   .col = 5
 }
 ```
+
+## Test
+dot (error invalid field)
+
+```cent
+Test {
+  .has_error = true
+}
+```
+
+```akela
+struct Person
+    firstName: [100 const]Nat8
+    lastName: [100 const]Nat8
+    age: Int32
+end
+var p: Person
+p.abc
+```
+
+```cent
+Error {
+  .message = "identifier not a field of struct: abc"
+  .line = 378
+  .col = 3
+}
+```
