@@ -384,4 +384,25 @@ Error {
   .line = 378
   .col = 3
 }
+``` 
+
+## Test
+(error expected identifier)
+
+```cent
+Test {
+  .has_error = true
+}
+```
+
+```akela
+struct end
+```
+
+```cent
+Error {
+  .message = "expected identifier"
+  .line = 399
+  .col = 8
+}
 ```
