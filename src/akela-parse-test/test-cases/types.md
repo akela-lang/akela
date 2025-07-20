@@ -47,3 +47,24 @@ Error {
   .col = 1
 }
 ```
+
+## Test
+(error missing declaration 3)
+
+```cent
+Test {
+  .has_error = true
+}
+```
+
+```akela
+x = fn() end
+```
+
+```cent
+Error {
+  .message = "variable not declared: x"
+  .line = 61
+  .col = 1
+}
+```
