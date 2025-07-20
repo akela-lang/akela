@@ -230,3 +230,24 @@ Error {
   .col = 1
 }
 ```
+
+## Test
+(error expected type)
+
+```cent
+Test {
+  .has_error = true
+}
+```
+
+```akela
+const a:
+```
+
+```cent
+Error {
+  .message = "expected type identifier or fn"
+  .line = 245
+  .col = 1
+}
+```
