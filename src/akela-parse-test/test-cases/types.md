@@ -188,3 +188,24 @@ Ast::Stmts {
   }
 }
 ```
+
+## Test
+function dseq comma (error)
+
+```cent
+Test {
+  .has_error = true
+}
+```
+
+```akela
+fn foo(a: Int32,) end
+```
+
+```cent
+Error {
+  .message = "expected declaration after comma"
+  .line = 202
+  .col = 17
+}
+```
