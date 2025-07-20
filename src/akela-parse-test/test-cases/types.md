@@ -251,3 +251,24 @@ Error {
   .col = 1
 }
 ```
+
+## Test
+(error type not defined)
+
+```cent
+Test {
+  .has_error = true
+}
+```
+
+```akela
+const a: Foo
+```
+
+```cent
+Error {
+  .message = "type not defined: Foo"
+  .line = 265
+  .col = 10
+}
+```
