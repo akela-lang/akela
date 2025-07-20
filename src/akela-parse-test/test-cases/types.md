@@ -68,3 +68,25 @@ Error {
   .col = 1
 }
 ```
+
+## Test
+(error type not defined)
+
+```cent
+Test {
+  .has_error = true
+}
+```
+
+```akela
+const x: SuperInt
+x + 1
+```
+
+```cent
+Error {
+  .message = "type not defined: SuperInt"
+  .line = 82
+  .col = 10
+}
+```

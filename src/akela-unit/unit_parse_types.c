@@ -4,25 +4,6 @@
 #include "zinc/test.h"
 #include "zinc/expect.h"
 
-void AkeUnit_parse_types_exists(Zinc_test* test)
-{
-	if (test->dry_run) {
-		Zinc_string_add_str(&test->name, __func__);
-		test->mute = false;
-		test->solo = false;
-		return;
-	}
-
-	struct Ake_comp_unit cu;
-
-    AkeUnit_parse_setup("const x: SuperInt; x + 1", &cu);
-	Zinc_expect_has_errors(test, &cu.errors);
-	Zinc_expect_source_error(test, &cu.errors, "type not defined: SuperInt");
-	Zinc_expect_false(test, cu.valid, "valid");
-
-    AkeUnit_parse_teardown(&cu);
-}
-
 void AkeUnit_parse_types_array(Zinc_test* test)
 {
 	if (test->dry_run) {
@@ -270,7 +251,6 @@ void AkeUnit_parse_types(Zinc_test* test)
 		test->mute = false;
 		test->solo = false;
 
-		Zinc_test_register(test, AkeUnit_parse_types_exists);
 		Zinc_test_register(test, AkeUnit_parse_types_array);
 		Zinc_test_register(test, AkeUnit_parse_error_dseq_comma);
 		Zinc_test_register(test, AkeUnit_parse_error_declaration_colon);
