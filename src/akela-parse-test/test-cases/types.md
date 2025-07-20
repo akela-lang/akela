@@ -272,3 +272,25 @@ Error {
   .col = 10
 }
 ```
+
+## Test
+(error not a type)
+
+```cent
+Test {
+  .has_error = true
+}
+```
+
+```akela
+const foo: Int32
+const a: foo
+```
+
+```cent
+Error {
+  .message = "identifier is not a type: foo"
+  .line = 287
+  .col = 10
+}
+```
