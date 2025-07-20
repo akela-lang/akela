@@ -7,7 +7,6 @@
 #include "unit_comp_unit.h"
 #include "unit_comp_table.h"
 #include "unit_lex_tools.h"
-#include "unit_parse_struct.h"
 #include "unit_environment.h"
 #include "unit_type_list.h"
 #include "unit_type_slots.h"
@@ -28,7 +27,6 @@ void AkeUnit(Zinc_test* test)
         Zinc_test_register(test, AkeUnit_parse_types);
         Zinc_test_register(test, AkeUnit_comp_unit);
         Zinc_test_register(test, AkeUnit_comp_table);
-        Zinc_test_register(test, AkeUnit_parse_struct);
         Zinc_test_register(test, AkeUnit_Environment);
         Zinc_test_register(test, AkeUnit_TypeList);
         Zinc_test_register(test, AkeUnit_TypeSlots);

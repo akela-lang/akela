@@ -4,7 +4,7 @@
   * factor [x]
   * function [x]
   * stmts [x]
-  * struct []
+  * struct [x]
   * types []
 * modules
 * print function

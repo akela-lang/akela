@@ -448,3 +448,444 @@ Error {
   .col = 1
 }
 ```
+
+## Test
+(error duplicate)
+
+```cent
+Test {
+  .has_error = true
+}
+```
+
+```akela
+const Person: Int32 = 1
+struct Person end
+```
+
+```cent
+Error {
+  .message = "duplicate variable in scope: Person"
+  .line = 463
+  .col = 8
+}
+```
+
+## Test
+struct impl
+
+```cent
+Test {
+}
+```
+
+```akela
+extern pow(Real64, Real64)->Real64
+extern sqrt(Real64)->Real64
+struct Point
+    x: Real64
+    y: Real64
+end
+struct Line
+    p0: Point
+    p1: Point
+end
+impl Line
+    fn length(self)->Real64
+        sqrt(pow(self.p1.x - self.p0.x, 2) + pow(self.p1.y - self.p0.y, 2))
+    end
+end
+```
+
+```cent
+use lib::base::*
+const type0 = Type::Function {
+  .name = "pow"
+  .input = Input {
+    TypeParam::Regular {
+      .name = ""
+      .type = Type::Real {
+        .name = "Real64"
+        .bit_count = 64
+      }
+    }
+    TypeParam::Regular {
+      .name = ""
+      .type = Type::Real {
+        .name = "Real64"
+        .bit_count = 64
+      }
+    }
+  }
+  .output = Type::Real {
+    .name = "Real64"
+    .bit_count = 64
+  }
+}
+const type1 = Type::Real {
+  .name = "Real64"
+  .bit_count = 64
+}
+const type2 = Type::Function {
+  .name = "sqrt"
+  .input = Input {
+    TypeParam::Regular {
+      .name = ""
+      .type = Type::Real {
+        .name = "Real64"
+        .bit_count = 64
+      }
+    }
+  }
+  .output = Type::Real {
+    .name = "Real64"
+    .bit_count = 64
+  }
+}
+const type3 = Type::Struct {
+  .name = "Point"
+  TypeField {
+    .name = "x"
+    .type = Type::Real {
+      .name = "Real64"
+      .bit_count = 64
+    }
+  }
+  TypeField {
+    .name = "y"
+    .type = Type::Real {
+      .name = "Real64"
+      .bit_count = 64
+    }
+  }
+}
+const type4 = Type::Function {
+  .name = "length"
+  .input = Input {
+    TypeParam::Self {
+      .name = "self"
+      .type = Type::Struct {
+        .name = "Line"
+        TypeField {
+          .name = "p0"
+          .type = Type::Struct {
+            .name = "Point"
+            TypeField {
+              .name = "x"
+              .type = Type::Real {
+                .name = "Real64"
+                .bit_count = 64
+              }
+            }
+            TypeField {
+              .name = "y"
+              .type = Type::Real {
+                .name = "Real64"
+                .bit_count = 64
+              }
+            }
+          }
+        }
+        TypeField {
+          .name = "p1"
+          .type = Type::Struct {
+            .name = "Point"
+            TypeField {
+              .name = "x"
+              .type = Type::Real {
+                .name = "Real64"
+                .bit_count = 64
+              }
+            }
+            TypeField {
+              .name = "y"
+              .type = Type::Real {
+                .name = "Real64"
+                .bit_count = 64
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  .output = Type::Real {
+    .name = "Real64"
+    .bit_count = 64
+  }
+}
+const type5 = Type::Struct {
+  .name = "Line"
+  TypeField {
+    .name = "p0"
+    .type = Type::Struct {
+      .name = "Point"
+      TypeField {
+        .name = "x"
+        .type = Type::Real {
+          .name = "Real64"
+          .bit_count = 64
+        }
+      }
+      TypeField {
+        .name = "y"
+        .type = Type::Real {
+          .name = "Real64"
+          .bit_count = 64
+        }
+      }
+    }
+  }
+  TypeField {
+    .name = "p1"
+    .type = Type::Struct {
+      .name = "Point"
+      TypeField {
+        .name = "x"
+        .type = Type::Real {
+          .name = "Real64"
+          .bit_count = 64
+        }
+      }
+      TypeField {
+        .name = "y"
+        .type = Type::Real {
+          .name = "Real64"
+          .bit_count = 64
+        }
+      }
+    }
+  }
+}
+const type6 = Type::Integer {
+  .name = "Int32"
+  .bit_count = 32
+}
+Ast::Stmts {
+  Ast::Extern {
+    .type = type0
+    Ast::Prototype {
+      Ast::Id {
+        .value = "pow"
+      }
+      Ast::Dseq {
+        Ast::Declaration {
+          Ast::Id {
+          }
+          Ast::Type {
+            .type = type1
+          }
+        }
+        Ast::Declaration {
+          Ast::Id {
+          }
+          Ast::Type {
+            .type = type1
+          }
+        }
+      }
+      Ast::Dret {
+        Ast::Type {
+          .type = type1
+        }
+      }
+    }
+  }
+  Ast::Extern {
+    .type = type2
+    Ast::Prototype {
+      Ast::Id {
+        .value = "sqrt"
+      }
+      Ast::Dseq {
+        Ast::Declaration {
+          Ast::Id {
+          }
+          Ast::Type {
+            .type = type1
+          }
+        }
+      }
+      Ast::Dret {
+        Ast::Type {
+          .type = type1
+        }
+      }
+    }
+  }
+  Ast::Struct {
+    .value = "Point"
+    Ast::Declaration {
+      Ast::Id {
+        .value = "x"
+      }
+      Ast::Type {
+        .type = type1
+      }
+    }
+    Ast::Declaration {
+      Ast::Id {
+        .value = "y"
+      }
+      Ast::Type {
+        .type = type1
+      }
+    }
+  }
+  Ast::Struct {
+    .value = "Line"
+    Ast::Declaration {
+      Ast::Id {
+        .value = "p0"
+      }
+      Ast::Type {
+        .type = type3
+      }
+    }
+    Ast::Declaration {
+      Ast::Id {
+        .value = "p1"
+      }
+      Ast::Type {
+        .type = type3
+      }
+    }
+  }
+  Ast::Impl {
+    Ast::Function {
+      .type = type4
+      Ast::Prototype {
+        Ast::Id {
+          .value = "length"
+        }
+        Ast::Dseq {
+          Ast::Self {
+            Ast::Id {
+              .value = "self"
+            }
+            Ast::Type {
+              .type = type5
+            }
+          }
+        }
+        Ast::Dret {
+          Ast::Type {
+            .type = type1
+          }
+        }
+      }
+      Ast::Stmts {
+        .type = type1
+        Ast::Call {
+          .type = type1
+          Ast::Id {
+            .value = "sqrt"
+            .type = type2
+          }
+          Ast::Cseq {
+            Ast::Plus {
+              .type = type1
+              Ast::Call {
+                .type = type1
+                Ast::Id {
+                  .value = "pow"
+                  .type = type0
+                }
+                Ast::Cseq {
+                  Ast::Minus {
+                    .type = type1
+                    Ast::Dot {
+                      .type = type1
+                      Ast::Dot {
+                        .type = type3
+                        Ast::Id {
+                          .value = "self"
+                          .type = type5
+                        }
+                        Ast::Id {
+                          .value = "p1"
+                        }
+                      }
+                      Ast::Id {
+                        .value = "x"
+                      }
+                    }
+                    Ast::Dot {
+                      .type = type1
+                      Ast::Dot {
+                        .type = type3
+                        Ast::Id {
+                          .value = "self"
+                          .type = type5
+                        }
+                        Ast::Id {
+                          .value = "p0"
+                        }
+                      }
+                      Ast::Id {
+                        .value = "x"
+                      }
+                    }
+                  }
+                  Ast::Number {
+                    .value = "2"
+                    .type = type6
+                  }
+                }
+              }
+              Ast::Call {
+                .type = type1
+                Ast::Id {
+                  .value = "pow"
+                  .type = type0
+                }
+                Ast::Cseq {
+                  Ast::Minus {
+                    .type = type1
+                    Ast::Dot {
+                      .type = type1
+                      Ast::Dot {
+                        .type = type3
+                        Ast::Id {
+                          .value = "self"
+                          .type = type5
+                        }
+                        Ast::Id {
+                          .value = "p1"
+                        }
+                      }
+                      Ast::Id {
+                        .value = "y"
+                      }
+                    }
+                    Ast::Dot {
+                      .type = type1
+                      Ast::Dot {
+                        .type = type3
+                        Ast::Id {
+                          .value = "self"
+                          .type = type5
+                        }
+                        Ast::Id {
+                          .value = "p0"
+                        }
+                      }
+                      Ast::Id {
+                        .value = "y"
+                      }
+                    }
+                  }
+                  Ast::Number {
+                    .value = "2"
+                    .type = type6
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+```
