@@ -299,11 +299,11 @@ void CentUnit_lex_enum(Zinc_test* test)
     Cent_lex_data ld;
 
     CentUnit_lex_setup(&ld,
-        "enum Symbol_type\n"
+        "enum Symbol_type {\n"
         "   Variable\n"
         "   Type\n"
         "   Info\n"
-        "end\n"
+        "}\n"
     );
 
     /* line 1 */
@@ -317,6 +317,9 @@ void CentUnit_lex_enum(Zinc_test* test)
     Zinc_expect_string(test, &t->value, "Symbol_type", "value 1.2");
     Cent_token_destroy(t);
     free(t);
+
+	t = lex(&ld);
+	Zinc_expect_int_equal(test, t->type, Cent_token_left_curly_brace, "type 1.3");
 
     t = lex(&ld);
     Zinc_expect_int_equal(test, t->type, Cent_token_newline, "type 1.3");
@@ -370,7 +373,7 @@ void CentUnit_lex_enum(Zinc_test* test)
     if (!Zinc_expect_ptr(test, t, "ptr 5.1")) {
 		return Zinc_assert();
 	}
-    Zinc_expect_int_equal(test, t->type, Cent_token_end, "type 5.1");
+    Zinc_expect_int_equal(test, t->type, Cent_token_right_curly_brace, "type 5.1");
     Cent_token_destroy(t);
     free(t);
 

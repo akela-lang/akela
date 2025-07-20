@@ -14,7 +14,6 @@ typedef enum Cent_token_type {
     Cent_token_id,
     Cent_token_eof,
     Cent_token_element,
-    Cent_token_end,
     Cent_token_newline,
     Cent_token_properties,
     Cent_token_children,

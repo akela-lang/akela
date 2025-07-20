@@ -16,7 +16,6 @@ void Cent_lex_data_init(
     Cent_lex_add_reserved_word(ld, "element", Cent_token_element);
     Cent_lex_add_reserved_word(ld, "properties", Cent_token_properties);
     Cent_lex_add_reserved_word(ld, "children", Cent_token_children);
-    Cent_lex_add_reserved_word(ld, "end", Cent_token_end);
     Cent_lex_add_reserved_word(ld, "enum", Cent_token_enum);
     Cent_lex_add_reserved_word(ld, "true", Cent_token_true);
     Cent_lex_add_reserved_word(ld, "false", Cent_token_false);
