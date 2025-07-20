@@ -209,3 +209,24 @@ Error {
   .col = 17
 }
 ```
+
+## Test
+declaration (expected colon)
+
+```cent
+Test {
+  .has_error = true
+}
+```
+
+```akela
+const a
+```
+
+```cent
+Error {
+  .message = "expected colon after variable(s)"
+  .line = 224
+  .col = 1
+}
+```
