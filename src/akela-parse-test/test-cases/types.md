@@ -294,3 +294,24 @@ Error {
   .col = 10
 }
 ```
+
+## Test
+(error return type)
+
+```cent
+Test {
+  .has_error = true
+}
+```
+
+```akela
+fn foo()->Int32 true end
+```
+
+```cent
+Error {
+  .message = "returned type does not match function return type"
+  .line = 308
+  .col = 11
+}
+```
