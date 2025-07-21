@@ -843,3 +843,258 @@ Ast::Stmts {
 }
 ```
 
+## Test
+assign
+
+```cent
+Test {
+}
+```
+
+```akela
+var a: Int32; a = 1
+```
+
+```cent
+use lib::base::*
+const type0 = Type::Integer {
+  .name = "Int32"
+  .bit_count = 32
+}
+Ast::Stmts {
+  .type = type0
+  Ast::Var {
+    Ast::Id {
+      .value = "a"
+    }
+    Ast::Type {
+      .type = type0
+    }
+  }
+  Ast::Assign {
+    .type = type0
+    Ast::Id {
+      .value = "a"
+      .type = type0
+    }
+    Ast::Number {
+      .value = "1"
+      .type = type0
+    }
+  }
+}
+```
+
+## Test
+assign 2
+
+```cent
+Test {
+}
+```
+
+```akela
+var a: Int32
+a = 1 + 2
+```
+
+```cent
+use lib::base::*
+const type0 = Type::Integer {
+  .name = "Int32"
+  .bit_count = 32
+}
+Ast::Stmts {
+  .type = type0
+  Ast::Var {
+    Ast::Id {
+      .value = "a"
+    }
+    Ast::Type {
+      .type = type0
+    }
+  }
+  Ast::Assign {
+    .type = type0
+    Ast::Id {
+      .value = "a"
+      .type = type0
+    }
+    Ast::Plus {
+      .type = type0
+      Ast::Number {
+        .value = "1"
+        .type = type0
+      }
+      Ast::Number {
+        .value = "2"
+        .type = type0
+      }
+    }
+  }
+}
+```
+
+## Test
+const
+
+```cent
+Test {
+}
+```
+
+```akela
+const a: Int32 = 0
+```
+
+```cent
+use lib::base::*
+const type0 = Type::Integer {
+  .name = "Int32"
+  .bit_count = 32
+}
+Ast::Stmts {
+  Ast::Const {
+    Ast::Id {
+      .value = "a"
+    }
+    Ast::Type {
+      .type = type0
+    }
+    Ast::Number {
+      .value = "0"
+      .type = type0
+    }
+  }
+}
+```
+
+## Test
+const 2
+
+```cent
+Test {
+}
+```
+
+```akela
+const a: Int32 = 1
+```
+
+```cent
+use lib::base::*
+const type0 = Type::Integer {
+  .name = "Int32"
+  .bit_count = 32
+}
+Ast::Stmts {
+  Ast::Const {
+    Ast::Id {
+      .value = "a"
+    }
+    Ast::Type {
+      .type = type0
+    }
+    Ast::Number {
+      .value = "1"
+      .type = type0
+    }
+  }
+}
+```
+
+## Test
+const (error expected declaration)
+
+```cent
+Test {
+  .has_error = true
+}
+```
+
+```akela
+const
+```
+
+```cent
+Error {
+  .message = "expected id"
+  .line = 2
+  .col = 1
+}
+```
+
+## Test
+var
+
+```cent
+Test {
+}
+```
+
+```akela
+var x: Int32 = 10
+x = 5
+x
+```
+
+```cent
+use lib::base::*
+const type0 = Type::Integer {
+  .name = "Int32"
+  .bit_count = 32
+}
+Ast::Stmts {
+  .type = type0
+  Ast::Var {
+    Ast::Id {
+      .value = "x"
+    }
+    Ast::Type {
+      .type = type0
+    }
+    Ast::Number {
+      .value = "10"
+      .type = type0
+    }
+  }
+  Ast::Assign {
+    .type = type0
+    Ast::Id {
+      .value = "x"
+      .type = type0
+    }
+    Ast::Number {
+      .value = "5"
+      .type = type0
+    }
+  }
+  Ast::Id {
+    .value = "x"
+    .type = type0
+  }
+}
+```
+
+## Test
+const (error immutable changed)
+
+```cent
+Test {
+  .has_error = true
+}
+```
+
+```akela
+const x: Int32 = 10
+x = 5
+x
+```
+
+```cent
+Error {
+  .message = "immutable variable changed in assignment"
+  .line = 2
+  .col = 1
+}
+```
