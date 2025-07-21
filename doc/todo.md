@@ -1,11 +1,4 @@
 # Akela
-* convert parse tests
-  * expr [x]
-  * factor [x]
-  * function [x]
-  * stmts [x]
-  * struct [x]
-  * types []
 * modules
 * print function
   * integer []
