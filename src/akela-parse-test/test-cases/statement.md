@@ -7,6 +7,28 @@ TestSuite {
 ```
 
 ## Test
+blank
+
+```cent
+use lib::base::*
+Test {
+  .solo = false
+  .mute = false
+  .snapshot = false
+  .has_error = false
+}
+```
+
+```akela
+```
+
+```cent
+use lib::base::*
+Ast::Stmts {
+}
+```
+
+## Test
 assign
 
 ```cent

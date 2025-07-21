@@ -2235,3 +2235,120 @@ Error {
   .col = 24
 }
 ```
+
+## Test
+call newline
+
+```cent
+use lib::base::*
+Test {
+  .solo = false
+  .mute = false
+  .snapshot = false
+  .has_error = false
+}
+```
+
+```akela
+fn foo(a: Int32, b: Int32)->Int32 a+b end
+foo(
+1,
+2
+)
+```
+
+```cent
+use lib::base::*
+const type0 = Type::Integer {
+  .name = "Int32"
+  .bit_count = 32
+}
+const type1 = Type::Function {
+  .name = "foo"
+  .input = Input {
+    TypeParam::Regular {
+      .name = "a"
+      .type = Type::Integer {
+        .name = "Int32"
+        .bit_count = 32
+      }
+    }
+    TypeParam::Regular {
+      .name = "b"
+      .type = Type::Integer {
+        .name = "Int32"
+        .bit_count = 32
+      }
+    }
+  }
+  .output = Type::Integer {
+    .name = "Int32"
+    .bit_count = 32
+  }
+}
+Ast::Stmts {
+  .type = type0
+  Ast::Function {
+    .type = type1
+    Ast::Prototype {
+      Ast::Id {
+        .value = "foo"
+      }
+      Ast::Dseq {
+        Ast::Declaration {
+          Ast::Id {
+            .value = "a"
+          }
+          Ast::Type {
+            .type = type0
+          }
+        }
+        Ast::Declaration {
+          Ast::Id {
+            .value = "b"
+          }
+          Ast::Type {
+            .type = type0
+          }
+        }
+      }
+      Ast::Dret {
+        Ast::Type {
+          .type = type0
+        }
+      }
+    }
+    Ast::Stmts {
+      .type = type0
+      Ast::Plus {
+        .type = type0
+        Ast::Id {
+          .value = "a"
+          .type = type0
+        }
+        Ast::Id {
+          .value = "b"
+          .type = type0
+        }
+      }
+    }
+  }
+  Ast::Call {
+    .type = type0
+    Ast::Id {
+      .value = "foo"
+      .type = type1
+    }
+    Ast::Cseq {
+      Ast::Number {
+        .value = "1"
+        .type = type0
+      }
+      Ast::Number {
+        .value = "2"
+        .type = type0
+      }
+    }
+  }
+}
+```
