@@ -12,8 +12,8 @@ The Akela project is a work in progress. Most of the work has been focused on fa
 recursive decent parsing, type checking, and testing tools. Code generation has been
 lightly worked on.
 
-I am converting developer intensive parsing unit test cases (src/akela-unit)
-to the new script-based integration tests (src/akela-parse-test). Check out
+I am converting developer intensive run unit test cases (src/akela-llvm-unit)
+to the new script-based end-to-end tests (src/akela-run-test). Check out
 the [todo](doc/todo.md) to see what I will be working on in the near term.
 
 ## Project Goals
