@@ -315,3 +315,24 @@ Error {
   .col = 11
 }
 ```
+
+## Test
+function call (error param)
+
+```cent
+Test {
+  .has_error = true
+}
+```
+
+```akela
+fn foo(a: Int32) true end; foo(true)
+```
+
+```cent
+Error {
+  .message = "parameter and arguments types do not match"
+  .line = 329
+  .col = 32
+}
+```
