@@ -141,7 +141,7 @@ void Apt_case_run(Zinc_test* case_test)
         }
 
         if (case_data->has_error) {
-            case_test->pass = Apt_check_errors(
+            Apt_check_errors(
                 top_test,
                 case_test,
                 &ct->primary->errors,

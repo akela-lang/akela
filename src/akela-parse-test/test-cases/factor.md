@@ -315,7 +315,7 @@ const я: Int32
 Errors {
   Error {
     .message = "Unrecognized character: я"
-    .line = 311
+    .line = 1
     .col = 7
   }
 }
@@ -403,7 +403,7 @@ fn foo() end
 Errors {
   Error {
     .message = "negative operator was used on expression with no value"
-    .line = 399
+    .line = 2
     .col = 1
   }
 }
@@ -426,7 +426,7 @@ Test {
 Errors {
   Error {
     .message = "expected parse_factor after sign"
-    .line = 423
+    .line = 2
     .col = 1
   }
 }
@@ -521,7 +521,7 @@ fn foo() end
 Errors {
   Error {
     .message = "! operator used on parse_factor with no value"
-    .line = 517
+    .line = 2
     .col = 1
   }
 }
@@ -686,7 +686,7 @@ Test {
 Errors {
   Error {
     .message = "array elements not the same type"
-    .line = 682
+    .line = 1
     .col = 2
   }
 }
@@ -753,7 +753,7 @@ Test {
 Errors {
   Error {
     .message = "array literal has no elements"
-    .line = 749
+    .line = 1
     .col = 2
   }
 }
@@ -776,7 +776,7 @@ Test {
 Errors {
   Error {
     .message = "expected right square bracket"
-    .line = 773
+    .line = 2
     .col = 1
   }
 }
@@ -799,7 +799,7 @@ Test {
 Errors {
   Error {
     .message = "expected expr after comma"
-    .line = 795
+    .line = 1
     .col = 4
   }
 }
@@ -852,7 +852,7 @@ Test {
 Errors {
   Error {
     .message = "empty parenthesis"
-    .line = 848
+    .line = 1
     .col = 2
   }
 }
@@ -875,7 +875,7 @@ Test {
 Errors {
   Error {
     .message = "expected right parenthesis"
-    .line = 872
+    .line = 2
     .col = 1
   }
 }
@@ -899,7 +899,7 @@ fn foo() end
 Errors {
   Error {
     .message = "parenthesis on expression that has no value"
-    .line = 895
+    .line = 2
     .col = 2
   }
 }
@@ -922,7 +922,7 @@ Test {
 Errors {
   Error {
     .message = "expected parse_factor after !"
-    .line = 919
+    .line = 2
     .col = 1
   }
 }
@@ -945,7 +945,7 @@ fn foo() end
 ```cent
 Error {
   .message = "! operator used on parse_factor with no value"
-  .line = 942
+  .line = 2
   .col = 1
 }
 ```
@@ -966,7 +966,7 @@ Test {
 ```cent
 Error {
   .message = "not operator used on non-boolean"
-  .line = 963
+  .line = 1
   .col = 1
 }
 ```
@@ -1283,7 +1283,7 @@ a[0] = 10
 ```cent
 Error {
   .message = "immutable variable changed in assignment"
-  .line = 1280
+  .line = 2
   .col = 1
 }
 ```

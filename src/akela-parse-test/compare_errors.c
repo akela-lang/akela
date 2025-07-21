@@ -130,9 +130,16 @@ bool Apt_check_error(
     Zinc_string_init(&expect_message);
     Zinc_string_add_format(&expect_message, "could not find error: %s", Zinc_string_c_str(&message->data.string));
     if (Zinc_expect_true(case_test, found, Zinc_string_c_str(&expect_message))) {
-        Zinc_expect_size_t_equal(case_test, line->data.natural, e->loc.line, "incorrect line");
-        Zinc_expect_size_t_equal(case_test, col->data.natural, e->loc.col, "incorrect column");
+        size_t expected_line = line->data.natural;
+        size_t actual_line = e->loc.line - case_data->source_bounds.loc.line + 1;
+        if (!Zinc_expect_size_t_equal(case_test, actual_line, expected_line, "incorrect line")) {
+            valid = false;
+        }
+        if (!Zinc_expect_size_t_equal(case_test, col->data.natural, e->loc.col, "incorrect column")) {
+            valid = false;
+        }
     } else {
+        valid = false;
         fprintf(stderr, "\tErrors:\n");
         Zinc_error* e = errors->head;
         while (e) {

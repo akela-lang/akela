@@ -404,7 +404,7 @@ end
 ```cent
 Error {
   .message = "returned type does not match function return type"
-  .line = 399
+  .line = 1
   .col = 19
 }
 ```
@@ -425,7 +425,7 @@ fn foo
 ```cent
 Error {
   .message = "expected left parenthesis"
-  .line = 423
+  .line = 2
   .col = 1
 }
 ```
@@ -446,7 +446,7 @@ fn foo(
 ```cent
 Error {
   .message = "expected right parenthesis"
-  .line = 444
+  .line = 2
   .col = 1
 }
 ```
@@ -467,7 +467,7 @@ fn foo()
 ```cent
 Error {
   .message = "expected end"
-  .line = 465
+  .line = 2
   .col = 1
 }
 ```
@@ -489,7 +489,7 @@ end
 ```cent
 Error {
   .message = "returned type does not match function return type"
-  .line = 485
+  .line = 2
   .col = 5
 }
 ```
@@ -510,7 +510,7 @@ return true
 ```cent
 Error {
   .message = "return statement outside of function"
-  .line = 507
+  .line = 1
   .col = 1
 }
 ```
@@ -679,7 +679,7 @@ end
 ```cent
 Error {
   .message = "return expression has no value"
-  .line = 675
+  .line = 3
   .col = 10
 }
 ```
@@ -991,7 +991,7 @@ const a: fn(Bool) = fn(x: Int32) end
 ```cent
 Error {
   .message = "values in assignment are not compatible"
-  .line = 988
+  .line = 1
   .col = 21
 }
 ```
@@ -1012,7 +1012,7 @@ const f: fn()->Int32 = fn()->Int32 true end
 ```cent
 Error {
   .message = "returned type does not match function return type"
-  .line = 1009
+  .line = 1
   .col = 30
 }
 ```
@@ -1033,7 +1033,7 @@ fn (
 ```cent
 Error {
   .message = "expected right parenthesis"
-  .line = 1031
+  .line = 2
   .col = 1
 }
 ```
@@ -1054,7 +1054,7 @@ fn ()
 ```cent
 Error {
   .message = "expected end"
-  .line = 1052
+  .line = 2
   .col = 1
 }
 ```
@@ -1177,7 +1177,7 @@ end
 ```cent
 Error {
   .message = "values in assignment are not compatible"
-  .line = 1172
+  .line = 1
   .col = 1
 }
 ```
@@ -1198,7 +1198,7 @@ const a: Int32 = true
 ```cent
 Error {
   .message = "values in assignment are not compatible"
-  .line = 1195
+  .line = 1
   .col = 18
 }
 ```
@@ -1341,7 +1341,7 @@ foo() + 2
 ```cent
 Error {
   .message = "addition on non-numeric operand"
-  .line = 1338
+  .line = 2
   .col = 1
 }
 ```
@@ -1716,7 +1716,7 @@ foo(1)
 ```cent
 Error {
   .message = "not enough arguments in function call"
-  .line = 1713
+  .line = 2
   .col = 6
 }
 ```
@@ -1738,7 +1738,7 @@ foo(1, 2)
 ```cent
 Error {
   .message = "too many arguments in function call"
-  .line = 1735
+  .line = 2
   .col = 9
 }
 ```
@@ -1760,7 +1760,7 @@ foo(true)
 ```cent
 Error {
   .message = "parameter and arguments types do not match"
-  .line = 1757
+  .line = 2
   .col = 5
 }
 ```
@@ -1782,7 +1782,7 @@ foo(true)
 ```cent
 Error {
   .message = "parameter and arguments types do not match"
-  .line = 1779
+  .line = 2
   .col = 5
 }
 ```
@@ -1804,7 +1804,7 @@ foo(
 ```cent
 Error {
   .message = "expected right parenthesis"
-  .line = 1802
+  .line = 3
   .col = 1
 }
 ```
@@ -1825,7 +1825,7 @@ foo()
 ```cent
 Error {
   .message = "variable not declared: foo"
-  .line = 1822
+  .line = 1
   .col = 1
 }
 ```
@@ -1847,7 +1847,7 @@ foo()
 ```cent
 Error {
   .message = "not a function type"
-  .line = 1844
+  .line = 2
   .col = 1
 }
 ```
@@ -1869,7 +1869,7 @@ foo(1,)
 ```cent
 Error {
   .message = "expected expression after comma"
-  .line = 1866
+  .line = 2
   .col = 7
 }
 ```
@@ -2168,7 +2168,7 @@ const a: fn(Int32) = fn(x: Bool) end
 ```cent
 Error {
   .message = "values in assignment are not compatible"
-  .line = 2165
+  .line = 1
   .col = 22
 }
 ```
@@ -2189,7 +2189,7 @@ const a: fn()->Int32 = fn()->Bool true end
 ```cent
 Error {
   .message = "values in assignment are not compatible"
-  .line = 2186
+  .line = 1
   .col = 24
 }
 ```
@@ -2210,7 +2210,7 @@ const a: fn(Int64) = fn(x: Int32) end
 ```cent
 Error {
   .message = "values in assignment are not compatible"
-  .line = 2207
+  .line = 1
   .col = 22
 }
 ```
@@ -2231,7 +2231,7 @@ const a: fn()->Int64 = fn()->Int32 1 end
 ```cent
 Error {
   .message = "values in assignment are not compatible"
-  .line = 2228
+  .line = 1
   .col = 24
 }
 ```

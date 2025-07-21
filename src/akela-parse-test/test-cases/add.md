@@ -21,7 +21,7 @@ Test {
 Errors {
   Error {
     .message = "addition on non-numeric operand"
-    .line = 17
+    .line = 1
     .col = 5
   }
 }

@@ -103,7 +103,7 @@ Test {
   Errors {
     Error {
       .message = "expected term after additive operator"
-      .line = 100
+      .line = 2
       .col = 1
     }
   }
@@ -131,7 +131,7 @@ foo() + 1
   Errors {
     Error {
       .message = "addition operand has no value"
-      .line = 127
+      .line = 2
       .col = 1
     }
   }
@@ -158,7 +158,7 @@ true + 1
   Errors {
     Error {
       .message = "addition on non-numeric operand"
-      .line = 154
+      .line = 1
       .col = 1
     }
   }
@@ -186,7 +186,7 @@ fn foo() end
   Errors {
     Error {
       .message = "addition operand has no value"
-      .line = 182
+      .line = 2
       .col = 5
     }
   }
@@ -213,7 +213,7 @@ Test {
   Errors {
     Error {
       .message = "addition on non-numeric operand"
-      .line = 209
+      .line = 1
       .col = 5
     }
   }
@@ -598,7 +598,7 @@ Test {
 Errors {
   Error {
     .message = "expected term after operator"
-    .line = 595
+    .line = 2
     .col = 1
   }
 }
@@ -626,7 +626,7 @@ foo() * 1
 Errors {
   Error {
     .message = "multiplication operand has no value"
-    .line = 622
+    .line = 2
     .col = 1
   }
 }
@@ -653,7 +653,7 @@ true * 1
 Errors {
   Error {
     .message = "multiplication on non-numeric operand"
-    .line = 649
+    .line = 1
     .col = 1
   }
 }
@@ -681,7 +681,7 @@ fn foo() end
 Errors {
   Error {
     .message = "multiplication operand has no value"
-    .line = 677
+    .line = 2
     .col = 5
   }
 }
@@ -708,7 +708,7 @@ Test {
 Errors {
   Error {
     .message = "multiplication on non-numeric operand"
-    .line = 704
+    .line = 1
     .col = 5
   }
 }
@@ -1111,7 +1111,7 @@ Test {
 Errors {
   Error {
     .message = "expected term after caret"
-    .line = 1108
+    .line = 2
     .col = 1
   }
 }
@@ -1139,7 +1139,7 @@ fn foo() end
 Errors {
   Error {
     .message = "power operand has no value"
-    .line = 1135
+    .line = 2
     .col = 5
   }
 }
@@ -1166,7 +1166,7 @@ true ^ 2
 Errors {
   Error {
     .message = "power on non-numeric operand"
-    .line = 1162
+    .line = 1
     .col = 1
   }
 }
@@ -1194,7 +1194,7 @@ fn foo() end
 Errors {
   Error {
     .message = "power operand has no value"
-    .line = 1190
+    .line = 2
     .col = 5
   }
 }
@@ -1221,7 +1221,7 @@ Test {
 Errors {
   Error {
     .message = "power on non-numeric operand"
-    .line = 1217
+    .line = 1
     .col = 5
   }
 }
@@ -1793,7 +1793,7 @@ Test {
 Errors {
   Error {
     .message = "expected term after comparison operator"
-    .line = 1790
+    .line = 2
     .col = 1
   }
 }
@@ -1821,7 +1821,7 @@ foo() < 100
 Errors {
   Error {
     .message = "operand has no value"
-    .line = 1817
+    .line = 2
     .col = 1
   }
 }
@@ -1849,7 +1849,7 @@ fn foo() end
 Errors {
   Error {
     .message = "operand has no value"
-    .line = 1845
+    .line = 2
     .col = 7
   }
 }
@@ -1876,7 +1876,7 @@ true < 100
 Errors {
   Error {
     .message = "comparison operand is not numeric"
-    .line = 1872
+    .line = 1
     .col = 1
   }
 }
@@ -1903,7 +1903,7 @@ Test {
 Errors {
   Error {
     .message = "comparison operand is not numeric"
-    .line = 1899
+    .line = 1
     .col = 7
   }
 }
@@ -2103,7 +2103,7 @@ true &&
 Errors {
   Error {
     .message = "expected term after && or ||"
-    .line = 2100
+    .line = 2
     .col = 1
   }
 }
@@ -2131,7 +2131,7 @@ foo() && true
 Errors {
   Error {
     .message = "left-side operand of boolean operator has no type"
-    .line = 2127
+    .line = 2
     .col = 1
   }
 }
@@ -2159,7 +2159,7 @@ true && foo()
 Errors {
   Error {
     .message = "operand of boolean operator has no type"
-    .line = 2155
+    .line = 2
     .col = 9
   }
 }
@@ -2186,7 +2186,7 @@ Test {
 Errors {
   Error {
     .message = "left-side expression of boolean operator is not boolean"
-    .line = 2182
+    .line = 1
     .col = 1
   }
 }
@@ -2213,7 +2213,7 @@ true && 1
 Errors {
   Error {
     .message = "expression of boolean operator is not boolean"
-    .line = 2209
+    .line = 1
     .col = 9
   }
 }
@@ -2784,7 +2784,7 @@ foo()[1]
 Errors {
   Error {
     .message = "expression has subscript but has no value"
-    .line = 2780
+    .line = 2
     .col = 1
   }
 }
@@ -2812,7 +2812,7 @@ a[1]
 Errors {
   Error {
     .message = "expression has subscript but is not an array or slice"
-    .line = 2808
+    .line = 2
     .col = 1
   }
 }
@@ -2840,7 +2840,7 @@ a[1
 Errors {
   Error {
     .message = "expected right-square-bracket"
-    .line = 2837
+    .line = 3
     .col = 1
   }
 }
@@ -2987,7 +2987,7 @@ a, b, c = 1, 2
 Errors {
   Error {
     .message = "assignment sequence counts do not match"
-    .line = 2983
+    .line = 4
     .col = 11
   }
 }
@@ -3014,7 +3014,7 @@ const a: Bool =
 Errors {
   Error {
     .message = "expected expression"
-    .line = 3011
+    .line = 2
     .col = 1
   }
 }
@@ -3042,7 +3042,7 @@ const a: [10]Nat8 = foo()
 Errors {
   Error {
     .message = "cannot assign with operand that has no value"
-    .line = 3038
+    .line = 2
     .col = 21
   }
 }
@@ -3069,7 +3069,7 @@ const x: Int32 = true
 Errors {
   Error {
     .message = "values in assignment are not compatible"
-    .line = 3065
+    .line = 1
     .col = 18
   }
 }
@@ -3096,7 +3096,7 @@ true = true
 Errors {
   Error {
     .message = "invalid lvalue"
-    .line = 3092
+    .line = 1
     .col = 1
   }
 }
@@ -3649,7 +3649,7 @@ Test {
 Errors {
   Error {
     .message = "invalid lvalue"
-    .line = 3645
+    .line = 1
     .col = 1
   }
 }
@@ -3676,7 +3676,7 @@ Test {
 Errors {
   Error {
     .message = "invalid lvalue"
-    .line = 3672
+    .line = 1
     .col = 1
   }
 }

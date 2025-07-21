@@ -1,5 +1,5 @@
 # Test Suite
-statements
+statement
 
 ```cent
 TestSuite {
@@ -1060,7 +1060,7 @@ if end
 ```cent
 Error {
   .message = "expected condition after if"
-  .line = 1057
+  .line = 1
   .col = 4
 }
 ```
@@ -1081,7 +1081,7 @@ if true
 ```cent
 Error {
   .message = "expected end"
-  .line = 1079
+  .line = 2
   .col = 1
 }
 ```
@@ -1102,7 +1102,7 @@ if true elseif end
 ```cent
 Error {
   .message = "expected condition after elseif"
-  .line = 1099
+  .line = 1
   .col = 16
 }
 ```
@@ -1161,7 +1161,7 @@ while end
 ```cent
 Error {
   .message = "expected expression after while"
-  .line = 1158
+  .line = 1
   .col = 7
 }
 ```
@@ -1182,7 +1182,7 @@ while true
 ```cent
 Error {
   .message = "expected end"
-  .line = 1180
+  .line = 2
   .col = 1
 }
 ```
@@ -1360,7 +1360,7 @@ end
 ```cent
 Error {
   .message = "iteration expression has no value"
-  .line = 1356
+  .line = 3
   .col = 17
 }
 ```
@@ -1383,7 +1383,7 @@ end
 ```cent
 Error {
   .message = "iteration expression is not an array or slice"
-  .line = 1379
+  .line = 2
   .col = 17
 }
 ```
@@ -1406,7 +1406,7 @@ end
 ```cent
 Error {
   .message = "cannot cast list element"
-  .line = 1402
+  .line = 2
   .col = 17
 }
 ```
@@ -1429,7 +1429,7 @@ end
 ```cent
 Error {
   .message = "expected '=' or 'in' after for element declaration"
-  .line = 1426
+  .line = 3
   .col = 1
 }
 ```
@@ -1451,7 +1451,7 @@ for i: Int32 = 1:10
 ```cent
 Error {
   .message = "expected end"
-  .line = 1449
+  .line = 3
   .col = 1
 }
 ```
@@ -1473,7 +1473,7 @@ for i: Int32 =
 ```cent
 Error {
   .message = "expected range start"
-  .line = 1471
+  .line = 3
   .col = 1
 }
 ```
@@ -1495,7 +1495,7 @@ for i: Int32 = 1
 ```cent
 Error {
   .message = "expected colon"
-  .line = 1493
+  .line = 3
   .col = 1
 }
 ```
@@ -1517,7 +1517,7 @@ for i: Int32 = 1:
 ```cent
 Error {
   .message = "expected range end"
-  .line = 1515
+  .line = 3
   .col = 1
 }
 ```
@@ -1540,7 +1540,7 @@ end
 ```cent
 Error {
   .message = "start range expression has no value"
-  .line = 1536
+  .line = 2
   .col = 16
 }
 ```
@@ -1561,7 +1561,7 @@ for i: Int32 = true:10 end
 ```cent
 Error {
   .message = "start range expression is not numeric"
-  .line = 1558
+  .line = 1
   .col = 16
 }
 ```
@@ -1584,7 +1584,7 @@ end
 ```cent
 Error {
   .message = "end range expression has no value"
-  .line = 1580
+  .line = 2
   .col = 18
 }
 ```
@@ -1606,7 +1606,7 @@ end
 ```cent
 Error {
   .message = "end range expression is not numeric"
-  .line = 1602
+  .line = 1
   .col = 18
 }
 ```
@@ -1628,7 +1628,7 @@ for i: Int32 in:
 ```cent
 Error {
   .message = "expected for iteration expression"
-  .line = 1625
+  .line = 2
   .col = 16
 }
 ```
@@ -1882,7 +1882,7 @@ const
 ```cent
 Error {
   .message = "expected id"
-  .line = 1880
+  .line = 2
   .col = 1
 }
 ```
@@ -2024,7 +2024,7 @@ x
 ```cent
 Error {
   .message = "immutable variable changed in assignment"
-  .line = 2020
+  .line = 2
   .col = 1
 }
 ```

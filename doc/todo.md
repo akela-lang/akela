@@ -30,6 +30,7 @@
   * variable []
 
 # Akela Parse Test
+* organize test suites to be more fine-grained
 
 # Akela Run Test
 * sub

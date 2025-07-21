@@ -22,7 +22,7 @@ x + 1
 ```cent
 Error {
   .message = "variable not declared: x"
-  .line = 19
+  .line = 1
   .col = 1
 }
 ```
@@ -43,7 +43,7 @@ foo() + 1
 ```cent
 Error {
   .message = "variable not declared: foo"
-  .line = 40
+  .line = 1
   .col = 1
 }
 ```
@@ -64,7 +64,7 @@ x = fn() end
 ```cent
 Error {
   .message = "variable not declared: x"
-  .line = 61
+  .line = 1
   .col = 1
 }
 ```
@@ -86,7 +86,7 @@ x + 1
 ```cent
 Error {
   .message = "type not defined: SuperInt"
-  .line = 82
+  .line = 1
   .col = 10
 }
 ```
@@ -205,7 +205,7 @@ fn foo(a: Int32,) end
 ```cent
 Error {
   .message = "expected declaration after comma"
-  .line = 202
+  .line = 1
   .col = 17
 }
 ```
@@ -226,7 +226,7 @@ const a
 ```cent
 Error {
   .message = "expected colon after variable(s)"
-  .line = 224
+  .line = 2
   .col = 1
 }
 ```
@@ -247,7 +247,7 @@ const a:
 ```cent
 Error {
   .message = "expected type identifier or fn"
-  .line = 245
+  .line = 2
   .col = 1
 }
 ```
@@ -268,7 +268,7 @@ const a: Foo
 ```cent
 Error {
   .message = "type not defined: Foo"
-  .line = 265
+  .line = 1
   .col = 10
 }
 ```
@@ -290,7 +290,7 @@ const a: foo
 ```cent
 Error {
   .message = "identifier is not a type: foo"
-  .line = 287
+  .line = 2
   .col = 10
 }
 ```
@@ -311,7 +311,7 @@ fn foo()->Int32 true end
 ```cent
 Error {
   .message = "returned type does not match function return type"
-  .line = 308
+  .line = 1
   .col = 11
 }
 ```
@@ -332,7 +332,7 @@ fn foo(a: Int32) true end; foo(true)
 ```cent
 Error {
   .message = "parameter and arguments types do not match"
-  .line = 329
+  .line = 1
   .col = 32
 }
 ```
@@ -353,7 +353,7 @@ fn foo(a: Int32) true end; foo(foo(1))
 ```cent
 Error {
   .message = "argument expression has no value"
-  .line = 350
+  .line = 1
   .col = 32
 }
 ```

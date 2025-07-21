@@ -325,7 +325,7 @@ end
 ```cent
 Error {
   .message = "Not a valid field for Person: middle_name"
-  .line = 319
+  .line = 9
   .col = 5
 }
 ```
@@ -354,7 +354,7 @@ end
 ```cent
 Error {
   .message = "struct field missing: last_name"
-  .line = 348
+  .line = 6
   .col = 5
 }
 ```
@@ -381,7 +381,7 @@ p.abc
 ```cent
 Error {
   .message = "identifier not a field of struct: abc"
-  .line = 378
+  .line = 7
   .col = 3
 }
 ``` 
@@ -402,7 +402,7 @@ struct end
 ```cent
 Error {
   .message = "expected identifier"
-  .line = 399
+  .line = 1
   .col = 8
 }
 ```
@@ -423,7 +423,7 @@ struct Person
 ```cent
 Error {
   .message = "expected end"
-  .line = 421
+  .line = 2
   .col = 1
 }
 ```
@@ -444,7 +444,7 @@ struct Person x: Int32
 ```cent
 Error {
   .message = "expected end"
-  .line = 442
+  .line = 2
   .col = 1
 }
 ```
@@ -466,7 +466,7 @@ struct Person end
 ```cent
 Error {
   .message = "duplicate variable in scope: Person"
-  .line = 463
+  .line = 2
   .col = 8
 }
 ```
