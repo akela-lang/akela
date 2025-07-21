@@ -583,3 +583,186 @@ Errors {
   }
 }
 ```
+
+## Test
+id
+
+```cent
+Test {
+}
+```
+
+```akela
+const x: Int64 = 1
+x
+```
+
+```cent
+use lib::base::*
+const type0 = Type::Integer {
+  .name = "Int64"
+  .bit_count = 64
+}
+Ast::Stmts {
+  .type = type0
+  Ast::Const {
+    Ast::Id {
+      .value = "x"
+    }
+    Ast::Type {
+      .type = type0
+    }
+    Ast::Number {
+      .value = "1"
+      .type = type0
+    }
+  }
+  Ast::Id {
+    .value = "x"
+    .type = type0
+  }
+}
+```
+
+## Test
+id 2
+
+```cent
+Test {
+}
+```
+
+```akela
+const _x10: Int64 = 1
+_x10
+```
+
+```cent
+use lib::base::*
+const type0 = Type::Integer {
+  .name = "Int64"
+  .bit_count = 64
+}
+Ast::Stmts {
+  .type = type0
+  Ast::Const {
+    Ast::Id {
+      .value = "_x10"
+    }
+    Ast::Type {
+      .type = type0
+    }
+    Ast::Number {
+      .value = "1"
+      .type = type0
+    }
+  }
+  Ast::Id {
+    .value = "_x10"
+    .type = type0
+  }
+}
+```
+
+## Test
+id 3
+
+```cent
+Test {
+}
+```
+
+```akela
+const a2: Int64 = 1
+a2
+```
+
+```cent
+use lib::base::*
+const type0 = Type::Integer {
+  .name = "Int64"
+  .bit_count = 64
+}
+Ast::Stmts {
+  .type = type0
+  Ast::Const {
+    Ast::Id {
+      .value = "a2"
+    }
+    Ast::Type {
+      .type = type0
+    }
+    Ast::Number {
+      .value = "1"
+      .type = type0
+    }
+  }
+  Ast::Id {
+    .value = "a2"
+    .type = type0
+  }
+}
+```
+
+## Test
+id greek
+
+```cent
+Test {
+}
+```
+
+```akela
+const αβγ: Int64 = 1
+αβγ
+```
+
+```cent
+use lib::base::*
+const type0 = Type::Integer {
+  .name = "Int64"
+  .bit_count = 64
+}
+Ast::Stmts {
+  .type = type0
+  Ast::Const {
+    Ast::Id {
+      .value = "αβγ"
+    }
+    Ast::Type {
+      .type = type0
+    }
+    Ast::Number {
+      .value = "1"
+      .type = type0
+    }
+  }
+  Ast::Id {
+    .value = "αβγ"
+    .type = type0
+  }
+}
+```
+
+## Test
+id cyrillic (error)
+
+```cent
+Test {
+  .has_error = true
+}
+```
+
+```akela
+const я: Int32
+я
+```
+```cent
+Errors {
+  Error {
+    .message = "Unrecognized character: я"
+    .line = 1
+    .col = 7
+  }
+}
+```

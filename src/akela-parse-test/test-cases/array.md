@@ -947,3 +947,281 @@ Ast::Stmts {
   }
 }
 ```
+
+## Test
+array literal integer
+
+```cent
+Test {
+}
+```
+
+```akela
+[1,2,3]
+```
+
+```cent
+use lib::base::*
+const type0 = Type::Array {
+  .is_const = false
+  .dim = 3
+  .type = Type::Integer {
+    .name = "Int32"
+    .bit_count = 32
+  }
+}
+const type1 = Type::Integer {
+  .name = "Int32"
+  .bit_count = 32
+}
+Ast::Stmts {
+  .type = type0
+  Ast::ArrayLiteral {
+    .type = type0
+    Ast::Number {
+      .value = "1"
+      .type = type1
+    }
+    Ast::Number {
+      .value = "2"
+      .type = type1
+    }
+    Ast::Number {
+      .value = "3"
+      .type = type1
+    }
+  }
+}
+```
+
+## Test
+array literal real
+
+```cent
+Test {
+}
+```
+
+```akela
+[1.0,2.5,3.2]
+```
+
+```cent
+use lib::base::*
+const type0 = Type::Array {
+  .is_const = false
+  .dim = 3
+  .type = Type::Real {
+    .name = "Real64"
+    .bit_count = 64
+  }
+}
+const type1 = Type::Real {
+  .name = "Real64"
+  .bit_count = 64
+}
+Ast::Stmts {
+  .type = type0
+  Ast::ArrayLiteral {
+    .type = type0
+    Ast::Number {
+      .value = "1.0"
+      .type = type1
+    }
+    Ast::Number {
+      .value = "2.5"
+      .type = type1
+    }
+    Ast::Number {
+      .value = "3.2"
+      .type = type1
+    }
+  }
+}
+```
+
+## Test
+array literal numeric
+
+```cent
+Test {
+}
+```
+
+```akela
+[1, 2.5, 3]
+```
+
+```cent
+use lib::base::*
+const type0 = Type::Array {
+  .is_const = false
+  .dim = 3
+  .type = Type::Integer {
+    .name = "Int32"
+    .bit_count = 32
+  }
+}
+const type1 = Type::Integer {
+  .name = "Int32"
+  .bit_count = 32
+}
+const type2 = Type::Real {
+  .name = "Real64"
+  .bit_count = 64
+}
+Ast::Stmts {
+  .type = type0
+  Ast::ArrayLiteral {
+    .type = type0
+    Ast::Number {
+      .value = "1"
+      .type = type1
+    }
+    Ast::Number {
+      .value = "2.5"
+      .type = type2
+    }
+    Ast::Number {
+      .value = "3"
+      .type = type1
+    }
+  }
+}
+```
+
+## Test
+array literal mixed (error)
+
+```cent
+Test {
+  .has_error = true
+}
+```
+
+```akela
+[1,true,3]
+```
+
+```cent
+Errors {
+  Error {
+    .message = "array elements not the same type"
+    .line = 1
+    .col = 2
+  }
+}
+```
+
+## Test
+array literal bool
+
+```cent
+Test {
+}
+```
+
+```akela
+[false,true,false]
+```
+
+```cent
+use lib::base::*
+const type0 = Type::Array {
+  .is_const = false
+  .dim = 3
+  .type = Type::Boolean {
+    .name = "Bool"
+  }
+}
+const type1 = Type::Boolean {
+  .name = "Bool"
+}
+Ast::Stmts {
+  .type = type0
+  Ast::ArrayLiteral {
+    .type = type0
+    Ast::Boolean {
+      .value = "false"
+      .type = type1
+    }
+    Ast::Boolean {
+      .value = "true"
+      .type = type1
+    }
+    Ast::Boolean {
+      .value = "false"
+      .type = type1
+    }
+  }
+}
+```
+
+## Test
+array literal empty error
+
+```cent
+Test {
+  .has_error = true
+}
+```
+
+```akela
+[]
+```
+
+```cent
+Errors {
+  Error {
+    .message = "array literal has no elements"
+    .line = 1
+    .col = 2
+  }
+}
+```
+
+## Test
+array literal (error right square bracket)
+
+```cent
+Test {
+  .has_error = true
+}
+```
+
+```akela
+[1,2
+```
+
+```cent
+Errors {
+  Error {
+    .message = "expected right square bracket"
+    .line = 2
+    .col = 1
+  }
+}
+```
+
+## Test
+array literal (error expected expression)
+
+```cent
+Test {
+  .has_error = true
+}
+```
+
+```akela
+[1,]
+```
+
+```cent
+Errors {
+  Error {
+    .message = "expected expr after comma"
+    .line = 1
+    .col = 4
+  }
+}
+```

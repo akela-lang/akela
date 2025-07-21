@@ -408,3 +408,103 @@ Ast::Stmts {
   }
 }
 ```
+
+## Test
+paren number
+
+```cent
+Test {
+}
+```
+
+```akela
+(32)
+```
+
+```cent
+use lib::base::*
+const type0 = Type::Integer {
+  .name = "Int32"
+  .bit_count = 32
+}
+Ast::Stmts {
+  .type = type0
+  Ast::Parenthesis {
+    .type = type0
+    Ast::Number {
+      .value = "32"
+      .type = type0
+    }
+  }
+}
+```
+
+## Test
+paren (error no expression)
+
+```cent
+Test {
+  .has_error = true
+}
+```
+
+```akela
+()
+```
+
+```cent
+Errors {
+  Error {
+    .message = "empty parenthesis"
+    .line = 1
+    .col = 2
+  }
+}
+```
+
+## Test
+paren (error expected right paren)
+
+```cent
+Test {
+  .has_error = true
+}
+```
+
+```akela
+(1
+```
+
+```cent
+Errors {
+  Error {
+    .message = "expected right parenthesis"
+    .line = 2
+    .col = 1
+  }
+}
+```
+
+## Test
+paren (error no value)
+
+```cent
+Test {
+  .has_error = true
+}
+```
+
+```akela
+fn foo() end
+(foo())
+```
+
+```cent
+Errors {
+  Error {
+    .message = "parenthesis on expression that has no value"
+    .line = 2
+    .col = 2
+  }
+}
+```

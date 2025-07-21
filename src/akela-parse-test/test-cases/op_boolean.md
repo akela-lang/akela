@@ -354,3 +354,164 @@ Ast::Stmts {
   }
 }
 ```
+
+## Test
+id not
+
+```cent
+Test {
+}
+```
+
+```akela
+const a: Bool = true
+!a
+```
+
+```cent
+use lib::base::*
+const type0 = Type::Boolean {
+  .name = "Bool"
+}
+Ast::Stmts {
+  .type = type0
+  Ast::Const {
+    Ast::Id {
+      .value = "a"
+    }
+    Ast::Type {
+      .type = type0
+    }
+    Ast::Boolean {
+      .value = "true"
+      .type = type0
+    }
+  }
+  Ast::Not {
+    .type = type0
+    Ast::Id {
+      .value = "a"
+      .type = type0
+    }
+  }
+}
+```
+
+## Test
+not literal
+
+```cent
+Test {
+}
+```
+
+```akela
+!true
+```
+
+```cent
+use lib::base::*
+const type0 = Type::Boolean {
+  .name = "Bool"
+}
+Ast::Stmts {
+  .type = type0
+  Ast::Not {
+    .type = type0
+    Ast::Boolean {
+      .value = "true"
+      .type = type0
+    }
+  }
+}
+```
+
+## Test
+not (error not value)
+
+```cent
+Test {
+  .has_error = true
+}
+```
+
+```akela
+fn foo() end
+!foo()
+```
+
+```cent
+Errors {
+  Error {
+    .message = "! operator used on parse_factor with no value"
+    .line = 2
+    .col = 1
+  }
+}
+```
+
+## Test
+not (error expected expression)
+
+```cent
+Test {
+  .has_error = true
+}
+```
+
+```akela
+!
+```
+
+```cent
+Errors {
+  Error {
+    .message = "expected parse_factor after !"
+    .line = 2
+    .col = 1
+  }
+}
+```
+
+## Test
+not (error not an expression)
+
+```cent
+Test {
+  .has_error = true
+}
+```
+
+```akela
+fn foo() end
+!foo()
+```
+
+```cent
+Error {
+  .message = "! operator used on parse_factor with no value"
+  .line = 2
+  .col = 1
+}
+```
+
+## Test
+not (error not boolean)
+
+```cent
+Test {
+  .has_error = true
+}
+```
+
+```akela
+!1
+```
+
+```cent
+Error {
+  .message = "not operator used on non-boolean"
+  .line = 1
+  .col = 1
+}
+```
