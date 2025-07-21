@@ -515,3 +515,33 @@ Error {
   .col = 1
 }
 ```
+
+## Test
+newline not
+
+```cent
+Test {
+}
+```
+
+```akela
+!
+true
+```
+
+```cent
+use lib::base::*
+const type0 = Type::Boolean {
+  .name = "Bool"
+}
+Ast::Stmts {
+  .type = type0
+  Ast::Not {
+    .type = type0
+    Ast::Boolean {
+      .value = "true"
+      .type = type0
+    }
+  }
+}
+```

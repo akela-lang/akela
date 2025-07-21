@@ -766,3 +766,80 @@ Errors {
   }
 }
 ```
+
+## Test
+newline after const
+
+```cent
+Test {
+}
+```
+
+```akela
+const
+x
+:
+Int32 =
+1
+```
+
+```cent
+use lib::base::*
+const type0 = Type::Integer {
+  .name = "Int32"
+  .bit_count = 32
+}
+Ast::Stmts {
+  Ast::Const {
+    Ast::Id {
+      .value = "x"
+    }
+    Ast::Type {
+      .type = type0
+    }
+    Ast::Number {
+      .value = "1"
+      .type = type0
+    }
+  }
+}
+```
+
+## Test
+newline after var
+
+```cent
+Test {
+}
+```
+
+```akela
+var
+x
+:
+Int32 =
+1
+```
+
+```cent
+use lib::base::*
+const type0 = Type::Integer {
+  .name = "Int32"
+  .bit_count = 32
+}
+Ast::Stmts {
+  Ast::Var {
+    Ast::Id {
+      .value = "x"
+    }
+    Ast::Type {
+      .type = type0
+    }
+    Ast::Number {
+      .value = "1"
+      .type = type0
+    }
+  }
+}
+```
+

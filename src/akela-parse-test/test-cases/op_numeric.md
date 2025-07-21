@@ -1506,3 +1506,36 @@ Errors {
   }
 }
 ```
+
+## Test
+newline sign
+
+```cent
+Test {
+}
+```
+
+```akela
+-
+1
+```
+
+```cent
+use lib::base::*
+const type0 = Type::Integer {
+  .name = "Int32"
+  .bit_count = 32
+}
+Ast::Stmts {
+  .type = type0
+  Ast::Sign {
+    .type = type0
+    Ast::Minus {
+    }
+    Ast::Number {
+      .value = "1"
+      .type = type0
+    }
+  }
+}
+```

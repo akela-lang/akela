@@ -508,3 +508,35 @@ Errors {
   }
 }
 ```
+
+## Test
+newline parenthesis
+
+```cent
+Test {
+}
+```
+
+```akela
+(
+200
+)
+```
+
+```cent
+use lib::base::*
+const type0 = Type::Integer {
+  .name = "Int32"
+  .bit_count = 32
+}
+Ast::Stmts {
+  .type = type0
+  Ast::Parenthesis {
+    .type = type0
+    Ast::Number {
+      .value = "200"
+      .type = type0
+    }
+  }
+}
+```
