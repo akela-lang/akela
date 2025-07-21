@@ -336,3 +336,24 @@ Error {
   .col = 32
 }
 ```
+
+## Test
+function (error param no value)
+
+```cent
+Test {
+  .has_error = true
+}
+```
+
+```akela
+fn foo(a: Int32) true end; foo(foo(1))
+```
+
+```cent
+Error {
+  .message = "argument expression has no value"
+  .line = 350
+  .col = 32
+}
+```
