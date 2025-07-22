@@ -49,4 +49,8 @@ Data_type_list {
         .type = Type::Bool
         .align = 1
     }
+    Data_type {
+        .type = Type::Void
+        .align = 0
+    }
 }

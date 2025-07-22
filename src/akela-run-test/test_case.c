@@ -214,10 +214,19 @@ bool Art_check_address(
         Zinc_string* type_string = &type_value->data.enumeration.enum_value->display;
 
         Cent_value* value_value = Cent_value_get_str(field, "value");
-        assert(value_value);
+        bool is_void = false;
+        if (type_value->type == Cent_value_type_enum) {
+            if (Zinc_string_compare_str(&type_value->name, "Type")) {
+                if (Zinc_string_compare_str(&type_value->data.enumeration.enum_value->display, "Void")) {
+                    is_void = true;
+                }
+            }
+        }
+
+        assert(type == Run_type_void || value_value);
 
         /* handle case of string which could be regex */
-        if (value_value->type == Cent_value_type_string) {
+        if (value_value && value_value->type == Cent_value_type_string) {
             Zinc_string* actual = &cg_result->value;
             Zinc_string* expected = &value_value->data.string;
             case_test->check_count++;
@@ -237,7 +246,9 @@ bool Art_check_address(
         }
 
         /* otherwise look at type */
-        if (type == Run_type_int8) {
+        if (type == Run_type_void) {
+            matched = value_value == NULL;
+        } else if (type == Run_type_int8) {
             if (value_value->type == Cent_value_type_natural) {
                 if (value_value->data.natural <= INT64_MAX) {
                     value_value->type = Cent_value_type_integer;

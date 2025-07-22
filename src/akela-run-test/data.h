@@ -57,6 +57,7 @@ typedef enum {
     Run_type_real32,
     Run_type_real64,
     Run_type_bool,
+    Run_type_void,
 } Run_type;
 
 void Art_pair_init(Art_pair* pair);
