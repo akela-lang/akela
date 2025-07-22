@@ -3,8 +3,6 @@ Const declaration and const use of Bool
 
 ```cent
   TestSuite {
-    .solo = false
-    .mute = false
   }
 ```
 
@@ -20,12 +18,6 @@ a
 /ModuleID/
 /source_filename/
 /target datalayout/
-
-/abort/
-
-/printf/
-
-/exit/
 
 define i1 @__top_level() {
 entry:
@@ -61,12 +53,6 @@ a
 /ModuleID/
 /source_filename/
 /target datalayout/
-
-/abort/
-
-/printf/
-
-/exit/
 
 define i1 @__top_level() {
 entry:

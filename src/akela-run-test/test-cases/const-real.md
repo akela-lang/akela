@@ -21,12 +21,6 @@ a
 /source_filename/
 /target datalayout/
 
-/abort/
-
-/printf/
-
-/exit/
-
 define half @__top_level() {
 entry:
   %a = alloca half, align 2
@@ -62,12 +56,6 @@ a
 /source_filename/
 /target datalayout/
 
-/abort/
-
-/printf/
-
-/exit/
-
 define float @__top_level() {
 entry:
   %a = alloca float, align 4
@@ -102,12 +90,6 @@ a
 /ModuleID/
 /source_filename/
 /target datalayout/
-
-/abort/
-
-/printf/
-
-/exit/
 
 define double @__top_level() {
 entry:

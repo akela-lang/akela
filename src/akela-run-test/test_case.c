@@ -18,7 +18,7 @@ bool Art_diff_value(Cob_re regex_re, Zinc_string* actual, Zinc_string* expected)
 Zinc_string_list* Art_split(Zinc_string* string);
 Zinc_string* Art_join(Zinc_string_list* list);
 void Art_print_akela(Zinc_string* ake);
-void Art_print_llvm(Art_pair* pair);
+void Art_print_llvm(Zinc_test* case_test, Art_pair* pair);
 void Art_print_result(Art_pair* pair);
 void Art_setup_address(Zinc_test* top_test, Zinc_test* suite_test, Zinc_test* case_test);
 bool Art_check_address(
@@ -48,6 +48,10 @@ void Art_run_test(Zinc_test* case_test)
     Art_top_data* top_data = top_test->data;
     Art_suite_data* suite_data = suite_test->data;
     Art_case_data* case_data = case_test->data;
+
+    if (case_data->has_error) {
+        return;
+    }
 
     FILE* fp = fopen(Zinc_string_c_str(&suite_data->path), "r");
     bool valid = Zinc_expect_ptr(
@@ -110,7 +114,7 @@ void Art_run_test(Zinc_test* case_test)
             &case_data->llvm);
         if (!llvm_pair.matched) {
             passed = false;
-            Art_print_llvm(&llvm_pair);
+            Art_print_llvm(case_test, &llvm_pair);
         }
         Art_pair_destroy(&llvm_pair);
 
@@ -597,9 +601,10 @@ void Art_print_akela(Zinc_string* ake)
     fprintf(stderr, "%s\n", ake->buf);
 }
 
-void Art_print_llvm(Art_pair* pair)
+void Art_print_llvm(Zinc_test* case_test, Art_pair* pair)
 {
     if (!pair->matched) {
+        Zinc_test_print_unseen(case_test);
         fprintf(stderr, "llvm is different.\n");
         fprintf(stderr, "Actual:\n");
         Zinc_string_finish(pair->actual);

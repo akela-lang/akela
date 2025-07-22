@@ -26,24 +26,43 @@ namespace Akela_llvm {
         delete jd;
     }
 
+    /* NOLINTNEXTLINE(misc-no-recursion) */
+    void Check_subscript(Jit_data* jd, Ake_Ast* n)
+    {
+        if (n->kind == Ake_ast_type_array_subscript) {
+            jd->need_printf = true;
+            jd->need_exit = true;
+        }
+
+        Ake_Ast* p = n->head;
+        while (p) {
+            Check_subscript(jd, p);
+            p = p->next;
+        }
+    }
+
     bool Jit(Akela_llvm_cg* cg, Jit_data* jd, Ake_Ast* n, Ake_code_gen_result* result)
     {
         bool valid = true;
 
-        // InitializeNativeTarget();
-        // InitializeNativeTargetAsmPrinter();
-        // InitializeNativeTargetAsmParser();
-        // Jit_data jd;
-        // Jit_data_init(&jd, cg->el);
+        Check_subscript(jd, n);
 
-        if (!Zinc_string_list_contains_str(cg->extern_list, "abort")) {
-            Declare_abort(jd);
+        if (jd->need_abort) {
+            if (!Zinc_string_list_contains_str(cg->extern_list, "abort")) {
+                Declare_abort(jd);
+            }
         }
-        if (!Zinc_string_list_contains_str(cg->extern_list, "printf")) {
-            Declare_printf(jd);
+
+        if (jd->need_printf) {
+            if (!Zinc_string_list_contains_str(cg->extern_list, "printf")) {
+                Declare_printf(jd);
+            }
         }
-        if (!Zinc_string_list_contains_str(cg->extern_list, "exit")) {
-            Declare_exit(jd);
+
+        if (jd->need_exit) {
+            if (!Zinc_string_list_contains_str(cg->extern_list, "exit")) {
+                Declare_exit(jd);
+            }
         }
 
         std::vector<Type*> param_types = std::vector<Type*>();

@@ -3,8 +3,6 @@ Const declaration and const use of Int
 
 ```cent
   TestSuite {
-    .solo = false
-    .mute = false
   }
 ```
 
@@ -20,12 +18,6 @@ a
 /; ModuleID/
 /source_filename/
 /target datalayout/
-
-declare void @abort()
-
-declare void @printf(ptr, ...)
-
-declare void @exit(i32)
 
 define i8 @__top_level() {
 entry:
@@ -62,12 +54,6 @@ a
 /source_filename/
 /target datalayout/
 
-declare void @abort()
-
-declare void @printf(ptr, ...)
-
-declare void @exit(i32)
-
 define i16 @__top_level() {
 entry:
   %a = alloca i16, align 2
@@ -103,12 +89,6 @@ a
 /source_filename/
 /target datalayout/
 
-declare void @abort()
-
-declare void @printf(ptr, ...)
-
-declare void @exit(i32)
-
 define i32 @__top_level() {
 entry:
   %a = alloca i32, align 4
@@ -143,12 +123,6 @@ a
 /ModuleID/
 /source_filename/
 /target datalayout/
-
-/abort/
-
-/printf/
-
-/exit/
 
 define i64 @__top_level() {
 entry:

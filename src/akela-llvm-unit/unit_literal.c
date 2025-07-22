@@ -3,23 +3,6 @@
 #include "zinc/test.h"
 #include "zinc/expect.h"
 
-void AkeLlvmUnit_literal_integer(Zinc_test* test)
-{
-    if (test->dry_run) {
-        Zinc_string_add_str(&test->name, __func__);
-        test->mute = false;
-        test->solo = false;
-        return;
-    }
-    Ake_code_gen_result result;
-    Ake_code_gen_result_init(&result);
-
-    AkeLlvmUnit_cg_setup("1", &result);
-    Zinc_expect_string(test, &result.value, "1", "1");
-
-    Ake_code_gen_result_destroy(&result);
-}
-
 void AkeLlvmUnit_literal_double(Zinc_test* test)
 {
     if (test->dry_run) {

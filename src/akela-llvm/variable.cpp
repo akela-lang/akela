@@ -286,12 +286,14 @@ namespace Akela_llvm {
         Value* printf_string = jd->Builder->CreateGlobalString("invalid subscript index", ".str");
         printf_args.push_back(printf_string);
         jd->Builder->CreateCall(jd->printf_function, printf_args);
+        jd->need_printf = true;
 
         std::vector<Value*> exit_args;
         Type* status_type = Type::getInt32Ty(*jd->TheContext);
         Value* status_value = ConstantInt::get(status_type, APInt(32, 1, false));
         exit_args.push_back(status_value);
         jd->Builder->CreateCall(jd->exit_function, exit_args);
+        jd->need_exit = true;
         jd->Builder->CreateBr(continue_block);
 
         jd->Builder->SetInsertPoint(continue_block);

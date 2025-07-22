@@ -19,12 +19,6 @@ literal positive, literal positive
 /source_filename/
 /target/
 
-/abort/
-
-/printf/
-
-/exit/
-
 define i32 @__top_level() {
 entry:
   ret i32 11
@@ -55,12 +49,6 @@ literal positive, literal negative
 /ModuleID/
 /source_filename/
 /target/
-
-/abort/
-
-/printf/
-
-/exit/
 
 define i32 @__top_level() {
 entry:
@@ -93,12 +81,6 @@ literal negative, literal positive
 /source_filename/
 /target/
 
-/abort/
-
-/printf/
-
-/exit/
-
 define i32 @__top_level() {
 entry:
   ret i32 -1
@@ -130,12 +112,6 @@ literal negative, literal negative
 /source_filename/
 /target/
 
-/abort/
-
-/printf/
-
-/exit/
-
 define i32 @__top_level() {
 entry:
   ret i32 -25
@@ -166,12 +142,6 @@ literal real, literal real
 /ModuleID/
 /source_filename/
 /target/
-
-/abort/
-
-/printf/
-
-/exit/
 
 define double @__top_level() {
 entry:

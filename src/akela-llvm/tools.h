@@ -62,6 +62,9 @@ namespace Akela_llvm {
         llvm::Function* printf_function;
         llvm::Function* exit_function;
         std::vector<llvm::Function*> current_function;
+        bool need_printf;
+        bool need_exit;
+        bool need_abort;
     } Jit_data;
 
     bool IsArray(Ake_TypeKind kind);

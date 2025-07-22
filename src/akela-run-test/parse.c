@@ -198,33 +198,27 @@ void Art_test_suite_meta(Zinc_test* top_test, Zinc_test* suite_test, Cent_value*
     }
 
     Cent_value* solo = Cent_value_get_str(value, "solo");
-    if (!solo) {
-        Zinc_error_list_set(&suite_data->errors, &value_n->loc, "expected solo property");
-        return;
-    }
+    if (solo) {
+        if (solo->type != Cent_value_type_boolean) {
+            Zinc_error_list_set(&suite_data->errors, &value_n->loc, "expected solo to be boolean");
+            return;
+        }
 
-    if (solo->type != Cent_value_type_boolean) {
-        Zinc_error_list_set(&suite_data->errors, &value_n->loc, "expected solo to be boolean");
-        return;
-    }
-
-    suite_test->solo = solo->data.boolean;
-    if (suite_test->solo) {
-        top_data->has_solo = true;
+        suite_test->solo = solo->data.boolean;
+        if (suite_test->solo) {
+            top_data->has_solo = true;
+        }
     }
 
     Cent_value* mute = Cent_value_get_str(value, "mute");
-    if (!mute) {
-        Zinc_error_list_set(&suite_data->errors, &value_n->loc, "expected mute");
-        return;
-    }
+    if (mute) {
+        if (mute->type != Cent_value_type_boolean) {
+            Zinc_error_list_set(&suite_data->errors, &value_n->loc, "expected mute to be boolean");
+            return;
+        }
 
-    if (mute->type != Cent_value_type_boolean) {
-        Zinc_error_list_set(&suite_data->errors, &value_n->loc, "expected mute to be boolean");
-        return;
+        suite_test->mute = mute->data.boolean;
     }
-
-    suite_test->mute = mute->data.boolean;
 }
 
 void Art_test_header(Zinc_test* top_test, Zinc_test* suite_test, Lava_dom* header)
@@ -331,10 +325,7 @@ void Art_test_meta(Zinc_test* top_test, Zinc_test* suite_test, Zinc_test* case_t
     }
 
     Cent_value* solo = Cent_value_get_str(value, "solo");
-    if (!solo) {
-        Zinc_error_list_set(&suite_data->errors, &n->loc, "expected solo");
-        case_data->has_error = true;
-    } else {
+    if (solo) {
         if (solo->type != Cent_value_type_boolean) {
             Zinc_error_list_set(&suite_data->errors, &n->loc, "expected solo to be boolean");
             case_data->has_error = true;
@@ -347,10 +338,7 @@ void Art_test_meta(Zinc_test* top_test, Zinc_test* suite_test, Zinc_test* case_t
     }
 
     Cent_value* mute = Cent_value_get_str(value, "mute");
-    if (!mute) {
-        Zinc_error_list_set(&suite_data->errors, &n->loc, "expected mute");
-        case_data->has_error = true;
-    } else {
+    if (mute) {
         if (mute->type != Cent_value_type_boolean) {
             Zinc_error_list_set(&suite_data->errors, &n->loc, "expected mute to be boolean");
             case_data->has_error = true;
@@ -360,10 +348,7 @@ void Art_test_meta(Zinc_test* top_test, Zinc_test* suite_test, Zinc_test* case_t
     }
 
     Cent_value* snapshot = Cent_value_get_str(value, "snapshot");
-    if (!snapshot) {
-        Zinc_error_list_set(&suite_data->errors, &n->loc, "expected snapshot");
-        case_data->has_error = true;
-    } else {
+    if (snapshot) {
         if (snapshot->type != Cent_value_type_boolean) {
             Zinc_error_list_set(&suite_data->errors, &n->loc, "expected snapshot to be boolean");
             case_data->has_error = true;
