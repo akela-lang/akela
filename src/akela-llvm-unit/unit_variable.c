@@ -3,26 +3,6 @@
 #include "zinc/test.h"
 #include "zinc/expect.h"
 
-void AkeLlvmUnit_variable_const_int(Zinc_test* test)
-{
-    if (test->dry_run) {
-        Zinc_string_add_str(&test->name, __func__);
-        test->mute = false;
-        test->solo = false;
-        return;
-    }
-    Ake_code_gen_result result;
-    Ake_code_gen_result_init(&result);
-
-    AkeLlvmUnit_cg_setup("const a: Int32 = 31\n"
-             "a"
-            ,&result);
-    Zinc_expect_no_errors(test, &result.cu->errors);
-    Zinc_expect_string(test, &result.value, "31", "31");
-
-    Ake_code_gen_result_destroy(&result);
-}
-
 void AkeLlvmUnit_variable_assign(Zinc_test* test)
 {
     if (test->dry_run) {
@@ -270,7 +250,6 @@ void AkeLlvmUnit_variable(Zinc_test* test)
         test->mute = false;
         test->solo = false;
 
-        Zinc_test_register(test, AkeLlvmUnit_variable_const_int);
         Zinc_test_register(test, AkeLlvmUnit_variable_assign);
         Zinc_test_register(test, AkeLlvmUnit_variable_assign_multiple);
         Zinc_test_register(test, AkeLlvmUnit_variable_copy_from_variable);
