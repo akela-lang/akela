@@ -33,3 +33,32 @@ Test {
   }
 }
 ```
+
+## Test
+const void 2
+
+```akela
+const a: Int32 = 1
+```
+
+```llvm
+/ModuleID/
+/source_filename/
+/target datalayout/
+
+define void @__top_level() {
+entry:
+  %a = alloca i32, align 4
+  store i32 1, ptr %a, align 4
+  ret void
+}
+```
+
+```cent
+use lib::base::*
+Test {
+  Field {
+    .type = Type::Void
+  }
+}
+```
