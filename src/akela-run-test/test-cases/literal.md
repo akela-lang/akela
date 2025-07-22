@@ -35,6 +35,7 @@ Test {
 ```
 
 ## Test
+double
 
 ```akela
 1.5
@@ -57,6 +58,34 @@ Test {
   Field {
     .type = Type::Real64
     .value = 1.5
+  }
+}
+```
+
+## Test
+boolean
+
+```akela
+true
+```
+
+```llvm
+/ModuleID/
+/source_filename/
+/target/
+
+define i1 @__top_level() {
+entry:
+  ret i1 true
+}
+```
+
+```cent
+use lib::base::*
+Test {
+  Field {
+    .type = Type::Bool
+    .value = true
   }
 }
 ```
