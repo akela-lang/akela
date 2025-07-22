@@ -1,5 +1,4 @@
 #include <zinc/test.h>
-#include "unit_literal.h"
 #include "unit_variable.h"
 #include "unit_operator.h"
 #include "unit_stmts.h"
@@ -14,7 +13,6 @@ void AkeLlvmUnit(Zinc_test* test)
         test->mute = false;
         test->solo = false;
 
-        Zinc_test_register(test, AkeLlvmUnit_literal);
         Zinc_test_register(test, AkeLlvmUnit_variable);
         Zinc_test_register(test, AkeLlvmUnit_operator);
         Zinc_test_register(test, AkeLlvmUnit_stmts);

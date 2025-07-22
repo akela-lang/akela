@@ -63,7 +63,7 @@ Test {
 ```
 
 ## Test
-boolean
+boolean true
 
 ```akela
 true
@@ -86,6 +86,34 @@ Test {
   Field {
     .type = Type::Bool
     .value = true
+  }
+}
+```
+
+## Test
+boolean false
+
+```akela
+false
+```
+
+```llvm
+/ModuleID/
+/source_filename/
+/target/
+
+define i1 @__top_level() {
+entry:
+  ret i1 false
+}
+```
+
+```cent
+use lib::base::*
+Test {
+  Field {
+    .type = Type::Bool
+    .value = false
   }
 }
 ```
