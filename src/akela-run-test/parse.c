@@ -302,7 +302,9 @@ void Art_test_header(Zinc_test* top_test, Zinc_test* suite_test, Lava_dom* heade
 
     Zinc_string_add_string(&case_test->name, &case_data->description);
 
-    case_test->func = Art_run_test;
+    if (!suite_data->errors.head) {
+        case_test->func = Art_run_test;
+    }
 }
 
 void Art_test_meta(Zinc_test* top_test, Zinc_test* suite_test, Zinc_test* case_test, Cent_value* value)
