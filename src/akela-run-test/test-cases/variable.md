@@ -282,3 +282,41 @@ Test {
   }
 }
 ```
+
+## Test
+copy variable
+
+```akela
+const a: Int32 = 50
+const b: Int32 = a
+a + b
+```
+
+```llvm
+/; ModuleID/
+/source_filename/
+/target datalayout/
+
+define i32 @__top_level() {
+entry:
+  %a = alloca i32, align 4
+  store i32 50, ptr %a, align 4
+  %b = alloca i32, align 4
+  %0 = load i32, ptr %a, align 4
+  store i32 %0, ptr %b, align 4
+  %1 = load i32, ptr %a, align 4
+  %2 = load i32, ptr %b, align 4
+  %addtmp = add i32 %1, %2
+  ret i32 %addtmp
+}
+```
+
+```cent
+use lib::base::*
+Test {
+  Field {
+    .type = Type::Int32
+    .value = 100
+  }
+}
+```
