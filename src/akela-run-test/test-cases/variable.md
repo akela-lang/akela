@@ -128,3 +128,157 @@ Test {
   }
 }
 ```
+
+## Test
+var assign multiple 1
+
+```akela
+var a: Int32
+var b: Int32
+var c: Int32
+a = b = c = 44
+a
+```
+
+```llvm
+/ModuleID/
+/source_filename/
+/target datalayout/
+
+define i32 @__top_level() {
+entry:
+  %a = alloca i32, align 4
+  %b = alloca i32, align 4
+  %c = alloca i32, align 4
+  store i32 44, ptr %c, align 4
+  store i32 44, ptr %b, align 4
+  store i32 44, ptr %a, align 4
+  %0 = load i32, ptr %a, align 4
+  ret i32 %0
+}
+```
+
+```cent
+use lib::base::*
+Test {
+  Field {
+    .type = Type::Int32
+    .value = 44
+  }
+}
+```
+
+## Test
+var assign multiple 2
+
+```akela
+var a: Int32
+var b: Int32
+var c: Int32
+a = b = c = 44
+b
+```
+
+```llvm
+/ModuleID/
+/source_filename/
+/target datalayout/
+
+define i32 @__top_level() {
+entry:
+  %a = alloca i32, align 4
+  %b = alloca i32, align 4
+  %c = alloca i32, align 4
+  store i32 44, ptr %c, align 4
+  store i32 44, ptr %b, align 4
+  store i32 44, ptr %a, align 4
+  %0 = load i32, ptr %b, align 4
+  ret i32 %0
+}
+```
+
+```cent
+use lib::base::*
+Test {
+  Field {
+    .type = Type::Int32
+    .value = 44
+  }
+}
+```
+
+## Test
+var assign multiple 3
+
+```akela
+var a: Int32
+var b: Int32
+var c: Int32
+a = b = c = 44
+c
+```
+
+```llvm
+/ModuleID/
+/source_filename/
+/target datalayout/
+
+define i32 @__top_level() {
+entry:
+  %a = alloca i32, align 4
+  %b = alloca i32, align 4
+  %c = alloca i32, align 4
+  store i32 44, ptr %c, align 4
+  store i32 44, ptr %b, align 4
+  store i32 44, ptr %a, align 4
+  %0 = load i32, ptr %c, align 4
+  ret i32 %0
+}
+```
+
+```cent
+use lib::base::*
+Test {
+  Field {
+    .type = Type::Int32
+    .value = 44
+  }
+}
+```
+
+## Test
+var assign multiple 4
+
+```akela
+var a: Int32
+var b: Int32
+var c: Int32
+a = b = c = 44
+```
+
+```llvm
+/ModuleID/
+/source_filename/
+/target datalayout/
+
+define i32 @__top_level() {
+entry:
+  %a = alloca i32, align 4
+  %b = alloca i32, align 4
+  %c = alloca i32, align 4
+  store i32 44, ptr %c, align 4
+  store i32 44, ptr %b, align 4
+  store i32 44, ptr %a, align 4
+  ret i32 44
+}
+```
+
+```cent
+use lib::base::*
+Test {
+  Field {
+    .type = Type::Int32
+    .value = 44
+  }
+}
+```
