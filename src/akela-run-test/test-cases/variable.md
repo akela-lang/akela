@@ -320,3 +320,35 @@ Test {
   }
 }
 ```
+
+## Test
+const Int64
+
+```akela
+const a: Int64 = 2
+a
+```
+
+```llvm
+/; ModuleID/
+/source_filename/
+/target datalayout/
+
+define i64 @__top_level() {
+entry:
+  %a = alloca i64, align 8
+  store i64 2, ptr %a, align 8
+  %0 = load i64, ptr %a, align 8
+  ret i64 %0
+}
+```
+
+```cent
+use lib::base::*
+Test {
+  Field {
+    .type = Type::Int64
+    .value = 2
+  }
+}
+```
