@@ -27,7 +27,7 @@
   * operator []
   * stmts []
   * struct []
-  * variable []
+  * variable [x]
 
 # Akela Parse Test
 

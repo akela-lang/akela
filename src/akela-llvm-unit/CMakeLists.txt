@@ -2,7 +2,6 @@
 set(akela_llvm_unit_files
         unit.c
         unit_cg_tools.c
-        unit_variable.c
         unit_stmts.c
         unit_function.c
         unit_array.c
