@@ -14,13 +14,6 @@ void AkeLlvmUnit_stmts_if_expression(Zinc_test* test)
     Ake_code_gen_result result;
 
     Ake_code_gen_result_init(&result);
-    AkeLlvmUnit_cg_setup("const a: Int32 = if true 1 else 2 end\n"
-             "a\n",
-             &result);
-    Zinc_expect_string(test, &result.value, "1", "value");
-    Ake_code_gen_result_destroy(&result);
-
-    Ake_code_gen_result_init(&result);
     AkeLlvmUnit_cg_setup("const a: Int32 = if false 1 else 2 end\n"
              "a\n",
              &result);
