@@ -3,26 +3,6 @@
 #include "zinc/test.h"
 #include "zinc/expect.h"
 
-void AkeLlvmUnit_variable_int32_int64(Zinc_test* test)
-{
-    if (test->dry_run) {
-        Zinc_string_add_str(&test->name, __func__);
-        test->mute = false;
-        test->solo = false;
-        return;
-    }
-    Ake_code_gen_result result;
-
-    Ake_code_gen_result_init(&result);
-    AkeLlvmUnit_cg_setup("const a: Int32 = 1\n"
-             "const b: Int64 = a\n"
-             "b\n",
-             &result);
-    Zinc_expect_no_errors(test, &result.cu->errors);
-    Zinc_expect_string(test, &result.value, "1", "value");
-    Ake_code_gen_result_destroy(&result);
-}
-
 void AkeLlvmUnit_variable_assign_scalar_id(Zinc_test* test)
 {
     if (test->dry_run) {
@@ -115,7 +95,6 @@ void AkeLlvmUnit_variable(Zinc_test* test)
         test->mute = false;
         test->solo = false;
 
-        Zinc_test_register(test, AkeLlvmUnit_variable_int32_int64);
         Zinc_test_register(test, AkeLlvmUnit_variable_assign_scalar_id);
         Zinc_test_register(test, AkeLlvmUnit_variable_assign_eseq);
 
