@@ -242,35 +242,41 @@ Lava_dom* Lava_parse_backquote(Lava_parse_data* pd)
 
     Lava_lookahead(pd);
     n->data.backquote.bounds.loc = pd->lookahead->loc;
-    if (pd->lookahead->kind == Lava_token_kind_text) {
-        if (!Lava_match(pd, Lava_token_kind_text, "expected text", &txt, n)) {
-            assert(false && "not possible");
-        }
-        if (txt) {
-            Zinc_string_add_string(&n->data.backquote.text, &txt->text);
-            Lava_token_destroy(txt);
-            free(txt);
-        }
-    }
 
-    Lava_lookahead(pd);
-    while (pd->lookahead->kind == Lava_token_kind_newline) {
-        nl = NULL;
-        Lava_match(pd, Lava_token_kind_newline, "expected newline", &nl, n);
-        Zinc_string_add_char(&n->data.backquote.text, '\n');
-        Lava_token_destroy(nl);
-        free(nl);
-
+    while (true) {
         Lava_lookahead(pd);
-        if (pd->lookahead->kind == Lava_token_kind_text) {
+        if (pd->lookahead->kind == Lava_token_kind_eof) {
+            break;
+        }
+        if (pd->lookahead->kind == Lava_token_kind_backquote) {
+            break;
+        }
+
+        if (pd->lookahead->kind == Lava_token_kind_newline) {
+            if (!Lava_match(pd, Lava_token_kind_newline, "expected newline", &nl, n)) {
+                assert(false && "not possible");
+            }
+            Zinc_string_add_str(&n->data.backquote.text, "\n");
+            Lava_token_destroy(nl);
+            free(nl);
+        } else if (pd->lookahead->kind == Lava_token_kind_header) {
+            Lava_token* header = NULL;
+            if (!Lava_match(pd, Lava_token_kind_header, "expected header", &header, n)) {
+                assert(false && "not possible");
+            }
+            Zinc_string_add_string(&n->data.backquote.text, &header->text);
+            Lava_token_destroy(header);
+            free(header);
+        } else if (pd->lookahead->kind == Lava_token_kind_text) {
             if (!Lava_match(pd, Lava_token_kind_text, "expected text", &txt, n)) {
                 assert(false && "not possible");
             }
             Zinc_string_add_string(&n->data.backquote.text, &txt->text);
             Lava_token_destroy(txt);
             free(txt);
+        } else {
+            assert(false && "unhandled token kind");
         }
-        Lava_lookahead(pd);
     }
 
     Lava_lookahead(pd);
@@ -278,6 +284,15 @@ Lava_dom* Lava_parse_backquote(Lava_parse_data* pd)
     Lava_match(pd, Lava_token_kind_backquote, "expected backquote", &bq, n);
     Lava_token_destroy(bq);
     free(bq);
+
+    Lava_lookahead(pd);
+    if (pd->lookahead->kind == Lava_token_kind_newline) {
+        if (!Lava_match(pd, Lava_token_kind_newline, "expected newline", &nl, n)) {
+            assert(false && "not possible");
+        }
+        Lava_token_destroy(nl);
+        free(nl);
+    }
 
     return n;
 }

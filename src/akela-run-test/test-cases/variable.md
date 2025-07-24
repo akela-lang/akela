@@ -381,3 +381,55 @@ Test {
   }
 }
 ```
+
+## Test
+Int32 to Int64
+
+```akela
+const a: Int32 = 1
+const b: Int64 = a
+b
+```
+
+```c
+#include <stdint.h>
+#include <stdio.h>
+uint64_t top_level()
+{
+    uint32_t a = 1;
+    uint64_t b = a;
+    return b;
+}
+int main() {
+    printf("%ld\n", top_level());
+    return 0;
+}
+```
+
+```llvm
+/ModuleID/
+/source_filename/
+/target datalayout/
+
+define i64 @__top_level() {
+entry:
+  %a = alloca i32, align 4
+  store i32 1, ptr %a, align 4
+  %b = alloca i64, align 8
+  %0 = load i32, ptr %a, align 4
+  %1 = zext i32 %0 to i64
+  store i32 %1, ptr %b, align 4
+  %2 = load i64, ptr %b, align 8
+  ret i64 %2
+}
+```
+
+```cent
+use lib::base::*
+Test {
+  Field {
+    .type = Type::Int64
+    .value = 1
+  }
+}
+```

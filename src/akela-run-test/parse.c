@@ -288,6 +288,7 @@ void Art_test_header(Zinc_test* top_test, Zinc_test* suite_test, Lava_dom* heade
                     }
                 }
                 case_data->ct = ct;
+            } else if (Zinc_string_compare_str(&item->data.backquote.format, "c")) {
             } else {
                 Zinc_error_list_set(
                     &suite_data->errors,
@@ -295,12 +296,18 @@ void Art_test_header(Zinc_test* top_test, Zinc_test* suite_test, Lava_dom* heade
                     "unexpected format: %bf",
                     &item->data.backquote.format);
             }
+        } else {
+            assert(false && "invalid item kind");
         }
 
         item = item->next;
     }
 
     Zinc_string_add_string(&case_test->name, &case_data->description);
+
+    if (!case_data->ct) {
+        Zinc_error_list_set(&suite_data->errors, &header->loc, "expected cent backquote");
+    }
 
     if (!suite_data->errors.head) {
         case_test->func = Art_run_test;
@@ -359,7 +366,17 @@ void Art_test_meta(Zinc_test* top_test, Zinc_test* suite_test, Zinc_test* case_t
         }
     }
 
+    bool has_data = false;
     if (!case_data->has_error) {
-        case_data->value = value->data.dag.tail;
+        if (value) {
+            if (value->data.dag.tail) {
+                case_data->value = value->data.dag.tail;
+                has_data = true;
+            }
+        }
+    }
+
+    if (!has_data) {
+        printf("no data\n");
     }
 }
