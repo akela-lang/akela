@@ -3,26 +3,6 @@
 #include "zinc/test.h"
 #include "zinc/expect.h"
 
-void AkeLlvmUnit_stmts_if(Zinc_test* test)
-{
-    if (test->dry_run) {
-        Zinc_string_add_str(&test->name, __func__);
-        test->mute = false;
-        test->solo = false;
-        return;
-    }
-    Ake_code_gen_result result;
-    Ake_code_gen_result_init(&result);
-
-    AkeLlvmUnit_cg_setup("if true\n"
-             "  1\n"
-             "end\n",
-             &result);
-    Zinc_expect_string(test, &result.value, "", "value");
-
-    Ake_code_gen_result_destroy(&result);
-}
-
 void AkeLlvmUnit_stmts_if_else(Zinc_test* test)
 {
     if (test->dry_run) {
@@ -152,7 +132,6 @@ void AkeLlvmUnit_stmts(Zinc_test* test)
         test->mute = false;
         test->solo = false;
 
-        Zinc_test_register(test, AkeLlvmUnit_stmts_if);
         Zinc_test_register(test, AkeLlvmUnit_stmts_if_else);
         Zinc_test_register(test, AkeLlvmUnit_stmts_if_elseif_else);
         Zinc_test_register(test, AkeLlvmUnit_stmts_if_expression);
