@@ -23,7 +23,7 @@
 * convert run tests
   * array []
   * function []
-  * literal []
+  * literal [x]
   * operator []
   * stmts [x]
   * struct []
@@ -52,7 +52,9 @@
 # Test
 
 # Example
-* read config
-* parse
-* run
-* check difference
+* test suite
+* test
+  * akela (code)
+  * text (output)
+* check examples
+* output html
