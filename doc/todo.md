@@ -34,6 +34,7 @@
 # Akela Run Test
 
 # Centipede
+* characters
 
 # Cobble
 

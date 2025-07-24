@@ -59,3 +59,33 @@ Test {
   }
 }
 ```
+
+## Test
+const string
+
+```akela
+"hello"
+```
+
+```llvm
+/ModuleID/
+/source_filename/
+/target datalayout/
+
+@.str = private unnamed_addr constant [6 x i8] c"hello\00", align 1
+
+define ptr @__top_level() {
+entry:
+  ret ptr @.str
+}
+```
+
+```cent
+use lib::base::*
+Test {
+  Field {
+    .type = Type::Nat8
+    .value = "hello"
+  }
+}
+```
