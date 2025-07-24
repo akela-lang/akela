@@ -32,9 +32,6 @@
 # Akela Parse Test
 
 # Akela Run Test
-* sub
-* mult
-* divide
 
 # Centipede
 
