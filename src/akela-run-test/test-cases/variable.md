@@ -433,3 +433,40 @@ Test {
   }
 }
 ```
+
+## Test
+assign scalar id
+
+```akela
+const a: Int32 = 11
+var b: Int32
+b = a
+b
+```
+
+```llvm
+/ModuleID/
+/source_filename/
+/target datalayout/
+
+define i32 @__top_level() {
+entry:
+  %a = alloca i32, align 4
+  store i32 11, ptr %a, align 4
+  %b = alloca i32, align 4
+  %0 = load i32, ptr %a, align 4
+  store i32 %0, ptr %b, align 4
+  %1 = load i32, ptr %b, align 4
+  ret i32 %1
+}
+```
+
+```cent
+use lib::base::*
+Test {
+  Field {
+    .type = Type::Int32
+    .value = 11
+  }
+}
+```
