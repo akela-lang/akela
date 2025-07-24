@@ -11,9 +11,9 @@ a + b
 ```
 
 ```llvm
-; ModuleID = 'Akela JIT'
-source_filename = "Akela JIT"
-target datalayout = "e-m:e-p270:32:32-p271:32:32-p272:64:64-i64:64-i128:128-f80:128-n8:16:32:64-S128"
+/ModuleID/
+/source_filename/
+/target datalayout/
 
 define i32 @__top_level() {
 entry:
@@ -34,6 +34,41 @@ Test {
   Field {
     .type = Type::Int32
     .value = 3
+  }
+}
+```
+
+## Test
+if
+
+```akela
+if true
+    1
+end
+```
+
+```llvm
+/ModuleID/
+/source_filename/
+/target datalayout/
+
+define void @__top_level() {
+entry:
+  br i1 true, label %thentmp, label %nexttmp
+
+thentmp:                                          ; preds = %entry
+  br label %nexttmp
+
+nexttmp:                                          ; preds = %thentmp, %entry
+  ret void
+}
+```
+
+```cent
+use lib::base::*
+Test {
+  Field {
+    .type = Type::Void
   }
 }
 ```
