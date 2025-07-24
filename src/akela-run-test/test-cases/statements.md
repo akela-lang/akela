@@ -216,3 +216,57 @@ Test {
   }
 }
 ```
+
+## Test
+if false elseif true else
+
+```akela
+if false
+    1
+elseif true
+    2
+else
+    3
+end
+```
+
+```llvm
+/ModuleID/
+/source_filename/
+/target datalayout/
+
+define i32 @__top_level() {
+entry:
+  %ifresult = alloca i32, align 4
+  br i1 false, label %thentmp, label %nexttmp
+
+thentmp:                                          ; preds = %entry
+  store i32 1, ptr %ifresult, align 4
+  br label %endiftmp
+
+nexttmp:                                          ; preds = %entry
+  br i1 true, label %thentmp1, label %nexttmp2
+
+thentmp1:                                         ; preds = %nexttmp
+  store i32 2, ptr %ifresult, align 4
+  br label %endiftmp
+
+nexttmp2:                                         ; preds = %nexttmp
+  store i32 3, ptr %ifresult, align 4
+  br label %endiftmp
+
+endiftmp:                                         ; preds = %nexttmp2, %thentmp1, %thentmp
+  %0 = load i32, ptr %ifresult, align 4
+  ret i32 %0
+}
+```
+
+```cent
+use lib::base::*
+Test {
+  Field {
+    .type = Type::Int32
+    .value = 2
+  }
+}
+```
