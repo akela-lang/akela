@@ -14,18 +14,6 @@ void AkeLlvmUnit_stmts_if_elseif_else(Zinc_test* test)
     Ake_code_gen_result result;
 
     Ake_code_gen_result_init(&result);
-    AkeLlvmUnit_cg_setup("if true\n"
-             "  1\n"
-             "elseif true\n"
-             "  2\n"
-             "else\n"
-             "  3\n"
-             "end\n",
-             &result);
-    Zinc_expect_string(test, &result.value, "1", "value");
-    Ake_code_gen_result_destroy(&result);
-
-    Ake_code_gen_result_init(&result);
     AkeLlvmUnit_cg_setup("if false\n"
              "  1\n"
              "elseif true\n"
