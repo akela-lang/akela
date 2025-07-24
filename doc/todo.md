@@ -25,7 +25,7 @@
   * function []
   * literal []
   * operator []
-  * stmts []
+  * stmts [x]
   * struct []
   * variable [x]
 
