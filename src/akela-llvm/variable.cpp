@@ -71,6 +71,13 @@ namespace Akela_llvm {
                 AllocaInst* lhs_value = jd->Builder->CreateAlloca(t, nullptr, lhs->value.buf);
                 sym->reference = lhs_value;
                 Value *rhs_value = Dispatch(jd, rhs);
+
+                if (type->kind == AKE_TYPE_INTEGER && rhs->type->kind == AKE_TYPE_INTEGER) {
+                    if (type->data.integer.bit_count > rhs->type->data.integer.bit_count) {
+                        rhs_value = jd->Builder->CreateZExt(rhs_value, t);
+                    }
+                }
+
                 jd->Builder->CreateStore(rhs_value, lhs_value);
             } else {
                 Type* t = Get_type(jd, type);

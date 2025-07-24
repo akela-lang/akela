@@ -418,7 +418,7 @@ entry:
   %b = alloca i64, align 8
   %0 = load i32, ptr %a, align 4
   %1 = zext i32 %0 to i64
-  store i32 %1, ptr %b, align 4
+  store i64 %1, ptr %b, align 8
   %2 = load i64, ptr %b, align 8
   ret i64 %2
 }
