@@ -19,19 +19,6 @@ void AkeLlvmUnit_variable_assign_eseq(Zinc_test* test)
         "var b: Int32\n"
         "var c: Int32\n"
         "var d: Int32\n"
-        "a, b, c, d = 1, 2, 3, 4\n"
-        "c",
-             &result);
-    Zinc_expect_no_errors(test, &result.cu->errors);
-    Zinc_expect_string(test, &result.value, "3", "value");
-    Ake_code_gen_result_destroy(&result);
-
-    Ake_code_gen_result_init(&result);
-    AkeLlvmUnit_cg_setup(
-        "var a: Int32\n"
-        "var b: Int32\n"
-        "var c: Int32\n"
-        "var d: Int32\n"
          "a, b, c, d = 1, 2, 3, 4\n"
              "d",
              &result);

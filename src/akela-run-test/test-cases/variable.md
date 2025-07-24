@@ -554,3 +554,45 @@ Test {
   }
 }
 ```
+
+## Test
+multi assign 3
+
+```akela
+var a: Int32
+var b: Int32
+var c: Int32
+var d: Int32
+a, b, c, d = 1, 2, 3, 4
+c
+```
+
+```llvm
+/ModuleID/
+/source_filename/
+/target datalayout/
+
+define i32 @__top_level() {
+entry:
+  %a = alloca i32, align 4
+  %b = alloca i32, align 4
+  %c = alloca i32, align 4
+  %d = alloca i32, align 4
+  store i32 1, ptr %a, align 4
+  store i32 2, ptr %b, align 4
+  store i32 3, ptr %c, align 4
+  store i32 4, ptr %d, align 4
+  %0 = load i32, ptr %c, align 4
+  ret i32 %0
+}
+```
+
+```cent
+use lib::base::*
+Test {
+  Field {
+    .type = Type::Int32
+    .value = 3
+  }
+}
+```
