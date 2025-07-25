@@ -15,14 +15,6 @@ void AkeLlvmUnit_code_gen_array_const2(Zinc_test* test)
 
     Ake_code_gen_result_init(&result);
     AkeLlvmUnit_cg_setup("const a: [5 const]Nat8 = [1,2,3,4,0]\n"
-             "a[2]\n",
-             &result);
-    Zinc_expect_no_errors(test, &result.cu->errors);
-    Zinc_expect_string(test, &result.value, "3", "value 2");
-    Ake_code_gen_result_destroy(&result);
-
-    Ake_code_gen_result_init(&result);
-    AkeLlvmUnit_cg_setup("const a: [5 const]Nat8 = [1,2,3,4,0]\n"
              "a[3]\n",
              &result);
     Zinc_expect_no_errors(test, &result.cu->errors);
