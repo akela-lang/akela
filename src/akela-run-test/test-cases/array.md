@@ -434,3 +434,59 @@ Test {
   }
 }
 ```
+
+## Test
+array not const 1
+
+```akela
+const a: [5]Int32 = [1,2,3,4,5]
+a[0]
+```
+
+```llvm
+/ModuleID/
+/source_filename/
+/target datalayout/
+
+@.str = private unnamed_addr constant [24 x i8] c"invalid subscript index\00", align 1
+
+declare void @printf(ptr, ...)
+
+declare void @exit(i32)
+
+define i32 @__top_level() {
+entry:
+  %a = alloca [5 x i32], align 4
+  %arrayelementtmp = getelementptr inbounds [5 x i32], ptr %a, i64 0, i64 0
+  store i32 1, ptr %arrayelementtmp, align 4
+  %arrayelementtmp1 = getelementptr inbounds i32, ptr %arrayelementtmp, i64 1
+  store i32 2, ptr %arrayelementtmp1, align 4
+  %arrayelementtmp2 = getelementptr inbounds i32, ptr %arrayelementtmp1, i64 1
+  store i32 3, ptr %arrayelementtmp2, align 4
+  %arrayelementtmp3 = getelementptr inbounds i32, ptr %arrayelementtmp2, i64 1
+  store i32 4, ptr %arrayelementtmp3, align 4
+  %arrayelementtmp4 = getelementptr inbounds i32, ptr %arrayelementtmp3, i64 1
+  store i32 5, ptr %arrayelementtmp4, align 4
+  br i1 true, label %continuetmp, label %aborttmp
+
+aborttmp:                                         ; preds = %entry
+  call void (ptr, ...) @printf(ptr @.str)
+  call void @exit(i32 1)
+  br label %continuetmp
+
+continuetmp:                                      ; preds = %aborttmp, %entry
+  %subscripttmp = getelementptr inbounds i32, ptr %a, i64 0
+  %elementtmp = load i32, ptr %subscripttmp, align 4
+  ret i32 %elementtmp
+}
+```
+
+```cent
+use lib::base::*
+Test {
+  Field {
+    .type = Type::Nat8
+    .value = 1
+  }
+}
+```
