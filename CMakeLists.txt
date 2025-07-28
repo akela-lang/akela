@@ -6,7 +6,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON) # Ensure the compiler strictly uses C++20
 set(CMAKE_CXX_EXTENSIONS OFF)       # Disable compiler-specific extensions (optional)
 
 # LLVM
-find_package(LLVM 21.0.0 REQUIRED CONFIG PATHS ../llvm-project/build-release)
+find_package(LLVM 21.1.0 REQUIRED CONFIG PATHS ../llvm-project/build-release)
 message(STATUS "Found LLVM ${LLVM_PACKAGE_VERSION}")
 message(STATUS "Using LLVMConfig.cmake in: ${LLVM_DIR}")
 include_directories(${LLVM_INCLUDE_DIRS})
