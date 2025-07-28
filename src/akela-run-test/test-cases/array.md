@@ -912,3 +912,69 @@ Test {
   }
 }
 ```
+
+## Test
+multidimensional literal 4
+
+```akela
+const a: [2][2]Int32 = [[1,2],[3,4]]
+a[1][1]
+```
+
+```llvm
+/ModuleID/
+/source_filename/
+/target datalayout/
+
+@.str = private unnamed_addr constant [24 x i8] c"invalid subscript index\00", align 1
+@.str.1 = private unnamed_addr constant [24 x i8] c"invalid subscript index\00", align 1
+
+declare void @printf(ptr, ...)
+
+declare void @exit(i32)
+
+define i32 @__top_level() {
+entry:
+  %a = alloca [2 x [2 x i32]], align 4
+  %arrayelementtmp = getelementptr inbounds [2 x [2 x i32]], ptr %a, i64 0, i64 0
+  %arrayelementtmp1 = getelementptr inbounds [2 x i32], ptr %arrayelementtmp, i64 0, i64 0
+  store i32 1, ptr %arrayelementtmp1, align 4
+  %arrayelementtmp2 = getelementptr inbounds i32, ptr %arrayelementtmp1, i64 1
+  store i32 2, ptr %arrayelementtmp2, align 4
+  %arrayelementtmp3 = getelementptr inbounds [2 x i32], ptr %arrayelementtmp, i64 1
+  %arrayelementtmp4 = getelementptr inbounds [2 x i32], ptr %arrayelementtmp3, i64 0, i64 0
+  store i32 3, ptr %arrayelementtmp4, align 4
+  %arrayelementtmp5 = getelementptr inbounds i32, ptr %arrayelementtmp4, i64 1
+  store i32 4, ptr %arrayelementtmp5, align 4
+  br i1 true, label %continuetmp, label %aborttmp
+
+aborttmp:                                         ; preds = %entry
+  call void (ptr, ...) @printf(ptr @.str)
+  call void @exit(i32 1)
+  br label %continuetmp
+
+continuetmp:                                      ; preds = %aborttmp, %entry
+  %subscripttmp = getelementptr inbounds [2 x i32], ptr %a, i64 1
+  br i1 true, label %continuetmp7, label %aborttmp6
+
+aborttmp6:                                        ; preds = %continuetmp
+  call void (ptr, ...) @printf(ptr @.str.1)
+  call void @exit(i32 1)
+  br label %continuetmp7
+
+continuetmp7:                                     ; preds = %aborttmp6, %continuetmp
+  %subscripttmp8 = getelementptr inbounds i32, ptr %subscripttmp, i64 1
+  %elementtmp = load i32, ptr %subscripttmp8, align 4
+  ret i32 %elementtmp
+}
+```
+
+```cent
+use lib::base::*
+Test {
+  Field {
+    .type = Type::Int32
+    .value = 4
+  }
+}
+```
