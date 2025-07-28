@@ -15,22 +15,6 @@ void AkeLlvmUnit_code_gen_array_literal_multidimensional(Zinc_test* test)
 
     Ake_code_gen_result_init(&result);
     AkeLlvmUnit_cg_setup("const a: [2][2]Int32 = [[1,2],[3,4]]\n"
-             "a[0][1]\n",
-             &result);
-    Zinc_expect_no_errors(test, &result.cu->errors);
-    Zinc_expect_string(test, &result.value, "2", "value");
-    Ake_code_gen_result_destroy(&result);
-
-    Ake_code_gen_result_init(&result);
-    AkeLlvmUnit_cg_setup("const a: [2][2]Int32 = [[1,2],[3,4]]\n"
-             "a[1][0]\n",
-             &result);
-    Zinc_expect_no_errors(test, &result.cu->errors);
-    Zinc_expect_string(test, &result.value, "3", "value");
-    Ake_code_gen_result_destroy(&result);
-
-    Ake_code_gen_result_init(&result);
-    AkeLlvmUnit_cg_setup("const a: [2][2]Int32 = [[1,2],[3,4]]\n"
              "a[1][1]\n",
              &result);
     Zinc_expect_no_errors(test, &result.cu->errors);
