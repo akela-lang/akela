@@ -148,7 +148,8 @@ namespace Akela_llvm {
         if (type) {
             if (NeedPointer(type->kind)) {
                 //t = t->getPointerTo();
-                t = PointerType::get(t, 0);
+                //t = PointerType::get(t, 0);
+                t = PointerType::get(*jd->TheContext, 0);
             }
         }
         return t;
@@ -175,7 +176,8 @@ namespace Akela_llvm {
                 Ake_Type* type2 = type->data.array.type;
                 t = Get_type(jd, type2);
                 if (type2->kind == AKE_TYPE_FUNCTION) {
-                    t = PointerType::get(t, 0);
+                    //t = PointerType::get(t, 0);
+                    t = PointerType::get(*jd->TheContext, 0);
                 }
                 t = ArrayType::get(t, dim);
             } else {

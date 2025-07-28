@@ -17,7 +17,8 @@ namespace Akela_llvm {
             Type* element_type2 = Get_type(jd, element_type);
             if (element_type->kind == AKE_TYPE_FUNCTION) {
                 //element_type = element_type->getPointerTo();
-                element_type2 = PointerType::get(element_type2, 0);
+                //element_type2 = PointerType::get(element_type2, 0);
+                element_type2 = PointerType::get(*jd->TheContext, 0);
             }
             type_list.push_back(element_type2);
             element_dec = element_dec->next;
@@ -34,7 +35,8 @@ namespace Akela_llvm {
             Type* element_type = Get_type(jd, tf->type);
             if (tf->type->kind == AKE_TYPE_FUNCTION) {
                 //element_type = element_type->getPointerTo();
-                element_type = PointerType::get(element_type, 0);
+                //element_type = PointerType::get(element_type, 0);
+                element_type = PointerType::get(*jd->TheContext, 0);
             }
             type_list.push_back(element_type);
             tf = tf->next;
@@ -156,6 +158,7 @@ namespace Akela_llvm {
         return value;
     }
 
+    /* NOLINTNEXTLINE(misc-no-recursion) */
     Value* Handle_struct_literal_element(Jit_data* jd, Value* ptr, Ake_Ast* n)
     {
         //auto t = (StructType*)n->tu->data.fields.backend_type;

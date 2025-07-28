@@ -56,7 +56,8 @@ void CreateTopLevel(JITData* jd)
     Type* element_type = Type::getInt8Ty(*jd->TheContext);
     ArrayType* array_type = ArrayType::get(element_type, 6);
     //PointerType* pt = array_type->getPointerTo();
-    PointerType* pt = PointerType::get(array_type, 0);
+    //PointerType* pt = PointerType::get(array_type, 0);
+    PointerType* pt = PointerType::get(*jd->TheContext, 0);
     Type* ret_type = pt;
     FunctionType *func_type = FunctionType::get(ret_type, param_types, false);
     Function *f = Function::Create(func_type, Function::ExternalLinkage, TOP_LEVEL_NAME, *jd->TheModule);
