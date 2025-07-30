@@ -18,6 +18,7 @@
 * run IR generation in same pass
 * order independence of global variables
 * cast numerical values
+* disallow array copying like C
 
 # Akela LLVM
 * convert run tests

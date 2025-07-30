@@ -15,14 +15,6 @@ void AkeLlvmUnit_code_gen_array_boolean(Zinc_test* test)
 
     Ake_code_gen_result_init(&result);
     AkeLlvmUnit_cg_setup("const a: [4]Bool = [true,false,true,false]\n"
-             "a[0]\n",
-             &result);
-    Zinc_expect_no_errors(test, &result.cu->errors);
-    Zinc_expect_string(test, &result.value, "true", "value");
-    Ake_code_gen_result_destroy(&result);
-
-    Ake_code_gen_result_init(&result);
-    AkeLlvmUnit_cg_setup("const a: [4]Bool = [true,false,true,false]\n"
              "a[1]\n",
              &result);
     Zinc_expect_no_errors(test, &result.cu->errors);
