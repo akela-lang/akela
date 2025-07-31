@@ -1506,3 +1506,57 @@ Test {
   }
 }
 ```
+
+## Test
+real 3
+
+```akela
+const a: [4]Real64 = [1.0, 2.0, 3.0, 4.0]
+a[2]
+```
+
+```llvm
+; ModuleID = 'Akela JIT'
+source_filename = "Akela JIT"
+target datalayout = "e-m:e-p270:32:32-p271:32:32-p272:64:64-i64:64-i128:128-f80:128-n8:16:32:64-S128"
+
+@.str = private unnamed_addr constant [24 x i8] c"invalid subscript index\00", align 1
+
+declare void @printf(ptr, ...)
+
+declare void @exit(i32)
+
+define double @__top_level() {
+entry:
+  %a = alloca [4 x double], align 8
+  %arrayelementtmp = getelementptr inbounds [4 x double], ptr %a, i64 0, i64 0
+  store double 1.000000e+00, ptr %arrayelementtmp, align 8
+  %arrayelementtmp1 = getelementptr inbounds double, ptr %arrayelementtmp, i64 1
+  store double 2.000000e+00, ptr %arrayelementtmp1, align 8
+  %arrayelementtmp2 = getelementptr inbounds double, ptr %arrayelementtmp1, i64 1
+  store double 3.000000e+00, ptr %arrayelementtmp2, align 8
+  %arrayelementtmp3 = getelementptr inbounds double, ptr %arrayelementtmp2, i64 1
+  store double 4.000000e+00, ptr %arrayelementtmp3, align 8
+  br i1 true, label %continuetmp, label %aborttmp
+
+aborttmp:                                         ; preds = %entry
+  call void (ptr, ...) @printf(ptr @.str)
+  call void @exit(i32 1)
+  br label %continuetmp
+
+continuetmp:                                      ; preds = %aborttmp, %entry
+  %subscripttmp = getelementptr inbounds double, ptr %a, i64 2
+  %elementtmp = load double, ptr %subscripttmp, align 8
+  ret double %elementtmp
+}
+```
+
+```cent
+use lib::base::*
+Test {
+  Field {
+    .type = Type::Real64
+    .value = 3.0
+  }
+}
+```
