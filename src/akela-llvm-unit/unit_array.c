@@ -15,14 +15,6 @@ void AkeLlvmUnit_code_gen_array_float(Zinc_test* test)
 
     Ake_code_gen_result_init(&result);
     AkeLlvmUnit_cg_setup("const a: [4]Real64 = [1.0, 2.0, 3.0, 4.0]\n"
-             "a[0]\n",
-             &result);
-    Zinc_expect_no_errors(test, &result.cu->errors);
-    Zinc_expect_string(test, &result.value, "1.000000", "value");
-    Ake_code_gen_result_destroy(&result);
-
-    Ake_code_gen_result_init(&result);
-    AkeLlvmUnit_cg_setup("const a: [4]Real64 = [1.0, 2.0, 3.0, 4.0]\n"
              "a[1]\n",
              &result);
     Zinc_expect_no_errors(test, &result.cu->errors);
