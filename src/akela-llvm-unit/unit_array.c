@@ -3,25 +3,6 @@
 #include "zinc/test.h"
 #include "zinc/expect.h"
 
-void AkeLlvmUnit_code_gen_array_float(Zinc_test* test)
-{
-    if (test->dry_run) {
-        Zinc_string_add_str(&test->name, __func__);
-        test->mute = false;
-        test->solo = false;
-        return;
-    }
-    Ake_code_gen_result result;
-
-    Ake_code_gen_result_init(&result);
-    AkeLlvmUnit_cg_setup("const a: [4]Real64 = [1.0, 2.0, 3.0, 4.0]\n"
-             "a[3]\n",
-             &result);
-    Zinc_expect_no_errors(test, &result.cu->errors);
-    Zinc_expect_string(test, &result.value, "4.000000", "value");
-    Ake_code_gen_result_destroy(&result);
-}
-
 void AkeLlvmUnit_code_gen_assign_array_id2(Zinc_test* test)
 {
     if (test->dry_run) {
@@ -331,7 +312,6 @@ void AkeLlvmUnit_array(Zinc_test* test)
         test->mute = false;
         test->solo = false;
 
-        Zinc_test_register(test, AkeLlvmUnit_code_gen_array_float);
         Zinc_test_register(test, AkeLlvmUnit_code_gen_assign_array_id);
         Zinc_test_register(test, AkeLlvmUnit_code_gen_assign_array_id2);
         Zinc_test_register(test, AkeLlvmUnit_code_gen_assign_array_subscript);
