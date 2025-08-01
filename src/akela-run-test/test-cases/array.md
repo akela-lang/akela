@@ -1695,3 +1695,69 @@ Test {
   }
 }
 ```
+
+## Test
+subscript assign
+
+```akela
+var a: [4]Int32 = [1, 2, 3, 4]
+a[0] = 10
+a[0]
+```
+
+```llvm
+; ModuleID = 'Akela JIT'
+source_filename = "Akela JIT"
+target datalayout = "e-m:e-p270:32:32-p271:32:32-p272:64:64-i64:64-i128:128-f80:128-n8:16:32:64-S128"
+
+@.str = private unnamed_addr constant [24 x i8] c"invalid subscript index\00", align 1
+@.str.1 = private unnamed_addr constant [24 x i8] c"invalid subscript index\00", align 1
+
+declare void @printf(ptr, ...)
+
+declare void @exit(i32)
+
+define i32 @__top_level() {
+entry:
+  %a = alloca [4 x i32], align 4
+  %arrayelementtmp = getelementptr inbounds [4 x i32], ptr %a, i64 0, i64 0
+  store i32 1, ptr %arrayelementtmp, align 4
+  %arrayelementtmp1 = getelementptr inbounds i32, ptr %arrayelementtmp, i64 1
+  store i32 2, ptr %arrayelementtmp1, align 4
+  %arrayelementtmp2 = getelementptr inbounds i32, ptr %arrayelementtmp1, i64 1
+  store i32 3, ptr %arrayelementtmp2, align 4
+  %arrayelementtmp3 = getelementptr inbounds i32, ptr %arrayelementtmp2, i64 1
+  store i32 4, ptr %arrayelementtmp3, align 4
+  br i1 true, label %continuetmp, label %aborttmp
+
+aborttmp:                                         ; preds = %entry
+  call void (ptr, ...) @printf(ptr @.str)
+  call void @exit(i32 1)
+  br label %continuetmp
+
+continuetmp:                                      ; preds = %aborttmp, %entry
+  %subscripttmp = getelementptr inbounds i32, ptr %a, i64 0
+  store i32 10, ptr %subscripttmp, align 4
+  br i1 true, label %continuetmp5, label %aborttmp4
+
+aborttmp4:                                        ; preds = %continuetmp
+  call void (ptr, ...) @printf(ptr @.str.1)
+  call void @exit(i32 1)
+  br label %continuetmp5
+
+continuetmp5:                                     ; preds = %aborttmp4, %continuetmp
+  %subscripttmp6 = getelementptr inbounds i32, ptr %a, i64 0
+  %elementtmp = load i32, ptr %subscripttmp6, align 4
+  ret i32 %elementtmp
+}
+```
+
+```cent
+use lib::base::*
+Test {
+  Field {
+    .type = Type::Int32
+    .value = 10
+  }
+}
+```
