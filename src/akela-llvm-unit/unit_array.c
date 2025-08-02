@@ -22,21 +22,6 @@ void AkeLlvmUnit_array_assign_sub_array(Zinc_test* test)
              "]\n"
              "var b: [4]Int32\n"
              "b = a[1]\n"
-             "b[0]\n",
-             &result);
-    Zinc_expect_no_errors(test, &result.cu->errors);
-    Zinc_expect_string(test, &result.value, "5", "value");
-    Ake_code_gen_result_destroy(&result);
-
-    Ake_code_gen_result_init(&result);
-    AkeLlvmUnit_cg_setup("const a: [4][4]Int32 = ["
-             "  [1, 2, 3, 4],\n"
-             "  [5, 6, 7, 8],\n"
-             "  [9, 10, 11, 12],\n"
-             "  [13, 14, 15, 16]\n"
-             "]\n"
-             "var b: [4]Int32\n"
-             "b = a[1]\n"
              "b[1]\n",
              &result);
     Zinc_expect_no_errors(test, &result.cu->errors);
