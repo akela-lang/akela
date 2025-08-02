@@ -1616,7 +1616,7 @@ Test {
 ```
 
 ## Test
-array copy 2
+copy array 1
 
 ```akela
 var a: [4]Int32 = [1, 2, 3, 4]
