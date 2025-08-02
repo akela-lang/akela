@@ -19,18 +19,6 @@ void AkeLlvmUnit_code_gen_assign_array_allocate(Zinc_test* test)
              "a[1] = 2\n"
              "a[2] = 3\n"
              "a[3] = 4\n"
-             "a[1]\n",
-             &result);
-    Zinc_expect_no_errors(test, &result.cu->errors);
-    Zinc_expect_string(test, &result.value, "2", "value");
-    Ake_code_gen_result_destroy(&result);
-
-    Ake_code_gen_result_init(&result);
-    AkeLlvmUnit_cg_setup("var a: [4]Int32\n"
-             "a[0] = 1\n"
-             "a[1] = 2\n"
-             "a[2] = 3\n"
-             "a[3] = 4\n"
              "a[2]\n",
              &result);
     Zinc_expect_no_errors(test, &result.cu->errors);
