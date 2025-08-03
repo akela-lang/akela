@@ -60,3 +60,4 @@
   * text (output)
 * check examples
 * output html
+* array subscript assert exit
