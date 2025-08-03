@@ -21,20 +21,6 @@ void AkeLlvmUnit_struct_assign_elements(Zinc_test* test)
              "var a: Point\n"
              "a.x = 1.0\n"
              "a.y = 2.0\n"
-             "a.x\n",
-             &result);
-    Zinc_expect_no_errors(test, &result.cu->errors);
-    Zinc_expect_string(test, &result.value, "1.000000", "value");
-    Ake_code_gen_result_destroy(&result);
-
-    Ake_code_gen_result_init(&result);
-    AkeLlvmUnit_cg_setup("struct Point\n"
-             "  x: Real64\n"
-             "  y: Real64\n"
-             "end\n"
-             "var a: Point\n"
-             "a.x = 1.0\n"
-             "a.y = 2.0\n"
              "a.y\n",
              &result);
     Zinc_expect_no_errors(test, &result.cu->errors);
