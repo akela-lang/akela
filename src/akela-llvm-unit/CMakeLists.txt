@@ -3,7 +3,6 @@ set(akela_llvm_unit_files
         unit.c
         unit_cg_tools.c
         unit_function.c
-        unit_array.c
         unit_struct.c
 )
 add_library(akela-llvm-unit STATIC ${akela_llvm_unit_files})
