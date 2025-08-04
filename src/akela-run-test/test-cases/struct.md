@@ -1838,3 +1838,45 @@ Test {
   }
 }
 ```
+
+## Test
+struct Nat8
+
+```akela
+struct Foo
+    x: Nat8
+end
+var foo: Foo
+foo.x = 5
+foo.x
+```
+
+```llvm
+; ModuleID = 'Akela JIT'
+source_filename = "Akela JIT"
+target datalayout = "e-m:e-p270:32:32-p271:32:32-p272:64:64-i64:64-i128:128-f80:128-n8:16:32:64-S128"
+
+%Foo.0 = type { i8 }
+%Foo.1 = type { i8 }
+%Foo.2 = type { i8 }
+
+define i8 @__top_level() {
+entry:
+  %foo = alloca %Foo.0, align 8
+  %0 = getelementptr inbounds nuw %Foo.1, ptr %foo, i32 0, i32 0
+  store i8 5, ptr %0, align 1
+  %1 = getelementptr inbounds nuw %Foo.2, ptr %foo, i32 0, i32 0
+  %x = load i8, ptr %1, align 1
+  ret i8 %x
+}
+```
+
+```cent
+use lib::base::*
+Test {
+  Field {
+    .type = Type::Nat8
+    .value = 5
+  }
+}
+```
