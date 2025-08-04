@@ -258,3 +258,68 @@ Test {
   }
 }
 ```
+
+## Test
+const array 2
+
+```akela
+const a: [6 const]Nat8 = "John"
+a[0]
+```
+
+```llvm
+; ModuleID = 'Akela JIT'
+source_filename = "Akela JIT"
+target datalayout = "e-m:e-p270:32:32-p271:32:32-p272:64:64-i64:64-i128:128-f80:128-n8:16:32:64-S128"
+
+@.str = private unnamed_addr constant [5 x i8] c"John\00", align 1
+@.str.1 = private unnamed_addr constant [24 x i8] c"invalid subscript index\00", align 1
+
+declare void @printf(ptr, ...)
+
+declare void @exit(i32)
+
+define i8 @__top_level() {
+entry:
+  %a = alloca [6 x i8], align 1
+  %lhstmp = getelementptr inbounds i8, ptr %a, i64 0
+  %rhs = load i8, ptr @.str, align 1
+  store i8 %rhs, ptr %lhstmp, align 1
+  %lhstmp1 = getelementptr inbounds i8, ptr %a, i64 1
+  %rhs2 = load i8, ptr getelementptr inbounds (i8, ptr @.str, i64 1), align 1
+  store i8 %rhs2, ptr %lhstmp1, align 1
+  %lhstmp3 = getelementptr inbounds i8, ptr %a, i64 2
+  %rhs4 = load i8, ptr getelementptr inbounds (i8, ptr @.str, i64 2), align 1
+  store i8 %rhs4, ptr %lhstmp3, align 1
+  %lhstmp5 = getelementptr inbounds i8, ptr %a, i64 3
+  %rhs6 = load i8, ptr getelementptr inbounds (i8, ptr @.str, i64 3), align 1
+  store i8 %rhs6, ptr %lhstmp5, align 1
+  %lhstmp7 = getelementptr inbounds i8, ptr %a, i64 4
+  %rhs8 = load i8, ptr getelementptr inbounds (i8, ptr @.str, i64 4), align 1
+  store i8 %rhs8, ptr %lhstmp7, align 1
+  %lhstmp9 = getelementptr inbounds i8, ptr %a, i64 5
+  %rhs10 = load i8, ptr getelementptr inbounds (i8, ptr @.str, i64 5), align 1
+  store i8 %rhs10, ptr %lhstmp9, align 1
+  br i1 true, label %continuetmp, label %aborttmp
+
+aborttmp:                                         ; preds = %entry
+  call void (ptr, ...) @printf(ptr @.str.1)
+  call void @exit(i32 1)
+  br label %continuetmp
+
+continuetmp:                                      ; preds = %aborttmp, %entry
+  %subscripttmp = getelementptr inbounds i8, ptr %a, i64 0
+  %elementtmp = load i8, ptr %subscripttmp, align 1
+  ret i8 %elementtmp
+}
+```
+
+```cent
+use lib::base::*
+Test {
+  Field {
+    .type = Type::Nat8
+    .value = 74
+  }
+}
+```
