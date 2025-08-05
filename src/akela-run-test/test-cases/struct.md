@@ -1962,3 +1962,86 @@ Test {
   }
 }
 ```
+
+## Test
+struct array copy Int32 to Nat8
+
+```akela
+const a: [4]Int32 = [1,2,3,4]
+struct Foo
+    x: [4]Nat8
+end
+const foo: Foo = Foo
+    x: a
+end
+foo.x[0]
+```
+
+```llvm
+; ModuleID = 'Akela JIT'
+source_filename = "Akela JIT"
+target datalayout = "e-m:e-p270:32:32-p271:32:32-p272:64:64-i64:64-i128:128-f80:128-n8:16:32:64-S128"
+
+%Foo.0 = type { [4 x i8] }
+%Foo.1 = type { [4 x i8] }
+%Foo.2 = type { [4 x i8] }
+
+@.str = private unnamed_addr constant [24 x i8] c"invalid subscript index\00", align 1
+
+declare void @printf(ptr, ...)
+
+declare void @exit(i32)
+
+define i8 @__top_level() {
+entry:
+  %a = alloca [4 x i32], align 4
+  %arrayelementtmp = getelementptr inbounds [4 x i32], ptr %a, i64 0, i64 0
+  store i32 1, ptr %arrayelementtmp, align 4
+  %arrayelementtmp1 = getelementptr inbounds i32, ptr %arrayelementtmp, i64 1
+  store i32 2, ptr %arrayelementtmp1, align 4
+  %arrayelementtmp2 = getelementptr inbounds i32, ptr %arrayelementtmp1, i64 1
+  store i32 3, ptr %arrayelementtmp2, align 4
+  %arrayelementtmp3 = getelementptr inbounds i32, ptr %arrayelementtmp2, i64 1
+  store i32 4, ptr %arrayelementtmp3, align 4
+  %foo = alloca %Foo.0, align 8
+  %x = getelementptr inbounds nuw %Foo.1, ptr %foo, i32 0, i32 0
+  %lhstmp = getelementptr inbounds i32, ptr %x, i64 0
+  %rhstmp = getelementptr inbounds i32, ptr %a, i64 0
+  %rhs = load i32, ptr %rhstmp, align 4
+  store i32 %rhs, ptr %lhstmp, align 4
+  %lhstmp4 = getelementptr inbounds i32, ptr %x, i64 1
+  %rhstmp5 = getelementptr inbounds i32, ptr %a, i64 1
+  %rhs6 = load i32, ptr %rhstmp5, align 4
+  store i32 %rhs6, ptr %lhstmp4, align 4
+  %lhstmp7 = getelementptr inbounds i32, ptr %x, i64 2
+  %rhstmp8 = getelementptr inbounds i32, ptr %a, i64 2
+  %rhs9 = load i32, ptr %rhstmp8, align 4
+  store i32 %rhs9, ptr %lhstmp7, align 4
+  %lhstmp10 = getelementptr inbounds i32, ptr %x, i64 3
+  %rhstmp11 = getelementptr inbounds i32, ptr %a, i64 3
+  %rhs12 = load i32, ptr %rhstmp11, align 4
+  store i32 %rhs12, ptr %lhstmp10, align 4
+  %0 = getelementptr inbounds nuw %Foo.2, ptr %foo, i32 0, i32 0
+  br i1 true, label %continuetmp, label %aborttmp
+
+aborttmp:                                         ; preds = %entry
+  call void (ptr, ...) @printf(ptr @.str)
+  call void @exit(i32 1)
+  br label %continuetmp
+
+continuetmp:                                      ; preds = %aborttmp, %entry
+  %subscripttmp = getelementptr inbounds i8, ptr %0, i64 0
+  %elementtmp = load i8, ptr %subscripttmp, align 1
+  ret i8 %elementtmp
+}
+```
+
+```cent
+use lib::base::*
+Test {
+  Field {
+    .type = Type::Nat8
+    .value = 1
+  }
+}
+```
