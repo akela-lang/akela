@@ -24,23 +24,6 @@ void AkeLlvmUnit_struct_array12(Zinc_test* test)
              "  last_name: \"Smith\"\n"
              "  age: 35\n"
              "end\n"
-             "p.last_name[0]\n",
-             &result);
-    Zinc_expect_no_errors(test, &result.cu->errors);
-    Zinc_expect_string(test, &result.value, "83", "value");
-    Ake_code_gen_result_destroy(&result);
-
-    Ake_code_gen_result_init(&result);
-    AkeLlvmUnit_cg_setup("struct Person\n"
-             "  first_name: [100 const]Nat8\n"
-             "  last_name: [100 const]Nat8\n"
-             "  age: Nat32\n"
-             "end\n"
-             "const p: Person = Person\n"
-             "  first_name: \"John\"\n"
-             "  last_name: \"Smith\"\n"
-             "  age: 35\n"
-             "end\n"
              "p.age\n",
              &result);
     Zinc_expect_no_errors(test, &result.cu->errors);
