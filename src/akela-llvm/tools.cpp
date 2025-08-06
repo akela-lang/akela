@@ -405,13 +405,16 @@ namespace Akela_llvm {
         size_t size = 0;
         Ake_Type* lhs_type2 = NULL;
         Ake_Type* rhs_type2 = NULL;
-        if (lhs_type->kind == AKE_TYPE_ARRAY) {
+        assert(lhs_type->kind == AKE_TYPE_ARRAY);
+        assert(rhs_type->kind == AKE_TYPE_ARRAY);
+        size = 0;
+        if (lhs_type->data.array.dim < rhs_type->data.array.dim) {
             size = lhs_type->data.array.dim;
-            lhs_type2 = lhs_type->data.array.type;
-            rhs_type2 = rhs_type->data.array.type;
         } else {
-            assert(false && "invalid type");
+            size = rhs_type->data.array.dim;
         }
+        lhs_type2 = lhs_type->data.array.type;
+        rhs_type2 = rhs_type->data.array.type;
 
         for (size_t i = 0; i < size; i++) {
             Type* t = Get_type(jd, lhs_type2);
