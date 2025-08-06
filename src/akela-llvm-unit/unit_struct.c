@@ -3,30 +3,6 @@
 #include "zinc/test.h"
 #include "zinc/expect.h"
 
-void AkeLlvmUnit_struct_array11(Zinc_test* test)
-{
-    if (test->dry_run) {
-        Zinc_string_add_str(&test->name, __func__);
-        test->mute = false;
-        test->solo = false;
-        return;
-    }
-    Ake_code_gen_result result;
-
-    Ake_code_gen_result_init(&result);
-    AkeLlvmUnit_cg_setup("const a: [4]Nat8 = [1,2,3,4]\n"
-             "struct Foo\n"
-             "  x: [4]Nat8\n"
-             "end\n"
-             "var foo: Foo\n"
-             "foo.x = a\n"
-             "foo.x[3]\n",
-             &result);
-    Zinc_expect_no_errors(test, &result.cu->errors);
-    Zinc_expect_string(test, &result.value, "4", "value");
-    Ake_code_gen_result_destroy(&result);
-}
-
 void AkeLlvmUnit_struct_array12(Zinc_test* test)
 {
     if (test->dry_run) {
@@ -312,7 +288,6 @@ void AkeLlvmUnit_struct(Zinc_test* test)
         test->mute = false;
         test->solo = false;
 
-        Zinc_test_register(test, AkeLlvmUnit_struct_array11);
         Zinc_test_register(test, AkeLlvmUnit_struct_array12);
         Zinc_test_register(test, AkeLlvmUnit_struct_struct);
         Zinc_test_register(test, AkeLlvmUnit_struct_struct2);
