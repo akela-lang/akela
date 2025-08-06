@@ -1623,3 +1623,102 @@ Test {
   }
 }
 ```
+
+## Test
+Person
+
+```akela
+struct Person
+    first_name: [100 const]Nat8
+    last_name: [100 const]Nat8
+    age: Nat32
+end
+const p: Person = Person
+    first_name: "John"
+    last_name: "Smith"
+    age: 35
+end
+p.first_name[0]
+```
+
+```llvm
+; ModuleID = 'Akela JIT'
+source_filename = "Akela JIT"
+target datalayout = "e-m:e-p270:32:32-p271:32:32-p272:64:64-i64:64-i128:128-f80:128-n8:16:32:64-S128"
+
+%Person.0 = type { [100 x i8], [100 x i8], i32 }
+%Person.1 = type { [100 x i8], [100 x i8], i32 }
+%Person.2 = type { [100 x i8], [100 x i8], i32 }
+
+@.str = private unnamed_addr constant [5 x i8] c"John\00", align 1
+@.str.1 = private unnamed_addr constant [6 x i8] c"Smith\00", align 1
+@.str.2 = private unnamed_addr constant [24 x i8] c"invalid subscript index\00", align 1
+
+declare void @printf(ptr, ...)
+
+declare void @exit(i32)
+
+define i8 @__top_level() {
+entry:
+  %p = alloca %Person.0, align 8
+  %first_name = getelementptr inbounds nuw %Person.1, ptr %p, i32 0, i32 0
+  %lhstmp = getelementptr inbounds i8, ptr %first_name, i64 0
+  %rhs = load i8, ptr @.str, align 1
+  store i8 %rhs, ptr %lhstmp, align 1
+  %lhstmp1 = getelementptr inbounds i8, ptr %first_name, i64 1
+  %rhs2 = load i8, ptr getelementptr inbounds (i8, ptr @.str, i64 1), align 1
+  store i8 %rhs2, ptr %lhstmp1, align 1
+  %lhstmp3 = getelementptr inbounds i8, ptr %first_name, i64 2
+  %rhs4 = load i8, ptr getelementptr inbounds (i8, ptr @.str, i64 2), align 1
+  store i8 %rhs4, ptr %lhstmp3, align 1
+  %lhstmp5 = getelementptr inbounds i8, ptr %first_name, i64 3
+  %rhs6 = load i8, ptr getelementptr inbounds (i8, ptr @.str, i64 3), align 1
+  store i8 %rhs6, ptr %lhstmp5, align 1
+  %lhstmp7 = getelementptr inbounds i8, ptr %first_name, i64 4
+  %rhs8 = load i8, ptr getelementptr inbounds (i8, ptr @.str, i64 4), align 1
+  store i8 %rhs8, ptr %lhstmp7, align 1
+  %last_name = getelementptr inbounds nuw %Person.1, ptr %p, i32 0, i32 1
+  %lhstmp9 = getelementptr inbounds i8, ptr %last_name, i64 0
+  %rhs10 = load i8, ptr @.str.1, align 1
+  store i8 %rhs10, ptr %lhstmp9, align 1
+  %lhstmp11 = getelementptr inbounds i8, ptr %last_name, i64 1
+  %rhs12 = load i8, ptr getelementptr inbounds (i8, ptr @.str.1, i64 1), align 1
+  store i8 %rhs12, ptr %lhstmp11, align 1
+  %lhstmp13 = getelementptr inbounds i8, ptr %last_name, i64 2
+  %rhs14 = load i8, ptr getelementptr inbounds (i8, ptr @.str.1, i64 2), align 1
+  store i8 %rhs14, ptr %lhstmp13, align 1
+  %lhstmp15 = getelementptr inbounds i8, ptr %last_name, i64 3
+  %rhs16 = load i8, ptr getelementptr inbounds (i8, ptr @.str.1, i64 3), align 1
+  store i8 %rhs16, ptr %lhstmp15, align 1
+  %lhstmp17 = getelementptr inbounds i8, ptr %last_name, i64 4
+  %rhs18 = load i8, ptr getelementptr inbounds (i8, ptr @.str.1, i64 4), align 1
+  store i8 %rhs18, ptr %lhstmp17, align 1
+  %lhstmp19 = getelementptr inbounds i8, ptr %last_name, i64 5
+  %rhs20 = load i8, ptr getelementptr inbounds (i8, ptr @.str.1, i64 5), align 1
+  store i8 %rhs20, ptr %lhstmp19, align 1
+  %age = getelementptr inbounds nuw %Person.1, ptr %p, i32 0, i32 2
+  store i32 35, ptr %age, align 4
+  %0 = getelementptr inbounds nuw %Person.2, ptr %p, i32 0, i32 0
+  br i1 true, label %continuetmp, label %aborttmp
+
+aborttmp:                                         ; preds = %entry
+  call void (ptr, ...) @printf(ptr @.str.2)
+  call void @exit(i32 1)
+  br label %continuetmp
+
+continuetmp:                                      ; preds = %aborttmp, %entry
+  %subscripttmp = getelementptr inbounds i8, ptr %0, i64 0
+  %elementtmp = load i8, ptr %subscripttmp, align 1
+  ret i8 %elementtmp
+}
+```
+
+```cent
+use lib::base::*
+Test {
+  Field {
+    .type = Type::Nat8
+    .value = 74
+  }
+}
+```
