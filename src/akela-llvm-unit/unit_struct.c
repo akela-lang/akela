@@ -20,19 +20,6 @@ void AkeLlvmUnit_struct_array11(Zinc_test* test)
              "end\n"
              "var foo: Foo\n"
              "foo.x = a\n"
-             "foo.x[2]\n",
-             &result);
-    Zinc_expect_no_errors(test, &result.cu->errors);
-    Zinc_expect_string(test, &result.value, "3", "value");
-    Ake_code_gen_result_destroy(&result);
-
-    Ake_code_gen_result_init(&result);
-    AkeLlvmUnit_cg_setup("const a: [4]Nat8 = [1,2,3,4]\n"
-             "struct Foo\n"
-             "  x: [4]Nat8\n"
-             "end\n"
-             "var foo: Foo\n"
-             "foo.x = a\n"
              "foo.x[3]\n",
              &result);
     Zinc_expect_no_errors(test, &result.cu->errors);

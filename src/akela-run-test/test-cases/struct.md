@@ -2047,7 +2047,7 @@ Test {
 ```
 
 ## Test
-struct array assign
+struct array assign 1
 
 ```akela
 struct Foo
@@ -2156,7 +2156,7 @@ Test {
 ```
 
 ## Test
-struct array assign
+struct array assign 2
 
 ```akela
 struct Foo
@@ -2260,6 +2260,115 @@ Test {
   Field {
     .type = Type::Int32
     .value = 2
+  }
+}
+```
+
+## Test
+struct array assign 3
+
+```akela
+struct Foo
+    x: [4]Int32
+end
+var foo: Foo
+foo.x[0] = 1
+foo.x[1] = 2
+foo.x[2] = 3
+foo.x[3] = 4
+foo.x[2]
+```
+
+```llvm
+; ModuleID = 'Akela JIT'
+source_filename = "Akela JIT"
+target datalayout = "e-m:e-p270:32:32-p271:32:32-p272:64:64-i64:64-i128:128-f80:128-n8:16:32:64-S128"
+
+%Foo.0 = type { [4 x i32] }
+%Foo.1 = type { [4 x i32] }
+%Foo.2 = type { [4 x i32] }
+%Foo.3 = type { [4 x i32] }
+%Foo.4 = type { [4 x i32] }
+%Foo.5 = type { [4 x i32] }
+
+@.str = private unnamed_addr constant [24 x i8] c"invalid subscript index\00", align 1
+@.str.1 = private unnamed_addr constant [24 x i8] c"invalid subscript index\00", align 1
+@.str.2 = private unnamed_addr constant [24 x i8] c"invalid subscript index\00", align 1
+@.str.3 = private unnamed_addr constant [24 x i8] c"invalid subscript index\00", align 1
+@.str.4 = private unnamed_addr constant [24 x i8] c"invalid subscript index\00", align 1
+
+declare void @printf(ptr, ...)
+
+declare void @exit(i32)
+
+define i32 @__top_level() {
+entry:
+  %foo = alloca %Foo.0, align 8
+  %0 = getelementptr inbounds nuw %Foo.1, ptr %foo, i32 0, i32 0
+  br i1 true, label %continuetmp, label %aborttmp
+
+aborttmp:                                         ; preds = %entry
+  call void (ptr, ...) @printf(ptr @.str)
+  call void @exit(i32 1)
+  br label %continuetmp
+
+continuetmp:                                      ; preds = %aborttmp, %entry
+  %subscripttmp = getelementptr inbounds i32, ptr %0, i64 0
+  store i32 1, ptr %subscripttmp, align 4
+  %1 = getelementptr inbounds nuw %Foo.2, ptr %foo, i32 0, i32 0
+  br i1 true, label %continuetmp2, label %aborttmp1
+
+aborttmp1:                                        ; preds = %continuetmp
+  call void (ptr, ...) @printf(ptr @.str.1)
+  call void @exit(i32 1)
+  br label %continuetmp2
+
+continuetmp2:                                     ; preds = %aborttmp1, %continuetmp
+  %subscripttmp3 = getelementptr inbounds i32, ptr %1, i64 1
+  store i32 2, ptr %subscripttmp3, align 4
+  %2 = getelementptr inbounds nuw %Foo.3, ptr %foo, i32 0, i32 0
+  br i1 true, label %continuetmp5, label %aborttmp4
+
+aborttmp4:                                        ; preds = %continuetmp2
+  call void (ptr, ...) @printf(ptr @.str.2)
+  call void @exit(i32 1)
+  br label %continuetmp5
+
+continuetmp5:                                     ; preds = %aborttmp4, %continuetmp2
+  %subscripttmp6 = getelementptr inbounds i32, ptr %2, i64 2
+  store i32 3, ptr %subscripttmp6, align 4
+  %3 = getelementptr inbounds nuw %Foo.4, ptr %foo, i32 0, i32 0
+  br i1 true, label %continuetmp8, label %aborttmp7
+
+aborttmp7:                                        ; preds = %continuetmp5
+  call void (ptr, ...) @printf(ptr @.str.3)
+  call void @exit(i32 1)
+  br label %continuetmp8
+
+continuetmp8:                                     ; preds = %aborttmp7, %continuetmp5
+  %subscripttmp9 = getelementptr inbounds i32, ptr %3, i64 3
+  store i32 4, ptr %subscripttmp9, align 4
+  %4 = getelementptr inbounds nuw %Foo.5, ptr %foo, i32 0, i32 0
+  br i1 true, label %continuetmp11, label %aborttmp10
+
+aborttmp10:                                       ; preds = %continuetmp8
+  call void (ptr, ...) @printf(ptr @.str.4)
+  call void @exit(i32 1)
+  br label %continuetmp11
+
+continuetmp11:                                    ; preds = %aborttmp10, %continuetmp8
+  %subscripttmp12 = getelementptr inbounds i32, ptr %4, i64 2
+  %elementtmp = load i32, ptr %subscripttmp12, align 4
+  ret i32 %elementtmp
+}
+```
+
+```cent
+use lib::base::*
+Test {
+  Field {
+    .type = Type::Int32
+    .value = 3
   }
 }
 ```
