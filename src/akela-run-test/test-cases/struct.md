@@ -2052,3 +2052,76 @@ Test {
   }
 }
 ```
+
+## Test
+struct struct 3
+
+```akela
+struct Point
+    x: Real64
+    y: Real64
+end
+struct Line
+    p0: Point
+    p1: Point
+end
+const line: Line = Line
+    p0: Point
+        x: 1.5
+        y: 2.5
+    end
+    p1: Point
+        x: 3.0
+        y: 4.0
+    end
+end
+line.p1.x
+```
+
+```llvm
+; ModuleID = 'Akela JIT'
+source_filename = "Akela JIT"
+target datalayout = "e-m:e-p270:32:32-p271:32:32-p272:64:64-i64:64-i128:128-f80:128-n8:16:32:64-S128"
+
+%Line.4 = type { %Point.2, %Point.3 }
+%Point.2 = type { double, double }
+%Point.3 = type { double, double }
+%Line.7 = type { %Point.5, %Point.6 }
+%Point.5 = type { double, double }
+%Point.6 = type { double, double }
+%Point.8 = type { double, double }
+%Point.9 = type { double, double }
+%Line.12 = type { %Point.10, %Point.11 }
+%Point.10 = type { double, double }
+%Point.11 = type { double, double }
+%Point.13 = type { double, double }
+
+define double @__top_level() {
+entry:
+  %line = alloca %Line.4, align 8
+  %p0 = getelementptr inbounds nuw %Line.7, ptr %line, i32 0, i32 0
+  %x = getelementptr inbounds nuw %Point.8, ptr %p0, i32 0, i32 0
+  store double 1.500000e+00, ptr %x, align 8
+  %y = getelementptr inbounds nuw %Point.8, ptr %p0, i32 0, i32 1
+  store double 2.500000e+00, ptr %y, align 8
+  %p1 = getelementptr inbounds nuw %Line.7, ptr %line, i32 0, i32 1
+  %x1 = getelementptr inbounds nuw %Point.9, ptr %p1, i32 0, i32 0
+  store double 3.000000e+00, ptr %x1, align 8
+  %y2 = getelementptr inbounds nuw %Point.9, ptr %p1, i32 0, i32 1
+  store double 4.000000e+00, ptr %y2, align 8
+  %0 = getelementptr inbounds nuw %Line.12, ptr %line, i32 0, i32 1
+  %1 = getelementptr inbounds nuw %Point.13, ptr %0, i32 0, i32 0
+  %x3 = load double, ptr %1, align 8
+  ret double %x3
+}
+```
+
+```cent
+use lib::base::*
+Test {
+  Field {
+    .type = Type::Real64
+    .value = 3.0
+  }
+}
+```
