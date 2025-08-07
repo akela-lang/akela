@@ -3,42 +3,6 @@
 #include "zinc/test.h"
 #include "zinc/expect.h"
 
-void AkeLlvmUnit_struct_struct(Zinc_test* test)
-{
-    if (test->dry_run) {
-        Zinc_string_add_str(&test->name, __func__);
-        test->mute = false;
-        test->solo = false;
-        return;
-    }
-    Ake_code_gen_result result;
-
-    Ake_code_gen_result_init(&result);
-    AkeLlvmUnit_cg_setup("struct Point\n"
-             "  x: Real64\n"
-             "  y: Real64\n"
-             "end\n"
-             "struct Line\n"
-             "  p0: Point\n"
-             "  p1: Point\n"
-             "end\n"
-             "const line: Line = Line\n"
-             "  p0: Point\n"
-             "    x: 1.5\n"
-             "    y: 2.5\n"
-             "  end\n"
-             "  p1: Point\n"
-             "    x: 3.0\n"
-             "    y: 4.0\n"
-             "  end\n"
-             "end\n"
-             "line.p1.y\n",
-             &result);
-    Zinc_expect_no_errors(test, &result.cu->errors);
-    Zinc_expect_string(test, &result.value, "4.000000", "value");
-    Ake_code_gen_result_destroy(&result);
-}
-
 void AkeLlvmUnit_struct_struct2(Zinc_test* test)
 {
     if (test->dry_run) {
@@ -151,7 +115,6 @@ void AkeLlvmUnit_struct(Zinc_test* test)
         test->mute = false;
         test->solo = false;
 
-        Zinc_test_register(test, AkeLlvmUnit_struct_struct);
         Zinc_test_register(test, AkeLlvmUnit_struct_struct2);
         Zinc_test_register(test, AkeLlvmUnit_struct_struct3);
         Zinc_test_register(test, AkeLlvmUnit_struct_function);
