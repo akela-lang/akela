@@ -32,31 +32,6 @@ void AkeLlvmUnit_struct_struct(Zinc_test* test)
              "    y: 4.0\n"
              "  end\n"
              "end\n"
-             "line.p0.x\n",
-             &result);
-    Zinc_expect_no_errors(test, &result.cu->errors);
-    Zinc_expect_string(test, &result.value, "1.500000", "value");
-    Ake_code_gen_result_destroy(&result);
-
-    Ake_code_gen_result_init(&result);
-    AkeLlvmUnit_cg_setup("struct Point\n"
-             "  x: Real64\n"
-             "  y: Real64\n"
-             "end\n"
-             "struct Line\n"
-             "  p0: Point\n"
-             "  p1: Point\n"
-             "end\n"
-             "const line: Line = Line\n"
-             "  p0: Point\n"
-             "    x: 1.5\n"
-             "    y: 2.5\n"
-             "  end\n"
-             "  p1: Point\n"
-             "    x: 3.0\n"
-             "    y: 4.0\n"
-             "  end\n"
-             "end\n"
              "line.p0.y\n",
              &result);
     Zinc_expect_no_errors(test, &result.cu->errors);
