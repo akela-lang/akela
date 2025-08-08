@@ -2243,7 +2243,6 @@ entry:
 ```cent
 use lib::base::*
 Test {
-  .snapshot = true
   Field {
     .type = Type::Real64
     .value = 1.6

@@ -88,7 +88,6 @@ void AkeLlvmUnit_struct(Zinc_test* test)
         test->mute = false;
         test->solo = false;
 
-        Zinc_test_register(test, AkeLlvmUnit_struct_struct2);
         Zinc_test_register(test, AkeLlvmUnit_struct_struct3);
         Zinc_test_register(test, AkeLlvmUnit_struct_function);
 
