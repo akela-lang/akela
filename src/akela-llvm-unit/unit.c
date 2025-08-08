@@ -1,6 +1,5 @@
 #include <zinc/test.h>
 #include "unit_function.h"
-#include "unit_struct.h"
 
 void AkeLlvmUnit(Zinc_test* test)
 {
@@ -10,7 +9,6 @@ void AkeLlvmUnit(Zinc_test* test)
         test->solo = false;
 
         Zinc_test_register(test, AkeLlvmUnit_function);
-        Zinc_test_register(test, AkeLlvmUnit_struct);
 
         return;
     }

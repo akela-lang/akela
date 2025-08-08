@@ -2330,3 +2330,113 @@ Test {
   }
 }
 ```
+
+## Test
+struct function 1
+
+```akela
+struct Foo
+    compute: fn(Int32)->Int32
+end
+const foo: Foo = Foo
+    compute: fn (x: Int32)->Int32
+        x + 1
+    end
+end
+foo.compute(77)
+```
+
+```llvm
+; ModuleID = 'Akela JIT'
+source_filename = "Akela JIT"
+target datalayout = "e-m:e-p270:32:32-p271:32:32-p272:64:64-i64:64-i128:128-f80:128-n8:16:32:64-S128"
+
+%Foo.0 = type { ptr }
+%Foo.1 = type { ptr }
+%Foo.2 = type { ptr }
+
+define i32 @__top_level() {
+entry:
+  %foo = alloca %Foo.0, align 8
+  %compute = getelementptr inbounds nuw %Foo.1, ptr %foo, i32 0, i32 0
+  store ptr @__anonymous_function_0, ptr %compute, align 8
+  %0 = getelementptr inbounds nuw %Foo.2, ptr %foo, i32 0, i32 0
+  %compute1 = load ptr, ptr %0, align 8
+  %1 = call i32 %compute1(i32 77)
+  ret i32 %1
+}
+
+define i32 @__anonymous_function_0(i32 %0) {
+body:
+  %x = alloca i32, align 4
+  store i32 %0, ptr %x, align 4
+  %1 = load i32, ptr %x, align 4
+  %addtmp = add i32 %1, 1
+  ret i32 %addtmp
+}
+```
+
+```cent
+use lib::base::*
+Test {
+  Field {
+    .type = Type::Int32
+    .value = 78
+  }
+}
+```
+
+## Test
+struct function 2
+
+```akela
+struct Foo
+    compute: fn(Int32)->Int32
+end
+const foo: Foo = Foo
+    compute: fn (x: Int32)->Int32
+        x + 2
+    end
+end
+foo.compute(77)
+```
+
+```llvm
+; ModuleID = 'Akela JIT'
+source_filename = "Akela JIT"
+target datalayout = "e-m:e-p270:32:32-p271:32:32-p272:64:64-i64:64-i128:128-f80:128-n8:16:32:64-S128"
+
+%Foo.0 = type { ptr }
+%Foo.1 = type { ptr }
+%Foo.2 = type { ptr }
+
+define i32 @__top_level() {
+entry:
+  %foo = alloca %Foo.0, align 8
+  %compute = getelementptr inbounds nuw %Foo.1, ptr %foo, i32 0, i32 0
+  store ptr @__anonymous_function_0, ptr %compute, align 8
+  %0 = getelementptr inbounds nuw %Foo.2, ptr %foo, i32 0, i32 0
+  %compute1 = load ptr, ptr %0, align 8
+  %1 = call i32 %compute1(i32 77)
+  ret i32 %1
+}
+
+define i32 @__anonymous_function_0(i32 %0) {
+body:
+  %x = alloca i32, align 4
+  store i32 %0, ptr %x, align 4
+  %1 = load i32, ptr %x, align 4
+  %addtmp = add i32 %1, 2
+  ret i32 %addtmp
+}
+```
+
+```cent
+use lib::base::*
+Test {
+  Field {
+    .type = Type::Int32
+    .value = 79
+  }
+}
+```
