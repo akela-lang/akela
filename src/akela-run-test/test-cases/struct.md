@@ -2198,3 +2198,55 @@ Test {
   }
 }
 ```
+
+## Test
+struct assign
+
+```akela
+struct Point
+    x: Real64
+    y: Real64
+end
+var p: Point = Point
+    x: 1.5
+    y: 2.5
+end
+p.x = 1.6
+p.x
+```
+
+```llvm
+; ModuleID = 'Akela JIT'
+source_filename = "Akela JIT"
+target datalayout = "e-m:e-p270:32:32-p271:32:32-p272:64:64-i64:64-i128:128-f80:128-n8:16:32:64-S128"
+
+%Point.0 = type { double, double }
+%Point.1 = type { double, double }
+%Point.2 = type { double, double }
+%Point.3 = type { double, double }
+
+define double @__top_level() {
+entry:
+  %p = alloca %Point.0, align 8
+  %x = getelementptr inbounds nuw %Point.1, ptr %p, i32 0, i32 0
+  store double 1.500000e+00, ptr %x, align 8
+  %y = getelementptr inbounds nuw %Point.1, ptr %p, i32 0, i32 1
+  store double 2.500000e+00, ptr %y, align 8
+  %0 = getelementptr inbounds nuw %Point.2, ptr %p, i32 0, i32 0
+  store double 1.600000e+00, ptr %0, align 8
+  %1 = getelementptr inbounds nuw %Point.3, ptr %p, i32 0, i32 0
+  %x1 = load double, ptr %1, align 8
+  ret double %x1
+}
+```
+
+```cent
+use lib::base::*
+Test {
+  .snapshot = true
+  Field {
+    .type = Type::Real64
+    .value = 1.6
+  }
+}
+```
