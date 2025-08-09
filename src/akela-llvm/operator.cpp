@@ -83,4 +83,31 @@ namespace Akela_llvm {
         Value* value = jd->Builder->CreateSub(zero_value, number_value, "negatetmp");
         return value;
     }
+
+    Value* Handle_and(Jit_data* jd, Ake_Ast* n)
+    {
+        Ake_Ast* lhs = Ake_ast_get(n, 0);
+        Ake_Ast* rhs = Ake_ast_get(n, 1);
+
+        Value* lhs_value = Dispatch(jd, lhs);
+        BasicBlock* curBB = jd->Builder->GetInsertBlock();
+        BasicBlock* rhsBB = BasicBlock::Create(*jd->TheContext, "and.rhs", curBB->getParent());
+        BasicBlock* mergeBB = BasicBlock::Create(*jd->TheContext, "and.end", curBB->getParent());
+
+        jd->Builder->CreateCondBr(lhs_value, rhsBB, mergeBB);
+
+        jd->Builder->SetInsertPoint(rhsBB);
+        Value* rhs_value = Dispatch(jd, rhs);
+        jd->Builder->CreateBr(mergeBB);
+        rhsBB = jd->Builder->GetInsertBlock();
+
+        jd->Builder->SetInsertPoint(mergeBB);
+        Type* t = Get_type(jd, n->type);
+        PHINode* phi = jd->Builder->CreatePHI(t, 2, "and.tmp");
+        phi->addIncoming(jd->Builder->getFalse(), curBB);
+        phi->addIncoming(rhs_value, rhsBB);
+
+        return phi;
+    }
 }
+
