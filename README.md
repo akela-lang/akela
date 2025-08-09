@@ -31,7 +31,7 @@ software engineers more than dynamically typed or gradually typed
 * Option data types
 * Memory management with allocators including an arena allocator, a reference counting allocator, and user-defined allocators
 * Series / Vector data types for financial data
-* Support for trading indicators, screeners, and simulations
+* Support for trading indicators, screeners, and backtesting
 
 ## Subprojects
 * Akela - The Akela compiler which is written in C;
