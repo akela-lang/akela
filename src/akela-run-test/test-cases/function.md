@@ -506,3 +506,48 @@ Test {
   }
 }
 ```
+
+## Test
+function assign 2
+
+```akela
+fn foo()->Int32 1 end
+fn bar()->Int32 2 end
+foo = bar
+foo()
+```
+
+```llvm
+; ModuleID = 'Akela JIT'
+source_filename = "Akela JIT"
+target datalayout = "e-m:e-p270:32:32-p271:32:32-p272:64:64-i64:64-i128:128-f80:128-n8:16:32:64-S128"
+
+define i32 @__top_level() {
+entry:
+  %bar = alloca ptr, align 8
+  store ptr @bar, ptr %bar, align 8
+  %0 = load ptr, ptr %bar, align 8
+  %1 = call i32 %0()
+  ret i32 %1
+}
+
+define i32 @foo() {
+body:
+  ret i32 1
+}
+
+define i32 @bar() {
+body:
+  ret i32 2
+}
+```
+
+```cent
+use lib::base::*
+Test {
+  Field {
+    .type = Type::Int32
+    .value = 2
+  }
+}
+```
