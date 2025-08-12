@@ -101,8 +101,6 @@ void Art_run_test(Zinc_test* case_test)
 
     void* jd = Ake_code_gen_init(cg, &Akela_llvm_vtable);
     Ake_code_gen_jit(cg, &Akela_llvm_vtable, jd, ct->primary->root, &cg_result);
-    Ake_code_gen_destroy(cg, &Akela_llvm_vtable, jd);
-    Akela_llvm_cg_destroy(cg);
 
     /* check llvm output */
     if (!case_data->snapshot) {
@@ -131,6 +129,8 @@ void Art_run_test(Zinc_test* case_test)
         case_test->pass = true;
     }
 
+    Ake_code_gen_destroy(cg, &Akela_llvm_vtable, jd);
+    Akela_llvm_cg_destroy(cg);
     Ake_comp_table_destroy(ct);
     free(ct);
 }

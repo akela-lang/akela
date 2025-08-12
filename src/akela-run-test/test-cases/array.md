@@ -83,6 +83,7 @@ entry:
 ```cent
 use lib::base::*
 Test {
+  .mute = true
   Field {
     .type = Type::Nat8
     .value = "hello"
@@ -485,7 +486,7 @@ continuetmp:                                      ; preds = %aborttmp, %entry
 use lib::base::*
 Test {
   Field {
-    .type = Type::Nat8
+    .type = Type::Int32
     .value = 1
   }
 }
@@ -541,7 +542,7 @@ continuetmp:                                      ; preds = %aborttmp, %entry
 use lib::base::*
 Test {
   Field {
-    .type = Type::Nat8
+    .type = Type::Int32
     .value = 2
   }
 }
@@ -597,7 +598,7 @@ continuetmp:                                      ; preds = %aborttmp, %entry
 use lib::base::*
 Test {
   Field {
-    .type = Type::Nat8
+    .type = Type::Int32
     .value = 3
   }
 }
@@ -653,7 +654,7 @@ continuetmp:                                      ; preds = %aborttmp, %entry
 use lib::base::*
 Test {
   Field {
-    .type = Type::Nat8
+    .type = Type::Int32
     .value = 4
   }
 }
@@ -709,7 +710,7 @@ continuetmp:                                      ; preds = %aborttmp, %entry
 use lib::base::*
 Test {
   Field {
-    .type = Type::Nat8
+    .type = Type::Int32
     .value = 5
   }
 }

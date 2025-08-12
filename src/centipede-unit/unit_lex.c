@@ -320,6 +320,8 @@ void CentUnit_lex_enum(Zinc_test* test)
 
 	t = lex(&ld);
 	Zinc_expect_int_equal(test, t->type, Cent_token_left_curly_brace, "type 1.3");
+	Cent_token_destroy(t);
+	free(t);
 
     t = lex(&ld);
     Zinc_expect_int_equal(test, t->type, Cent_token_newline, "type 1.3");

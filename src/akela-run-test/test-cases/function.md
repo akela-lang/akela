@@ -388,3 +388,49 @@ Test {
   }
 }
 ```
+
+## Test
+function return array
+
+```akela
+fn foo(a: Int32, b: Int32, c: Int32)->[6 const]Nat8
+    "hello"
+end
+foo(1, 2, 3)
+```
+
+```llvm
+; ModuleID = 'Akela JIT'
+source_filename = "Akela JIT"
+target datalayout = "e-m:e-p270:32:32-p271:32:32-p272:64:64-i64:64-i128:128-f80:128-n8:16:32:64-S128"
+
+@.str = private unnamed_addr constant [6 x i8] c"hello\00", align 1
+
+define ptr @__top_level() {
+entry:
+  %0 = call ptr @foo(i32 1, i32 2, i32 3)
+  ret ptr %0
+}
+
+define ptr @foo(i32 %0, i32 %1, i32 %2) {
+body:
+  %a = alloca i32, align 4
+  store i32 %0, ptr %a, align 4
+  %b = alloca i32, align 4
+  store i32 %1, ptr %b, align 4
+  %c = alloca i32, align 4
+  store i32 %2, ptr %c, align 4
+  ret ptr @.str
+}
+```
+
+```cent
+use lib::base::*
+Test {
+  .mute = true
+  Field {
+    .type = Type::Nat64
+    .value = 103
+  }
+}
+```

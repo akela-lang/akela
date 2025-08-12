@@ -215,6 +215,7 @@ namespace Akela_llvm {
                         char* v = fp();
                         Zinc_string_add_str(&result->value, v);
                         if (result->return_address) {
+                            assert(result->return_size == 4);
                             *(char**)result->return_address = v;
                         }
                     } else {
@@ -237,6 +238,7 @@ namespace Akela_llvm {
                     int32_t v = fp();
                     Zinc_string_add_format(value, "%d", v);
                     if (result->return_address) {
+                        assert(result->return_size >= 4);
                         *(int32_t*)result->return_address = v;
                     }
                 } else if (bit_count == 16) {
