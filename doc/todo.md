@@ -33,6 +33,8 @@
 # Akela Parse Test
 
 # Akela Run Test
+* field variants
+  * pointers
 
 # Centipede
 * characters

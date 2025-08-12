@@ -434,3 +434,35 @@ Test {
   }
 }
 ```
+
+## Test
+extern
+
+```akela
+extern pow(x: Real64, y: Real64)->Real64
+pow(5.0, 2.0)
+```
+
+```llvm
+; ModuleID = 'Akela JIT'
+source_filename = "Akela JIT"
+target datalayout = "e-m:e-p270:32:32-p271:32:32-p272:64:64-i64:64-i128:128-f80:128-n8:16:32:64-S128"
+
+define double @__top_level() {
+entry:
+  %0 = call double @pow(double 5.000000e+00, double 2.000000e+00)
+  ret double %0
+}
+
+declare double @pow(double, double)
+```
+
+```cent
+use lib::base::*
+Test {
+  Field {
+    .type = Type::Real64
+    .value = 25.0
+  }
+}
+```
