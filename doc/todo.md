@@ -22,12 +22,12 @@
 
 # Akela LLVM
 * convert run tests
-  * array []
+  * array [x]
   * function []
   * literal [x]
-  * operator []
+  * operator [x]
   * stmts [x]
-  * struct []
+  * struct [x]
   * variable [x]
 
 # Akela Parse Test

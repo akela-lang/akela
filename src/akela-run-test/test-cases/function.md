@@ -677,3 +677,86 @@ Test {
   }
 }
 ```
+
+## Test
+function call and array subscripting
+
+```akela
+fn add_ten(array: [10]Int32, i: Nat64)->Int32
+    array[i] + 10
+end
+const a: [10]Int32 = [100,200,300,400,500,600,700,800,900,1000]
+add_ten(a, 0)
+```
+
+```llvm
+; ModuleID = 'Akela JIT'
+source_filename = "Akela JIT"
+target datalayout = "e-m:e-p270:32:32-p271:32:32-p272:64:64-i64:64-i128:128-f80:128-n8:16:32:64-S128"
+
+@.str = private unnamed_addr constant [24 x i8] c"invalid subscript index\00", align 1
+
+declare void @printf(ptr, ...)
+
+declare void @exit(i32)
+
+define i32 @__top_level() {
+entry:
+  %a = alloca [10 x i32], align 4
+  %arrayelementtmp = getelementptr inbounds [10 x i32], ptr %a, i64 0, i64 0
+  store i32 100, ptr %arrayelementtmp, align 4
+  %arrayelementtmp1 = getelementptr inbounds i32, ptr %arrayelementtmp, i64 1
+  store i32 200, ptr %arrayelementtmp1, align 4
+  %arrayelementtmp2 = getelementptr inbounds i32, ptr %arrayelementtmp1, i64 1
+  store i32 300, ptr %arrayelementtmp2, align 4
+  %arrayelementtmp3 = getelementptr inbounds i32, ptr %arrayelementtmp2, i64 1
+  store i32 400, ptr %arrayelementtmp3, align 4
+  %arrayelementtmp4 = getelementptr inbounds i32, ptr %arrayelementtmp3, i64 1
+  store i32 500, ptr %arrayelementtmp4, align 4
+  %arrayelementtmp5 = getelementptr inbounds i32, ptr %arrayelementtmp4, i64 1
+  store i32 600, ptr %arrayelementtmp5, align 4
+  %arrayelementtmp6 = getelementptr inbounds i32, ptr %arrayelementtmp5, i64 1
+  store i32 700, ptr %arrayelementtmp6, align 4
+  %arrayelementtmp7 = getelementptr inbounds i32, ptr %arrayelementtmp6, i64 1
+  store i32 800, ptr %arrayelementtmp7, align 4
+  %arrayelementtmp8 = getelementptr inbounds i32, ptr %arrayelementtmp7, i64 1
+  store i32 900, ptr %arrayelementtmp8, align 4
+  %arrayelementtmp9 = getelementptr inbounds i32, ptr %arrayelementtmp8, i64 1
+  store i32 1000, ptr %arrayelementtmp9, align 4
+  %0 = call i32 @add_ten(ptr %a, i64 0)
+  ret i32 %0
+}
+
+define i32 @add_ten(ptr %0, i64 %1) {
+body:
+  %array = alloca ptr, align 8
+  store ptr %0, ptr %array, align 8
+  %i = alloca i64, align 8
+  store i64 %1, ptr %i, align 8
+  %2 = load ptr, ptr %array, align 8
+  %3 = load i64, ptr %i, align 8
+  %4 = icmp ult i64 %3, 10
+  br i1 %4, label %continuetmp, label %aborttmp
+
+aborttmp:                                         ; preds = %body
+  call void (ptr, ...) @printf(ptr @.str)
+  call void @exit(i32 1)
+  br label %continuetmp
+
+continuetmp:                                      ; preds = %aborttmp, %body
+  %subscripttmp = getelementptr inbounds i32, ptr %2, i64 %3
+  %elementtmp = load i32, ptr %subscripttmp, align 4
+  %addtmp = add i32 %elementtmp, 10
+  ret i32 %addtmp
+}
+```
+
+```cent
+use lib::base::*
+Test {
+  Field {
+    .type = Type::Int32
+    .value = 110
+  }
+}
+```
