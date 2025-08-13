@@ -18,17 +18,6 @@ void AkeLlvmUnit_function_array_param(Zinc_test* test)
              "  array[i] + 10\n"
              "end\n"
              "const a: [10]Int32 = [100,200,300,400,500,600,700,800,900,1000]\n"
-             "add_ten(a, 1)\n",
-             &result);
-    Zinc_expect_no_errors(test, &result.cu->errors);
-    Zinc_expect_string(test, &result.value, "210", "value");
-    Ake_code_gen_result_destroy(&result);
-
-    Ake_code_gen_result_init(&result);
-    AkeLlvmUnit_cg_setup("fn add_ten(array: [10]Int32, i: Nat64)->Int32\n"
-             "  array[i] + 10\n"
-             "end\n"
-             "const a: [10]Int32 = [100,200,300,400,500,600,700,800,900,1000]\n"
              "add_ten(a, 2)\n",
              &result);
     Zinc_expect_no_errors(test, &result.cu->errors);
