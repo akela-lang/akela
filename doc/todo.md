@@ -1,16 +1,6 @@
 # Akela
 * modules
 * print function
-  * integer []
-  * natural []
-  * real []
-  * boolean []
-  * string []
-  * struct []
-  * pointer []
-  * array []
-  * slice []
-  * function []
 * insert error context lines related to current check; used for line and col numbers
 * wrap pointers
 * new syntax tree
@@ -21,18 +11,11 @@
 * disallow array copying like C
 
 # Akela LLVM
-* convert run tests
-  * array [x]
-  * function []
-  * literal [x]
-  * operator [x]
-  * stmts [x]
-  * struct [x]
-  * variable [x]
 
 # Akela Parse Test
 
 # Akela Run Test
+* organize test cases
 * field variants
   * pointers
 
