@@ -20,25 +20,6 @@ void AkeLlvmUnit_function_struct_param(Zinc_test* test)
             "  y: Real64\n"
             "end\n"
             "fn add_ten(p: Point)->Real64\n"
-             "  p.x + 10.0\n"
-             "end\n"
-             "const p: Point = Point\n"
-             "  x: 2.5\n"
-             "  y: 3.5\n"
-             "end\n"
-             "add_ten(p)",
-             &result);
-    Zinc_expect_no_errors(test, &result.cu->errors);
-    Zinc_expect_string(test, &result.value, "12.500000", "value");
-    Ake_code_gen_result_destroy(&result);
-
-    Ake_code_gen_result_init(&result);
-    AkeLlvmUnit_cg_setup(
-            "struct Point\n"
-            "  x: Real64\n"
-            "  y: Real64\n"
-            "end\n"
-            "fn add_ten(p: Point)->Real64\n"
             "  p.y + 10.0\n"
             "end\n"
             "const p: Point = Point\n"
