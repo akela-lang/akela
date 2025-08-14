@@ -24,23 +24,6 @@ void AkeLlvmUnit_function_function_param(Zinc_test* test)
             "fn compute(foo: fn(Int32)->Int32, x: Int32)->Int32\n"
             "  foo(x)\n"
             "end\n"
-            "compute(add_one, 15)\n",
-            &result);
-    Zinc_expect_no_errors(test, &result.cu->errors);
-    Zinc_expect_string(test, &result.value, "16", "value");
-    Ake_code_gen_result_destroy(&result);
-
-    Ake_code_gen_result_init(&result);
-    AkeLlvmUnit_cg_setup(
-            "fn add_one(x: Int32)->Int32\n"
-            "  x + 1\n"
-            "end\n"
-            "fn add_two(x: Int32)->Int32\n"
-            "  x + 2\n"
-            "end\n"
-            "fn compute(foo: fn(Int32)->Int32, x: Int32)->Int32\n"
-            "  foo(x)\n"
-            "end\n"
             "compute(add_two, 15)\n",
             &result);
     Zinc_expect_no_errors(test, &result.cu->errors);

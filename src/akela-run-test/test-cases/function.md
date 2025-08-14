@@ -1046,3 +1046,71 @@ Test {
   }
 }
 ```
+
+## Test
+function param
+
+```akela
+fn add_one(x: Int32)->Int32
+    x + 1
+end
+fn add_two(x: Int32)->Int32
+    x + 2
+end
+fn compute(foo: fn(Int32)->Int32, x: Int32)->Int32
+    foo(x)
+end
+compute(add_one, 15)
+```
+
+```llvm
+; ModuleID = 'Akela JIT'
+source_filename = "Akela JIT"
+target datalayout = "e-m:e-p270:32:32-p271:32:32-p272:64:64-i64:64-i128:128-f80:128-n8:16:32:64-S128"
+
+define i32 @__top_level() {
+entry:
+  %0 = call i32 @compute(ptr @add_one, i32 15)
+  ret i32 %0
+}
+
+define i32 @add_one(i32 %0) {
+body:
+  %x = alloca i32, align 4
+  store i32 %0, ptr %x, align 4
+  %1 = load i32, ptr %x, align 4
+  %addtmp = add i32 %1, 1
+  ret i32 %addtmp
+}
+
+define i32 @add_two(i32 %0) {
+body:
+  %x = alloca i32, align 4
+  store i32 %0, ptr %x, align 4
+  %1 = load i32, ptr %x, align 4
+  %addtmp = add i32 %1, 2
+  ret i32 %addtmp
+}
+
+define i32 @compute(ptr %0, i32 %1) {
+body:
+  %foo = alloca ptr, align 8
+  store ptr %0, ptr %foo, align 8
+  %x = alloca i32, align 4
+  store i32 %1, ptr %x, align 4
+  %2 = load ptr, ptr %foo, align 8
+  %3 = load i32, ptr %x, align 4
+  %4 = call i32 %2(i32 %3)
+  ret i32 %4
+}
+```
+
+```cent
+use lib::base::*
+Test {
+  Field {
+    .type = Type::Int32
+    .value = 16
+  }
+}
+```
