@@ -1182,3 +1182,71 @@ Test {
   }
 }
 ```
+
+## Test
+array of functions
+
+```akela
+var func_array: [5]fn(Int32)->Int32
+func_array[0] = fn (x: Int32)->Int32 x*2 end
+func_array[0](10)
+```
+
+```llvm
+; ModuleID = 'Akela JIT'
+source_filename = "Akela JIT"
+target datalayout = "e-m:e-p270:32:32-p271:32:32-p272:64:64-i64:64-i128:128-f80:128-n8:16:32:64-S128"
+
+@.str = private unnamed_addr constant [24 x i8] c"invalid subscript index\00", align 1
+@.str.1 = private unnamed_addr constant [24 x i8] c"invalid subscript index\00", align 1
+
+declare void @printf(ptr, ...)
+
+declare void @exit(i32)
+
+define i32 @__top_level() {
+entry:
+  %func_array = alloca [5 x ptr], align 8
+  br i1 true, label %continuetmp, label %aborttmp
+
+aborttmp:                                         ; preds = %entry
+  call void (ptr, ...) @printf(ptr @.str)
+  call void @exit(i32 1)
+  br label %continuetmp
+
+continuetmp:                                      ; preds = %aborttmp, %entry
+  %subscripttmp = getelementptr inbounds ptr, ptr %func_array, i64 0
+  store ptr @__anonymous_function_0, ptr %subscripttmp, align 8
+  br i1 true, label %continuetmp2, label %aborttmp1
+
+aborttmp1:                                        ; preds = %continuetmp
+  call void (ptr, ...) @printf(ptr @.str.1)
+  call void @exit(i32 1)
+  br label %continuetmp2
+
+continuetmp2:                                     ; preds = %aborttmp1, %continuetmp
+  %subscripttmp3 = getelementptr inbounds ptr, ptr %func_array, i64 0
+  %elementtmp = load ptr, ptr %subscripttmp3, align 8
+  %0 = call i32 %elementtmp(i32 10)
+  ret i32 %0
+}
+
+define i32 @__anonymous_function_0(i32 %0) {
+body:
+  %x = alloca i32, align 4
+  store i32 %0, ptr %x, align 4
+  %1 = load i32, ptr %x, align 4
+  %multmp = mul i32 %1, 2
+  ret i32 %multmp
+}
+```
+
+```cent
+use lib::base::*
+Test {
+  Field {
+    .type = Type::Int32
+    .value = 20
+  }
+}
+```
