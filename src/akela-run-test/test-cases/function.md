@@ -928,7 +928,7 @@ Test {
 ```
 
 ## Test
-struct param
+struct param 1
 
 ```akela
 struct Point
@@ -983,6 +983,66 @@ Test {
   Field {
     .type = Type::Real64
     .value = 12.5
+  }
+}
+```
+
+## Test
+struct param 2
+
+```akela
+struct Point
+    x: Real64
+    y: Real64
+end
+fn add_ten(p: Point)->Real64
+    p.y + 10.0
+end
+const p: Point = Point
+    x: 2.5
+    y: 3.5
+end
+add_ten(p)
+```
+
+```llvm
+; ModuleID = 'Akela JIT'
+source_filename = "Akela JIT"
+target datalayout = "e-m:e-p270:32:32-p271:32:32-p272:64:64-i64:64-i128:128-f80:128-n8:16:32:64-S128"
+
+%Point.3 = type { double, double }
+%Point.4 = type { double, double }
+%Point.2 = type { double, double }
+
+define double @__top_level() {
+entry:
+  %p = alloca %Point.3, align 8
+  %x = getelementptr inbounds nuw %Point.4, ptr %p, i32 0, i32 0
+  store double 2.500000e+00, ptr %x, align 8
+  %y = getelementptr inbounds nuw %Point.4, ptr %p, i32 0, i32 1
+  store double 3.500000e+00, ptr %y, align 8
+  %0 = call double @add_ten(ptr %p)
+  ret double %0
+}
+
+define double @add_ten(ptr %0) {
+body:
+  %p = alloca ptr, align 8
+  store ptr %0, ptr %p, align 8
+  %1 = load ptr, ptr %p, align 8
+  %2 = getelementptr inbounds nuw %Point.2, ptr %1, i32 0, i32 1
+  %y = load double, ptr %2, align 8
+  %addtmp = fadd double %y, 1.000000e+01
+  ret double %addtmp
+}
+```
+
+```cent
+use lib::base::*
+Test {
+  Field {
+    .type = Type::Real64
+    .value = 13.5
   }
 }
 ```
