@@ -10,15 +10,3 @@ set_target_properties(akela-llvm-unit
         ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib
         LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib
 )
-
-# function_pointer
-add_executable(function_pointer function_pointer.cpp)
-target_link_libraries(function_pointer zinc ${llvm_libs} ${coverage_lib})
-
-add_executable(llvm_abort abort.c)
-target_link_libraries(llvm_abort ${coverage_lib})
-
-set_target_properties(function_pointer llvm_abort
-        PROPERTIES
-        RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin
-)

@@ -15,7 +15,6 @@
 # Akela Parse Test
 
 # Akela Run Test
-* organize test cases
 * field variants
   * pointers
 
