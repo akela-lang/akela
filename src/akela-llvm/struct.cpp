@@ -16,8 +16,6 @@ namespace Akela_llvm {
             Ake_Type* element_type = element_type_node->type;
             Type* element_type2 = Get_type(jd, element_type);
             if (element_type->kind == AKE_TYPE_FUNCTION) {
-                //element_type = element_type->getPointerTo();
-                //element_type2 = PointerType::get(element_type2, 0);
                 element_type2 = PointerType::get(*jd->TheContext, 0);
             }
             type_list.push_back(element_type2);
@@ -34,8 +32,6 @@ namespace Akela_llvm {
         while (tf) {
             Type* element_type = Get_type(jd, tf->type);
             if (tf->type->kind == AKE_TYPE_FUNCTION) {
-                //element_type = element_type->getPointerTo();
-                //element_type = PointerType::get(element_type, 0);
                 element_type = PointerType::get(*jd->TheContext, 0);
             }
             type_list.push_back(element_type);
