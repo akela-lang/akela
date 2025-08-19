@@ -1,9 +1,9 @@
 # Akela
+* syntax tree with tagged union
 * modules
 * print function
 * insert error context lines related to current check; used for line and col numbers
 * wrap pointers
-* new syntax tree
 * move type checks into their own functions
 * run IR generation in same pass
 * order independence of global variables

@@ -7,13 +7,13 @@
 #include "zinc/list.h"
 #include "type.h"
 
-void Ake_ast_create(Ake_Ast** n)
+void Ake_AstCreate(Ake_Ast** n)
 {
 	Zinc_malloc_safe((void**)n, sizeof(Ake_Ast));
-	Ake_ast_init(*n);
+	Ake_AstInit(*n);
 }
 
-void Ake_ast_init(Ake_Ast* n)
+void Ake_AstInit(Ake_Ast* n)
 {
 	n->kind = Ake_ast_type_none;
 	Zinc_string_init(&n->value);
@@ -28,14 +28,14 @@ void Ake_ast_init(Ake_Ast* n)
 }
 
 /* NOLINTNEXTLINE(misc-no-recursion) */
-void Ake_ast_destroy(Ake_Ast* n)
+void Ake_AstDestroy(Ake_Ast* n)
 {
     if (n) {
         Ake_Ast* p = n->head;
         while (p) {
             Ake_Ast* temp = p;
             p = p->next;
-            Ake_ast_destroy(temp);
+            Ake_AstDestroy(temp);
         }
 
         Zinc_string_destroy(&n->value);
@@ -49,7 +49,7 @@ void Ake_ast_destroy(Ake_Ast* n)
     }
 }
 
-void Ake_ast_add(Ake_Ast* p, Ake_Ast* c)
+void Ake_AstAdd(Ake_Ast* p, Ake_Ast* c)
 {
     if (p->head && p->tail) {
         p->tail->next = c;
@@ -63,18 +63,7 @@ void Ake_ast_add(Ake_Ast* p, Ake_Ast* c)
 	c->parent = p;
 }
 
-/* assume parent and child are not NULL */
-void Ast_node_push(Ake_Ast* parent, Ake_Ast* child)
-{
-	Ake_Ast* old_head = parent->head;
-	if (old_head) {
-		old_head->prev = child;
-	}
-	child->next = old_head;
-	parent->head = child;
-}
-
-Ake_Ast* Ake_ast_get(Ake_Ast* p, size_t pos)
+Ake_Ast* Ake_AstGet(Ake_Ast* p, size_t pos)
 {
 	int i = 0;
 	for (Ake_Ast* n = p->head; n; n = n->next) {
@@ -87,7 +76,7 @@ Ake_Ast* Ake_ast_get(Ake_Ast* p, size_t pos)
 }
 
 /* NOLINTNEXTLINE(misc-no-recursion) */
-void Ake_ast_copy(Ake_Ast* src, Ake_Ast* dest)
+void Ake_AstCopy(Ake_Ast* src, Ake_Ast* dest)
 {
     dest->kind = src->kind;
     dest->type = Ake_TypeClone(src->type);
@@ -96,19 +85,19 @@ void Ake_ast_copy(Ake_Ast* src, Ake_Ast* dest)
 }
 
 /* NOLINTNEXTLINE(misc-no-recursion) */
-Ake_Ast* Ake_ast_clone(Ake_Ast* n)
+Ake_Ast* Ake_AstClone(Ake_Ast* n)
 {
 	Ake_Ast* copy = NULL;
 
 	if (n) {
-        Ake_ast_create(&copy);
-        Ake_ast_copy(n, copy);
+        Ake_AstCreate(&copy);
+        Ake_AstCopy(n, copy);
 
 		Ake_Ast* p = n->head;
 		while (p) {
 			Ake_Ast* p_copy = NULL;
-			p_copy = Ake_ast_clone(p);
-            Ake_ast_add(copy, p_copy);
+			p_copy = Ake_AstClone(p);
+            Ake_AstAdd(copy, p_copy);
 			p = p->next;
 		}
 	}
@@ -117,7 +106,7 @@ Ake_Ast* Ake_ast_clone(Ake_Ast* n)
 }
 
 /* NOLINTNEXTLINE(misc-no-recursion) */
-bool Ake_ast_match(Ake_Ast* a, Ake_Ast* b)
+bool Ake_AstMatch(Ake_Ast* a, Ake_Ast* b)
 {
 	if (a && b) {
 		if (a->kind != b->kind) {
@@ -135,7 +124,7 @@ bool Ake_ast_match(Ake_Ast* a, Ake_Ast* b)
 		Ake_Ast* c = a->head;
 		Ake_Ast* d = b->head;
 		do {
-			if (!Ake_ast_match(c, d)) {
+			if (!Ake_AstMatch(c, d)) {
 				return false;
 			}
 			if (c) c = c->next;
@@ -150,7 +139,7 @@ bool Ake_ast_match(Ake_Ast* a, Ake_Ast* b)
 	return true;
 }
 
-size_t Ake_ast_count_children(Ake_Ast* n)
+size_t Ake_AstCountChildren(Ake_Ast* n)
 {
     size_t count = 0;
     if (n) {

@@ -12,7 +12,7 @@ namespace Akela_llvm {
         Zinc_string_finish(&n->value);
         struct Ake_Ast* element_dec = n->head;
         while (element_dec) {
-            Ake_Ast* element_type_node = Ake_ast_get(element_dec, 1);
+            Ake_Ast* element_type_node = Ake_AstGet(element_dec, 1);
             Ake_Type* element_type = element_type_node->type;
             Type* element_type2 = Get_type(jd, element_type);
             if (element_type->kind == AKE_TYPE_FUNCTION) {
@@ -52,14 +52,14 @@ namespace Akela_llvm {
     bool DotIsTypeContextPointer(Ake_Ast* n)
     {
         if (n->parent->kind == Ake_ast_type_dot) {
-            Ake_Ast* p0 = Ake_ast_get(n->parent, 0);
+            Ake_Ast* p0 = Ake_AstGet(n->parent, 0);
             if (p0 == n) {
                 return true;
             }
         }
 
         if (n->parent->kind == Ake_ast_type_assign) {
-            Ake_Ast* p0 = Ake_ast_get(n->parent, 0);
+            Ake_Ast* p0 = Ake_AstGet(n->parent, 0);
             if (p0 == n) {
                 return true;
             }
@@ -74,13 +74,13 @@ namespace Akela_llvm {
 
     Value* Handle_dot(Jit_data* jd, Ake_Ast* n)
     {
-        Ake_Ast* left = Ake_ast_get(n, 0);
+        Ake_Ast* left = Ake_AstGet(n, 0);
         Ake_Type* left_type = left->type;
         assert(left_type);
         assert(left_type->kind == AKE_TYPE_STRUCT);
         Value* struct_value = Dispatch(jd, left);
 
-        Ake_Ast* right = Ake_ast_get(n, 1);
+        Ake_Ast* right = Ake_AstGet(n, 1);
         Ake_TypeField* tf = left_type->data.fields.head;
         //auto struct_type = (StructType*)left_tu->data.fields.backend_type;
         StructType* struct_type = GetStructTypeFromType(jd, left_type);
@@ -121,8 +121,8 @@ namespace Akela_llvm {
         Value* value;
         if (n->parent->kind == Ake_ast_type_const || n->parent->kind == Ake_ast_type_var) {
             Ake_Environment* env = Ake_get_current_env(n->parent);
-            Ake_Ast* lhs =  Ake_ast_get(n->parent, 0);
-            Ake_Ast* type_node = Ake_ast_get(n->parent, 1);
+            Ake_Ast* lhs =  Ake_AstGet(n->parent, 0);
+            Ake_Ast* type_node = Ake_AstGet(n->parent, 1);
             Ake_symbol* sym = Ake_EnvironmentGet(env, &lhs->value, type_node->loc.start);
             value = (Value*)sym->value;
         } else {
@@ -132,8 +132,8 @@ namespace Akela_llvm {
         size_t i = 0;
         Ake_Ast* field = n->head;
         while (field) {
-            Ake_Ast* id = Ake_ast_get(field, 0);
-            Ake_Ast* expr = Ake_ast_get(field, 1);
+            Ake_Ast* id = Ake_AstGet(field, 0);
+            Ake_Ast* expr = Ake_AstGet(field, 1);
 
             Zinc_string_finish(&id->value);
             Value* gep_value = jd->Builder->CreateStructGEP(t, value, i, id->value.buf);
@@ -163,8 +163,8 @@ namespace Akela_llvm {
         size_t i = 0;
         Ake_Ast* field = n->head;
         while (field) {
-            Ake_Ast* id = Ake_ast_get(field, 0);
-            Ake_Ast* expr = Ake_ast_get(field, 1);
+            Ake_Ast* id = Ake_AstGet(field, 0);
+            Ake_Ast* expr = Ake_AstGet(field, 1);
 
             Zinc_string_finish(&id->value);
             Value* gep_value = jd->Builder->CreateStructGEP(t, ptr, i, id->value.buf);

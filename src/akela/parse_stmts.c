@@ -36,7 +36,7 @@ Ake_Ast* Ake_parse_stmts(Ake_parse_state* ps, bool suppress_env, bool is_global)
 	struct Ake_environment* saved = NULL;
 	struct Ake_environment* env = NULL;
 
-	Ake_ast_create(&n);
+	Ake_AstCreate(&n);
 	n->kind = Ake_ast_type_stmts;
 
 	if (!suppress_env) {
@@ -53,7 +53,7 @@ Ake_Ast* Ake_parse_stmts(Ake_parse_state* ps, bool suppress_env, bool is_global)
     }
 
 	if (a) {
-        Ake_ast_add(n, a);
+        Ake_AstAdd(n, a);
 		last = a;
 	}
 
@@ -72,7 +72,7 @@ Ake_Ast* Ake_parse_stmts(Ake_parse_state* ps, bool suppress_env, bool is_global)
         }
 
 		if (b) {
-            Ake_ast_add(n, b);
+            Ake_AstAdd(n, b);
 			last = b;
 		}
 	}
@@ -130,7 +130,7 @@ Ake_Ast* Ake_parse_stmt(struct Ake_parse_state* ps)
 Ake_Ast* Ake_parse_extern(struct Ake_parse_state* ps)
 {
     Ake_Ast* n = NULL;
-    Ake_ast_create(&n);
+    Ake_AstCreate(&n);
     n->kind = Ake_ast_type_extern;
 
     struct Ake_token* ext = NULL;
@@ -145,7 +145,7 @@ Ake_Ast* Ake_parse_extern(struct Ake_parse_state* ps)
     bool has_id;
     proto = Ake_parse_prototype(ps, false, true, false, false, &has_id);
     if (proto) {
-        Ake_ast_add(n, proto);
+        Ake_AstAdd(n, proto);
         if (proto->kind == Ake_ast_type_error) {
             n->kind = Ake_ast_type_error;
         }
@@ -164,7 +164,7 @@ Ake_Ast* Ake_parse_extern(struct Ake_parse_state* ps)
             n->kind = Ake_ast_type_error;
         }
 
-        Ake_Ast *id_node = Ake_ast_get(proto, 0);
+        Ake_Ast *id_node = Ake_AstGet(proto, 0);
         struct Ake_Symbol *new_sym = NULL;
         Zinc_malloc_safe((void **) &new_sym, sizeof(struct Ake_Symbol));
         Ake_SymbolInit(new_sym);
@@ -175,7 +175,7 @@ Ake_Ast* Ake_parse_extern(struct Ake_parse_state* ps)
     }
 
     if (n->kind != Ake_ast_type_error) {
-        Ake_Ast* id = Ake_ast_get(proto, 0);
+        Ake_Ast* id = Ake_AstGet(proto, 0);
         Zinc_string_list_add_bf(ps->extern_list, &id->value);
     }
 
@@ -186,7 +186,7 @@ Ake_Ast* Ake_parse_extern(struct Ake_parse_state* ps)
 Ake_Ast* Ake_parse_while(struct Ake_parse_state* ps)
 {
 	Ake_Ast* n = NULL;
-    Ake_ast_create(&n);
+    Ake_AstCreate(&n);
     n->kind = Ake_ast_type_while;
 
 	struct Ake_token* whl = NULL;
@@ -201,7 +201,7 @@ Ake_Ast* Ake_parse_while(struct Ake_parse_state* ps)
     }
 
     if (a) {
-        Ake_ast_add(n, a);
+        Ake_AstAdd(n, a);
     } else {
         struct Zinc_location a_loc = Ake_get_location(ps);
 		Zinc_error_list_set(ps->el, &a_loc, "expected expression after while");
@@ -216,7 +216,7 @@ Ake_Ast* Ake_parse_while(struct Ake_parse_state* ps)
     }
 
     if (b) {
-        Ake_ast_add(n, b);
+        Ake_AstAdd(n, b);
     }
 
 	struct Ake_token* end = NULL;
@@ -237,7 +237,7 @@ Ake_Ast* Ake_parse_while(struct Ake_parse_state* ps)
 Ake_Ast* Ake_parse_for(struct Ake_parse_state* ps)
 {
 	Ake_Ast* n = NULL;
-    Ake_ast_create(&n);
+    Ake_AstCreate(&n);
 
 	struct Ake_token* f = NULL;
 	if (!Ake_match(ps, Ake_token_for, "expected for", &f, n)) {
@@ -256,7 +256,7 @@ Ake_Ast* Ake_parse_for(struct Ake_parse_state* ps)
     }
 
     if (dec) {
-        Ake_ast_add(n, dec);
+        Ake_AstAdd(n, dec);
     }
 
     Ake_consume_newline(ps, n);
@@ -295,7 +295,7 @@ Ake_Ast* Ake_parse_for(struct Ake_parse_state* ps)
     }
 
     if (c) {
-        Ake_ast_add(n, c);
+        Ake_AstAdd(n, c);
     }
 
 	Ake_token_destroy(f);
@@ -358,10 +358,10 @@ void Ake_parse_for_range(struct Ake_parse_state* ps, Ake_Ast* parent)
 	}
 
 	if (a) {
-        Ake_ast_add(parent, a);
+        Ake_AstAdd(parent, a);
     }
     if (b) {
-        Ake_ast_add(parent, b);
+        Ake_AstAdd(parent, b);
 	}
 
 	Ake_token_destroy(equal);
@@ -425,12 +425,12 @@ void Ake_parse_for_iteration(struct Ake_parse_state* ps, Ake_Ast* parent)
 	}
 
     if (list) {
-        Ake_ast_add(parent, list);
+        Ake_AstAdd(parent, list);
     }
 
 	if (parent->kind != Ake_ast_type_error) {
-		Ake_Ast* element = Ake_ast_get(parent, 0);
-		Ake_Ast* element_type_node = Ake_ast_get(element, 1);
+		Ake_Ast* element = Ake_AstGet(parent, 0);
+		Ake_Ast* element_type_node = Ake_AstGet(element, 1);
 
 		Ake_Type* list_type = list->type;
 
@@ -473,7 +473,7 @@ void Ake_parse_for_iteration(struct Ake_parse_state* ps, Ake_Ast* parent)
 Ake_Ast* Ake_parse_struct(struct Ake_parse_state* ps)
 {
 	Ake_Ast* n = NULL;
-    Ake_ast_create(&n);
+    Ake_AstCreate(&n);
     n->kind = Ake_ast_type_struct;
 
     Ake_token* st = NULL;
@@ -498,7 +498,7 @@ Ake_Ast* Ake_parse_struct(struct Ake_parse_state* ps)
     }
 
 	if (a) {
-        Ake_ast_add(n, a);
+        Ake_AstAdd(n, a);
 	}
 
 	while (true) {
@@ -516,7 +516,7 @@ Ake_Ast* Ake_parse_struct(struct Ake_parse_state* ps)
         }
 
 		if (b) {
-            Ake_ast_add(n, b);
+            Ake_AstAdd(n, b);
 		}
 	}
 
@@ -558,7 +558,7 @@ Ake_Ast* Ake_parse_struct(struct Ake_parse_state* ps)
 Ake_Ast* Ake_parse_return(struct Ake_parse_state* ps)
 {
 	Ake_Ast* n = NULL;
-    Ake_ast_create(&n);
+    Ake_AstCreate(&n);
     n->kind = Ake_ast_type_return;
 
 	struct Ake_token* ret = NULL;
@@ -574,7 +574,7 @@ Ake_Ast* Ake_parse_return(struct Ake_parse_state* ps)
     }
 
 	if (a) {
-        Ake_ast_add(n, a);
+        Ake_AstAdd(n, a);
 	}
 
 	if (n->kind != Ake_ast_type_error) {
@@ -591,7 +591,7 @@ Ake_Ast* Ake_parse_return(struct Ake_parse_state* ps)
 					/* test case: test_parse_return_error_outside_of_function */
                     n->kind = Ake_ast_type_error;
 				} else {
-                    Ake_Ast* proto = Ake_ast_get(fd, 0);
+                    Ake_Ast* proto = Ake_AstGet(fd, 0);
                     if (!Ake_check_return_type(ps, proto, n, &ret->loc)) {
                         /* test case: test_parse_return_error_type_does_not_match */
                         n->kind = Ake_ast_type_error;
@@ -611,7 +611,7 @@ Ake_Ast* Ake_parse_return(struct Ake_parse_state* ps)
 Ake_Ast* Ake_parse_let(struct Ake_parse_state* ps)
 {
     Ake_Ast* n = NULL;
-    Ake_ast_create(&n);
+    Ake_AstCreate(&n);
 
 	Ake_get_lookahead(ps);
 	if (ps->lookahead->type == Ake_token_const) {
@@ -640,14 +640,14 @@ Ake_Ast* Ake_parse_let(struct Ake_parse_state* ps)
 	Ake_match(ps, Ake_token_id, "expected id", &id, n);
 
 	Ake_Ast* id_node = NULL;
-	Ake_ast_create(&id_node);
+	Ake_AstCreate(&id_node);
 	id_node->kind = Ake_ast_type_id;
 	if (id) {
 		Zinc_string_add_string(&id_node->value, &id->value);
 		Ake_token_destroy(id);
 		free(id);
 	}
-    Ake_ast_add(n, id_node);
+    Ake_AstAdd(n, id_node);
 
     Ake_consume_newline(ps, n);
 
@@ -672,7 +672,7 @@ Ake_Ast* Ake_parse_let(struct Ake_parse_state* ps)
         n->kind = Ake_ast_type_error;
     }
     if (type_node) {
-        Ake_ast_add(n, type_node);
+        Ake_AstAdd(n, type_node);
     } else {
         struct Zinc_location type_use_loc = Ake_get_location(ps);
         Zinc_error_list_set(ps->el, &type_use_loc, "expected type");
@@ -701,7 +701,7 @@ Ake_Ast* Ake_parse_let(struct Ake_parse_state* ps)
         }
 
         if (b) {
-            Ake_ast_add(n, b);
+            Ake_AstAdd(n, b);
         } else {
             struct Zinc_location b_loc = Ake_get_location(ps);
             Zinc_error_list_set(ps->el, &b_loc, "expected expression");
@@ -732,7 +732,7 @@ Ake_Ast* Ake_parse_let(struct Ake_parse_state* ps)
 Ake_Ast* Ake_parse_impl(struct Ake_parse_state* ps)
 {
     Ake_Ast* n = NULL;
-    Ake_ast_create(&n);
+    Ake_AstCreate(&n);
     n->kind = Ake_ast_type_impl;
 
     struct Ake_token* imp = NULL;
@@ -768,7 +768,7 @@ Ake_Ast* Ake_parse_impl(struct Ake_parse_state* ps)
         struct Ake_token* t = Ake_get_lookahead(ps);
         if (t->type == Ake_token_fn) {
             Ake_Ast* func = Ake_parse_function(ps, true, struct_type);
-            Ake_ast_add(n, func);
+            Ake_AstAdd(n, func);
 
             struct Ake_token* t2 = Ake_get_lookahead(ps);
             if (t2->type == Ake_token_end) {

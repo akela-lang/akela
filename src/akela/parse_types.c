@@ -40,7 +40,7 @@ Ake_Ast* Ake_parse_prototype(
 {
     Ake_Ast* n = NULL;
 
-    Ake_ast_create(&n);
+    Ake_AstCreate(&n);
     n->kind = Ake_ast_type_prototype;
 
     /* 0 id */
@@ -51,16 +51,16 @@ Ake_Ast* Ake_parse_prototype(
         if (!Ake_match(ps, Ake_token_id, "expected identifier", &id, n)) {
             assert(false);
         }
-        Ake_ast_create(&id_node);
+        Ake_AstCreate(&id_node);
         id_node->kind = Ake_ast_type_id;
         Zinc_string_copy(&id->value, &id_node->value);
-        Ake_ast_add(n, id_node);
+        Ake_AstAdd(n, id_node);
         Ake_token_destroy(id);
         free(id);
         Ake_consume_newline(ps, n);
         *has_id = true;
     } else {
-        Ake_ast_create(&id_node);
+        Ake_AstCreate(&id_node);
         id_node->kind = Ake_ast_type_id;
         if (is_function) {
             Zinc_string_add_format(
@@ -69,7 +69,7 @@ Ake_Ast* Ake_parse_prototype(
                     Ake_symbol_table_generate_id(ps->st)
             );
         }
-        Ake_ast_add(n, id_node);
+        Ake_AstAdd(n, id_node);
         *has_id = false;
     }
 
@@ -91,7 +91,7 @@ Ake_Ast* Ake_parse_prototype(
     }
 
     if (dseq_node) {
-        Ake_ast_add(n, dseq_node);
+        Ake_AstAdd(n, dseq_node);
     }
 
     if (!Ake_consume_newline(ps, n)) {
@@ -135,13 +135,13 @@ Ake_Ast* Ake_parse_prototype(
     }
 
     Ake_Ast* ret = NULL;
-    Ake_ast_create(&ret);
+    Ake_AstCreate(&ret);
     ret->kind = Ake_ast_type_dret;
     if (ret_type) {
-        Ake_ast_add(ret, ret_type);
+        Ake_AstAdd(ret, ret_type);
     }
 
-    Ake_ast_add(n, ret);
+    Ake_AstAdd(n, ret);
 
     return n;
 }
@@ -153,11 +153,11 @@ Ake_Ast* Ake_parse_prototype(
  */
 void Ake_declare_params(Ake_parse_state* ps, Ake_Ast* proto, Ake_Type* struct_type)
 {
-    Ake_Ast* dseq = Ake_ast_get(proto, 1);
+    Ake_Ast* dseq = Ake_AstGet(proto, 1);
     Ake_Ast* dec = dseq->head;
     while (dec) {
-        Ake_Ast* id_node = Ake_ast_get(dec, 0);
-        Ake_Ast* type_node = Ake_ast_get(dec, 1);
+        Ake_Ast* id_node = Ake_AstGet(dec, 0);
+        Ake_Ast* type_node = Ake_AstGet(dec, 1);
         if (dec->kind == Ake_ast_type_self) {
             if (struct_type) {
                 type_node->type = Ake_TypeClone(struct_type);
@@ -188,7 +188,7 @@ Ake_Ast* Ake_parse_dseq(
         bool is_method)
 {
 	Ake_Ast* n = NULL;
-    Ake_ast_create(&n);
+    Ake_AstCreate(&n);
 	n->kind = Ake_ast_type_dseq;
 
 	Ake_Ast* dec = NULL;
@@ -201,7 +201,7 @@ Ake_Ast* Ake_parse_dseq(
 		return n;
 	}
 
-    Ake_ast_add(n, dec);
+    Ake_AstAdd(n, dec);
 
 	while (true)
 	{
@@ -231,9 +231,9 @@ Ake_Ast* Ake_parse_dseq(
             free(eps);
             if (is_extern) {
                 Ake_Ast* ellipsis = NULL;
-                Ake_ast_create(&ellipsis);
+                Ake_AstCreate(&ellipsis);
                 ellipsis->kind = Ake_ast_type_ellipsis;
-                Ake_ast_add(n, ellipsis);
+                Ake_AstAdd(n, ellipsis);
                 break;
             } else {
                 Zinc_error_list_set(ps->el, &eps->loc,
@@ -256,7 +256,7 @@ Ake_Ast* Ake_parse_dseq(
 			break;
 		}
 
-        Ake_ast_add(n, dec);
+        Ake_AstAdd(n, dec);
 	}
 
 	return n;
@@ -314,7 +314,7 @@ Ake_Ast* Ake_parse_declaration(
     bool type_only = !require_param_name && Ake_token_is_type(ps, t0);
     bool is_self = is_method && t0->type == Ake_token_self;
     if (t0->type == Ake_token_id || type_only || is_self) {
-        Ake_ast_create(&n);
+        Ake_AstCreate(&n);
         n->kind = Ake_ast_type_declaration;
 
         if (is_self) {
@@ -326,24 +326,24 @@ Ake_Ast* Ake_parse_declaration(
             }
 
             Ake_Ast* id_node = NULL;
-            Ake_ast_create(&id_node);
+            Ake_AstCreate(&id_node);
             id_node->kind = Ake_ast_type_id;
             Zinc_string_add_str(&id_node->value, "self");
-            Ake_ast_add(n, id_node);
+            Ake_AstAdd(n, id_node);
 
             Ake_Ast* type_node = NULL;
-            Ake_ast_create(&type_node);
+            Ake_AstCreate(&type_node);
             type_node->kind = Ake_ast_type_type;
-            Ake_ast_add(n, type_node);
+            Ake_AstAdd(n, type_node);
 
             Ake_token_destroy(self);
             free(self);
 
         } else if (type_only) {
             Ake_Ast* id_node = NULL;
-            Ake_ast_create(&id_node);
+            Ake_AstCreate(&id_node);
             id_node->kind = Ake_ast_type_id;
-            Ake_ast_add(n, id_node);
+            Ake_AstAdd(n, id_node);
 
             Ake_Ast* type_use = NULL;
             type_use = Ake_parse_type(ps);
@@ -359,13 +359,13 @@ Ake_Ast* Ake_parse_declaration(
             }
 
             if (type_use) {
-                Ake_ast_add(n, type_use);
+                Ake_AstAdd(n, type_use);
             }
         } else if (t0->type == Ake_token_id) {
             Ake_Ast* id_node = NULL;
-            Ake_ast_create(&id_node);
+            Ake_AstCreate(&id_node);
             id_node->kind = Ake_ast_type_id;
-            Ake_ast_add(n, id_node);
+            Ake_AstAdd(n, id_node);
 
             struct Ake_token *id = NULL;
             if (!Ake_match(ps, Ake_token_id, "expected id", &id, n)) {
@@ -411,7 +411,7 @@ Ake_Ast* Ake_parse_declaration(
             }
 
             if (type_use) {
-                Ake_ast_add(n, type_use);
+                Ake_AstAdd(n, type_use);
             }
         } else {
             assert(false);
@@ -431,7 +431,7 @@ Ake_Ast* Ake_parse_declaration(
 Ake_Ast* Ake_parse_type(Ake_parse_state* ps)
 {
 	Ake_Ast* n = NULL;
-    Ake_ast_create(&n);
+    Ake_AstCreate(&n);
     n->kind = Ake_ast_type_type;
     n->type = Ake_parse_type_dispatch(ps, n);
 	return n;
@@ -584,7 +584,7 @@ Ake_Type* Ake_parse_type_function(Ake_parse_state* ps, Ake_Ast* n)
     } else {
         Ake_Type_use_add_proto(ps, type, proto, NULL);
     }
-    Ake_ast_destroy(proto);
+    Ake_AstDestroy(proto);
 
     return type;
 }
@@ -673,17 +673,17 @@ Ake_Type* Ake_Type_use_add_proto(
     Zinc_string_destroy(&bf);
     func->kind = AKE_TYPE_FUNCTION;
 
-    Ake_Ast* id = Ake_ast_get(proto, 0);
-    Ake_Ast* dseq = Ake_ast_get(proto, 1);
-    Ake_Ast* dret = Ake_ast_get(proto, 2);
+    Ake_Ast* id = Ake_AstGet(proto, 0);
+    Ake_Ast* dseq = Ake_AstGet(proto, 1);
+    Ake_Ast* dret = Ake_AstGet(proto, 2);
 
     Zinc_string_copy(&id->value, &func->name);
 
     if (dseq->head) {
         Ake_Ast* dec = dseq->head;
         while (dec) {
-            Ake_Ast* id_node = Ake_ast_get(dec, 0);
-            Ake_Ast* type_node = Ake_ast_get(dec, 1);
+            Ake_Ast* id_node = Ake_AstGet(dec, 0);
+            Ake_Ast* type_node = Ake_AstGet(dec, 1);
 
             Ake_TypeParam* tp = NULL;
             Ake_TypeParamCreate(&tp);
@@ -704,7 +704,7 @@ Ake_Type* Ake_Type_use_add_proto(
         }
     }
 
-    Ake_Ast* ret_type_node = Ake_ast_get(dret, 0);
+    Ake_Ast* ret_type_node = Ake_AstGet(dret, 0);
     if (ret_type_node) {
         func->data.function.output = Ake_TypeClone(ret_type_node->type);
     }
@@ -717,8 +717,8 @@ bool Ake_check_return_type(Ake_parse_state* ps, Ake_Ast* proto, Ake_Ast* stmts_n
     bool valid = true;
 
     if (proto->kind != Ake_ast_type_error && stmts_node->kind != Ake_ast_type_error) {
-        Ake_Ast *dret = Ake_ast_get(proto, 2);
-        Ake_Ast *ret_type = Ake_ast_get(dret, 0);
+        Ake_Ast *dret = Ake_AstGet(proto, 2);
+        Ake_Ast *ret_type = Ake_AstGet(dret, 0);
         if (ret_type) {
             if (!Ake_TypeMatch(ret_type->type, stmts_node->type, NULL)) {
                 valid = Zinc_error_list_set(ps->el, loc, "returned type does not match function return type");
@@ -777,7 +777,7 @@ bool Ake_check_input_type(
 void Ake_Override_rhs(Ake_Type* type, Ake_Ast* rhs)
 {
     if (rhs->kind == Ake_ast_type_sign) {
-        Ake_Ast* p = Ake_ast_get(rhs, 1);
+        Ake_Ast* p = Ake_AstGet(rhs, 1);
         if (p->kind == Ake_ast_type_number) {
             Ake_TypeCopy(type, p->type);
             Ake_TypeCopy(type, rhs->type);

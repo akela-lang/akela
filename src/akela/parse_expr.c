@@ -77,7 +77,7 @@ Ake_Ast* Ake_parse_assignment(struct Ake_parse_state* ps)
         if (t0->type != Ake_token_equal) {
             if (n) {
                 /* last assignment */
-                Ake_ast_add(n, a);
+                Ake_AstAdd(n, a);
                 if (a->kind == Ake_ast_type_error) {
                     n->kind = Ake_ast_type_error;
                 }
@@ -90,12 +90,12 @@ Ake_Ast* Ake_parse_assignment(struct Ake_parse_state* ps)
         } else {
             if (!n) {
                 /* start assign tree */
-                Ake_ast_create(&n);
+                Ake_AstCreate(&n);
                 n->kind = Ake_ast_type_assign;
                 n->type = Ake_TypeClone(a->type);
             }
 
-            Ake_ast_add(n, a);
+            Ake_AstAdd(n, a);
 
             struct Ake_token *equal = NULL;
             if (!Ake_match(ps, Ake_token_equal, "expecting assign operator", &equal, n)) {
@@ -196,9 +196,9 @@ Ake_Ast* Ake_parse_eseq(struct Ake_parse_state* ps)
         }
 
         if (!parent) {
-            Ake_ast_create(&parent);
+            Ake_AstCreate(&parent);
             parent->kind = Ake_ast_type_eseq;
-            Ake_ast_add(parent, a);
+            Ake_AstAdd(parent, a);
             if (a->kind == Ake_ast_type_error) {
                 parent->kind = Ake_ast_type_error;
             }
@@ -239,7 +239,7 @@ Ake_Ast* Ake_parse_eseq(struct Ake_parse_state* ps)
         }
 
         if (b) {
-            Ake_ast_add(parent, b);
+            Ake_AstAdd(parent, b);
             if (b->kind == Ake_ast_type_error) {
                 parent->kind = Ake_ast_type_error;
             }
@@ -287,7 +287,7 @@ Ake_Ast* Ake_parse_boolean(struct Ake_parse_state* ps)
 			break;
 		}
 
-        Ake_ast_create(&n);
+        Ake_AstCreate(&n);
 		n->kind = type;
 
 		struct Ake_token* op = NULL;
@@ -312,13 +312,13 @@ Ake_Ast* Ake_parse_boolean(struct Ake_parse_state* ps)
 		}
 
         if (left) {
-            Ake_ast_add(n, left);
+            Ake_AstAdd(n, left);
             if (left->kind == Ake_ast_type_error) {
                 n->kind = Ake_ast_type_error;
             }
         }
         if (b) {
-            Ake_ast_add(n, b);
+            Ake_AstAdd(n, b);
             if (b->kind == Ake_ast_type_error) {
                 n->kind = Ake_ast_type_error;
             }
@@ -423,18 +423,18 @@ Ake_Ast* Ake_parse_comparison(struct Ake_parse_state* ps)
             n->kind = Ake_ast_type_error;
 		}
 
-        Ake_ast_create(&n);
+        Ake_AstCreate(&n);
         n->kind = type;
 
         if (left) {
-            Ake_ast_add(n, left);
+            Ake_AstAdd(n, left);
             if (left->kind == Ake_ast_type_error) {
                 n->kind = Ake_ast_type_error;
             }
         }
 
         if (b) {
-            Ake_ast_add(n, b);
+            Ake_AstAdd(n, b);
             if (b->kind == Ake_ast_type_error) {
                 n->kind = Ake_ast_type_error;
             }
@@ -516,7 +516,7 @@ Ake_Ast* Ake_parse_add(struct Ake_parse_state* ps)
 			break;
 		}
 
-        Ake_ast_create(&n);
+        Ake_AstCreate(&n);
         n->kind = type;
 
         struct Ake_token* op = NULL;
@@ -539,14 +539,14 @@ Ake_Ast* Ake_parse_add(struct Ake_parse_state* ps)
 		}
 
         if (left) {
-            Ake_ast_add(n, left);
+            Ake_AstAdd(n, left);
             if (left->kind == Ake_ast_type_error) {
                 n->kind = Ake_ast_type_error;
             }
         }
 
         if (b) {
-            Ake_ast_add(n, b);
+            Ake_AstAdd(n, b);
             if (b->kind == Ake_ast_type_error) {
                 n->kind = Ake_ast_type_error;
             }
@@ -638,7 +638,7 @@ Ake_Ast* Ake_parse_mult(struct Ake_parse_state* ps)
 			break;
 		}
 
-        Ake_ast_create(&n);
+        Ake_AstCreate(&n);
         n->kind = type;
 
         struct Ake_token* op = NULL;
@@ -662,14 +662,14 @@ Ake_Ast* Ake_parse_mult(struct Ake_parse_state* ps)
 		}
 
         if (left) {
-            Ake_ast_add(n, left);
+            Ake_AstAdd(n, left);
             if (left->kind == Ake_ast_type_error) {
                 n->kind = Ake_ast_type_error;
             }
         }
 
         if (b) {
-            Ake_ast_add(n, b);
+            Ake_AstAdd(n, b);
             if (b->kind == Ake_ast_type_error) {
                 n->kind = Ake_ast_type_error;
             }
@@ -748,10 +748,10 @@ Ake_Ast* Ake_parse_power(struct Ake_parse_state* ps)
 			break;
 		}
 
-        Ake_ast_create(&n);
+        Ake_AstCreate(&n);
         n->kind = Ake_ast_type_power;
         if (left) {
-            Ake_ast_add(n, left);
+            Ake_AstAdd(n, left);
             if (left->kind == Ake_ast_type_error) {
                 n->kind = Ake_ast_type_error;
             }
@@ -774,7 +774,7 @@ Ake_Ast* Ake_parse_power(struct Ake_parse_state* ps)
         }
 
         if (b) {
-            Ake_ast_add(n, b);
+            Ake_AstAdd(n, b);
             if (b->kind == Ake_ast_type_error) {
                 n->kind = Ake_ast_type_error;
             }
@@ -858,7 +858,7 @@ Ake_Ast* Ake_parse_complex_operators(struct Ake_parse_state* ps)
             break;
         }
 
-        Ake_ast_create(&n);
+        Ake_AstCreate(&n);
         if (t0->type == Ake_token_left_square_bracket) {
             Ake_parse_subscript(ps, left, n);
         } else if (t0->type == Ake_token_left_paren) {
@@ -939,10 +939,10 @@ void Ake_parse_subscript(struct Ake_parse_state* ps, Ake_Ast* left, Ake_Ast* n)
     Ake_token_destroy(rsb);
     free(rsb);
 
-    Ake_ast_add(n, left);
+    Ake_AstAdd(n, left);
 
     if (b) {
-        Ake_ast_add(n, b);
+        Ake_AstAdd(n, b);
     }
 }
 
@@ -963,10 +963,10 @@ void Ake_parse_call(struct Ake_parse_state* ps, Ake_Ast* left, Ake_Ast* n) {
     Ake_Ast *cseq_node = NULL;
     cseq_node = Ake_parse_cseq(ps, left);
 
-    Ake_ast_add(n, left);
+    Ake_AstAdd(n, left);
 
     if (cseq_node) {
-        Ake_ast_add(n, cseq_node);
+        Ake_AstAdd(n, cseq_node);
         if (cseq_node->kind == Ake_ast_type_error) {
             n->kind = Ake_ast_type_error;
         }
@@ -1004,7 +1004,7 @@ void Ake_parse_call(struct Ake_parse_state* ps, Ake_Ast* left, Ake_Ast* n) {
             }
             size_t ccount = 0;
             if (cseq_node) {
-                ccount = Ake_ast_count_children(cseq_node);
+                ccount = Ake_AstCountChildren(cseq_node);
             }
 
             if (ccount < tcount) {
@@ -1037,7 +1037,7 @@ void Ake_parse_call(struct Ake_parse_state* ps, Ake_Ast* left, Ake_Ast* n) {
 Ake_Ast* Ake_parse_cseq(Ake_parse_state* ps, Ake_Ast* left)
 {
     Ake_Ast* n = NULL;
-    Ake_ast_create(&n);
+    Ake_AstCreate(&n);
     n->kind = Ake_ast_type_cseq;
 
     if (!left->type || left->type->kind != AKE_TYPE_FUNCTION) {
@@ -1062,7 +1062,7 @@ Ake_Ast* Ake_parse_cseq(Ake_parse_state* ps, Ake_Ast* left)
     }
     i++;
 
-    Ake_ast_add(n, a);
+    Ake_AstAdd(n, a);
 
     while (true) {
         struct Ake_token* t0 = Ake_get_lookahead(ps);
@@ -1096,7 +1096,7 @@ Ake_Ast* Ake_parse_cseq(Ake_parse_state* ps, Ake_Ast* left)
             n->kind = Ake_ast_type_error;
         } else {
             /* transfer a -> parent */
-            Ake_ast_add(n, a);
+            Ake_AstAdd(n, a);
 
             if (!Ake_check_input_type(ps, left->type, i, a)) {
                 n->kind = Ake_ast_type_error;
@@ -1130,7 +1130,7 @@ Ake_Ast* Ake_parse_dot(struct Ake_parse_state* ps)
             break;
         }
 
-        Ake_ast_create(&n);
+        Ake_AstCreate(&n);
         n->kind = Ake_ast_type_dot;
 
         struct Ake_token* dot = NULL;
@@ -1149,18 +1149,18 @@ Ake_Ast* Ake_parse_dot(struct Ake_parse_state* ps)
         }
 
         Ake_Ast* b = NULL;
-        Ake_ast_create(&b);
+        Ake_AstCreate(&b);
         b->kind = Ake_ast_type_id;
         if (id) {
             Zinc_string_copy(&id->value, &b->value);
         }
 
-        Ake_ast_add(n, left);
+        Ake_AstAdd(n, left);
         if (left->kind == Ake_ast_type_error) {
             n->kind = Ake_ast_type_error;
         }
 
-        Ake_ast_add(n, b);
+        Ake_AstAdd(n, b);
 
         if (n->kind != Ake_ast_type_error) {
             if (!left->type) {

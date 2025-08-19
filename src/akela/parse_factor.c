@@ -73,7 +73,7 @@ Ake_Ast* Ake_parse_function(struct Ake_parse_state* ps, bool is_method, Ake_Type
 {
     Ake_Ast* n = NULL;
 
-    Ake_ast_create(&n);
+    Ake_AstCreate(&n);
     n->kind = Ake_ast_type_function;
 
     Ake_token* f = NULL;
@@ -86,7 +86,7 @@ Ake_Ast* Ake_parse_function(struct Ake_parse_state* ps, bool is_method, Ake_Type
     Ake_Ast* proto = NULL;
     bool has_id;
     proto = Ake_parse_prototype(ps, true, false, is_method, true, &has_id);
-    Ake_ast_add(n, proto);
+    Ake_AstAdd(n, proto);
     if (proto->kind == Ake_ast_type_error) {
         n->kind = Ake_ast_type_error;
     }
@@ -105,7 +105,7 @@ Ake_Ast* Ake_parse_function(struct Ake_parse_state* ps, bool is_method, Ake_Type
 
     /* 1 stmts */
     if (stmts_node) {
-        Ake_ast_add(n, stmts_node);
+        Ake_AstAdd(n, stmts_node);
     }
 
     Ake_end_environment(ps->st);
@@ -121,7 +121,7 @@ Ake_Ast* Ake_parse_function(struct Ake_parse_state* ps, bool is_method, Ake_Type
 
     if (n->kind != Ake_ast_type_error) {
         /* check return type */
-        Ake_Ast* dret = Ake_ast_get(proto, 2);
+        Ake_Ast* dret = Ake_AstGet(proto, 2);
         if (!Ake_check_return_type(ps, proto, stmts_node, &dret->loc)) {
             n->kind = Ake_ast_type_error;
         }
@@ -129,7 +129,7 @@ Ake_Ast* Ake_parse_function(struct Ake_parse_state* ps, bool is_method, Ake_Type
 
     if (!is_method) {
         if (n->kind != Ake_ast_type_error) {
-            Ake_Ast* id_node = Ake_ast_get(proto, 0);
+            Ake_Ast* id_node = Ake_AstGet(proto, 0);
             struct Ake_Symbol* new_sym = NULL;
             Zinc_malloc_safe((void**)&new_sym, sizeof(struct Ake_Symbol));
             Ake_SymbolInit(new_sym);
@@ -146,7 +146,7 @@ Ake_Ast* Ake_parse_function(struct Ake_parse_state* ps, bool is_method, Ake_Type
 Ake_Ast* Ake_parse_if(struct Ake_parse_state* ps)
 {
     Ake_Ast* n = NULL;
-    Ake_ast_create(&n);
+    Ake_AstCreate(&n);
     n->kind = Ake_ast_type_if;
 
     struct Ake_token* ift = NULL;
@@ -159,10 +159,10 @@ Ake_Ast* Ake_parse_if(struct Ake_parse_state* ps)
     free(ift);
 
     Ake_Ast* cb = NULL;
-    Ake_ast_create(&cb);
+    Ake_AstCreate(&cb);
     cb->kind = Ake_ast_type_conditional_branch;
 
-    Ake_ast_add(n, cb);
+    Ake_AstAdd(n, cb);
 
     Ake_Ast* cond = NULL;
     cond = Ake_parse_expr(ps);
@@ -177,7 +177,7 @@ Ake_Ast* Ake_parse_if(struct Ake_parse_state* ps)
         n->kind = Ake_ast_type_error;
         cb->kind = Ake_ast_type_error;
     } else {
-        Ake_ast_add(cb, cond);
+        Ake_AstAdd(cb, cond);
     }
 
     Ake_Ast* body = NULL;
@@ -189,7 +189,7 @@ Ake_Ast* Ake_parse_if(struct Ake_parse_state* ps)
 
     if (body) {
         cb->type = Ake_TypeClone(body->type);
-        Ake_ast_add(cb, body);
+        Ake_AstAdd(cb, body);
     }
 
     Ake_parse_elseif(ps, n);
@@ -201,7 +201,7 @@ Ake_Ast* Ake_parse_if(struct Ake_parse_state* ps)
     }
 
     if (b) {
-        Ake_ast_add(n, b);
+        Ake_AstAdd(n, b);
     }
 
     struct Ake_token* end = NULL;
@@ -258,7 +258,7 @@ void Ake_parse_elseif(struct Ake_parse_state* ps, Ake_Ast* parent)
         free(eit);
 
         Ake_Ast *cb = NULL;
-        Ake_ast_create(&cb);
+        Ake_AstCreate(&cb);
         cb->kind = Ake_ast_type_conditional_branch;
 
         Ake_Ast *cond = NULL;
@@ -275,7 +275,7 @@ void Ake_parse_elseif(struct Ake_parse_state* ps, Ake_Ast* parent)
             cb->kind = Ake_ast_type_error;
             parent->kind = Ake_ast_type_error;
         } else {
-            Ake_ast_add(cb, cond);
+            Ake_AstAdd(cb, cond);
         }
 
         Ake_Ast *body = NULL;
@@ -286,11 +286,11 @@ void Ake_parse_elseif(struct Ake_parse_state* ps, Ake_Ast* parent)
         }
 
         if (body) {
-            Ake_ast_add(cb, body);
+            Ake_AstAdd(cb, body);
             cb->type = Ake_TypeClone(body->type);
         }
 
-        Ake_ast_add(parent, cb);
+        Ake_AstAdd(parent, cb);
     }
 }
 
@@ -302,7 +302,7 @@ Ake_Ast* Ake_parse_else(struct Ake_parse_state* ps)
 
     struct Ake_token* t0 = Ake_get_lookahead(ps);
     if (t0 && t0->type == Ake_token_else) {
-        Ake_ast_create(&n);
+        Ake_AstCreate(&n);
         n->kind = Ake_ast_type_default_branch;
 
         struct Ake_token* et = NULL;
@@ -326,7 +326,7 @@ Ake_Ast* Ake_parse_else(struct Ake_parse_state* ps)
         }
 
         if (body) {
-            Ake_ast_add(n, body);
+            Ake_AstAdd(n, body);
         }
     }
 
@@ -336,7 +336,7 @@ Ake_Ast* Ake_parse_else(struct Ake_parse_state* ps)
 Ake_Ast* Ake_parse_not(struct Ake_parse_state* ps)
 {
 	Ake_Ast* n = NULL;
-    Ake_ast_create(&n);
+    Ake_AstCreate(&n);
     n->kind = Ake_ast_type_not;
 
     struct Ake_token* not = NULL;
@@ -364,7 +364,7 @@ Ake_Ast* Ake_parse_not(struct Ake_parse_state* ps)
 
 	if (n->kind != Ake_ast_type_error) {
 		if (a) {
-            Ake_ast_add(n, a);
+            Ake_AstAdd(n, a);
 		}
 	}
 
@@ -396,7 +396,7 @@ Ake_Ast* Ake_parse_literal(struct Ake_parse_state* ps)
 {
 	Ake_Ast* n = NULL;
 	char* type_name = NULL;
-    Ake_ast_create(&n);
+    Ake_AstCreate(&n);
 
 	struct Ake_token* t0 = Ake_get_lookahead(ps);
 
@@ -469,7 +469,7 @@ Ake_Ast* Ake_parse_literal(struct Ake_parse_state* ps)
 Ake_Ast* Ake_parse_id(Ake_parse_state* ps)
 {
     Ake_Ast* n = NULL;
-    Ake_ast_create(&n);
+    Ake_AstCreate(&n);
 
     Ake_token* t = Ake_get_lookahead(ps);
 
@@ -567,7 +567,7 @@ void Ake_find_missing_fields(Ake_parse_state* ps, Ake_Type* type, Ake_Ast* n) {
         bool found = false;
         Ake_Ast *field = n->head;
         while (field) {
-            Ake_Ast *id2 = Ake_ast_get(field, 0);
+            Ake_Ast *id2 = Ake_AstGet(field, 0);
             if (Zinc_string_compare(&id2->value, &tf->name)) {
                 found = true;
                 break;
@@ -597,9 +597,9 @@ void Ake_parse_struct_literal_elements(
         }
 
         Ake_Ast* field = NULL;
-        Ake_ast_create(&field);
+        Ake_AstCreate(&field);
         field->kind = Ake_ast_type_struct_literal_field;
-        Ake_ast_add(parent, field);
+        Ake_AstAdd(parent, field);
 
         Ake_struct_field_result sfr = Ake_get_struct_field(type, &name->value);
         if (!sfr.found) {
@@ -608,10 +608,10 @@ void Ake_parse_struct_literal_elements(
         }
 
         Ake_Ast* id = NULL;
-        Ake_ast_create(&id);
+        Ake_AstCreate(&id);
         id->kind = Ake_ast_type_id;
         Zinc_string_copy(&name->value, &id->value);
-        Ake_ast_add(field, id);
+        Ake_AstAdd(field, id);
 
         Ake_token_destroy(name);
         free(name);
@@ -626,7 +626,7 @@ void Ake_parse_struct_literal_elements(
 
         struct Ake_Ast* expr = Ake_parse_expr(ps);
         if (expr) {
-            Ake_ast_add(field, expr);
+            Ake_AstAdd(field, expr);
 
             if (parent->kind != Ake_ast_type_error) {
                 bool cast = false;
@@ -669,7 +669,7 @@ Ake_Ast* Ake_parse_sign(struct Ake_parse_state* ps)
 {
 	Ake_Ast* n = NULL;
 
-    Ake_ast_create(&n);
+    Ake_AstCreate(&n);
     n->kind = Ake_ast_type_sign;
 
 	struct Ake_token* t0 = Ake_get_lookahead(ps);
@@ -699,7 +699,7 @@ Ake_Ast* Ake_parse_sign(struct Ake_parse_state* ps)
 
 	if (n->kind != Ake_ast_type_error) {
 		Ake_Ast* left;
-        Ake_ast_create(&left);
+        Ake_AstCreate(&left);
 
 		if (t0->type == Ake_token_plus) {
 			left->kind = Ake_ast_type_plus;
@@ -707,9 +707,9 @@ Ake_Ast* Ake_parse_sign(struct Ake_parse_state* ps)
 			left->kind = Ake_ast_type_minus;
 		}
 
-        Ake_ast_add(n, left);
+        Ake_AstAdd(n, left);
 
-        Ake_ast_add(n, right);
+        Ake_AstAdd(n, right);
 
 	}
 
@@ -737,7 +737,7 @@ Ake_Ast* Ake_parse_sign(struct Ake_parse_state* ps)
 Ake_Ast* Ake_parse_array_literal(struct Ake_parse_state* ps)
 {
 	Ake_Ast* n = NULL;
-    Ake_ast_create(&n);
+    Ake_AstCreate(&n);
     n->kind = Ake_ast_type_array_literal;
 
     struct Ake_token* lsb = NULL;
@@ -814,7 +814,7 @@ void Ake_parse_aseq(struct Ake_parse_state* ps, Ake_Ast* parent)
     }
 
 	if (a) {
-        Ake_ast_add(parent, a);
+        Ake_AstAdd(parent, a);
 
 		while (true) {
 			struct Ake_token* t0 = Ake_get_lookahead(ps);
@@ -848,7 +848,7 @@ void Ake_parse_aseq(struct Ake_parse_state* ps, Ake_Ast* parent)
 				break;
 			}
 
-            Ake_ast_add(parent, a);
+            Ake_AstAdd(parent, a);
 		}
 	}
 }
@@ -856,7 +856,7 @@ void Ake_parse_aseq(struct Ake_parse_state* ps, Ake_Ast* parent)
 Ake_Ast* Ake_parse_parenthesis(struct Ake_parse_state* ps)
 {
 	Ake_Ast* n = NULL;
-    Ake_ast_create(&n);
+    Ake_AstCreate(&n);
     n->kind = Ake_ast_type_parenthesis;
 
 	struct Ake_token* lp = NULL;
@@ -891,7 +891,7 @@ Ake_Ast* Ake_parse_parenthesis(struct Ake_parse_state* ps)
     }
 
 	if (a) {
-        Ake_ast_add(n, a);
+        Ake_AstAdd(n, a);
 	}
 
 	if (n->kind != Ake_ast_type_error) {

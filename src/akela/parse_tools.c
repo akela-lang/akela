@@ -134,7 +134,7 @@ bool Ake_check_assignment_value_count(Ake_Ast* a, Ake_Ast* b)
             } else if (a->kind != Ake_ast_type_eseq && b->kind == Ake_ast_type_eseq) {
                 return false;
             } else if (a->kind == Ake_ast_type_eseq || b->kind == Ake_ast_type_eseq) {
-                if (Ake_ast_count_children(a) != Ake_ast_count_children(b)) {
+                if (Ake_AstCountChildren(a) != Ake_AstCountChildren(b)) {
                     return false;
                 }
             }

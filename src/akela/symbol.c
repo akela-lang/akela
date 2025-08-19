@@ -25,7 +25,7 @@ void Ake_SymbolDestroy(Ake_symbol* sym)
     free(sym->tu);
     Ake_TypeDestroy(sym->td);
     free(sym->td);
-    Ake_ast_destroy(sym->root);
+    Ake_AstDestroy(sym->root);
 }
 
 void Ake_SymbolCreate(struct Ake_Symbol** sym)

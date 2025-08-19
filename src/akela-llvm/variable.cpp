@@ -10,9 +10,9 @@ namespace Akela_llvm {
     /* NOLINTNEXTLINE(misc-no-recursion) */
     Value* Handle_variable_dec(Jit_data* jd, Ake_Ast* n)
     {
-        Ake_Ast* lhs = Ake_ast_get(n, 0);
-        Ake_Ast* type_node = Ake_ast_get(n, 1);
-        Ake_Ast* rhs = Ake_ast_get(n, 2);
+        Ake_Ast* lhs = Ake_AstGet(n, 0);
+        Ake_Ast* type_node = Ake_AstGet(n, 1);
+        Ake_Ast* rhs = Ake_AstGet(n, 2);
         Ake_Type* type = type_node->type;
         Ake_Environment* env = Ake_get_current_env(type_node);
         Ake_symbol* sym = Ake_EnvironmentGet(env, &lhs->value, type_node->loc.start);
@@ -185,8 +185,8 @@ namespace Akela_llvm {
         Value* ptr;
         if (n->parent->kind == Ake_ast_type_const || n->parent->kind == Ake_ast_type_var) {
             Ake_Environment* env = Ake_get_current_env(n->parent);
-            Ake_Ast* lhs =  Ake_ast_get(n->parent, 0);
-            Ake_Ast* type_node = Ake_ast_get(n->parent, 1);
+            Ake_Ast* lhs =  Ake_AstGet(n->parent, 0);
+            Ake_Ast* type_node = Ake_AstGet(n->parent, 1);
             Ake_symbol* sym = Ake_EnvironmentGet(env, &lhs->value, type_node->loc.start);
             ptr = (Value*)sym->value;
         } else {
@@ -239,7 +239,7 @@ namespace Akela_llvm {
         }
 
         if (n->parent->kind == Ake_ast_type_assign) {
-            Ake_Ast* p0 = Ake_ast_get(n->parent, 0);
+            Ake_Ast* p0 = Ake_AstGet(n->parent, 0);
             if (p0 == n) {
                 return true;
             }

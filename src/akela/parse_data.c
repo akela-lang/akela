@@ -8,6 +8,6 @@ void Ake_parse_result_init(Ake_parse_result* pr, Ake_Ast* root, Zinc_error_list*
 
 void Ake_parse_result_destroy(Ake_parse_result* pr)
 {
-    Ake_ast_destroy(pr->root);
+    Ake_AstDestroy(pr->root);
     Zinc_error_list_destroy(pr->errors);
 }

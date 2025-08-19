@@ -13,36 +13,36 @@ void AkeUnit_type_use1(Zinc_test* test)
 	}
 
 	Ake_Ast* n;
-    Ake_ast_create(&n);
+    Ake_AstCreate(&n);
 	n->kind = Ake_ast_type_type;
 
 	Ake_Ast* a;
-    Ake_ast_create(&a);
+    Ake_AstCreate(&a);
 	a->kind = Ake_ast_type_type;
-    Ake_ast_add(n, a);
+    Ake_AstAdd(n, a);
 
 	Ake_Ast* b;
-    Ake_ast_create(&b);
+    Ake_AstCreate(&b);
 	b->kind = Ake_ast_type_type;
-    Ake_ast_add(n, b);
+    Ake_AstAdd(n, b);
 
 	if (!Zinc_expect_ptr(test, n, "ptr n")) {
 		return Zinc_assert();
 	}
 
-	Ake_Ast* n0 = Ake_ast_get(n, 0);
+	Ake_Ast* n0 = Ake_AstGet(n, 0);
 	if (!Zinc_expect_ptr(test, n0, "ptr a")) {
 		return Zinc_assert();
 	}
 	Zinc_expect_ptr_equal(test, n0, a, "a");
 
-	Ake_Ast* n1 = Ake_ast_get(n, 1);
+	Ake_Ast* n1 = Ake_AstGet(n, 1);
 	if (!Zinc_expect_ptr(test, n1, "ptr b")) {
 		return Zinc_assert();
 	}
 	Zinc_expect_ptr_equal(test, n1, b, "b");
 
-    Ake_ast_destroy(n);
+    Ake_AstDestroy(n);
 }
 
 void AkeUnit_TypeDefMatchIntegerTrue(Zinc_test* test)

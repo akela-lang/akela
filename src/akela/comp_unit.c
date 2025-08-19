@@ -33,7 +33,7 @@ void Ake_comp_unit_create(Ake_comp_unit** cu)
 void Ake_comp_unit_destroy(Ake_comp_unit* cu)
 {
     if (cu) {
-        Ake_ast_destroy(cu->root);
+        Ake_AstDestroy(cu->root);
         Zinc_error_list_destroy(&cu->errors);
         Zinc_string_destroy(&cu->path);
         Ake_symbol_table_destroy(&cu->st);
@@ -55,7 +55,7 @@ void Ake_comp_unit_setup(Ake_comp_unit* cu, void* input, Zinc_input_unicode_vtab
 {
 	*ps = NULL;
 
-    Ake_ast_destroy(cu->root);
+    Ake_AstDestroy(cu->root);
 	cu->root = NULL;
 
 	struct Ake_lex_state* ls = NULL;
