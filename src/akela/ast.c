@@ -16,7 +16,11 @@ void Ake_AstCreate(Ake_Ast** n)
 void Ake_AstInit(Ake_Ast* n)
 {
 	n->kind = Ake_ast_type_none;
-	Zinc_string_init(&n->value);
+	Zinc_string_init(&n->id_value);
+	Zinc_string_init(&n->struct_value);
+	Zinc_string_init(&n->number_value);
+	Zinc_string_init(&n->string_value);
+	Zinc_string_init(&n->boolean_value);
 	n->type = NULL;
     Zinc_location_init(&n->loc);
 	n->env = NULL;
@@ -38,7 +42,11 @@ void Ake_AstDestroy(Ake_Ast* n)
             Ake_AstDestroy(temp);
         }
 
-        Zinc_string_destroy(&n->value);
+        Zinc_string_destroy(&n->id_value);
+    	Zinc_string_destroy(&n->struct_value);
+    	Zinc_string_destroy(&n->number_value);
+    	Zinc_string_destroy(&n->string_value);
+    	Zinc_string_destroy(&n->boolean_value);
         Ake_TypeDestroy(n->type);
     	free(n->type);
 
@@ -81,7 +89,11 @@ void Ake_AstCopy(Ake_Ast* src, Ake_Ast* dest)
     dest->kind = src->kind;
     dest->type = Ake_TypeClone(src->type);
     dest->loc = src->loc;
-    Zinc_string_copy(&src->value, &dest->value);
+    Zinc_string_copy(&src->id_value, &dest->id_value);
+	Zinc_string_copy(&src->struct_value, &dest->struct_value);
+	Zinc_string_copy(&src->number_value, &dest->number_value);
+	Zinc_string_copy(&src->string_value, &dest->string_value);
+	Zinc_string_copy(&src->boolean_value, &dest->boolean_value);
 }
 
 /* NOLINTNEXTLINE(misc-no-recursion) */
@@ -113,7 +125,23 @@ bool Ake_AstMatch(Ake_Ast* a, Ake_Ast* b)
 			return false;
 		}
 
-		if (!Zinc_string_compare(&a->value, &b->value)) {
+		if (!Zinc_string_compare(&a->id_value, &b->id_value)) {
+			return false;
+		}
+
+		if (!Zinc_string_compare(&a->struct_value, &b->struct_value)) {
+			return false;
+		}
+
+		if (!Zinc_string_compare(&a->number_value, &b->number_value)) {
+			return false;
+		}
+
+		if (!Zinc_string_compare(&a->string_value, &b->string_value)) {
+			return false;
+		}
+
+		if (!Zinc_string_compare(&a->boolean_value, &b->boolean_value)) {
 			return false;
 		}
 

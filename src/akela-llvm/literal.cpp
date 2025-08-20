@@ -10,34 +10,34 @@ namespace Akela_llvm {
         Ake_Type* type = n->type;
         if (type->kind == AKE_TYPE_INTEGER) {
             Type* t = Get_type(jd, n->type);
-            Zinc_string_finish(&n->value);
-            long v = strtol(n->value.buf, nullptr, 10);
+            Zinc_string_finish(&n->number_value);
+            long v = strtol(n->number_value.buf, nullptr, 10);
             return ConstantInt::get(t, APInt(type->data.integer.bit_count, v, true));
         }
 
         if (type->kind == AKE_TYPE_NATURAL) {
             Type* t = Get_type(jd, n->type);
-            Zinc_string_finish(&n->value);
-            long v = strtol(n->value.buf, nullptr, 10);
+            Zinc_string_finish(&n->number_value);
+            long v = strtol(n->number_value.buf, nullptr, 10);
             return ConstantInt::get(t, APInt(type->data.natural.bit_count, v, false));
         }
 
         if (type->kind == AKE_TYPE_REAL) {
-            Zinc_string_finish(&n->value);
+            Zinc_string_finish(&n->number_value);
             if (type->data.real.bit_count == 64) {
-                double v = strtod(n->value.buf, nullptr);
+                double v = strtod(n->number_value.buf, nullptr);
                 Type* t = Get_type(jd, n->type);
                 return ConstantFP::get(*jd->TheContext, APFloat(v));
             }
 
             if (type->data.real.bit_count == 32) {
-                float v = strtof(n->value.buf, nullptr);
+                float v = strtof(n->number_value.buf, nullptr);
                 return ConstantFP::get(*jd->TheContext, APFloat(v));
             }
 
             if (type->data.real.bit_count == 16) {
 #if IS_UNIX
-                _Float16 v = (_Float16)strtof(n->value.buf, nullptr);
+                _Float16 v = (_Float16)strtof(n->number_value.buf, nullptr);
                 Type* t = Type::getHalfTy(*jd->TheContext);
                 return ConstantFP::get(t, v);
 #elif IS_WIN
@@ -53,10 +53,10 @@ namespace Akela_llvm {
 
     Value* Handle_boolean(Jit_data* jd, Ake_Ast* n)
     {
-        if (Zinc_string_compare_str(&n->value, "true")) {
+        if (Zinc_string_compare_str(&n->boolean_value, "true")) {
             Type* t = Type::getInt1Ty(*jd->TheContext);
             return ConstantInt::get(t, APInt(1, 1, false));
-        } else if (Zinc_string_compare_str(&n->value, "false")) {
+        } else if (Zinc_string_compare_str(&n->boolean_value, "false")) {
             Type* t = Type::getInt1Ty(*jd->TheContext);
             return ConstantInt::get(t, APInt(1, 0, false));
         }
@@ -65,8 +65,8 @@ namespace Akela_llvm {
 
     Value* Handle_string(Jit_data* jd, Ake_Ast* n)
     {
-        Zinc_string_finish(&n->value);
-        Value* str_value = jd->Builder->CreateGlobalString(n->value.buf, ".str");
+        Zinc_string_finish(&n->string_value);
+        Value* str_value = jd->Builder->CreateGlobalString(n->string_value.buf, ".str");
         return str_value;
     }
 }

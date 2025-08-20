@@ -18,13 +18,13 @@ void AkeUnit_ast1(Zinc_test* test)
 	Ake_Ast* a;
     Ake_AstCreate(&a);
 	a->kind = Ake_ast_type_number;
-	Zinc_string_add_str(&a->value, "a");
+	Zinc_string_add_str(&a->number_value, "a");
     Ake_AstAdd(n, a);
 
 	Ake_Ast* b;
     Ake_AstCreate(&b);
 	b->kind = Ake_ast_type_number;
-	Zinc_string_add_str(&b->value, "b");
+	Zinc_string_add_str(&b->number_value, "b");
     Ake_AstAdd(n, b);
 
 	if (!Zinc_expect_ptr(test, n, "ptr n")) {
@@ -37,14 +37,14 @@ void AkeUnit_ast1(Zinc_test* test)
 		return Zinc_assert();
 	}
 	Zinc_expect_int_equal(test, a->kind, Ake_ast_type_number, "number");
-	Zinc_expect_string(test, &a->value, "a", "a");
+	Zinc_expect_string(test, &a->number_value, "a", "a");
 
 	b = Ake_AstGet(n, 1);
 	if (!Zinc_expect_ptr(test, b, "ptr b")) {
 		return Zinc_assert();
 	}
 	Zinc_expect_int_equal(test, b->kind, Ake_ast_type_number, "number");
-	Zinc_expect_string(test, &b->value, "b", "b");
+	Zinc_expect_string(test, &b->number_value, "b", "b");
 
     Ake_AstDestroy(n);
 }

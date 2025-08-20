@@ -171,12 +171,12 @@ Ake_Ast* Ake_parse_extern(struct Ake_parse_state* ps)
         new_sym->kind = AKE_SYMBOL_VARIABLE;
         Ake_Type* type = Ake_TypeClone(n->type);
         new_sym->tu = type;
-        Ake_EnvironmentAdd(ps->st->top, &id_node->value, new_sym, n->loc.start);
+        Ake_EnvironmentAdd(ps->st->top, &id_node->id_value, new_sym, n->loc.start);
     }
 
     if (n->kind != Ake_ast_type_error) {
-        Ake_Ast* id = Ake_AstGet(proto, 0);
-        Zinc_string_list_add_bf(ps->extern_list, &id->value);
+        Ake_Ast* id_node = Ake_AstGet(proto, 0);
+        Zinc_string_list_add_bf(ps->extern_list, &id_node->id_value);
     }
 
     return n;
@@ -488,7 +488,7 @@ Ake_Ast* Ake_parse_struct(struct Ake_parse_state* ps)
         n->kind = Ake_ast_type_error;
     }
     if (id) {
-        Zinc_string_copy(&id->value, &n->value);
+        Zinc_string_copy(&id->value, &n->struct_value);
     }
 
 	Ake_Ast* a = NULL;
@@ -643,7 +643,7 @@ Ake_Ast* Ake_parse_let(struct Ake_parse_state* ps)
 	Ake_AstCreate(&id_node);
 	id_node->kind = Ake_ast_type_id;
 	if (id) {
-		Zinc_string_add_string(&id_node->value, &id->value);
+		Zinc_string_add_string(&id_node->id_value, &id->value);
 		Ake_token_destroy(id);
 		free(id);
 	}

@@ -135,7 +135,7 @@ Ake_Ast* Ake_parse_function(struct Ake_parse_state* ps, bool is_method, Ake_Type
             Ake_SymbolInit(new_sym);
             new_sym->kind = AKE_SYMBOL_VARIABLE;
             new_sym->tu = Ake_TypeClone(type);
-            Ake_EnvironmentAdd(ps->st->top, &id_node->value, new_sym, n->loc.start);
+            Ake_EnvironmentAdd(ps->st->top, &id_node->id_value, new_sym, n->loc.start);
         }
     }
 
@@ -414,23 +414,27 @@ Ake_Ast* Ake_parse_literal(struct Ake_parse_state* ps)
 			if (x->is_integer) {
 			    if (ps->context.is_subscript) {
 			        type_name = "Nat64";
+			        Zinc_string_copy(&x->value, &n->number_value);
 			    } else {
 			        type_name = "Int32";
+			        Zinc_string_copy(&x->value, &n->number_value);
 			    }
 			} else if (x->is_float) {
 				type_name = "Real64";
+			    Zinc_string_copy(&x->value, &n->number_value);
 			}
 		} else if (x->type == Ake_token_string) {
 			n->kind = Ake_ast_type_string;
 			type_name = "Nat8";
             is_string = true;
+		    Zinc_string_copy(&x->value, &n->string_value);
 		} else if (x->type == Ake_token_boolean) {
 			n->kind = Ake_ast_type_boolean;
 			type_name = "Bool";
+		    Zinc_string_copy(&x->value, &n->boolean_value);
 		} else {
             assert(false);
         }
-		Zinc_string_copy(&x->value, &n->value);
 	}
 
 	if (n->kind != Ake_ast_type_error) {
@@ -452,7 +456,7 @@ Ake_Ast* Ake_parse_literal(struct Ake_parse_state* ps)
             Ake_TypeCreate(&type);
             type->kind = AKE_TYPE_ARRAY;
             type->data.array.is_const = true;
-            type->data.array.dim = n->value.size + 1;
+            type->data.array.dim = n->string_value.size + 1;
             type->data.array.type = Ake_TypeClone(sym->td);;
             n->type = type;
         } else {
@@ -515,7 +519,7 @@ Ake_Ast* Ake_parse_id(Ake_parse_state* ps)
         n->kind = Ake_ast_type_id;
 
         if (id) {
-            Zinc_string_copy(&id->value, &n->value);
+            Zinc_string_copy(&id->value, &n->id_value);
         }
 
         if (!sym) {
@@ -568,7 +572,7 @@ void Ake_find_missing_fields(Ake_parse_state* ps, Ake_Type* type, Ake_Ast* n) {
         Ake_Ast *field = n->head;
         while (field) {
             Ake_Ast *id2 = Ake_AstGet(field, 0);
-            if (Zinc_string_compare(&id2->value, &tf->name)) {
+            if (Zinc_string_compare(&id2->id_value, &tf->name)) {
                 found = true;
                 break;
             }
@@ -610,7 +614,7 @@ void Ake_parse_struct_literal_elements(
         Ake_Ast* id = NULL;
         Ake_AstCreate(&id);
         id->kind = Ake_ast_type_id;
-        Zinc_string_copy(&name->value, &id->value);
+        Zinc_string_copy(&name->value, &id->id_value);
         Ake_AstAdd(field, id);
 
         Ake_token_destroy(name);

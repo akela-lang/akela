@@ -46,9 +46,21 @@ void Ake_ast_cent_print(Ake_Ast* n, size_t level, Ake_TypeSlots* slots)
 
         level++;
 
-        if (n->value.size > 0) {
+        if (n->id_value.size > 0) {
             Ake_indent_print(level);
-            printf(".value = \"%s\"\n", Zinc_string_c_str(&n->value));
+            printf(".value = \"%s\"\n", Zinc_string_c_str(&n->id_value));
+        } else if (n->struct_value.size > 0) {
+            Ake_indent_print(level);
+            printf(".value = \"%s\"\n", Zinc_string_c_str(&n->struct_value));
+        } else if (n->number_value.size > 0) {
+            Ake_indent_print(level);
+            printf(".value = \"%s\"\n", Zinc_string_c_str(&n->number_value));
+        } else if (n->string_value.size > 0) {
+            Ake_indent_print(level);
+            printf(".value = \"%s\"\n", Zinc_string_c_str(&n->string_value));
+        } else if (n->boolean_value.size > 0) {
+            Ake_indent_print(level);
+            printf(".value = \"%s\"\n", Zinc_string_c_str(&n->boolean_value));
         }
 
         if (n->type) {

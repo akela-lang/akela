@@ -193,6 +193,56 @@ void Apt_case_run(Zinc_test* case_test)
     }
 }
 
+bool Apt_has_value(Ake_Ast* n)
+{
+    if (n->id_value.size > 0) {
+        return true;
+    }
+
+    if (n->struct_value.size > 0) {
+        return true;
+    }
+
+    if (n->number_value.size > 0) {
+        return true;
+    }
+
+    if (n->string_value.size > 0) {
+        return true;
+    }
+
+    if (n->boolean_value.size > 0) {
+        return true;
+    }
+
+    return false;
+}
+
+Zinc_string* Apt_get_value(Ake_Ast* n)
+{
+    if (n->id_value.size > 0) {
+        return &n->id_value;
+    }
+
+    if (n->struct_value.size > 0) {
+        return &n->struct_value;
+    }
+
+    if (n->number_value.size > 0) {
+        return &n->number_value;
+    }
+
+    if (n->string_value.size > 0) {
+        return &n->string_value;
+    }
+
+    if (n->boolean_value.size > 0) {
+        return &n->boolean_value;
+    }
+
+    return NULL;
+}
+
 /* NOLINTNEXTLINE(misc-no-recursion) */
 bool Apt_compare_ast(Zinc_test* top_test, Zinc_test* case_test, Ake_Ast* n, Cent_value* value)
 {
@@ -268,7 +318,7 @@ bool Apt_compare_ast(Zinc_test* top_test, Zinc_test* case_test, Ake_Ast* n, Cent
     }
 
     Cent_value* value_prop = Cent_value_get_str(value, "value");
-    if (n->value.size > 0) {
+    if (Apt_has_value(n)) {
         if (!value_prop) {
             Zinc_expect_failed(case_test);
             Zinc_spec_error_list_set(
@@ -281,7 +331,7 @@ bool Apt_compare_ast(Zinc_test* top_test, Zinc_test* case_test, Ake_Ast* n, Cent
         } else {
             Zinc_expect_passed(case_test);
             assert(value_prop->type == Cent_value_type_string);
-            if (!Zinc_string_compare(&n->value, &value_prop->data.string)) {
+            if (!Zinc_string_compare(Apt_get_value(n), &value_prop->data.string)) {
                 Cent_ast* prop_n = value_prop->n;
                 Zinc_spec_error_list_set(
                     &case_data->spec_errors,
@@ -289,7 +339,7 @@ bool Apt_compare_ast(Zinc_test* top_test, Zinc_test* case_test, Ake_Ast* n, Cent
                     &n->loc,
                     &prop_n->loc,
                     "AST values do not match (%bf) (%bf)",
-                    &n->value,
+                    Apt_get_value(n),
                     &value_prop->data.string);
                 pass = false;
             } else {
