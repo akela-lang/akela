@@ -1,5 +1,4 @@
 # Akela
-* validate ast function
 * syntax tree with tagged union
 * modules
 * print function
