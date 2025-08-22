@@ -57,7 +57,6 @@ typedef enum Ake_AstKind {
 	Ake_ast_type_struct,
 	Ake_ast_type_return,
     Ake_ast_type_eseq,
-    Ake_ast_type_error,
     Ake_ast_type_prototype,
     Ake_ast_type_extern,
     Ake_ast_type_struct_literal,
@@ -116,7 +115,6 @@ static char const* Ast_type_name(Ake_AstKind kind)
     name[Ake_ast_type_struct] = "struct";
     name[Ake_ast_type_return] = "return";
     name[Ake_ast_type_eseq] = "eseq";
-    name[Ake_ast_type_error] = "error";
     name[Ake_ast_type_prototype] = "prototype";
     name[Ake_ast_type_extern] = "extern";
     name[Ake_ast_type_struct_literal] = "struct-literal";
@@ -149,6 +147,7 @@ typedef struct Ake_Ast {
 	Ake_Ast* head;
 	Ake_Ast* tail;
 	Ake_Ast* parent;
+	bool has_error;
 } Ake_Ast;
 
 #ifdef __cplusplus

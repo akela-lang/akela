@@ -128,7 +128,7 @@ struct Ake_token* Ake_get_lookahead(struct Ake_parse_state* ps)
 bool Ake_check_assignment_value_count(Ake_Ast* a, Ake_Ast* b)
 {
     if (a && b) {
-        if (a->kind != Ake_ast_type_error && b->kind != Ake_ast_type_error) {
+        if (!a->has_error && !b->has_error) {
             if (a->kind == Ake_ast_type_eseq && b->kind != Ake_ast_type_eseq) {
                 return false;
             } else if (a->kind != Ake_ast_type_eseq && b->kind == Ake_ast_type_eseq) {

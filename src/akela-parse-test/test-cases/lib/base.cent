@@ -86,7 +86,6 @@ enum AstType {
   Struct
   Return
   Eseq
-  Error
   Prototype
   Extern
   StructLiteral

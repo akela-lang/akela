@@ -76,7 +76,7 @@ Ake_Ast* Ake_parse_prototype(
     struct Ake_token* lp = NULL;
     if (!Ake_match(ps, Ake_token_left_paren, "expected left parenthesis", &lp, n)) {
         /* test case: no test case needed */
-        n->kind = Ake_ast_type_error;
+        n->has_error = true;
     }
     Ake_token_destroy(lp);
     free(lp);
@@ -86,22 +86,17 @@ Ake_Ast* Ake_parse_prototype(
     /* 1 dseq */
     Ake_Ast* dseq_node = NULL;
     dseq_node = Ake_parse_dseq(ps, require_param_name, is_extern, is_method);
-    if (dseq_node && dseq_node->kind == Ake_ast_type_error) {
-        n->kind = Ake_ast_type_error;
-    }
 
     if (dseq_node) {
         Ake_AstAdd(n, dseq_node);
     }
 
-    if (!Ake_consume_newline(ps, n)) {
-        n->kind = Ake_ast_type_error;
-    }
+    Ake_consume_newline(ps, n);
 
     struct Ake_token* rp = NULL;
     if (!Ake_match(ps, Ake_token_right_paren, "expected right parenthesis", &rp, n)) {
         /* test case: test_parse_anonymous_function_expected_right_paren */
-        n->kind = Ake_ast_type_error;
+        n->has_error = true;
     }
     Ake_token_destroy(rp);
     free(rp);
@@ -113,24 +108,19 @@ Ake_Ast* Ake_parse_prototype(
         struct Ake_token* dc = NULL;
         if (!Ake_match(ps, Ake_token_arrow, "expecting ->", &dc, n)) {
             /* test case: no test case needed */
-            n->kind = Ake_ast_type_error;
+            n->has_error = true;
         }
         Ake_token_destroy(dc);
         free(dc);
 
-        if (!Ake_consume_newline(ps, n)) {
-            n->kind = Ake_ast_type_error;
-        }
+        Ake_consume_newline(ps, n);
 
         ret_type = Ake_parse_type(ps);
-        if (ret_type && ret_type->kind == Ake_ast_type_error) {
-            n->kind = Ake_ast_type_error;
-        }
 
         if (!ret_type) {
             struct Zinc_location ret_loc = Ake_get_location(ps);
             Zinc_error_list_set(ps->el, &ret_loc, "expected a type");
-            n->kind = Ake_ast_type_error;
+            n->has_error = true;
         }
     }
 
@@ -166,7 +156,7 @@ void Ake_declare_params(Ake_parse_state* ps, Ake_Ast* proto, Ake_Type* struct_ty
                 continue;
             }
         }
-        if (dec->kind != Ake_ast_type_error && type_node->kind != Ake_ast_type_error) {
+        if (!dec->has_error && !type_node->has_error) {
             Ake_declare_type(ps, type_node, id_node, true);
         }
         dec = dec->next;
@@ -193,9 +183,6 @@ Ake_Ast* Ake_parse_dseq(
 
 	Ake_Ast* dec = NULL;
 	dec = Ake_parse_declaration(ps, false, is_method, require_param_name, true);
-    if (dec && dec->kind == Ake_ast_type_error) {
-        n->kind = Ake_ast_type_error;
-    }
 
 	if (!dec) {
 		return n;
@@ -238,21 +225,18 @@ Ake_Ast* Ake_parse_dseq(
             } else {
                 Zinc_error_list_set(ps->el, &eps->loc,
                        "Found ellipsis but variadic functions are only supported in extern declarations");
-                n->kind = Ake_ast_type_error;
+                n->has_error = true;
                 break;
             }
         }
 
 		dec = Ake_parse_declaration(ps, false, is_method, require_param_name, true);
-        if (dec && dec->kind == Ake_ast_type_error) {
-            n->kind = Ake_ast_type_error;
-        }
 
 		if (!dec) {
             struct Zinc_location dec_loc = Ake_get_location(ps);
 			Zinc_error_list_set(ps->el, &dec_loc, "expected declaration after comma");
 			/* test case: test_parse_error_dseq_comma */
-            n->kind = Ake_ast_type_error;
+            n->has_error = true;
 			break;
 		}
 
@@ -347,15 +331,12 @@ Ake_Ast* Ake_parse_declaration(
 
             Ake_Ast* type_use = NULL;
             type_use = Ake_parse_type(ps);
-            if (type_use && type_use->kind == Ake_ast_type_error) {
-                n->kind = Ake_ast_type_error;
-            }
 
             if (!type_use) {
                 struct Zinc_location type_use_loc = Ake_get_location(ps);
                 Zinc_error_list_set(ps->el, &type_use_loc, "expected a type");
                 /* test case: test_parse_error_declaration_type */
-                n->kind = Ake_ast_type_error;
+                n->has_error = true;
             }
 
             if (type_use) {
@@ -381,7 +362,7 @@ Ake_Ast* Ake_parse_declaration(
             struct Ake_token *dc = NULL;
             if (!Ake_match(ps, Ake_token_colon, "expected colon", &dc, n)) {
                 /* test case: test_parse_error_declaration_double_colon */
-                n->kind = Ake_ast_type_error;
+                n->has_error = true;
             }
             Ake_token_destroy(dc);
             free(dc);
@@ -393,21 +374,12 @@ Ake_Ast* Ake_parse_declaration(
             if (!type_use) {
                 Zinc_location loc = Ake_get_location(ps);
                 Zinc_error_list_set(ps->el, &loc, "expected type identifier or fn");
-            }
-            if (!type_use || type_use->kind == Ake_ast_type_error) {
-                n->kind = Ake_ast_type_error;
+                n->has_error = true;
             }
             if (add_symbol) {
-                if (n->kind != Ake_ast_type_error) {
+                if (!n->has_error) {
                     Ake_declare_type(ps, type_use, id_node, is_const);
                 }
-            }
-
-            if (!type_use) {
-                struct Zinc_location type_use_loc = Ake_get_location(ps);
-                Zinc_error_list_set(ps->el, &type_use_loc, "expected a type");
-                /* test case: test_parse_error_declaration_type */
-                n->kind = Ake_ast_type_error;
             }
 
             if (type_use) {
@@ -507,7 +479,7 @@ Ake_Type* Ake_parse_type_array(Ake_parse_state* ps, Ake_Ast* n)
 
     Ake_token* rsb = NULL;
     if (!Ake_match(ps, Ake_token_right_square_bracket, "expected right square bracket", &rsb, n)) {
-        n->kind = Ake_ast_type_error;
+        n->has_error = true;
     }
     Ake_token_destroy(rsb);
     free(rsb);
@@ -521,7 +493,7 @@ Ake_Type* Ake_parse_type_array(Ake_parse_state* ps, Ake_Ast* n)
             type->data.array.type = type2;
         } else {
             Zinc_error_list_set(ps->el, &n->loc, "expected array element type");
-            n->kind = Ake_ast_type_error;
+            n->has_error = true;
         }
     } else {
         Ake_TypeSet(type, AKE_TYPE_SLICE);
@@ -530,7 +502,7 @@ Ake_Type* Ake_parse_type_array(Ake_parse_state* ps, Ake_Ast* n)
             type->data.slice.type = type2;
         } else {
             Zinc_error_list_set(ps->el, &n->loc, "expected slice element type");
-            n->kind = Ake_ast_type_error;
+            n->has_error = true;
         }
     }
 
@@ -554,7 +526,7 @@ Ake_Type* Ake_parse_type_pointer(Ake_parse_state* ps, Ake_Ast* n)
         type->data.pointer.type = type2;
     } else {
         Zinc_error_list_set(ps->el, &n->loc, "expected pointer type");
-        n->kind = Ake_ast_type_error;
+        n->has_error = true;
     }
     return type;
 }
@@ -579,8 +551,8 @@ Ake_Type* Ake_parse_type_function(Ake_parse_state* ps, Ake_Ast* n)
     if (has_id) {
         Zinc_error_list_set(ps->el, &proto->loc, "function type has name");
     }
-    if (proto->kind == Ake_ast_type_error) {
-        n->kind = Ake_ast_type_error;
+    if (proto->has_error) {
+        n->has_error = true;
     } else {
         Ake_Type_use_add_proto(ps, type, proto, NULL);
     }
@@ -595,11 +567,11 @@ Ake_Type* Ake_parse_type_id(Ake_parse_state* ps, Ake_Ast* n)
 
     struct Ake_token* id = NULL;
     if (!Ake_match(ps, Ake_token_id, "expected type identifier", &id, n)) {
-        n->kind = Ake_ast_type_error;
+        n->has_error = true;
     }
 
     struct Ake_Symbol* sym = NULL;
-    if (n->kind != Ake_ast_type_error) {
+    if (!n->has_error) {
         Ake_get_lookahead(ps);
         size_t seq = ps->lookahead->loc.start;
         sym = Ake_EnvironmentGet(ps->st->top, &id->value, seq);
@@ -608,17 +580,17 @@ Ake_Type* Ake_parse_type_id(Ake_parse_state* ps, Ake_Ast* n)
             Zinc_string_create_str(&id->value, &a);
             Zinc_error_list_set(ps->el, &id->loc, "type not defined: %s", a);
             free(a);
-            n->kind = Ake_ast_type_error;
+            n->has_error = true;
             /* test case: test_parse_error_type_not_defined */
         } else if (!sym->td) {
             char *a;
             Zinc_string_create_str(&id->value, &a);
             Zinc_error_list_set(ps->el, &id->loc, "identifier is not a type: %s", a);
             free(a);
-            n->kind = Ake_ast_type_error;
+            n->has_error = true;
             /* test case: test_parse_error_not_a_type */
         } else {
-            if (n->kind != Ake_ast_type_error) {
+            if (!n->has_error) {
                 type = Ake_TypeClone(sym->td);
             }
         }
@@ -642,7 +614,7 @@ void Ake_create_variable_symbol(Ake_parse_state* ps, Zinc_string* name, Ake_Type
 
 void Ake_declare_type(Ake_parse_state* ps, Ake_Ast* type_node, Ake_Ast* id_node, bool is_const)
 {
-    if (type_node && type_node->kind != Ake_ast_type_error) {
+    if (type_node && !type_node->has_error) {
         if (id_node) {
             if (id_node->kind == Ake_ast_type_id) {
                 Ake_create_variable_symbol(ps, &id_node->id_value, type_node->type, type_node->loc.start, is_const);
@@ -716,7 +688,7 @@ bool Ake_check_return_type(Ake_parse_state* ps, Ake_Ast* proto, Ake_Ast* stmts_n
 {
     bool valid = true;
 
-    if (proto->kind != Ake_ast_type_error && stmts_node->kind != Ake_ast_type_error) {
+    if (!proto->has_error && !stmts_node->has_error) {
         Ake_Ast *dret = Ake_AstGet(proto, 2);
         Ake_Ast *ret_type = Ake_AstGet(dret, 0);
         if (ret_type) {
@@ -837,12 +809,16 @@ bool Ake_check_lvalue(Ake_parse_state* ps, Ake_Ast* n, Zinc_location* loc)
     while (p) {
         if (!Ake_is_lvalue(p->kind)) {
             Zinc_error_list_set(ps->el, loc, "invalid lvalue");
+            n->has_error = true;
+            p->has_error = true;
             return false;
         }
         if (!p->head) {
             assert(p->type);
             if (p->kind != Ake_ast_type_id) {
                 Zinc_error_list_set(ps->el, loc, "invalid lvalue");
+                n->has_error = true;
+                p->has_error = true;
                 return false;
             }
             Ake_get_lookahead(ps);
@@ -850,7 +826,7 @@ bool Ake_check_lvalue(Ake_parse_state* ps, Ake_Ast* n, Zinc_location* loc)
             sym = Ake_EnvironmentGet(ps->st->top, &p->id_value, seq);
             if (sym->is_const) {
                 Zinc_error_list_set(ps->el, loc, "immutable variable changed in assignment");
-                n->kind = Ake_ast_type_error;
+                n->has_error = true;
             }
             first = p;
         }
@@ -859,20 +835,22 @@ bool Ake_check_lvalue(Ake_parse_state* ps, Ake_Ast* n, Zinc_location* loc)
 
     if (!n->type) {
         Zinc_error_list_set(ps->el, loc, "invalid lvalue");
+        n->has_error = true;
         return false;
     }
 
     if (!sym) {
         Zinc_error_list_set(ps->el, loc, "invalid lvalue");
+        n->has_error = true;
         return false;
     }
 
-    if (n->kind != Ake_ast_type_error) {
+    if (!n->has_error) {
         if (n->kind == Ake_ast_type_array_subscript) {
             Ake_Ast* left = n->head;
             if (left->type->kind == AKE_TYPE_ARRAY && left->type->data.array.is_const) {
                 Zinc_error_list_set(ps->el, loc, "immutable variable changed in assignment");
-                n->kind = Ake_ast_type_error;
+                n->has_error = true;
             }
 
         }

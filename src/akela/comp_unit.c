@@ -85,7 +85,7 @@ bool Ake_comp_unit_compile(Ake_comp_unit* cu, void* input_obj, Zinc_input_unicod
 	Ake_comp_unit_setup(cu, input_obj, input_vtable, &ps);
 	Ake_parse_result pr = Ake_parse(ps);
     cu->root = pr.root;
-    if (cu->root->kind == Ake_ast_type_error || cu->errors.head) {
+    if (cu->root->has_error || cu->errors.head) {
         valid = false;
     }
 

@@ -29,6 +29,7 @@ void Ake_AstInit(Ake_Ast* n)
 	n->head = NULL;
 	n->tail = NULL;
 	n->parent = NULL;
+	n->has_error = false;
 }
 
 /* NOLINTNEXTLINE(misc-no-recursion) */
@@ -69,6 +70,9 @@ void Ake_AstAdd(Ake_Ast* p, Ake_Ast* c)
     }
     Zinc_location_combine(&p->loc, &c->loc);
 	c->parent = p;
+	if (c->has_error) {
+		p->has_error = true;
+	}
 }
 
 Ake_Ast* Ake_AstGet(Ake_Ast* p, size_t pos)

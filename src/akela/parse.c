@@ -20,7 +20,7 @@ Ake_parse_result Ake_parse(Ake_parse_state* ps)
     assert(t0);
 	if (t0->type != Ake_token_eof) {
 		Zinc_error_list_set(ps->el, &next_loc, "Couldn't process token: %s", Ake_token_name(t0->type));
-        n->kind = Ake_ast_type_error;
+        n->has_error = true;
  	}
 
     Ake_token_destroy(t0);

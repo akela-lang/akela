@@ -261,10 +261,6 @@ char* Ake_ast_cent_name(Ake_AstKind type)
         return "Ast::Eseq";
     }
 
-    if (type == Ake_ast_type_error) {
-        return "Ast::Error";
-    }
-
     if (type == Ake_ast_type_prototype) {
         return "Ast::Prototype";
     }

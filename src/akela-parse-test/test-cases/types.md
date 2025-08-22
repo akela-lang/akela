@@ -1,5 +1,5 @@
 # Test Suite
-type
+types
 
 ```cent
 TestSuite {
