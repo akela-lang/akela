@@ -4,7 +4,7 @@
 #include "type_slots.h"
 
 void Ake_print_types(Ake_TypeSlots* slots);
-void Ake_ast_cent_print(Ake_Ast* n, size_t level, Ake_TypeSlots* slots);
+void Ake_ast_cent_print(Ake_Ast* n, size_t level, bool is_property, Ake_TypeSlots* slots);
 void Ake_indent_print(size_t level);
 char* Ake_ast_cent_name(Ake_AstKind type);
 void Ake_type_cent_print(Ake_Type* type, size_t level, bool is_property);
@@ -20,7 +20,7 @@ void Ake_tree_print(Ake_Ast* n, Zinc_string* initial_line)
 
     Ake_TypeSlotsScan(&slots, n);
     Ake_print_types(&slots);
-    Ake_ast_cent_print(n, 0, &slots);
+    Ake_ast_cent_print(n, 0, false, &slots);
 
     Ake_TypeSlotsDestroy(&slots);
  }
@@ -38,10 +38,12 @@ void Ake_print_types(Ake_TypeSlots* slots)
 }
 
 /* NOLINTNEXTLINE(misc-no-recursion) */
-void Ake_ast_cent_print(Ake_Ast* n, size_t level, Ake_TypeSlots* slots)
+void Ake_ast_cent_print(Ake_Ast* n, size_t level, bool is_property, Ake_TypeSlots* slots)
 {
     if (n) {
-        Ake_indent_print(level);
+        if (!is_property) {
+            Ake_indent_print(level);
+        }
         printf("%s {\n", Ake_ast_cent_name(n->kind));
 
         level++;
@@ -69,9 +71,24 @@ void Ake_ast_cent_print(Ake_Ast* n, size_t level, Ake_TypeSlots* slots)
             printf(".type = type%zu\n", slot);
         }
 
+        switch (n->kind) {
+            case AKE_AST_SIGN:
+                Ake_indent_print(level);
+                printf(".op = ");
+                Ake_ast_cent_print(n->data.sign.op, level, true, slots);
+
+                Ake_indent_print(level);
+                printf(".right = ");
+                Ake_ast_cent_print(n->data.sign.right, level, true, slots);
+                break;
+            case AKE_AST_ID:
+            default:
+                break;
+        }
+
         Ake_Ast* p = n->head;
         while (p) {
-            Ake_ast_cent_print(p, level, slots);
+            Ake_ast_cent_print(p, level, false, slots);
             p = p->next;
         }
 
@@ -97,7 +114,7 @@ char* Ake_ast_cent_name(Ake_AstKind type)
         return "Ast::Id";
     }
 
-    if (type == Ake_ast_type_sign) {
+    if (type == AKE_AST_SIGN) {
         return "Ast::Sign";
     }
 

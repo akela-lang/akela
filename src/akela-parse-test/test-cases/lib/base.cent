@@ -97,6 +97,13 @@ enum AstType {
   Var
 }
 
+variant Ast::Sign {
+    properties {
+        op: Ast
+        right: Ast
+    }
+}
+
 enum TypeKind {
   None
   Integer

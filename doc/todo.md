@@ -2,7 +2,7 @@
 * syntax tree with tagged union
   * none [x]
   * id [x]
-  * sign []
+  * sign [x]
   * number []
   * string []
   * assign []

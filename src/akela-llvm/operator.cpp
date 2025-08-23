@@ -50,8 +50,8 @@ namespace Akela_llvm {
     /* NOLINTNEXTLINE(misc-no-recursion) */
     Value* Handle_sign(Jit_data* jd, Ake_Ast* n)
     {
-        Ake_Ast* op = Ake_AstGet(n, 0);
-        Ake_Ast* number = Ake_AstGet(n, 1);
+        Ake_Ast* op = n->data.sign.op;
+        Ake_Ast* number = n->data.sign.right;
         Value* number_value = Dispatch(jd, number);
 
         if (op->kind == Ake_ast_type_plus) {

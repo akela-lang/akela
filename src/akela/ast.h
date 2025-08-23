@@ -16,7 +16,7 @@
 typedef enum Ake_AstKind {
 	AKE_AST_NONE,
 	AKE_AST_ID,
-	Ake_ast_type_sign,
+	AKE_AST_SIGN,
 	Ake_ast_type_number,
 	Ake_ast_type_string,
 	Ake_ast_type_assign,
@@ -74,7 +74,7 @@ static char const* Ast_type_name(Ake_AstKind kind)
 	char const* name[AKE_AST_COUNT];
     name[AKE_AST_NONE] = "none";
     name[AKE_AST_ID] = "id";
-    name[Ake_ast_type_sign] = "sign";
+    name[AKE_AST_SIGN] = "sign";
     name[Ake_ast_type_number] = "number";
     name[Ake_ast_type_string] = "string";
     name[Ake_ast_type_assign] = "assign";
@@ -140,6 +140,7 @@ typedef struct Ake_Ast {
 	Zinc_string boolean_value;
 	union {
 		struct { Zinc_string value; } id;
+		struct { Ake_Ast* op; Ake_Ast* right; } sign;
 	} data;
 	Ake_Type* type;
     Zinc_location loc;

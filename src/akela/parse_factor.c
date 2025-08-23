@@ -641,7 +641,7 @@ Ake_Ast* Ake_parse_sign(struct Ake_parse_state* ps)
 	Ake_Ast* n = NULL;
 
     Ake_AstCreate(&n);
-    n->kind = Ake_ast_type_sign;
+    Ake_AstSet(n, AKE_AST_SIGN);
 
 	struct Ake_token* t0 = Ake_get_lookahead(ps);
 
@@ -651,16 +651,18 @@ Ake_Ast* Ake_parse_sign(struct Ake_parse_state* ps)
         assert(false && "not possible");
     }
 
-    Ake_Ast* left;
-    Ake_AstCreate(&left);
+    Ake_Ast* op = NULL;
+    Ake_AstCreate(&op);
 
     if (t0->type == Ake_token_plus) {
-        left->kind = Ake_ast_type_plus;
+        op->kind = Ake_ast_type_plus;
+    } else if (t0->type == Ake_token_minus) {
+        op->kind = Ake_ast_type_minus;
     } else {
-        left->kind = Ake_ast_type_minus;
+        assert(false && "not possible");
     }
 
-    Ake_AstAdd(n, left);
+    n->data.sign.op = op;
 
     Ake_consume_newline(ps, n);
 
@@ -672,7 +674,7 @@ Ake_Ast* Ake_parse_sign(struct Ake_parse_state* ps)
 		Zinc_error_list_set(ps->el, &right_loc, "expected parse_factor after sign");
         n->has_error = true;
 	} else {
-	    Ake_AstAdd(n, right);
+	    n->data.sign.right = right;
 	}
 
 	if (!n->has_error) {

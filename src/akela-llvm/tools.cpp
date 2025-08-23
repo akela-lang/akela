@@ -410,7 +410,7 @@ namespace Akela_llvm {
             return Handle_subscript(jd, n);
         }
 
-        if (n->kind == Ake_ast_type_sign) {
+        if (n->kind == AKE_AST_SIGN) {
             return Handle_sign(jd, n);
         }
 

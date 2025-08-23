@@ -1,5 +1,5 @@
 # Test Suite
-operator
+operator numeric
 
 ```cent
 TestSuite {
@@ -282,13 +282,13 @@ Ast::Stmts {
       .type = type0
     }
     Ast::Sign {
-      .type = type0
-      Ast::Plus {
+      .op = Ast::Plus {
       }
-      Ast::Number {
+      .right = Ast::Number {
         .value = "1"
         .type = type0
       }
+      .type = type0
     }
   }
 }
@@ -300,10 +300,6 @@ add negative
 ```cent
 use lib::base::*
 Test {
-  .solo = false
-  .mute = false
-  .snapshot = false
-  .has_error = false
 }
 ```
 
@@ -335,13 +331,13 @@ Ast::Stmts {
       .type = type0
     }
     Ast::Sign {
-      .type = type0
-      Ast::Minus {
+      .op = Ast::Minus {
       }
-      Ast::Number {
+      .right = Ast::Number {
         .value = "1"
         .type = type0
       }
+      .type = type0
     }
   }
 }
@@ -444,13 +440,13 @@ Ast::Stmts {
       .type = type0
     }
     Ast::Sign {
-      .type = type0
-      Ast::Plus {
+      .op = Ast::Plus {
       }
-      Ast::Number {
+      .right = Ast::Number {
         .value = "1"
         .type = type0
       }
+      .type = type0
     }
   }
 }
@@ -501,13 +497,13 @@ Ast::Stmts {
       .type = type0
     }
     Ast::Sign {
-      .type = type0
-      Ast::Minus {
+      .op = Ast::Minus {
       }
-      Ast::Number {
+      .right = Ast::Number {
         .value = "1"
         .type = type0
       }
+      .type = type0
     }
   }
 }
@@ -695,10 +691,6 @@ mult positive
 ```cent
 use lib::base::*
 Test {
-  .solo = false
-  .mute = false
-  .snapshot = false
-  .has_error = false
 }
 ```
 
@@ -734,13 +726,13 @@ Ast::Stmts {
       .type = type0
     }
     Ast::Sign {
-      .type = type0
-      Ast::Plus {
+      .op = Ast::Plus {
       }
-      Ast::Number {
+      .right = Ast::Number {
         .value = "1"
         .type = type0
       }
+      .type = type0
     }
   }
 }
@@ -791,13 +783,13 @@ Ast::Stmts {
       .type = type0
     }
     Ast::Sign {
-      .type = type0
-      Ast::Minus {
+      .op = Ast::Minus {
       }
-      Ast::Number {
+      .right = Ast::Number {
         .value = "1"
         .type = type0
       }
+      .type = type0
     }
   }
 }
@@ -1375,22 +1367,22 @@ Ast::Stmts {
   Ast::Plus {
     .type = type0
     Ast::Sign {
-      .type = type0
-      Ast::Minus {
+      .op = Ast::Minus {
       }
-      Ast::Number {
+      .right = Ast::Number {
         .value = "5"
         .type = type0
       }
+      .type = type0
     }
     Ast::Sign {
-      .type = type0
-      Ast::Minus {
+      .op = Ast::Minus {
       }
-      Ast::Number {
+      .right = Ast::Number {
         .value = "20"
         .type = type0
       }
+      .type = type0
     }
   }
 }
@@ -1417,13 +1409,13 @@ const type0 = Type::Integer {
 Ast::Stmts {
   .type = type0
   Ast::Sign {
-    .type = type0
-    Ast::Minus {
+    .op = Ast::Minus {
     }
-    Ast::Number {
+    .right = Ast::Number {
       .value = "30"
       .type = type0
     }
+    .type = type0
   }
 }
 ```
@@ -1449,13 +1441,13 @@ const type0 = Type::Integer {
 Ast::Stmts {
   .type = type0
   Ast::Sign {
-    .type = type0
-    Ast::Plus {
+    .op = Ast::Plus {
     }
-    Ast::Number {
+    .right = Ast::Number {
       .value = "30"
       .type = type0
     }
+    .type = type0
   }
 }
 ```
@@ -1529,13 +1521,13 @@ const type0 = Type::Integer {
 Ast::Stmts {
   .type = type0
   Ast::Sign {
-    .type = type0
-    Ast::Minus {
+    .op = Ast::Minus {
     }
-    Ast::Number {
+    .right = Ast::Number {
       .value = "1"
       .type = type0
     }
+    .type = type0
   }
 }
 ```

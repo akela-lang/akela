@@ -748,8 +748,8 @@ bool Ake_check_input_type(
 /* NOLINTNEXTLINE(misc-no-recursion) */
 void Ake_Override_rhs(Ake_Type* type, Ake_Ast* rhs)
 {
-    if (rhs->kind == Ake_ast_type_sign) {
-        Ake_Ast* p = Ake_AstGet(rhs, 1);
+    if (rhs->kind == AKE_AST_SIGN) {
+        Ake_Ast* p = rhs->data.sign.right;
         if (p->kind == Ake_ast_type_number) {
             Ake_TypeCopy(type, p->type);
             Ake_TypeCopy(type, rhs->type);
