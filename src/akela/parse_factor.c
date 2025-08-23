@@ -129,7 +129,7 @@ Ake_Ast* Ake_parse_function(struct Ake_parse_state* ps, bool is_method, Ake_Type
             Ake_SymbolInit(new_sym);
             new_sym->kind = AKE_SYMBOL_VARIABLE;
             new_sym->tu = Ake_TypeClone(type);
-            Ake_EnvironmentAdd(ps->st->top, &id_node->id_value, new_sym, n->loc.start);
+            Ake_EnvironmentAdd(ps->st->top, &id_node->data.id.value, new_sym, n->loc.start);
         }
     }
 
@@ -483,10 +483,10 @@ Ake_Ast* Ake_parse_id(Ake_parse_state* ps)
 
     } else {
         /* id */
-        n->kind = Ake_ast_type_id;
+        Ake_AstSet(n, AKE_AST_ID);
 
         if (id) {
-            Zinc_string_copy(&id->value, &n->id_value);
+            Zinc_string_copy(&id->value, &n->data.id.value);
         }
 
         if (!sym) {
@@ -539,7 +539,7 @@ void Ake_find_missing_fields(Ake_parse_state* ps, Ake_Type* type, Ake_Ast* n) {
         Ake_Ast *field = n->head;
         while (field) {
             Ake_Ast *id2 = Ake_AstGet(field, 0);
-            if (Zinc_string_compare(&id2->id_value, &tf->name)) {
+            if (Zinc_string_compare(&id2->data.id.value, &tf->name)) {
                 found = true;
                 break;
             }
@@ -580,8 +580,8 @@ void Ake_parse_struct_literal_elements(
 
         Ake_Ast* id = NULL;
         Ake_AstCreate(&id);
-        id->kind = Ake_ast_type_id;
-        Zinc_string_copy(&name->value, &id->id_value);
+        Ake_AstSet(id, AKE_AST_ID);
+        Zinc_string_copy(&name->value, &id->data.id.value);
         Ake_AstAdd(field, id);
 
         Ake_token_destroy(name);

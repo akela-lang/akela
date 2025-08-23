@@ -16,7 +16,6 @@ void Ake_AstCreate(Ake_Ast** n)
 void Ake_AstInit(Ake_Ast* n)
 {
 	n->kind = AKE_AST_NONE;
-	Zinc_string_init(&n->id_value);
 	Zinc_string_init(&n->struct_value);
 	Zinc_string_init(&n->number_value);
 	Zinc_string_init(&n->string_value);
@@ -30,12 +29,40 @@ void Ake_AstInit(Ake_Ast* n)
 	n->tail = NULL;
 	n->parent = NULL;
 	n->has_error = false;
+	n->is_set = false;
+}
+
+void Ake_AstSet(Ake_Ast* n, Ake_AstKind kind)
+{
+	assert(!n->is_set);
+	n->kind = kind;
+	switch (kind) {
+		case AKE_AST_ID:
+			Zinc_string_init(&n->data.id.value);
+			n->is_set = true;
+			break;
+		default:
+			break;
+	}
+}
+
+void Ake_AstValidate(Ake_Ast* n)
+{
+	switch(n->kind) {
+		case AKE_AST_ID:
+			assert(n->is_set);
+			break;
+		default:
+			break;
+	}
 }
 
 /* NOLINTNEXTLINE(misc-no-recursion) */
 void Ake_AstDestroy(Ake_Ast* n)
 {
     if (n) {
+    	Ake_AstValidate(n);
+
         Ake_Ast* p = n->head;
         while (p) {
             Ake_Ast* temp = p;
@@ -43,7 +70,14 @@ void Ake_AstDestroy(Ake_Ast* n)
             Ake_AstDestroy(temp);
         }
 
-        Zinc_string_destroy(&n->id_value);
+    	switch(n->kind) {
+    		case AKE_AST_ID:
+    			Zinc_string_destroy(&n->data.id.value);
+    			break;
+        	default:
+    			break;
+    	}
+
     	Zinc_string_destroy(&n->struct_value);
     	Zinc_string_destroy(&n->number_value);
     	Zinc_string_destroy(&n->string_value);
@@ -60,6 +94,9 @@ void Ake_AstDestroy(Ake_Ast* n)
 
 void Ake_AstAdd(Ake_Ast* p, Ake_Ast* c)
 {
+	Ake_AstValidate(p);
+	Ake_AstValidate(c);
+
     if (p->head && p->tail) {
         p->tail->next = c;
         c->prev = p->tail;
@@ -77,6 +114,8 @@ void Ake_AstAdd(Ake_Ast* p, Ake_Ast* c)
 
 Ake_Ast* Ake_AstGet(Ake_Ast* p, size_t pos)
 {
+	Ake_AstValidate(p);
+
 	int i = 0;
 	for (Ake_Ast* n = p->head; n; n = n->next) {
 		if (i == pos) {
@@ -90,10 +129,19 @@ Ake_Ast* Ake_AstGet(Ake_Ast* p, size_t pos)
 /* NOLINTNEXTLINE(misc-no-recursion) */
 void Ake_AstCopy(Ake_Ast* src, Ake_Ast* dest)
 {
-    dest->kind = src->kind;
+	Ake_AstValidate(src);
+	Ake_AstValidate(dest);
+
+    Ake_AstSet(dest, src->kind);
     dest->type = Ake_TypeClone(src->type);
     dest->loc = src->loc;
-    Zinc_string_copy(&src->id_value, &dest->id_value);
+	switch (src->kind) {
+		case AKE_AST_ID:
+			Zinc_string_add_string(&src->data.id.value, &dest->data.id.value);
+			break;
+		default:
+			break;
+	}
 	Zinc_string_copy(&src->struct_value, &dest->struct_value);
 	Zinc_string_copy(&src->number_value, &dest->number_value);
 	Zinc_string_copy(&src->string_value, &dest->string_value);
@@ -103,6 +151,8 @@ void Ake_AstCopy(Ake_Ast* src, Ake_Ast* dest)
 /* NOLINTNEXTLINE(misc-no-recursion) */
 Ake_Ast* Ake_AstClone(Ake_Ast* n)
 {
+	Ake_AstValidate(n);
+
 	Ake_Ast* copy = NULL;
 
 	if (n) {
@@ -129,8 +179,17 @@ bool Ake_AstMatch(Ake_Ast* a, Ake_Ast* b)
 			return false;
 		}
 
-		if (!Zinc_string_compare(&a->id_value, &b->id_value)) {
-			return false;
+		Ake_AstValidate(a);
+		Ake_AstValidate(b);
+
+		switch (a->kind) {
+			case AKE_AST_ID:
+				if (!Zinc_string_compare(&a->data.id.value, &b->data.id.value)) {
+					return false;
+				}
+				break;
+			default:
+				break;
 		}
 
 		if (!Zinc_string_compare(&a->struct_value, &b->struct_value)) {
@@ -175,6 +234,7 @@ size_t Ake_AstCountChildren(Ake_Ast* n)
 {
     size_t count = 0;
     if (n) {
+    	Ake_AstValidate(n);
         Ake_Ast* p = n->head;
         while (p) {
             count++;

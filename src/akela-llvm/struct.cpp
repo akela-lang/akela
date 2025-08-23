@@ -92,7 +92,7 @@ namespace Akela_llvm {
         bool found = false;
         while (tf) {
             dec_tu = tf->type;
-            if (Zinc_string_compare(&tf->name, &right->id_value)) {
+            if (Zinc_string_compare(&tf->name, &right->data.id.value)) {
                 found = true;
                 break;
             }
@@ -107,8 +107,8 @@ namespace Akela_llvm {
         }
 
         Type* dot_type = Get_type_pointer(jd, n->type);
-        Zinc_string_finish(&right->id_value);
-        return jd->Builder->CreateLoad(dot_type, gep_value, Zinc_string_c_str(&right->id_value));
+        Zinc_string_finish(&right->data.id.value);
+        return jd->Builder->CreateLoad(dot_type, gep_value, Zinc_string_c_str(&right->data.id.value));
     }
 
     Value* Handle_struct_literal(Jit_data* jd, Ake_Ast* n)
@@ -126,7 +126,7 @@ namespace Akela_llvm {
             Ake_Environment* env = Ake_get_current_env(n->parent);
             Ake_Ast* lhs =  Ake_AstGet(n->parent, 0);
             Ake_Ast* type_node = Ake_AstGet(n->parent, 1);
-            Ake_symbol* sym = Ake_EnvironmentGet(env, &lhs->id_value, type_node->loc.start);
+            Ake_symbol* sym = Ake_EnvironmentGet(env, &lhs->data.id.value, type_node->loc.start);
             value = (Value*)sym->value;
         } else {
             value = jd->Builder->CreateAlloca(t, nullptr, bf.buf);
@@ -138,8 +138,8 @@ namespace Akela_llvm {
             Ake_Ast* id = Ake_AstGet(field, 0);
             Ake_Ast* expr = Ake_AstGet(field, 1);
 
-            Zinc_string_finish(&id->id_value);
-            Value* gep_value = jd->Builder->CreateStructGEP(t, value, i, id->id_value.buf);
+            Zinc_string_finish(&id->data.id.value);
+            Value* gep_value = jd->Builder->CreateStructGEP(t, value, i, id->data.id.value.buf);
             if (expr->type && expr->type->kind == AKE_TYPE_STRUCT) {
                 Handle_struct_literal_element(jd, gep_value, expr);
             } else if (IsArray(expr->type->kind)) {
@@ -169,8 +169,8 @@ namespace Akela_llvm {
             Ake_Ast* id = Ake_AstGet(field, 0);
             Ake_Ast* expr = Ake_AstGet(field, 1);
 
-            Zinc_string_finish(&id->id_value);
-            Value* gep_value = jd->Builder->CreateStructGEP(t, ptr, i, id->id_value.buf);
+            Zinc_string_finish(&id->data.id.value);
+            Value* gep_value = jd->Builder->CreateStructGEP(t, ptr, i, id->data.id.value.buf);
             if (expr->type->kind == AKE_TYPE_STRUCT) {
                 Handle_struct_literal_element(jd, gep_value, expr);
             } else if (IsArray(expr->type->kind)) {

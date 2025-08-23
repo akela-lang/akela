@@ -1,5 +1,7 @@
 # Akela
 * syntax tree with tagged union
+  * none [x]
+  * id [x]
 * modules
 * print function
 * insert error context lines related to current check; used for line and col numbers

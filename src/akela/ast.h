@@ -15,7 +15,7 @@
 
 typedef enum Ake_AstKind {
 	AKE_AST_NONE,
-	Ake_ast_type_id,
+	AKE_AST_ID,
 	Ake_ast_type_sign,
 	Ake_ast_type_number,
 	Ake_ast_type_string,
@@ -73,7 +73,7 @@ static char const* Ast_type_name(Ake_AstKind kind)
 {
 	char const* name[Ake_ast_type_count];
     name[AKE_AST_NONE] = "none";
-    name[Ake_ast_type_id] = "id";
+    name[AKE_AST_ID] = "id";
     name[Ake_ast_type_sign] = "sign";
     name[Ake_ast_type_number] = "number";
     name[Ake_ast_type_string] = "string";
@@ -134,11 +134,13 @@ static char const* Ast_type_name(Ake_AstKind kind)
 
 typedef struct Ake_Ast {
 	Ake_AstKind kind;
-	Zinc_string id_value;
 	Zinc_string struct_value;
 	Zinc_string number_value;
 	Zinc_string string_value;
 	Zinc_string boolean_value;
+	union {
+		struct { Zinc_string value; } id;
+	} data;
 	Ake_Type* type;
     Zinc_location loc;
 	Ake_Environment* env;
@@ -148,15 +150,18 @@ typedef struct Ake_Ast {
 	Ake_Ast* tail;
 	Ake_Ast* parent;
 	bool has_error;
+	bool is_set;
 } Ake_Ast;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-void Ake_AstCreate(Ake_Ast** n);
-AKELA_API void Ake_AstDestroy(Ake_Ast* n);
+AKELA_API void Ake_AstCreate(Ake_Ast** n);
 AKELA_API void Ake_AstInit(Ake_Ast* n);
+AKELA_API void Ake_AstSet(Ake_Ast* n, Ake_AstKind kind);
+AKELA_API void Ake_AstValidate(Ake_Ast* n);
+AKELA_API void Ake_AstDestroy(Ake_Ast* n);
 AKELA_API void Ake_AstAdd(Ake_Ast* p, Ake_Ast* c);
 AKELA_API Ake_Ast* Ake_AstGet(Ake_Ast* p, size_t pos);
 AKELA_API void Ake_AstCopy(Ake_Ast* src, Ake_Ast* dest);

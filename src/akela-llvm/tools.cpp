@@ -390,7 +390,7 @@ namespace Akela_llvm {
             return Handle_dot(jd, n);
         }
 
-        if (n->kind == Ake_ast_type_id) {
+        if (n->kind == AKE_AST_ID) {
             return Handle_identifier(jd, n);
         }
 

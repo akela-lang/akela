@@ -1081,9 +1081,9 @@ Ake_Ast* Ake_parse_dot(struct Ake_parse_state* ps)
 
         Ake_Ast* b = NULL;
         Ake_AstCreate(&b);
-        b->kind = Ake_ast_type_id;
+        Ake_AstSet(b, AKE_AST_ID);
         if (id) {
-            Zinc_string_copy(&id->value, &b->id_value);
+            Zinc_string_copy(&id->value, &b->data.id.value);
         }
 
         Ake_AstAdd(n, left);
@@ -1112,7 +1112,7 @@ Ake_Ast* Ake_parse_dot(struct Ake_parse_state* ps)
                 Ake_TypeField* tf = sym->td->data.fields.head;
             	Ake_Type* found_type = NULL;
                 while (tf) {
-                    if (Zinc_string_compare(&tf->name, &b->id_value)) {
+                    if (Zinc_string_compare(&tf->name, &b->data.id.value)) {
                     	found_type = tf->type;
                         found = true;
                         break;

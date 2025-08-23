@@ -195,7 +195,7 @@ void Apt_case_run(Zinc_test* case_test)
 
 bool Apt_has_value(Ake_Ast* n)
 {
-    if (n->id_value.size > 0) {
+    if (n->kind == AKE_AST_ID && n->data.id.value.size > 0) {
         return true;
     }
 
@@ -220,8 +220,8 @@ bool Apt_has_value(Ake_Ast* n)
 
 Zinc_string* Apt_get_value(Ake_Ast* n)
 {
-    if (n->id_value.size > 0) {
-        return &n->id_value;
+    if (n->kind == AKE_AST_ID && n->data.id.value.size > 0) {
+        return &n->data.id.value;
     }
 
     if (n->struct_value.size > 0) {

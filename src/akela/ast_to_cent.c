@@ -46,9 +46,9 @@ void Ake_ast_cent_print(Ake_Ast* n, size_t level, Ake_TypeSlots* slots)
 
         level++;
 
-        if (n->id_value.size > 0) {
+        if (n->kind == AKE_AST_ID && n->data.id.value.size > 0) {
             Ake_indent_print(level);
-            printf(".value = \"%s\"\n", Zinc_string_c_str(&n->id_value));
+            printf(".value = \"%s\"\n", Zinc_string_c_str(&n->data.id.value));
         } else if (n->struct_value.size > 0) {
             Ake_indent_print(level);
             printf(".value = \"%s\"\n", Zinc_string_c_str(&n->struct_value));
@@ -93,7 +93,7 @@ void Ake_indent_print(size_t level)
 
 char* Ake_ast_cent_name(Ake_AstKind type)
 {
-    if (type == Ake_ast_type_id) {
+    if (type == AKE_AST_ID) {
         return "Ast::Id";
     }
 

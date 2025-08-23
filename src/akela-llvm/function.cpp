@@ -11,14 +11,14 @@ namespace Akela_llvm {
         FunctionType* func_type = Get_function_type(jd, n->type);
         Ake_Ast *proto = Ake_AstGet(n, 0);
         Ake_Ast *id = Ake_AstGet(proto, 0);
-        Zinc_string_finish(&id->id_value);
-        Function* f = Function::Create(func_type, GlobalValue::ExternalLinkage, id->id_value.buf, *jd->TheModule);
+        Zinc_string_finish(&id->data.id.value);
+        Function* f = Function::Create(func_type, GlobalValue::ExternalLinkage, id->data.id.value.buf, *jd->TheModule);
 
         BasicBlock* last_block = Get_last_block(jd, jd->toplevel);
         jd->Builder->SetInsertPoint(last_block);
 
         Ake_Environment* env = Ake_get_current_env(n);
-        Ake_symbol* sym = Ake_EnvironmentGet(env, &id->id_value, n->loc.end);
+        Ake_symbol* sym = Ake_EnvironmentGet(env, &id->data.id.value, n->loc.end);
         sym->value = f;
 
         return f;
@@ -30,10 +30,10 @@ namespace Akela_llvm {
         FunctionType* func_type = Get_function_type(jd, n->type);
         Ake_Ast *proto = Ake_AstGet(n, 0);
         Ake_Ast *id = Ake_AstGet(proto, 0);
-        Zinc_string_finish(&id->id_value);
+        Zinc_string_finish(&id->data.id.value);
         Function* f = Function::Create(func_type,
                                        GlobalValue::ExternalLinkage,
-                                       id->id_value.buf,
+                                       id->data.id.value.buf,
                                        *jd->TheModule);
         BasicBlock* body_block = BasicBlock::Create(*jd->TheContext, "body", f);
         jd->Builder->SetInsertPoint(body_block);
@@ -46,15 +46,15 @@ namespace Akela_llvm {
             Ake_Ast* dec_type = Ake_AstGet(dec, 1);
             Value* dec_value = &f->arg_begin()[i];
 
-            Zinc_string_finish(&dec_id->id_value);
+            Zinc_string_finish(&dec_id->data.id.value);
             Type* t = Get_type_pointer(jd, dec_type->type);
             Value* lhs = jd->Builder->CreateAlloca(t,
                                                    nullptr,
-                                                   dec_id->id_value.buf);
+                                                   dec_id->data.id.value.buf);
             jd->Builder->CreateStore(dec_value, lhs);
 
             Ake_Environment* env = Ake_get_current_env(n);
-            Ake_symbol* sym = Ake_EnvironmentGet(env, &dec_id->id_value, dec->loc.end);
+            Ake_symbol* sym = Ake_EnvironmentGet(env, &dec_id->data.id.value, dec->loc.end);
             sym->reference = lhs;
 
             dec = dec->next;
@@ -75,7 +75,7 @@ namespace Akela_llvm {
         jd->Builder->SetInsertPoint(last_block);
 
         Ake_Environment* env = Ake_get_current_env(n);
-        Ake_symbol* sym = Ake_EnvironmentGet(env, &id->id_value, n->loc.start);
+        Ake_symbol* sym = Ake_EnvironmentGet(env, &id->data.id.value, n->loc.start);
         sym->value = f;
 
         return f;
