@@ -97,6 +97,12 @@ enum AstType {
   Var
 }
 
+variant Ast::Id {
+    properties {
+        value: String
+    }
+}
+
 variant Ast::Sign {
     properties {
         op: Ast
