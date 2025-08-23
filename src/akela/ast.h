@@ -14,7 +14,7 @@
 #include "environment.h"
 
 typedef enum Ake_AstKind {
-	Ake_ast_type_none,
+	AKE_AST_NONE,
 	Ake_ast_type_id,
 	Ake_ast_type_sign,
 	Ake_ast_type_number,
@@ -72,7 +72,7 @@ typedef enum Ake_AstKind {
 static char const* Ast_type_name(Ake_AstKind kind)
 {
 	char const* name[Ake_ast_type_count];
-    name[Ake_ast_type_none] = "none";
+    name[AKE_AST_NONE] = "none";
     name[Ake_ast_type_id] = "id";
     name[Ake_ast_type_sign] = "sign";
     name[Ake_ast_type_number] = "number";

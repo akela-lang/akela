@@ -15,7 +15,7 @@ void Ake_AstCreate(Ake_Ast** n)
 
 void Ake_AstInit(Ake_Ast* n)
 {
-	n->kind = Ake_ast_type_none;
+	n->kind = AKE_AST_NONE;
 	Zinc_string_init(&n->id_value);
 	Zinc_string_init(&n->struct_value);
 	Zinc_string_init(&n->number_value);

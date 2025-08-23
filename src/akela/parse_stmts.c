@@ -246,13 +246,13 @@ Ake_Ast* Ake_parse_for(struct Ake_parse_state* ps)
 	struct Ake_token* t0 = Ake_get_lookahead(ps);
 
 	if (t0 && t0->type == Ake_token_equal) {
-        if (n->kind == Ake_ast_type_none) {
+        if (n->kind == AKE_AST_NONE) {
             n->kind = Ake_ast_type_for_range;
         }
 		Ake_parse_for_range(ps, n);
 
 	} else if (t0 && t0->type == Ake_token_in) {
-        if (n->kind == Ake_ast_type_none) {
+        if (n->kind == AKE_AST_NONE) {
             n->kind = Ake_ast_type_for_iteration;
         }
 		Ake_parse_for_iteration(ps, n);
