@@ -66,12 +66,12 @@ typedef enum Ake_AstKind {
     Ake_ast_type_self,
 	Ake_ast_type_const,
 	Ake_ast_type_var,
-	Ake_ast_type_count		/* keep at end */
+	AKE_AST_COUNT		/* keep at end */
 } Ake_AstKind;
 
 static char const* Ast_type_name(Ake_AstKind kind)
 {
-	char const* name[Ake_ast_type_count];
+	char const* name[AKE_AST_COUNT];
     name[AKE_AST_NONE] = "none";
     name[AKE_AST_ID] = "id";
     name[Ake_ast_type_sign] = "sign";
@@ -125,7 +125,7 @@ static char const* Ast_type_name(Ake_AstKind kind)
 	name[Ake_ast_type_const] = "const";
 	name[Ake_ast_type_var] = "var";
 
-	if (kind >= 0 && kind < Ake_ast_type_count) {
+	if (kind >= 0 && kind < AKE_AST_COUNT) {
 		return name[kind];
 	}
 
