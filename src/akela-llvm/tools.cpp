@@ -414,7 +414,7 @@ namespace Akela_llvm {
             return Handle_sign(jd, n);
         }
 
-        if (n->kind == Ake_ast_type_number) {
+        if (n->kind == AKE_AST_NUMBER) {
             return Handle_number(jd, n);
         }
 

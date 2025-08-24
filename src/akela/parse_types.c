@@ -750,14 +750,14 @@ void Ake_Override_rhs(Ake_Type* type, Ake_Ast* rhs)
 {
     if (rhs->kind == AKE_AST_SIGN) {
         Ake_Ast* p = rhs->data.sign.right;
-        if (p->kind == Ake_ast_type_number) {
+        if (p->kind == AKE_AST_NUMBER) {
             Ake_TypeCopy(type, p->type);
             Ake_TypeCopy(type, rhs->type);
         }
         return;
     }
 
-    if (rhs->kind == Ake_ast_type_number) {
+    if (rhs->kind == AKE_AST_NUMBER) {
         if (Ake_is_numeric(type)) {
             Ake_TypeCopy(type, rhs->type);
         }

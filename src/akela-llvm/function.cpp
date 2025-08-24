@@ -98,7 +98,7 @@ namespace Akela_llvm {
         while (tp) {
             Ake_Type* param_tu = tp->type;
             Ake_Type* arg_tu = arg->type;
-            if (arg->kind == Ake_ast_type_number) {
+            if (arg->kind == AKE_AST_NUMBER) {
                 if ((arg_tu->kind == AKE_TYPE_INTEGER && arg_tu->data.integer.bit_count == 32)
                     && (param_tu->kind == AKE_TYPE_NATURAL && param_tu->data.natural.bit_count == 64)) {
                     arg_tu->kind = AKE_TYPE_NATURAL;

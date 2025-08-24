@@ -203,7 +203,7 @@ bool Apt_has_value(Ake_Ast* n)
         return true;
     }
 
-    if (n->number_value.size > 0) {
+    if (n->kind == AKE_AST_NUMBER && n->data.number.value.size > 0) {
         return true;
     }
 
@@ -228,8 +228,8 @@ Zinc_string* Apt_get_value(Ake_Ast* n)
         return &n->struct_value;
     }
 
-    if (n->number_value.size > 0) {
-        return &n->number_value;
+    if (n->kind == AKE_AST_NUMBER && n->data.number.value.size > 0) {
+        return &n->data.number.value;
     }
 
     if (n->string_value.size > 0) {

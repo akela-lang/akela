@@ -110,6 +110,12 @@ variant Ast::Sign {
     }
 }
 
+variant Ast::Number {
+    properties {
+        value: String
+    }
+}
+
 enum TypeKind {
   None
   Integer

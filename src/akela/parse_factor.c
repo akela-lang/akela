@@ -377,18 +377,18 @@ Ake_Ast* Ake_parse_literal(struct Ake_parse_state* ps)
 	if (!n->has_error) {
 		#pragma warning(suppress:6011)
 		if (x->type == Ake_token_number) {
-			n->kind = Ake_ast_type_number;
+		    Ake_AstSet(n, AKE_AST_NUMBER);
 			if (x->is_integer) {
 			    if (ps->context.is_subscript) {
 			        type_name = "Nat64";
-			        Zinc_string_copy(&x->value, &n->number_value);
+			        Zinc_string_copy(&x->value, &n->data.number.value);
 			    } else {
 			        type_name = "Int32";
-			        Zinc_string_copy(&x->value, &n->number_value);
+			        Zinc_string_copy(&x->value, &n->data.number.value);
 			    }
 			} else if (x->is_float) {
 				type_name = "Real64";
-			    Zinc_string_copy(&x->value, &n->number_value);
+			    Zinc_string_copy(&x->value, &n->data.number.value);
 			}
 		} else if (x->type == Ake_token_string) {
 			n->kind = Ake_ast_type_string;

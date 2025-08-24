@@ -10,34 +10,34 @@ namespace Akela_llvm {
         Ake_Type* type = n->type;
         if (type->kind == AKE_TYPE_INTEGER) {
             Type* t = Get_type(jd, n->type);
-            Zinc_string_finish(&n->number_value);
-            long v = strtol(n->number_value.buf, nullptr, 10);
+            Zinc_string_finish(&n->data.number.value);
+            long v = strtol(n->data.number.value.buf, nullptr, 10);
             return ConstantInt::get(t, APInt(type->data.integer.bit_count, v, true));
         }
 
         if (type->kind == AKE_TYPE_NATURAL) {
             Type* t = Get_type(jd, n->type);
-            Zinc_string_finish(&n->number_value);
-            long v = strtol(n->number_value.buf, nullptr, 10);
+            Zinc_string_finish(&n->data.number.value);
+            long v = strtol(n->data.number.value.buf, nullptr, 10);
             return ConstantInt::get(t, APInt(type->data.natural.bit_count, v, false));
         }
 
         if (type->kind == AKE_TYPE_REAL) {
-            Zinc_string_finish(&n->number_value);
+            Zinc_string_finish(&n->data.number.value);
             if (type->data.real.bit_count == 64) {
-                double v = strtod(n->number_value.buf, nullptr);
+                double v = strtod(n->data.number.value.buf, nullptr);
                 Type* t = Get_type(jd, n->type);
                 return ConstantFP::get(*jd->TheContext, APFloat(v));
             }
 
             if (type->data.real.bit_count == 32) {
-                float v = strtof(n->number_value.buf, nullptr);
+                float v = strtof(n->data.number.value.buf, nullptr);
                 return ConstantFP::get(*jd->TheContext, APFloat(v));
             }
 
             if (type->data.real.bit_count == 16) {
 #if IS_UNIX
-                _Float16 v = (_Float16)strtof(n->number_value.buf, nullptr);
+                _Float16 v = (_Float16)strtof(n->data.number.value.buf, nullptr);
                 Type* t = Type::getHalfTy(*jd->TheContext);
                 return ConstantFP::get(t, v);
 #elif IS_WIN

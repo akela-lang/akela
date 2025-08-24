@@ -37,8 +37,8 @@ void AkeUnit_comp_unit_compile(Zinc_test* test)
 	if (!Zinc_expect_ptr(test, number, "ptr number")) {
 		return Zinc_assert();
 	}
-	Zinc_expect_int_equal(test, number->kind, Ake_ast_type_number, "number number");
-	Zinc_expect_string(test, &number->number_value, "10", "10 number");
+	Zinc_expect_int_equal(test, number->kind, AKE_AST_NUMBER, "number number");
+	Zinc_expect_string(test, &number->data.number.value, "10", "10 number");
 
     free(input);
 	Ake_comp_unit_destroy(cu);

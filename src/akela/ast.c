@@ -17,7 +17,6 @@ void Ake_AstInit(Ake_Ast* n)
 {
 	n->kind = AKE_AST_NONE;
 	Zinc_string_init(&n->struct_value);
-	Zinc_string_init(&n->number_value);
 	Zinc_string_init(&n->string_value);
 	Zinc_string_init(&n->boolean_value);
 	n->type = NULL;
@@ -45,6 +44,11 @@ void Ake_AstSet(Ake_Ast* n, Ake_AstKind kind)
 			n->data.sign.op = NULL;
 			n->data.sign.right = NULL;
 			n->is_set = true;
+			break;
+		case AKE_AST_NUMBER:
+			Zinc_string_init(&n->data.number.value);
+			n->is_set = true;
+			break;
 		default:
 			break;
 	}
@@ -55,6 +59,9 @@ void Ake_AstValidate(Ake_Ast* n)
 	switch(n->kind) {
 		case AKE_AST_ID:
 		case AKE_AST_SIGN:
+			assert(n->is_set);
+			break;
+		case AKE_AST_NUMBER:
 			assert(n->is_set);
 			break;
 		default:
@@ -80,14 +87,17 @@ void Ake_AstDestroy(Ake_Ast* n)
     			Zinc_string_destroy(&n->data.id.value);
     			break;
     		case AKE_AST_SIGN:
+    			Ake_AstDestroy(n->data.sign.op);
     			Ake_AstDestroy(n->data.sign.right);
+    			break;
+    		case AKE_AST_NUMBER:
+    			Zinc_string_destroy(&n->data.number.value);
     			break;
         	default:
     			break;
     	}
 
     	Zinc_string_destroy(&n->struct_value);
-    	Zinc_string_destroy(&n->number_value);
     	Zinc_string_destroy(&n->string_value);
     	Zinc_string_destroy(&n->boolean_value);
         Ake_TypeDestroy(n->type);
@@ -150,11 +160,13 @@ void Ake_AstCopy(Ake_Ast* src, Ake_Ast* dest)
 		case AKE_AST_SIGN:
 			dest->data.sign.right = Ake_AstClone(src->data.sign.right);
 			break;
+		case AKE_AST_NUMBER:
+			Zinc_string_add_string(&src->data.number.value, &dest->data.number.value);
+			break;
 		default:
 			break;
 	}
 	Zinc_string_copy(&src->struct_value, &dest->struct_value);
-	Zinc_string_copy(&src->number_value, &dest->number_value);
 	Zinc_string_copy(&src->string_value, &dest->string_value);
 	Zinc_string_copy(&src->boolean_value, &dest->boolean_value);
 }
@@ -204,15 +216,15 @@ bool Ake_AstMatch(Ake_Ast* a, Ake_Ast* b)
 					return false;
 				}
 				break;
+			case AKE_AST_NUMBER:
+				if (!Zinc_string_compare(&a->data.number.value, &b->data.number.value)) {
+					return false;
+				}
 			default:
 				break;
 		}
 
 		if (!Zinc_string_compare(&a->struct_value, &b->struct_value)) {
-			return false;
-		}
-
-		if (!Zinc_string_compare(&a->number_value, &b->number_value)) {
 			return false;
 		}
 
