@@ -57,9 +57,9 @@ void Ake_ast_cent_print(Ake_Ast* n, size_t level, bool is_property, Ake_TypeSlot
         } else if (n->kind == AKE_AST_NUMBER && n->data.number.value.size > 0) {
             Ake_indent_print(level);
             printf(".value = \"%s\"\n", Zinc_string_c_str(&n->data.number.value));
-        } else if (n->string_value.size > 0) {
+        } else if (n->kind == AKE_AST_STRING && n->data.string.value.size > 0) {
             Ake_indent_print(level);
-            printf(".value = \"%s\"\n", Zinc_string_c_str(&n->string_value));
+            printf(".value = \"%s\"\n", Zinc_string_c_str(&n->data.string.value));
         } else if (n->boolean_value.size > 0) {
             Ake_indent_print(level);
             printf(".value = \"%s\"\n", Zinc_string_c_str(&n->boolean_value));
@@ -122,7 +122,7 @@ char* Ake_ast_cent_name(Ake_AstKind type)
         return "Ast::Number";
     }
 
-    if (type == Ake_ast_type_string) {
+    if (type == AKE_AST_STRING) {
         return "Ast::String";
     }
 

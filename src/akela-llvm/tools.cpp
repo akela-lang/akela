@@ -422,7 +422,7 @@ namespace Akela_llvm {
             return Handle_boolean(jd, n);
         }
 
-        if (n->kind == Ake_ast_type_string) {
+        if (n->kind == AKE_AST_STRING) {
             return Handle_string(jd, n);
         }
 

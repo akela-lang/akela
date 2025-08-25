@@ -391,10 +391,10 @@ Ake_Ast* Ake_parse_literal(struct Ake_parse_state* ps)
 			    Zinc_string_copy(&x->value, &n->data.number.value);
 			}
 		} else if (x->type == Ake_token_string) {
-			n->kind = Ake_ast_type_string;
+		    Ake_AstSet(n, AKE_AST_STRING);
 			type_name = "Nat8";
             is_string = true;
-		    Zinc_string_copy(&x->value, &n->string_value);
+		    Zinc_string_copy(&x->value, &n->data.string.value);
 		} else if (x->type == Ake_token_boolean) {
 			n->kind = Ake_ast_type_boolean;
 			type_name = "Bool";
@@ -423,7 +423,7 @@ Ake_Ast* Ake_parse_literal(struct Ake_parse_state* ps)
             Ake_TypeCreate(&type);
             type->kind = AKE_TYPE_ARRAY;
             type->data.array.is_const = true;
-            type->data.array.dim = n->string_value.size + 1;
+            type->data.array.dim = n->data.string.value.size + 1;
             type->data.array.type = Ake_TypeClone(sym->td);;
             n->type = type;
         } else {

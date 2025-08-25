@@ -65,8 +65,8 @@ namespace Akela_llvm {
 
     Value* Handle_string(Jit_data* jd, Ake_Ast* n)
     {
-        Zinc_string_finish(&n->string_value);
-        Value* str_value = jd->Builder->CreateGlobalString(n->string_value.buf, ".str");
+        Zinc_string_finish(&n->data.string.value);
+        Value* str_value = jd->Builder->CreateGlobalString(n->data.string.value.buf, ".str");
         return str_value;
     }
 }
