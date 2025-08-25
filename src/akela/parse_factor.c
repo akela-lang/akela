@@ -770,7 +770,7 @@ Ake_Ast* Ake_parse_array_literal(struct Ake_parse_state* ps)
 void Ake_parse_aseq(struct Ake_parse_state* ps, Ake_Ast* parent)
 {
 	Ake_Ast* a = NULL;
-    a = Ake_parse_simple_expr(ps);
+    a = Ake_parse_expr(ps);
 
 	if (a) {
         Ake_AstAdd(parent, a);
@@ -792,7 +792,7 @@ void Ake_parse_aseq(struct Ake_parse_state* ps, Ake_Ast* parent)
 
             Ake_consume_newline(ps, parent);
 
-			a = Ake_parse_simple_expr(ps);
+			a = Ake_parse_expr(ps);
 
 			if (!a) {
                 struct Zinc_location a_loc = Ake_get_location(ps);

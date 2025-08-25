@@ -24,6 +24,7 @@ Ake_Ast* Ake_parse_return(struct Ake_parse_state* ps);
 Ake_Ast* Ake_parse_let(struct Ake_parse_state* ps);
 Ake_Ast* Ake_parse_extern(struct Ake_parse_state* ps);
 Ake_Ast* Ake_parse_impl(struct Ake_parse_state* ps);
+Ake_Ast* Ake_parse_assignment(struct Ake_parse_state* ps);
 
 /* stmts -> stmt stmts' */
 /* stmts' -> separator stmt stmts' | e */
@@ -115,7 +116,7 @@ Ake_Ast* Ake_parse_stmt(struct Ake_parse_state* ps)
     } else if (t0->type == Ake_token_impl) {
         n = Ake_parse_impl(ps);
 	} else {
-        n = Ake_parse_expr(ps);
+        n = Ake_parse_assignment(ps);
 	}
 
     return n;
@@ -758,4 +759,70 @@ Ake_Ast* Ake_parse_impl(struct Ake_parse_state* ps)
     }
 
     return n;
+}
+
+/* assignment -> expr = expr */
+/*            -> expr */
+/* NOLINTNEXTLINE(misc-no-recursion) */
+Ake_Ast* Ake_parse_assignment(struct Ake_parse_state* ps)
+{
+	Ake_Ast* n = NULL;
+	Ake_Ast* a = NULL;
+	Ake_Ast* b = NULL;
+	a = Ake_parse_expr(ps);
+
+	if (!a) {
+		return NULL;
+	}
+
+	Ake_token* t0 = Ake_get_lookahead(ps);
+	if (t0->type == Ake_token_equal) {
+		Ake_AstCreate(&n);
+		n->kind = Ake_ast_type_assign;
+
+		Ake_AstAdd(n, a);
+
+		Ake_token *equal = NULL;
+		if (!Ake_match(ps, Ake_token_equal, "expecting assign operator", &equal, n)) {
+			/* test case: no test case needed */
+			assert(false && "not possible");
+		}
+		Ake_token_destroy(equal);
+		free(equal);
+
+		Ake_consume_newline(ps, n);
+
+		b = Ake_parse_expr(ps);
+		if (!b) {
+			Zinc_error_list_set(ps->el, &ps->lookahead->loc, "expected expression");
+			n->has_error = true;
+		} else {
+			Ake_AstAdd(n, b);
+		}
+	} else {
+		n = a;
+	}
+
+	if (n && n->kind == Ake_ast_type_assign && !n->has_error) {
+		if (!Ake_check_lvalue(ps, a, &n->loc)) {
+			n->has_error = true;
+		}
+
+		if (!b->type) {
+			Zinc_error_list_set(ps->el, &b->loc, "r-value does not have a type");
+			n->has_error = true;
+		}
+
+		bool cast = false;
+		if (!Ake_TypeMatch(a->type, b->type, &cast)) {
+			Zinc_error_list_set(ps->el, &b->loc, "values in assignment not compatible");
+			n->has_error = true;
+		}
+
+		n->type = Ake_TypeClone(a->type);
+
+		Ake_Override_rhs(a->type, b);
+	}
+
+	return n;
 }
