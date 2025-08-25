@@ -117,7 +117,6 @@ Ast::Stmts {
     }
   }
   Ast::Assign {
-    .type = type0
     Ast::Dot {
       .type = type0
       Ast::Id {

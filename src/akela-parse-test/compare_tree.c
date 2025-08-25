@@ -432,10 +432,13 @@ bool Apt_compare_type(
             case_test,
             &n->loc,
             &value_n->loc,
-            "type use node is null: %d-%s");
-        return false;
+            "type use node is null");
     } else {
         Zinc_expect_passed(case_test);
+    }
+
+    if (!type) {
+        return pass;
     }
 
     if (!Zinc_string_compare_str(&value->name, "Type")) {
@@ -453,7 +456,7 @@ bool Apt_compare_type(
     }
 
     Cent_value* name_value = Cent_value_get_str(value, "name");
-    if ((type->name.size > 0) && !name_value) {
+    if (type && type->name.size > 0 && !name_value) {
         Zinc_expect_failed(case_test);
         Zinc_spec_error_list_set(
             &case_data->spec_errors,
@@ -462,7 +465,7 @@ bool Apt_compare_type(
             &value_n->loc,
             "name not set");
     } else {
-        if (name_value && !Zinc_string_compare(&type->name, &name_value->data.string)) {
+        if (type && name_value && !Zinc_string_compare(&type->name, &name_value->data.string)) {
             Cent_ast* name_n = name_value->n;
             Zinc_spec_error_list_set(
                 &case_data->spec_errors,
@@ -479,7 +482,7 @@ bool Apt_compare_type(
     }
 
     Cent_value* tag = Cent_value_get_str(value, "@tag");
-    if (Zinc_expect_size_t_equal(case_test, type->kind, tag->data.enumeration.number, "type tag")) {
+    if (type && Zinc_expect_size_t_equal(case_test, type->kind, tag->data.enumeration.number, "type tag")) {
         Zinc_expect_passed(case_test);
         return pass;
     } else {

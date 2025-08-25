@@ -819,8 +819,6 @@ Ake_Ast* Ake_parse_assignment(struct Ake_parse_state* ps)
 			n->has_error = true;
 		}
 
-		n->type = Ake_TypeClone(a->type);
-
 		Ake_Override_rhs(a->type, b);
 	}
 

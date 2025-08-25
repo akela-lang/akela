@@ -98,7 +98,7 @@ namespace Akela_llvm {
             Assign_lhs_rhs_value(jd, lhs, rhs, rhs_value);
             lhs = lhs->prev;
         }
-        return rhs_value;
+        return nullptr;
     }
 
 /* NOLINTNEXTLINE(misc-no-recursion) */

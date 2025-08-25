@@ -299,10 +299,6 @@ assign newline
 ```cent
 use lib::base::*
 Test {
-  .solo = false
-  .mute = false
-  .snapshot = false
-  .has_error = false
 }
 ```
 
@@ -319,7 +315,6 @@ const type0 = Type::Integer {
   .bit_count = 32
 }
 Ast::Stmts {
-  .type = type0
   Ast::Var {
     Ast::Id {
       .value = "a"
@@ -329,7 +324,6 @@ Ast::Stmts {
     }
   }
   Ast::Assign {
-    .type = type0
     Ast::Id {
       .value = "a"
       .type = type0
@@ -647,7 +641,6 @@ const type0 = Type::Integer {
   .bit_count = 32
 }
 Ast::Stmts {
-  .type = type0
   Ast::Var {
     Ast::Id {
       .value = "a"
@@ -657,7 +650,6 @@ Ast::Stmts {
     }
   }
   Ast::Assign {
-    .type = type0
     Ast::Id {
       .value = "a"
       .type = type0
@@ -690,7 +682,6 @@ const type0 = Type::Integer {
   .bit_count = 32
 }
 Ast::Stmts {
-  .type = type0
   Ast::Var {
     Ast::Id {
       .value = "a"
@@ -700,7 +691,6 @@ Ast::Stmts {
     }
   }
   Ast::Assign {
-    .type = type0
     Ast::Id {
       .value = "a"
       .type = type0
@@ -844,7 +834,6 @@ Ast::Stmts {
     }
   }
   Ast::Assign {
-    .type = type0
     Ast::Id {
       .value = "x"
       .type = type0
