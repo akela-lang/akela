@@ -790,10 +790,6 @@ bool Ake_is_lvalue(enum Ake_AstKind type)
         return true;
     }
 
-    if (type == Ake_ast_type_eseq) {
-        return true;
-    }
-
     if (type == Ake_ast_type_dot) {
         return true;
     }

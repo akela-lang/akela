@@ -109,6 +109,7 @@ void Apt_case_run(Zinc_test* case_test)
 
     if (case_data->snapshot) {
         if (ct->primary->errors.head) {
+            Zinc_test_print_unseen(case_test);
             Zinc_error_list_print(&ct->primary->errors);
         }
 
@@ -137,6 +138,7 @@ void Apt_case_run(Zinc_test* case_test)
         Cent_comp_unit_build(expected_ct->primary);
 
         if (expected_ct->primary->errors.head) {
+            Zinc_test_print_unseen(case_test);
             Zinc_error_list_print(&expected_ct->primary->errors);
         }
 
@@ -153,6 +155,7 @@ void Apt_case_run(Zinc_test* case_test)
                     Zinc_error_list_set(&top_data->errors, &e->loc, "%bf", &e->message);
                     e = e->next;
                 }
+                Zinc_test_print_unseen(case_test);
                 Zinc_error_list_print(&top_data->errors);
                 Ake_comp_table_free(ct);
                 return;
@@ -164,6 +167,7 @@ void Apt_case_run(Zinc_test* case_test)
                     Zinc_error_list_set(&top_data->errors, &e->loc, "%bf", &e->message);
                     e = e->next;
                 }
+                Zinc_test_print_unseen(case_test);
                 Zinc_error_list_print(&top_data->errors);
 
                 Ake_comp_table_free(ct);
@@ -185,10 +189,12 @@ void Apt_case_run(Zinc_test* case_test)
 
     Ake_comp_table_free(ct);
     if (case_data->errors.head) {
+        Zinc_test_print_unseen(case_test);
         Zinc_error_list_print(&case_data->errors);
     }
 
     if (case_data->spec_errors.head) {
+        Zinc_test_print_unseen(case_test);
         Zinc_spec_error_list_print(&case_data->spec_errors);
     }
 }

@@ -93,23 +93,12 @@ namespace Akela_llvm {
     {
         Ake_Ast* rhs = n->tail;
         Ake_Ast* lhs = rhs->prev;
-        if (lhs->kind == Ake_ast_type_eseq && rhs->kind == Ake_ast_type_eseq) {
-            Ake_Ast* lhs2 = lhs->head;
-            Ake_Ast* rhs2 = rhs->head;
-            while (lhs2 && rhs2) {
-                Assign_lhs_rhs(jd, lhs2, rhs2);
-                lhs2 = lhs2->next;
-                rhs2 = rhs2->next;
-            }
-            return nullptr;
-        } else {
-            Value* rhs_value = Dispatch(jd, rhs);
-            while (lhs) {
-                Assign_lhs_rhs_value(jd, lhs, rhs, rhs_value);
-                lhs = lhs->prev;
-            }
-            return rhs_value;
+        Value* rhs_value = Dispatch(jd, rhs);
+        while (lhs) {
+            Assign_lhs_rhs_value(jd, lhs, rhs, rhs_value);
+            lhs = lhs->prev;
         }
+        return rhs_value;
     }
 
 /* NOLINTNEXTLINE(misc-no-recursion) */

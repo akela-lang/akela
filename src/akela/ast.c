@@ -294,8 +294,9 @@ void Ake_AstListDestroy(Ake_AstList* list)
 {
 	Ake_Ast* p = list->head;
 	while (p) {
-		Ake_AstDestroy(p);
+		Ake_Ast* temp = p;
 		p = p->next;
+		Ake_AstDestroy(temp);
 	}
 }
 

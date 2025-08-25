@@ -11,7 +11,6 @@
 #include "symbol.h"
 
 Ake_Ast* Ake_parse_assignment(struct Ake_parse_state* ps);
-Ake_Ast* Ake_parse_eseq(struct Ake_parse_state* ps);
 Ake_Ast* Ake_parse_boolean(struct Ake_parse_state* ps);
 Ake_Ast* Ake_parse_comparison(struct Ake_parse_state* ps);
 Ake_Ast* Ake_parse_add(struct Ake_parse_state* ps);
@@ -34,210 +33,64 @@ Ake_Ast* Ake_parse_expr(struct Ake_parse_state* ps)
 Ake_Ast* Ake_parse_assignment(struct Ake_parse_state* ps)
 {
 	Ake_Ast* n = NULL;
-
 	Ake_Ast* a = NULL;
-    Ake_Ast* a_last;
+	Ake_Ast* b = NULL;
+	a = Ake_parse_boolean(ps);
 
-	while (true) {
-        a_last = a;
-		a = Ake_parse_eseq(ps);
+	if (!a) {
+		return NULL;
+	}
 
-        if (!Ake_check_assignment_value_count(a, a_last)) {
-            Zinc_error_list_set(ps->el, &a->loc, "assignment sequence counts do not match");
-            /* test case: test_parse_expr_assignment_eseq_error_eseq_count */
-            n->has_error = true;
-        }
+	Ake_token* t0 = Ake_get_lookahead(ps);
+	if (t0->type == Ake_token_equal) {
+		Ake_AstCreate(&n);
+		n->kind = Ake_ast_type_assign;
 
-        if (!a) {
-            if (n) {
-                Zinc_error_list_set(ps->el, &a->loc, "missing rvalue in assignment");
-                n->has_error = true;
-            }
-            break;
-        }
+		Ake_AstAdd(n, a);
 
-        /* rvalue */
-        if (a_last) {
-            if (a->kind == Ake_ast_type_eseq) {
-                Ake_Ast* p = a->head;
-                while (p) {
-                    if (!p->type) {
-                        Zinc_error_list_set(ps->el, &p->loc, "rvalue does not have a type");
-                    }
-                    p = p->next;
-                }
-            } else {
-                if (!a->type) {
-                    Zinc_error_list_set(ps->el, &a->loc, "rvalue does not have a type");
-                }
-            }
-        }
+		Ake_token *equal = NULL;
+		if (!Ake_match(ps, Ake_token_equal, "expecting assign operator", &equal, n)) {
+			/* test case: no test case needed */
+			assert(false && "not possible");
+		}
+		Ake_token_destroy(equal);
+		free(equal);
 
-		struct Ake_token* t0 = Ake_get_lookahead(ps);
-        if (t0->type != Ake_token_equal) {
-            if (n) {
-                /* last assignment */
-                Ake_AstAdd(n, a);
-            } else {
-                /* no assignment */
-                n = a;
-            }
-            break;
+		Ake_consume_newline(ps, n);
 
-        } else {
-            if (!n) {
-                /* start assign tree */
-                Ake_AstCreate(&n);
-                n->kind = Ake_ast_type_assign;
-                n->type = Ake_TypeClone(a->type);
-            }
-
-            Ake_AstAdd(n, a);
-
-            struct Ake_token *equal = NULL;
-            if (!Ake_match(ps, Ake_token_equal, "expecting assign operator", &equal, n)) {
-                /* test case: no test case needed */
-                assert(false);
-            }
-
-            if (a->kind == Ake_ast_type_eseq) {
-                Ake_Ast* p = a->head;
-                while (p) {
-                    if (!p->type) {
-                        Zinc_error_list_set(ps->el, &p->loc, "lvalue does not have a type");
-                        n->has_error = true;
-                    }
-                    p = p->next;
-                }
-            } else {
-                if (!a->type) {
-                    Zinc_error_list_set(ps->el, &a->loc, "lvalue does not have a type");
-                    n->has_error = true;
-                }
-            }
-
-            Ake_token_destroy(equal);
-            free(equal);
-
-            Ake_consume_newline(ps, n);
-        }
+		b = Ake_parse_boolean(ps);
+		if (!b) {
+			Zinc_error_list_set(ps->el, &ps->lookahead->loc, "expected expression");
+			n->has_error = true;
+		} else {
+			Ake_AstAdd(n, b);
+		}
+	} else {
+		n = a;
 	}
 
     if (n && n->kind == Ake_ast_type_assign && !n->has_error) {
-        Ake_Ast* rhs = n->tail;
-        Ake_Ast* lhs = n->head;
-        Ake_Ast* prev_lhs = NULL;
-        while (lhs && lhs != rhs) {
-            if (lhs->kind == Ake_ast_type_eseq) {
-                Ake_Ast* lhs2 = lhs->head;
-                Ake_Ast* rhs2 = rhs->head;
-                while (lhs2) {
-                    if (!Ake_check_lvalue(ps, lhs2, &n->loc)) {
-                        n->has_error = true;
-                    }
-                    Ake_Override_rhs(lhs2->type, rhs2);
-                    if (!Ake_TypeMatch(lhs2->type, rhs2->type, NULL)) {
-                        Zinc_error_list_set(ps->el, &rhs2->loc, "values in assignment not compatible");
-                    }
-                    lhs2 = lhs2->next;
-                    rhs2 = rhs2->next;
-                }
-            } else {
-                if (!Ake_check_lvalue(ps, lhs, &n->loc)) {
-                    n->has_error = true;
-                }
-
-            	bool cast = false;
-                if (!Ake_TypeMatch(lhs->type, rhs->type, &cast)) {
-                    Zinc_error_list_set(ps->el, &rhs->loc, "values in assignment not compatible");
-                    n->has_error = true;
-                }
-
-                if (prev_lhs) {
-                    if (!Ake_TypeMatch(lhs->type, prev_lhs->type, NULL)) {
-                        Zinc_error_list_set(ps->el, &lhs->loc, "lvalues do not match type in assignment");
-                        n->has_error = true;
-                    }
-                }
-            }
-            prev_lhs = lhs;
-            lhs = lhs->next;
+        if (!Ake_check_lvalue(ps, a, &n->loc)) {
+            n->has_error = true;
         }
 
-        if (prev_lhs && prev_lhs->kind != Ake_ast_type_eseq) {
-            Ake_Override_rhs(prev_lhs->type, rhs);
+    	if (!b->type) {
+    		Zinc_error_list_set(ps->el, &b->loc, "r-value does not have a type");
+    		n->has_error = true;
+    	}
+
+        bool cast = false;
+        if (!Ake_TypeMatch(a->type, b->type, &cast)) {
+            Zinc_error_list_set(ps->el, &b->loc, "values in assignment not compatible");
+            n->has_error = true;
         }
+
+    	n->type = Ake_TypeClone(a->type);
+
+        Ake_Override_rhs(a->type, b);
     }
 
 	return n;
-}
-
-/* eseq = boolean eseq' */
-/* eseq' = , boolean | e */
-/* NOLINTNEXTLINE(misc-no-recursion) */
-Ake_Ast* Ake_parse_eseq(struct Ake_parse_state* ps)
-{
-    Ake_Ast* a = NULL;
-    a = Ake_parse_boolean(ps);
-
-    if (!a) {
-        return NULL;
-    }
-
-    Ake_Ast* parent = NULL;
-    while (true) {
-        struct Ake_token* t0 = Ake_get_lookahead(ps);
-
-        if (!t0 || t0->type != Ake_token_comma) {
-            break;
-        }
-
-        if (!parent) {
-            Ake_AstCreate(&parent);
-            parent->kind = Ake_ast_type_eseq;
-            Ake_AstAdd(parent, a);
-
-            if (!parent->has_error) {
-                if (!a->type) {
-                    Zinc_error_list_set(ps->el, &a->loc, "operand of eseq has no type");
-                    parent->has_error = true;
-                }
-            }
-        }
-
-        struct Ake_token* comma = NULL;
-        if (!Ake_match(ps, Ake_token_comma, "expected a comma", &comma, parent)) {
-            /* test case: no test case needed */
-            assert(false);
-        }
-        Ake_token_destroy(comma);
-        free(comma);
-
-        Ake_Ast* b = NULL;
-        b = Ake_parse_boolean(ps);
-
-        /* parent checks */
-        if (!b) {
-            Zinc_error_list_set(ps->el, &b->loc, "expected term after comma");
-            parent->has_error = true;
-        }
-
-        if (b) {
-            if (!b->type) {
-                Zinc_error_list_set(ps->el, &b->loc, "operand of eseq has no type");
-                b->has_error = true;
-            }
-        }
-
-        if (b) {
-            Ake_AstAdd(parent, b);
-        }
-    }
-
-    if (parent == NULL) {
-        parent = a;
-    }
-    return parent;
 }
 
 /* NOLINTNEXTLINE(misc-no-recursion) */

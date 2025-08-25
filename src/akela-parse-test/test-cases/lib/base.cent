@@ -85,7 +85,6 @@ enum AstType {
   Dot
   Struct
   Return
-  Eseq
   Prototype
   Extern
   StructLiteral
