@@ -20,7 +20,7 @@ void AkeUnit(Zinc_test* test)
         Zinc_test_register(test, AkeUnit_lex);
         Zinc_test_register(test, AkeUnit_lex_number);
         Zinc_test_register(test, AkeUnit_lex_tools);
-        Zinc_test_register(test, AkeUnit_ast);
+        Zinc_test_register(test, AkeUnit_Ast);
         Zinc_test_register(test, AkeUnit_type);
         Zinc_test_register(test, AkeUnit_symbol_table);
         Zinc_test_register(test, AkeUnit_comp_unit);

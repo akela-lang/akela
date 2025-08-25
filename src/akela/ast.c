@@ -277,3 +277,38 @@ size_t Ake_AstCountChildren(Ake_Ast* n)
 
     return count;
 }
+
+void Ake_AstListInit(Ake_AstList* list)
+{
+	list->head = NULL;
+	list->tail = NULL;
+}
+
+void Ake_AstListCreate(Ake_AstList** list)
+{
+	Zinc_malloc_safe((void**)list, sizeof (Ake_AstList));
+	Ake_AstListInit(*list);
+}
+
+void Ake_AstListDestroy(Ake_AstList* list)
+{
+	Ake_Ast* p = list->head;
+	while (p) {
+		Ake_AstDestroy(p);
+		p = p->next;
+	}
+}
+
+void Ake_AstListAdd(Ake_AstList* list, Ake_Ast* n)
+{
+	Ake_AstValidate(n);
+
+	if (list->head && list->tail) {
+		list->tail->next = n;
+		n->prev = list->tail;
+		list->tail = n;
+	} else {
+		list->head = n;
+		list->tail = n;
+	}
+}

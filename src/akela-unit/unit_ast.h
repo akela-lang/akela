@@ -3,6 +3,6 @@
 
 #include "zinc/test.h"
 
-void AkeUnit_ast(Zinc_test* test);
+void AkeUnit_Ast(Zinc_test* test);
 
 #endif
