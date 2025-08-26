@@ -1,4 +1,6 @@
 # Akela
+* move type checks and symbol table updates into their own functions
+* remove sequences from symbol lookup
 * syntax tree with tagged union
   * none [x]
   * id [x]
@@ -56,7 +58,6 @@
 * print function
 * insert error context lines related to current check; used for line and col numbers
 * wrap pointers
-* move type checks into their own functions
 * run IR generation in same pass
 * order independence of global variables
 * cast numerical values
