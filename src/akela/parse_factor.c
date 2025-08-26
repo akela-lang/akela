@@ -27,6 +27,8 @@ Ake_Ast* Ake_parse_if(struct Ake_parse_state* ps);
 void Ake_parse_elseif(struct Ake_parse_state* ps, Ake_Ast* parent);
 Ake_Ast* Ake_parse_else(struct Ake_parse_state* ps);
 
+void Ake_UpdateSymbolFunction(Ake_parse_state* ps, Ake_Ast* n);
+
 /*
 * factor -> id(cseq) | number | string | id | + factor | - factor | (expr)
 *		  | ! parse_factor | array_literal | function(dseq) stmts end
@@ -116,19 +118,25 @@ Ake_Ast* Ake_parse_function(struct Ake_parse_state* ps, bool is_method, Ake_Type
         }
     }
 
-    if (!is_method) {
-        if (!n->has_error) {
+    Ake_UpdateSymbolFunction(ps, n);
+
+	return n;
+}
+
+void Ake_UpdateSymbolFunction(Ake_parse_state* ps, Ake_Ast* n)
+{
+    if (!n->has_error) {
+        if (!n->parent || (n->parent->kind != Ake_ast_type_struct)) {
+            Ake_Ast* proto = Ake_AstGet(n, 0);
             Ake_Ast* id_node = Ake_AstGet(proto, 0);
             struct Ake_Symbol* new_sym = NULL;
             Zinc_malloc_safe((void**)&new_sym, sizeof(struct Ake_Symbol));
             Ake_SymbolInit(new_sym);
             new_sym->kind = AKE_SYMBOL_VARIABLE;
-            new_sym->tu = Ake_TypeClone(type);
+            new_sym->tu = Ake_TypeClone(n->type);
             Ake_EnvironmentAdd(ps->st->top, &id_node->data.id.value, new_sym, n->loc.start);
         }
     }
-
-	return n;
 }
 
 /* NOLINTNEXTLINE(misc-no-recursion) */

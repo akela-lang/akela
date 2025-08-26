@@ -1,14 +1,5 @@
 # Akela
-* move type checks and symbol table updates into their own functions
-  * parse stmts
-    * extern [x]
-    * for [x]
-    * struct [x]
-    * let [x]
-    * impl []
-    * assignment []
-  * parse expr
-  * parse factor
+* move update symbol functions to a new file
 * remove sequences from symbol lookup
 * syntax tree with tagged union
   * none [x]
@@ -62,7 +53,15 @@
   * impl []
   * self []
   * const []
-  * var [] 
+  * var []
+* add checking of symbols to UpdateSymbol functions
+  * stmts
+    * struct []
+  * expr
+    * dot []
+  * factor
+    * literal []
+    * struct literal []
 * modules
 * print function
 * insert error context lines related to current check; used for line and col numbers
