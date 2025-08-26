@@ -2,12 +2,9 @@
 * move type checks and symbol table updates into their own functions
   * parse stmts
     * extern [x]
-    * for []
-    * for range []
-    * for iteration []
-    * struct []
-    * return []
-    * let []
+    * for [x]
+    * struct [x]
+    * let [x]
     * impl []
     * assignment []
   * parse expr
