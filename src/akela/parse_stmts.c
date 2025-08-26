@@ -28,6 +28,7 @@ Ake_Ast* Ake_parse_assignment(struct Ake_parse_state* ps);
 
 void Ake_UpdateSymbolExtern(Ake_parse_state* ps, Ake_Ast* n);
 void Ake_UpdateSymbolFor(Ake_parse_state* ps, Ake_Ast* n);
+void Ake_UpdateSymbolStruct(Ake_parse_state* ps, Ake_Ast* n);
 
 /* stmts -> stmt stmts' */
 /* stmts' -> separator stmt stmts' | e */
@@ -531,12 +532,6 @@ Ake_Ast* Ake_parse_struct(struct Ake_parse_state* ps)
             /* test case: test_parse_struct_error_duplicate */
             n->has_error = true;
 		} else {
-			Ake_Type* type = Ake_StructToType(n);
-			Ake_symbol* sym = NULL;
-			Ake_SymbolCreate(&sym);
-			sym->kind = AKE_SYMBOL_TYPE;
-			sym->td = type;
-			Ake_EnvironmentAdd(ps->st->top, &id->value, sym, n->loc.start);
 		}
 	}
 
@@ -547,7 +542,21 @@ Ake_Ast* Ake_parse_struct(struct Ake_parse_state* ps)
 	Ake_token_destroy(end);
 	free(end);
 
+	Ake_UpdateSymbolStruct(ps, n);
+
 	return n;
+}
+
+void Ake_UpdateSymbolStruct(Ake_parse_state* ps, Ake_Ast* n)
+{
+	if (!n->has_error) {
+		Ake_Type* type = Ake_StructToType(n);
+		Ake_symbol* sym = NULL;
+		Ake_SymbolCreate(&sym);
+		sym->kind = AKE_SYMBOL_TYPE;
+		sym->td = type;
+		Ake_EnvironmentAdd(ps->st->top, &n->struct_value, sym, n->loc.start);
+	}
 }
 
 /* parse_return -> return expr | return */
