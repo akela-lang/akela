@@ -109,9 +109,6 @@ Ake_Ast* Ake_parse_boolean(struct Ake_parse_state* ps)
 
 			left = n;
 		}
-
-		Ake_token_destroy(op);
-		free(op);
 	}
 
 	return n;
@@ -225,9 +222,6 @@ Ake_Ast* Ake_parse_comparison(struct Ake_parse_state* ps)
 			}
 			left = n;
 		}
-
-		Ake_token_destroy(op);
-		free(op);
 	}
 
 	return n;
@@ -340,10 +334,6 @@ Ake_Ast* Ake_parse_add(struct Ake_parse_state* ps)
 
 			left = n;
 		}
-
-		/* destroy op op{} */
-		Ake_token_destroy(op);
-		free(op);
 	}
 
 	return n;
@@ -460,10 +450,6 @@ Ake_Ast* Ake_parse_mult(struct Ake_parse_state* ps)
 
 			left = n;
 		}
-
-		Ake_token_destroy(op);
-		free(op);
-
 	}
 
 	return n;
@@ -561,9 +547,6 @@ Ake_Ast* Ake_parse_power(struct Ake_parse_state* ps)
 
 			left = n;
 		}
-
-		Ake_token_destroy(caret);
-		free(caret);
 	}
 
 	return n;
@@ -645,9 +628,6 @@ void Ake_parse_subscript(struct Ake_parse_state* ps, Ake_Ast* left, Ake_Ast* n)
         assert(false);
     }
 
-    Ake_token_destroy(lsb);
-    free(lsb);
-
     Ake_consume_newline(ps,  n);
 
     Ake_Ast* b = NULL;
@@ -661,9 +641,6 @@ void Ake_parse_subscript(struct Ake_parse_state* ps, Ake_Ast* left, Ake_Ast* n)
     if (!Ake_match(ps, Ake_token_right_square_bracket, "expected right-square-bracket", &rsb, n)) {
         n->has_error = true;
     }
-
-    Ake_token_destroy(rsb);
-    free(rsb);
 
     Ake_AstAdd(n, left);
 
@@ -745,11 +722,6 @@ void Ake_parse_call(struct Ake_parse_state* ps, Ake_Ast* left, Ake_Ast* n) {
         }
 
     }
-
-    Ake_token_destroy(lp);
-    free(lp);
-    Ake_token_destroy(rp);
-    free(rp);
 }
 
 /* cseq -> expr cseq' | e */
@@ -794,9 +766,6 @@ Ake_Ast* Ake_parse_cseq(Ake_parse_state* ps, Ake_Ast* left)
             /* test case: no test case needed */
 			n->has_error = true;
         }
-
-        Ake_token_destroy(comma);
-        free(comma);
 
         Ake_consume_newline(ps, n);
 
@@ -913,11 +882,6 @@ Ake_Ast* Ake_parse_dot(struct Ake_parse_state* ps)
             }
 
             left = n;
-#pragma warning(suppress:6001)
-            Ake_token_destroy(dot);
-            free(dot);
-            Ake_token_destroy(id);
-            free(id);
         }
     }
 

@@ -138,8 +138,6 @@ Ake_Ast* Ake_parse_extern(struct Ake_parse_state* ps)
         /* test case: no test case needed */
         assert(false);
     }
-    Ake_token_destroy(ext);
-    free(ext);
 
     Ake_Ast* proto = NULL;
     bool has_id;
@@ -227,11 +225,6 @@ Ake_Ast* Ake_parse_while(struct Ake_parse_state* ps)
         /* test case: test_parse_while_error_expected_end */
     }
 
-	Ake_token_destroy(whl);
-	free(whl);
-	Ake_token_destroy(end);
-	free(end);
-
 	return n;
 }
 
@@ -299,11 +292,6 @@ Ake_Ast* Ake_parse_for(struct Ake_parse_state* ps)
         Ake_AstAdd(n, c);
     }
 
-	Ake_token_destroy(f);
-	free(f);
-	Ake_token_destroy(end);
-	free(end);
-
     Ake_end_environment(ps->st);
 
 	return n;
@@ -370,11 +358,6 @@ void Ake_parse_for_range(struct Ake_parse_state* ps, Ake_Ast* parent)
     if (b) {
         Ake_AstAdd(parent, b);
 	}
-
-	Ake_token_destroy(equal);
-	free(equal);
-	Ake_token_destroy(colon);
-	free(colon);
 
 	if (!parent->has_error) {
 		assert(a);
@@ -466,9 +449,6 @@ void Ake_parse_for_iteration(struct Ake_parse_state* ps, Ake_Ast* parent)
 			free(element_type2);
 		}
 	}
-
-	Ake_token_destroy(in);
-	free(in);
 }
 
 /* parse_struct -> struct id struct_stmts end */
@@ -536,13 +516,6 @@ Ake_Ast* Ake_parse_struct(struct Ake_parse_state* ps)
 		}
 	}
 
-	Ake_token_destroy(st);
-	free(st);
-	Ake_token_destroy(id);
-	free(id);
-	Ake_token_destroy(end);
-	free(end);
-
 	Ake_UpdateSymbolStruct(ps, n);
 
 	return n;
@@ -604,9 +577,6 @@ Ake_Ast* Ake_parse_return(struct Ake_parse_state* ps)
 		}
 	}
 
-    Ake_token_destroy(ret);
-    free(ret);
-
 	return n;
 }
 
@@ -622,16 +592,12 @@ Ake_Ast* Ake_parse_let(struct Ake_parse_state* ps)
 		if (!Ake_match(ps, Ake_token_const, "expected const", &t, n)) {
 			assert(false && "expected const");
 		}
-		Ake_token_destroy(t);
-		free(t);
 		n->kind = Ake_ast_type_const;
 	} else if (ps->lookahead->type == Ake_token_var) {
 		Ake_token* t = NULL;
 		if (!Ake_match(ps, Ake_token_var, "expected var", &t, n)) {
 			assert(false && "expected var");;
 		}
-		Ake_token_destroy(t);
-		free(t);
 		n->kind = Ake_ast_type_var;
 	} else {
 		assert(false && "expected const or var");
@@ -647,8 +613,6 @@ Ake_Ast* Ake_parse_let(struct Ake_parse_state* ps)
 	Ake_AstSet(id_node, AKE_AST_ID);
 	if (id) {
 		Zinc_string_add_string(&id_node->data.id.value, &id->value);
-		Ake_token_destroy(id);
-		free(id);
 	}
     Ake_AstAdd(n, id_node);
 
@@ -658,8 +622,6 @@ Ake_Ast* Ake_parse_let(struct Ake_parse_state* ps)
     if (!Ake_match(ps, Ake_token_colon, "expected colon after variable(s)", &dc, n)) {
         n->has_error = true;
     }
-    Ake_token_destroy(dc);
-    free(dc);
 
     Ake_consume_newline(ps, n);
 
@@ -688,8 +650,6 @@ Ake_Ast* Ake_parse_let(struct Ake_parse_state* ps)
             /* test case: no test case needed */
             assert(false);
         }
-        Ake_token_destroy(equal);
-        free(equal);
 
         Ake_consume_newline(ps, n);
 
@@ -747,8 +707,6 @@ Ake_Ast* Ake_parse_impl(struct Ake_parse_state* ps)
         /* test case: no test case needed */
         assert(false);
     }
-    Ake_token_destroy(imp);
-    free(imp);
 
     struct Ake_token* id = NULL;
     if (!Ake_match(ps, Ake_token_id, "expected identifier", &id, n)) {
@@ -768,9 +726,6 @@ Ake_Ast* Ake_parse_impl(struct Ake_parse_state* ps)
         }
     }
 
-    Ake_token_destroy(id);
-    free(id);
-
     while (true) {
         struct Ake_token* t = Ake_get_lookahead(ps);
         if (t->type == Ake_token_fn) {
@@ -783,8 +738,6 @@ Ake_Ast* Ake_parse_impl(struct Ake_parse_state* ps)
                 if (!Ake_match(ps, Ake_token_end, "expected end", &end, n)) {
                     assert(false);
                 }
-                Ake_token_destroy(end);
-                free(end);
                 break;
             } else {
                 bool has_sep;
@@ -799,8 +752,6 @@ Ake_Ast* Ake_parse_impl(struct Ake_parse_state* ps)
             if (!Ake_match(ps, Ake_token_end, "expected end", &end, n)) {
                 assert(false);
             }
-            Ake_token_destroy(end);
-            free(end);
             break;
         } else {
             Zinc_error_list_set(ps->el, &t->loc, "expected fn or end");
@@ -838,8 +789,6 @@ Ake_Ast* Ake_parse_assignment(struct Ake_parse_state* ps)
 			/* test case: no test case needed */
 			assert(false && "not possible");
 		}
-		Ake_token_destroy(equal);
-		free(equal);
 
 		Ake_consume_newline(ps, n);
 

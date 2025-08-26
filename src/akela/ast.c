@@ -28,6 +28,7 @@ void Ake_AstInit(Ake_Ast* n)
 	n->parent = NULL;
 	n->has_error = false;
 	n->is_set = false;
+	Ake_token_list_init(&n->token_list);
 }
 
 void Ake_AstSet(Ake_Ast* n, Ake_AstKind kind)
@@ -109,6 +110,8 @@ void Ake_AstDestroy(Ake_Ast* n)
 
     	Ake_EnvironmentDestroy(n->env);
     	free(n->env);
+
+    	Ake_token_list_destroy(&n->token_list);
 
         free(n);
     }

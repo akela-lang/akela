@@ -148,6 +148,7 @@ typedef struct Ake_Ast {
 	Ake_Ast* parent;
 	bool has_error;
 	bool is_set;
+	Ake_token_list token_list;
 } Ake_Ast;
 
 typedef struct Ake_AstList Ake_AstList;

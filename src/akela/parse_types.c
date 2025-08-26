@@ -55,8 +55,6 @@ Ake_Ast* Ake_parse_prototype(
         Ake_AstSet(id_node, AKE_AST_ID);
         Zinc_string_copy(&id->value, &id_node->data.id.value);
         Ake_AstAdd(n, id_node);
-        Ake_token_destroy(id);
-        free(id);
         Ake_consume_newline(ps, n);
         *has_id = true;
     } else {
@@ -78,8 +76,6 @@ Ake_Ast* Ake_parse_prototype(
         /* test case: no test case needed */
         n->has_error = true;
     }
-    Ake_token_destroy(lp);
-    free(lp);
 
     Ake_consume_newline(ps, n);
 
@@ -98,8 +94,6 @@ Ake_Ast* Ake_parse_prototype(
         /* test case: test_parse_anonymous_function_expected_right_paren */
         n->has_error = true;
     }
-    Ake_token_destroy(rp);
-    free(rp);
 
     /* 2 ret */
     t0 = Ake_get_lookahead(ps);
@@ -110,8 +104,6 @@ Ake_Ast* Ake_parse_prototype(
             /* test case: no test case needed */
             n->has_error = true;
         }
-        Ake_token_destroy(dc);
-        free(dc);
 
         Ake_consume_newline(ps, n);
 
@@ -195,9 +187,6 @@ Ake_Ast* Ake_parse_dseq(
             /* test case: no test case needed */
         }
 
-		Ake_token_destroy(comma);
-		free(comma);
-
         Ake_consume_newline(ps, n);
 
         struct Ake_token* t = Ake_get_lookahead(ps);
@@ -206,8 +195,6 @@ Ake_Ast* Ake_parse_dseq(
             if (!Ake_match(ps, Ake_token_ellipsis, "expected ellipsis", &eps, n)) {
                 assert(false);
             }
-            Ake_token_destroy(eps);
-            free(eps);
             if (is_extern) {
                 Ake_Ast* ellipsis = NULL;
                 Ake_AstCreate(&ellipsis);
@@ -323,8 +310,6 @@ Ake_Ast* Ake_parse_declaration(
                 /* test case: no test case needed */
             }
             Zinc_string_copy(&id->value, &id_node->data.id.value);
-            Ake_token_destroy(id);
-            free(id);
 
             Ake_consume_newline(ps, n);
 
@@ -333,8 +318,6 @@ Ake_Ast* Ake_parse_declaration(
                 /* test case: test_parse_error_declaration_double_colon */
                 n->has_error = true;
             }
-            Ake_token_destroy(dc);
-            free(dc);
 
             Ake_consume_newline(ps, n);
 
@@ -413,9 +396,6 @@ Ake_Type* Ake_parse_type_array(Ake_parse_state* ps, Ake_Ast* n)
         assert(false);
     }
 
-    Ake_token_destroy(lsb);
-    free(lsb);
-
     bool has_number = false;
     bool has_const = false;
     size_t dim_size_number = 0;
@@ -430,8 +410,6 @@ Ake_Type* Ake_parse_type_array(Ake_parse_state* ps, Ake_Ast* n)
         has_number = true;
         Zinc_string_finish(&dim_size->value);
         dim_size_number = (size_t) strtol(dim_size->value.buf, NULL, 10);
-        Ake_token_destroy(dim_size);
-        free(dim_size);
     }
 
     t0 = Ake_get_lookahead(ps);
@@ -442,16 +420,12 @@ Ake_Type* Ake_parse_type_array(Ake_parse_state* ps, Ake_Ast* n)
             assert(false);
         }
         has_const = true;
-        Ake_token_destroy(const_token);
-        free(const_token);
     }
 
     Ake_token* rsb = NULL;
     if (!Ake_match(ps, Ake_token_right_square_bracket, "expected right square bracket", &rsb, n)) {
         n->has_error = true;
     }
-    Ake_token_destroy(rsb);
-    free(rsb);
 
     if (has_number) {
         Ake_TypeSet(type, AKE_TYPE_ARRAY);
@@ -488,8 +462,6 @@ Ake_Type* Ake_parse_type_pointer(Ake_parse_state* ps, Ake_Ast* n)
     if (!Ake_match(ps, Ake_token_mult, "expected asterisk", &ast, n)) {
         assert(false && "not possible");
     }
-    Ake_token_destroy(ast);
-    free(ast);
     Ake_Type* type2 = Ake_parse_type_dispatch(ps, n);
     if (type2) {
         type->data.pointer.type = type2;
@@ -511,9 +483,6 @@ Ake_Type* Ake_parse_type_function(Ake_parse_state* ps, Ake_Ast* n)
     if (!Ake_match(ps, Ake_token_fn, "expected fn", &fn, n)) {
         assert(false);
     }
-
-    Ake_token_destroy(fn);
-    free(fn);
 
     bool has_id;
     Ake_Ast* proto = Ake_parse_prototype(ps, false, false, false, false, &has_id);
@@ -564,9 +533,6 @@ Ake_Type* Ake_parse_type_id(Ake_parse_state* ps, Ake_Ast* n)
             }
         }
     }
-
-    Ake_token_destroy(id);
-    free(id);
 
     return type;
 }

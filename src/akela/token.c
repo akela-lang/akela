@@ -15,19 +15,17 @@ void Ake_token_init(struct Ake_token* t)
     t->prev = NULL;
 }
 
+void Ake_token_create(Ake_token** t)
+{
+    Zinc_malloc_safe((void**)t, sizeof(Ake_token));
+    Ake_token_init(*t);
+}
+
 void Ake_token_destroy(struct Ake_token* t)
 {
-    /* destroy t{value{}} */
     if (t) {
         Zinc_string_destroy(&t->value);
     }
-}
-
-void Ake_token_reset(struct Ake_token* t)
-{
-    t->type = Ake_token_none;
-    /* destroy t{value{}} */
-    Zinc_string_reset(&t->value);
 }
 
 void Ake_token_list_init(struct Ake_token_list* tl)

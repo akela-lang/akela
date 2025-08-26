@@ -78,6 +78,9 @@ bool Ake_match(
 	if ((*t)->type == type) {
 		ps->lookahead = NULL;
         Zinc_location_combine(&n->loc, &(*t)->loc);
+	    if ((*t)->type != Ake_token_eof) {
+	        Ake_token_list_add(&n->token_list, *t);
+	    }
 		return valid;
 	}
 
@@ -97,8 +100,6 @@ bool Ake_consume_newline(struct Ake_parse_state* ps, Ake_Ast* n)
         if (t0 && t0->type == Ake_token_newline) {
             struct Ake_token* t = NULL;
             valid = Ake_match(ps, Ake_token_newline, "expected newline", &t, n) && valid;
-            Ake_token_destroy(t);
-            free(t);
         } else {
             break;
         }
@@ -147,9 +148,6 @@ void Ake_parse_separator(struct Ake_parse_state* ps, Ake_Ast* n, bool* has_separ
         assert(false);
         /* test case: no test case necessary */
     }
-
-    Ake_token_destroy(sep);
-    free(sep);
 }
 
 size_t Ake_get_current_seq(Ake_parse_state* ps)

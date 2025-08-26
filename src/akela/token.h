@@ -144,7 +144,7 @@ typedef struct Ake_token_list {
 } Ake_token_list;
 
 AKELA_API void Ake_token_init(struct Ake_token* t);
-AKELA_API void Ake_token_reset(struct Ake_token* t);
+AKELA_API void Ake_token_create(Ake_token** t);
 AKELA_API void Ake_token_list_init(struct Ake_token_list* tl);
 AKELA_API void Ake_token_list_destroy(struct Ake_token_list* tl);
 AKELA_API void Ake_token_destroy(struct Ake_token* t);

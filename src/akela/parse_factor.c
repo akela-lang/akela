@@ -79,8 +79,6 @@ Ake_Ast* Ake_parse_function(struct Ake_parse_state* ps, bool is_method, Ake_Type
     Ake_token* f = NULL;
     Ake_match(ps, Ake_token_fn, "expected fn", &f, n);
     Ake_consume_newline(ps, n);
-    Ake_token_destroy(f);
-    free(f);
 
     /* 0 prototype */
     Ake_Ast* proto = NULL;
@@ -109,9 +107,6 @@ Ake_Ast* Ake_parse_function(struct Ake_parse_state* ps, bool is_method, Ake_Type
         /* test case: test_parse_anonymous_function_expected_end */
         n->has_error = true;
     }
-
-	Ake_token_destroy(end);
-	free(end);
 
     if (!n->has_error) {
         /* check return type */
@@ -148,9 +143,6 @@ Ake_Ast* Ake_parse_if(struct Ake_parse_state* ps)
         /* test case: no test case necessary */
         n->has_error = true;
     }
-
-    Ake_token_destroy(ift);
-    free(ift);
 
     Ake_Ast* cb = NULL;
     Ake_AstCreate(&cb);
@@ -198,9 +190,6 @@ Ake_Ast* Ake_parse_if(struct Ake_parse_state* ps)
         n->has_error = true;
     }
 
-    Ake_token_destroy(end);
-    free(end);
-
     if (!n->has_error) {
         if (b) {
             /* only return a value if else exists */
@@ -241,9 +230,6 @@ void Ake_parse_elseif(struct Ake_parse_state* ps, Ake_Ast* parent)
             /* test case: no test case needed */
             assert(false);
         }
-
-        Ake_token_destroy(eit);
-        free(eit);
 
         Ake_Ast *cb = NULL;
         Ake_AstCreate(&cb);
@@ -289,9 +275,6 @@ Ake_Ast* Ake_parse_else(struct Ake_parse_state* ps)
             /* test case: no test case needed */
             assert(false);
         }
-
-        Ake_token_destroy(et);
-        free(et);
 
         /* stmts */
         Ake_Ast* body = NULL;
@@ -352,9 +335,6 @@ Ake_Ast* Ake_parse_not(struct Ake_parse_state* ps)
 			}
 		}
 	}
-
-	Ake_token_destroy(not);
-	free(not);
 
 	return n;
 }
@@ -431,9 +411,6 @@ Ake_Ast* Ake_parse_literal(struct Ake_parse_state* ps)
         }
 	}
 
-	Ake_token_destroy(x);
-	free(x);
-
 	return n;
 }
 
@@ -469,11 +446,7 @@ Ake_Ast* Ake_parse_id(Ake_parse_state* ps)
         if (!Ake_match(ps, Ake_token_end, "expected end", &end, n)) {
             n->has_error = true;
         }
-        Ake_token_destroy(end);
-        free(end);
 
-        Ake_token_destroy(id);
-        free(id);
         return n;
 
     } else {
@@ -498,8 +471,6 @@ Ake_Ast* Ake_parse_id(Ake_parse_state* ps)
             n->type = Ake_TypeClone(sym->tu);
         }
 
-        Ake_token_destroy(id);
-        free(id);
         return n;
     }
 
@@ -579,16 +550,11 @@ void Ake_parse_struct_literal_elements(
         Zinc_string_copy(&name->value, &id->data.id.value);
         Ake_AstAdd(field, id);
 
-        Ake_token_destroy(name);
-        free(name);
-
         struct Ake_token* colon = NULL;
         if (!Ake_match(ps, Ake_token_colon, "expected a colon", &colon, parent)) {
             parent->has_error = true;
             break;
         }
-        Ake_token_destroy(colon);
-        free(colon);
 
         struct Ake_Ast* expr = Ake_parse_expr(ps);
         if (expr) {
@@ -684,9 +650,6 @@ Ake_Ast* Ake_parse_sign(struct Ake_parse_state* ps)
 		}
 	}
 
-	Ake_token_destroy(sign);
-    free(sign);
-
 	return n;
 }
 
@@ -704,9 +667,6 @@ Ake_Ast* Ake_parse_array_literal(struct Ake_parse_state* ps)
         n->has_error = true;
         /* test case: no test case needed */
     }
-
-    Ake_token_destroy(lsb);
-    free(lsb);
 
     Ake_consume_newline(ps, n);
 
@@ -754,9 +714,6 @@ Ake_Ast* Ake_parse_array_literal(struct Ake_parse_state* ps)
         }
     }
 
-    Ake_token_destroy(rsb);
-    free(rsb);
-
 	return n;
 }
 
@@ -781,9 +738,6 @@ void Ake_parse_aseq(struct Ake_parse_state* ps, Ake_Ast* parent)
                 /* test case: no test case needed */
                 parent->has_error = true;
             }
-
-			Ake_token_destroy(comma);
-			free(comma);
 
             Ake_consume_newline(ps, parent);
 
@@ -847,12 +801,6 @@ Ake_Ast* Ake_parse_parenthesis(struct Ake_parse_state* ps)
 			n->type = Ake_TypeClone(type);
 		}
 	}
-
-	Ake_token_destroy(lp);
-	free(lp);
-
-	Ake_token_destroy(rp);
-	free(rp);
 
 	return n;
 }
