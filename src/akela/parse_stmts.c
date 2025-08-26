@@ -27,6 +27,7 @@ Ake_Ast* Ake_parse_impl(struct Ake_parse_state* ps);
 Ake_Ast* Ake_parse_assignment(struct Ake_parse_state* ps);
 
 void Ake_UpdateSymbolExtern(Ake_parse_state* ps, Ake_Ast* n);
+void Ake_UpdateSymbolFor(Ake_parse_state* ps, Ake_Ast* n);
 
 /* stmts -> stmt stmts' */
 /* stmts' -> separator stmt stmts' | e */
@@ -249,11 +250,16 @@ Ake_Ast* Ake_parse_for(struct Ake_parse_state* ps)
     Ake_consume_newline(ps, n);
 
 	Ake_Ast* dec = NULL;
-    dec = Ake_parse_declaration(ps, true, false, true, true);
+    dec = Ake_parse_declaration(ps, false, false, true, true);
 
     if (dec) {
-        Ake_AstAdd(n, dec);
+    	Ake_AstAdd(n, dec);
+    } else {
+	    Zinc_error_list_set(ps->el, &n->loc, "expected declaration");
+    	n->has_error = true;
     }
+
+	Ake_UpdateSymbolFor(ps, n);
 
     Ake_consume_newline(ps, n);
 
@@ -299,6 +305,18 @@ Ake_Ast* Ake_parse_for(struct Ake_parse_state* ps)
     Ake_end_environment(ps->st);
 
 	return n;
+}
+
+void Ake_UpdateSymbolFor(Ake_parse_state* ps, Ake_Ast* n)
+{
+	if (!n->has_error) {
+		Ake_Ast* dec = Ake_AstGet(n, 0);
+		if (!dec->has_error) {
+			Ake_Ast* id_node = Ake_AstGet(dec, 0);
+			Ake_Ast* type_node = Ake_AstGet(dec, 1);
+			Ake_declare_type(ps, type_node, id_node, true);
+		}
+	}
 }
 
 /* for_range -> for id = expr:expr stmts end */
