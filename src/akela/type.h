@@ -61,7 +61,6 @@ struct Ake_Type {
 
 typedef enum Ake_TypeParamKind {
     AKE_TYPE_PARAM_REGULAR,
-    AKE_TYPE_PARAM_SELF,
     AKE_TYPE_PARAM_ELLIPSIS,
 } Ake_TypeParamKind;
 

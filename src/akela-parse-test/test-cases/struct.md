@@ -490,7 +490,7 @@ struct Line
     p1: Point
 end
 impl Line
-    fn length(self)->Real64
+    fn length(self: Line)->Real64
         sqrt(pow(self.p1.x - self.p0.x, 2) + pow(self.p1.y - self.p0.y, 2))
     end
 end
@@ -561,7 +561,7 @@ const type3 = Type::Struct {
 const type4 = Type::Function {
   .name = "length"
   .input = Input {
-    TypeParam::Self {
+    TypeParam::Regular {
       .name = "self"
       .type = Type::Struct {
         .name = "Line"
@@ -758,7 +758,7 @@ Ast::Stmts {
           .value = "length"
         }
         Ast::Dseq {
-          Ast::Self {
+          Ast::Declaration {
             Ast::Id {
               .value = "self"
             }

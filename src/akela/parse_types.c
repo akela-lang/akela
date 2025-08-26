@@ -148,14 +148,6 @@ void Ake_declare_params(Ake_parse_state* ps, Ake_Ast* proto, Ake_Type* struct_ty
     while (dec) {
         Ake_Ast* id_node = Ake_AstGet(dec, 0);
         Ake_Ast* type_node = Ake_AstGet(dec, 1);
-        if (dec->kind == Ake_ast_type_self) {
-            if (struct_type) {
-                type_node->type = Ake_TypeClone(struct_type);
-            } else {
-                dec = dec->next;
-                continue;
-            }
-        }
         if (!dec->has_error && !type_node->has_error) {
             Ake_declare_type(ps, type_node, id_node, true);
         }
@@ -296,34 +288,11 @@ Ake_Ast* Ake_parse_declaration(
 
 	struct Ake_token* t0 = Ake_get_lookahead(ps);
     bool type_only = !require_param_name && Ake_token_is_type(ps, t0);
-    bool is_self = is_method && t0->type == Ake_token_self;
-    if (t0->type == Ake_token_id || type_only || is_self) {
+    if (t0->type == Ake_token_id || type_only) {
         Ake_AstCreate(&n);
         n->kind = Ake_ast_type_declaration;
 
-        if (is_self) {
-            n->kind = Ake_ast_type_self;
-            struct Ake_token *self = NULL;
-            if (!Ake_match(ps, Ake_token_self, "expected self", &self, n)) {
-                /* test case: no test case needed */
-                assert(false);
-            }
-
-            Ake_Ast* id_node = NULL;
-            Ake_AstCreate(&id_node);
-            Ake_AstSet(id_node, AKE_AST_ID);
-            Zinc_string_add_str(&id_node->data.id.value, "self");
-            Ake_AstAdd(n, id_node);
-
-            Ake_Ast* type_node = NULL;
-            Ake_AstCreate(&type_node);
-            type_node->kind = Ake_ast_type_type;
-            Ake_AstAdd(n, type_node);
-
-            Ake_token_destroy(self);
-            free(self);
-
-        } else if (type_only) {
+        if (type_only) {
             Ake_Ast* id_node = NULL;
             Ake_AstCreate(&id_node);
             Ake_AstSet(id_node, AKE_AST_ID);
@@ -661,10 +630,7 @@ Ake_Type* Ake_Type_use_add_proto(
             Ake_TypeParamCreate(&tp);
             Zinc_string_add_string(&tp->name, &id_node->data.id.value);
 
-            if (dec->kind == Ake_ast_type_self) {
-                tp->kind = AKE_TYPE_PARAM_SELF;
-                tp->type = Ake_TypeClone(struct_type);
-            } else if (dec->kind == Ake_ast_type_ellipsis) {
+            if (dec->kind == Ake_ast_type_ellipsis) {
                 tp->kind = AKE_TYPE_PARAM_ELLIPSIS;
             } else {
                 tp->type = Ake_TypeClone(type_node->type);

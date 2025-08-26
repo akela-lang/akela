@@ -91,7 +91,6 @@ enum AstType {
   StructLiteralField
   Ellipsis
   Impl
-  Self
   Const
   Var
 }
@@ -207,6 +206,5 @@ element TypeParam(TypeParamKind) {
 
 enum TypeParamKind {
     Regular
-    Self
     Ellipsis
 }

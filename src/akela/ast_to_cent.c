@@ -298,10 +298,6 @@ char* Ake_ast_cent_name(Ake_AstKind type)
         return "Ast::Impl";
     }
 
-    if (type == Ake_ast_type_self) {
-        return "Ast::Self";
-    }
-
     if (type == Ake_ast_type_const) {
         return "Ast::Const";
     }
@@ -468,10 +464,6 @@ char* Ake_type_param_cent_name(Ake_TypeParamKind kind)
 {
     if (kind == AKE_TYPE_PARAM_REGULAR) {
         return "TypeParam::Regular";
-    }
-
-    if (kind == AKE_TYPE_PARAM_SELF) {
-        return "TypeParam::Self";
     }
 
     if (kind == AKE_TYPE_PARAM_ELLIPSIS) {

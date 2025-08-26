@@ -52,7 +52,7 @@ Ake_Ast* Ake_parse_factor(struct Ake_parse_state* ps)
 	} else if (t0->type == Ake_token_number || t0->type == Ake_token_string || t0->type == Ake_token_boolean) {
 		n = Ake_parse_literal(ps);
 
-	} else if (t0->type == Ake_token_id || t0->type == Ake_token_self) {
+	} else if (t0->type == Ake_token_id) {
 		n = Ake_parse_id(ps);
 
 	} else if (t0->type == Ake_token_plus || t0->type == Ake_token_minus) {
@@ -448,11 +448,6 @@ Ake_Ast* Ake_parse_id(Ake_parse_state* ps)
 
     if (t->type == Ake_token_id) {
         if (!Ake_match(ps, Ake_token_id, "expecting identifier", &id, n)) {
-            /* test case: no test case needed */
-            assert(false);
-        }
-    } else if (t->type == Ake_token_self) {
-        if (!Ake_match(ps, Ake_token_self, "expecting self", &id, n)) {
             /* test case: no test case needed */
             assert(false);
         }

@@ -26,6 +26,8 @@ Ake_Ast* Ake_parse_extern(struct Ake_parse_state* ps);
 Ake_Ast* Ake_parse_impl(struct Ake_parse_state* ps);
 Ake_Ast* Ake_parse_assignment(struct Ake_parse_state* ps);
 
+void Ake_UpdateSymbolExtern(Ake_parse_state* ps, Ake_Ast* n);
+
 /* stmts -> stmt stmts' */
 /* stmts' -> separator stmt stmts' | e */
 /* NOLINTNEXTLINE(misc-no-recursion) */
@@ -156,14 +158,6 @@ Ake_Ast* Ake_parse_extern(struct Ake_parse_state* ps)
             n->has_error = true;
         }
 
-        Ake_Ast *id_node = Ake_AstGet(proto, 0);
-        struct Ake_Symbol *new_sym = NULL;
-        Zinc_malloc_safe((void **) &new_sym, sizeof(struct Ake_Symbol));
-        Ake_SymbolInit(new_sym);
-        new_sym->kind = AKE_SYMBOL_VARIABLE;
-        Ake_Type* type = Ake_TypeClone(n->type);
-        new_sym->tu = type;
-        Ake_EnvironmentAdd(ps->st->top, &id_node->data.id.value, new_sym, n->loc.start);
     }
 
     if (!n->has_error) {
@@ -171,7 +165,26 @@ Ake_Ast* Ake_parse_extern(struct Ake_parse_state* ps)
         Zinc_string_list_add_bf(ps->extern_list, &id_node->data.id.value);
     }
 
+	Ake_UpdateSymbolExtern(ps, n);
+
     return n;
+}
+
+void Ake_UpdateSymbolExtern(Ake_parse_state* ps, Ake_Ast* n)
+{
+	if (!n->has_error) {
+		Ake_Ast* proto = Ake_AstGet(n, 0);
+		if (proto) {
+			Ake_Ast *id_node = Ake_AstGet(proto, 0);
+			struct Ake_Symbol *new_sym = NULL;
+			Zinc_malloc_safe((void **) &new_sym, sizeof(struct Ake_Symbol));
+			Ake_SymbolInit(new_sym);
+			new_sym->kind = AKE_SYMBOL_VARIABLE;
+			Ake_Type* type = Ake_TypeClone(n->type);
+			new_sym->tu = type;
+			Ake_EnvironmentAdd(ps->st->top, &id_node->data.id.value, new_sym, n->loc.start);
+		}
+	}
 }
 
 /* NOLINTNEXTLINE(misc-no-recursion) */

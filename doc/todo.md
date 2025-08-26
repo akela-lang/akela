@@ -1,5 +1,17 @@
 # Akela
 * move type checks and symbol table updates into their own functions
+  * parse stmts
+    * extern [x]
+    * for []
+    * for range []
+    * for iteration []
+    * struct []
+    * return []
+    * let []
+    * impl []
+    * assignment []
+  * parse expr
+  * parse factor
 * remove sequences from symbol lookup
 * syntax tree with tagged union
   * none [x]
