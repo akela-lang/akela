@@ -1,5 +1,4 @@
 # Akela
-* move update symbol functions to a new file
 * remove sequences from symbol lookup
 * syntax tree with tagged union
   * none [x]

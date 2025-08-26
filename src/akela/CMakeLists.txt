@@ -21,6 +21,7 @@ set(lib_files
         type.c
         type_slots.c
         type_list.c
+        update_symbol.c
 )
 
 add_library(akela STATIC ${lib_files})
