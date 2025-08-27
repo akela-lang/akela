@@ -18,7 +18,7 @@ namespace Akela_llvm {
         jd->Builder->SetInsertPoint(last_block);
 
         Ake_Environment* env = Ake_get_current_env(n);
-        Ake_symbol* sym = Ake_EnvironmentGet(env, &id->data.id.value, n->loc.end);
+        Ake_symbol* sym = Ake_EnvironmentGet(env, &id->data.id.value);
         sym->value = f;
 
         return f;
@@ -54,7 +54,7 @@ namespace Akela_llvm {
             jd->Builder->CreateStore(dec_value, lhs);
 
             Ake_Environment* env = Ake_get_current_env(n);
-            Ake_symbol* sym = Ake_EnvironmentGet(env, &dec_id->data.id.value, dec->loc.end);
+            Ake_symbol* sym = Ake_EnvironmentGet(env, &dec_id->data.id.value);
             sym->reference = lhs;
 
             dec = dec->next;
@@ -75,7 +75,7 @@ namespace Akela_llvm {
         jd->Builder->SetInsertPoint(last_block);
 
         Ake_Environment* env = Ake_get_current_env(n);
-        Ake_symbol* sym = Ake_EnvironmentGet(env, &id->data.id.value, n->loc.start);
+        Ake_symbol* sym = Ake_EnvironmentGet(env, &id->data.id.value);
         sym->value = f;
 
         return f;

@@ -472,8 +472,7 @@ Ake_Ast* Ake_parse_struct(struct Ake_parse_state* ps)
     }
 
 	if (!n->has_error) {
-		size_t seq = Ake_get_current_seq(ps);
-		Ake_symbol* search = Ake_EnvironmentGetLocal(ps->st->top, &id->value, seq);
+		Ake_symbol* search = Ake_EnvironmentGetLocal(ps->st->top, &id->value);
 		if (search) {
 			Zinc_string_finish(&id->value);
 			Zinc_error_list_set(ps->el, &id->loc, "duplicate variable in scope: %s", id->value.buf);
@@ -663,8 +662,7 @@ Ake_Ast* Ake_parse_impl(struct Ake_parse_state* ps)
 
     Ake_Type* struct_type = NULL;
     if (id) {
-    	size_t seq = Ake_get_current_seq(ps);
-        Ake_symbol* sym = Ake_EnvironmentGet(ps->st->top, &id->value, seq);
+        Ake_symbol* sym = Ake_EnvironmentGet(ps->st->top, &id->value);
         if (sym->kind == AKE_SYMBOL_TYPE) {
             if (sym->td->kind == AKE_TYPE_STRUCT) {
                 struct_type = sym->td;

@@ -246,7 +246,7 @@ bool Ake_token_is_type(struct Ake_parse_state* ps, struct Ake_token* t)
     if (t->type == Ake_token_id) {
         Ake_get_lookahead(ps);
         size_t seq = ps->lookahead->loc.start;
-        Ake_symbol* sym = Ake_EnvironmentGet(ps->st->top, &t->value, seq);
+        Ake_symbol* sym = Ake_EnvironmentGet(ps->st->top, &t->value);
         if (sym && sym->td) {
             return true;
         }
@@ -511,7 +511,7 @@ Ake_Type* Ake_parse_type_id(Ake_parse_state* ps, Ake_Ast* n)
     if (!n->has_error) {
         Ake_get_lookahead(ps);
         size_t seq = ps->lookahead->loc.start;
-        sym = Ake_EnvironmentGet(ps->st->top, &id->value, seq);
+        sym = Ake_EnvironmentGet(ps->st->top, &id->value);
         if (!sym) {
             char* a;
             Zinc_string_create_str(&id->value, &a);
@@ -543,7 +543,7 @@ void Ake_create_variable_symbol(Ake_parse_state* ps, Zinc_string* name, Ake_Type
     new_sym->kind = AKE_SYMBOL_VARIABLE;
     new_sym->tu = Ake_TypeClone(type);
     new_sym->is_const = is_const;
-    Ake_EnvironmentAdd(ps->st->top, name, new_sym, seq);
+    Ake_EnvironmentAdd(ps->st->top, name, new_sym);
 }
 
 void Ake_declare_type(Ake_parse_state* ps, Ake_Ast* type_node, Ake_Ast* id_node, bool is_const)
@@ -749,7 +749,7 @@ bool Ake_check_lvalue(Ake_parse_state* ps, Ake_Ast* n, Zinc_location* loc)
             }
             Ake_get_lookahead(ps);
             size_t seq = ps->lookahead->loc.start;
-            sym = Ake_EnvironmentGet(ps->st->top, &p->data.id.value, seq);
+            sym = Ake_EnvironmentGet(ps->st->top, &p->data.id.value);
             if (sym->is_const) {
                 Zinc_error_list_set(ps->el, loc, "immutable variable changed in assignment");
                 n->has_error = true;

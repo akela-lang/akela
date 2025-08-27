@@ -48,7 +48,7 @@ namespace Akela_llvm {
     {
         StructType* struct_type = GetStructTypeFromNode(jd, n);
         Ake_Environment* env = Ake_get_current_env(n);
-        Ake_symbol* sym = Ake_EnvironmentGet(env, &n->struct_value, n->loc.start);
+        Ake_symbol* sym = Ake_EnvironmentGet(env, &n->struct_value);
         return nullptr;
     }
 
@@ -126,7 +126,7 @@ namespace Akela_llvm {
             Ake_Environment* env = Ake_get_current_env(n->parent);
             Ake_Ast* lhs =  Ake_AstGet(n->parent, 0);
             Ake_Ast* type_node = Ake_AstGet(n->parent, 1);
-            Ake_symbol* sym = Ake_EnvironmentGet(env, &lhs->data.id.value, type_node->loc.start);
+            Ake_symbol* sym = Ake_EnvironmentGet(env, &lhs->data.id.value);
             value = (Value*)sym->value;
         } else {
             value = jd->Builder->CreateAlloca(t, nullptr, bf.buf);

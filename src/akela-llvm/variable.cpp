@@ -15,7 +15,7 @@ namespace Akela_llvm {
         Ake_Ast* rhs = Ake_AstGet(n, 2);
         Ake_Type* type = type_node->type;
         Ake_Environment* env = Ake_get_current_env(type_node);
-        Ake_symbol* sym = Ake_EnvironmentGet(env, &lhs->data.id.value, type_node->loc.start);
+        Ake_symbol* sym = Ake_EnvironmentGet(env, &lhs->data.id.value);
         assert(sym);
         if (type->kind == AKE_TYPE_FUNCTION) {
             if (rhs) {
@@ -113,7 +113,7 @@ namespace Akela_llvm {
         Ake_Environment* env = Ake_get_current_env(lhs);
         if (lhs->type->kind == AKE_TYPE_FUNCTION) {
             if (lhs->kind == AKE_AST_ID) {
-                Ake_symbol* sym = Ake_EnvironmentGet(env, &lhs->data.id.value, lhs->loc.end);
+                Ake_symbol* sym = Ake_EnvironmentGet(env, &lhs->data.id.value);
                 AllocaInst *lhs_value;
                 if (sym->reference) {
                     lhs_value = (AllocaInst *) sym->reference;
@@ -139,7 +139,7 @@ namespace Akela_llvm {
             Array_copy(jd, lhs->type, rhs->type, lhs_value, rhs_value);
         } else {
             if (lhs->kind == AKE_AST_ID) {
-                Ake_symbol* sym = Ake_EnvironmentGet(env, &lhs->data.id.value, lhs->loc.end);
+                Ake_symbol* sym = Ake_EnvironmentGet(env, &lhs->data.id.value);
                 AllocaInst* lhs_value;
                 lhs_value = (AllocaInst*)sym->reference;
                 jd->Builder->CreateStore(rhs_value, lhs_value);
@@ -155,7 +155,7 @@ namespace Akela_llvm {
     Value* Handle_identifier(Jit_data* jd, Ake_Ast* n)
     {
         Ake_Environment* env = Ake_get_current_env(n);
-        Ake_symbol* sym = Ake_EnvironmentGet(env, &n->data.id.value, n->loc.end);
+        Ake_symbol* sym = Ake_EnvironmentGet(env, &n->data.id.value);
         if (sym->value) {
             return (Value*)sym->value;
         } else if (sym->reference) {
@@ -179,7 +179,7 @@ namespace Akela_llvm {
             Ake_Environment* env = Ake_get_current_env(n->parent);
             Ake_Ast* lhs =  Ake_AstGet(n->parent, 0);
             Ake_Ast* type_node = Ake_AstGet(n->parent, 1);
-            Ake_symbol* sym = Ake_EnvironmentGet(env, &lhs->data.id.value, type_node->loc.start);
+            Ake_symbol* sym = Ake_EnvironmentGet(env, &lhs->data.id.value);
             ptr = (Value*)sym->value;
         } else {
             ptr = jd->Builder->CreateAlloca(t, nullptr, "arrayliteraltmp");

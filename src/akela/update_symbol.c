@@ -15,7 +15,7 @@ void Ake_UpdateSymbolExtern(Ake_parse_state* ps, Ake_Ast* n)
             new_sym->kind = AKE_SYMBOL_VARIABLE;
             Ake_Type* type = Ake_TypeClone(n->type);
             new_sym->tu = type;
-            Ake_EnvironmentAdd(ps->st->top, &id_node->data.id.value, new_sym, n->loc.start);
+            Ake_EnvironmentAdd(ps->st->top, &id_node->data.id.value, new_sym);
         }
     }
 }
@@ -40,7 +40,7 @@ void Ake_UpdateSymbolStruct(Ake_parse_state* ps, Ake_Ast* n)
         Ake_SymbolCreate(&sym);
         sym->kind = AKE_SYMBOL_TYPE;
         sym->td = type;
-        Ake_EnvironmentAdd(ps->st->top, &n->struct_value, sym, n->loc.start);
+        Ake_EnvironmentAdd(ps->st->top, &n->struct_value, sym);
     }
 }
 
@@ -70,7 +70,7 @@ void Ake_UpdateSymbolFunction(Ake_parse_state* ps, Ake_Ast* n)
             Ake_SymbolInit(new_sym);
             new_sym->kind = AKE_SYMBOL_VARIABLE;
             new_sym->tu = Ake_TypeClone(n->type);
-            Ake_EnvironmentAdd(ps->st->top, &id_node->data.id.value, new_sym, n->loc.start);
+            Ake_EnvironmentAdd(ps->st->top, &id_node->data.id.value, new_sym);
         }
     }
 }

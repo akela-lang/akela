@@ -381,7 +381,7 @@ Ake_Ast* Ake_parse_literal(struct Ake_parse_state* ps)
         Zinc_string_init(&bf);
         Zinc_string_add_str(&bf, type_name);
 	    size_t seq = Ake_get_current_seq(ps);
-        Ake_symbol* sym = Ake_EnvironmentGet(ps->st->top, &bf, seq);
+        Ake_symbol* sym = Ake_EnvironmentGet(ps->st->top, &bf);
         assert(sym);
         if (sym->kind != AKE_SYMBOL_TYPE) {
             Zinc_error_list_set(ps->el, &n->loc, "expected a type");
@@ -422,7 +422,7 @@ Ake_Ast* Ake_parse_id(Ake_parse_state* ps)
     }
 
     size_t seq = Ake_get_current_seq(ps);
-    Ake_symbol* sym = Ake_EnvironmentGet(ps->st->top, &id->value, seq);
+    Ake_symbol* sym = Ake_EnvironmentGet(ps->st->top, &id->value);
     if (sym && sym->kind == AKE_SYMBOL_TYPE && sym->td && sym->td->kind == AKE_TYPE_STRUCT) {
         /* struct literal */
 
