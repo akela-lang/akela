@@ -1,6 +1,7 @@
 #include <akela/parse_types.h>
 #include "tools.h"
 #include "cg.h"
+#include "akela/update_symbol.h"
 
 using namespace llvm;
 using namespace llvm::orc;
@@ -8,6 +9,7 @@ using namespace llvm::orc;
 namespace Akela_llvm {
     Value* Handle_extern(Jit_data* jd, Ake_Ast* n)
     {
+        Ake_UpdateSymbolExtern(&jd->st, n);
         FunctionType* func_type = Get_function_type(jd, n->type);
         Ake_Ast *proto = Ake_AstGet(n, 0);
         Ake_Ast *id = Ake_AstGet(proto, 0);
@@ -17,7 +19,7 @@ namespace Akela_llvm {
         BasicBlock* last_block = Get_last_block(jd, jd->toplevel);
         jd->Builder->SetInsertPoint(last_block);
 
-        Ake_Environment* env = Ake_get_current_env(n);
+        Ake_Environment* env = jd->st.top;
         Ake_symbol* sym = Ake_EnvironmentGet(env, &id->data.id.value);
         sym->value = f;
 
@@ -38,6 +40,8 @@ namespace Akela_llvm {
         BasicBlock* body_block = BasicBlock::Create(*jd->TheContext, "body", f);
         jd->Builder->SetInsertPoint(body_block);
 
+        Ake_UpdateSymbolPrototype(&jd->st, n);
+
         Ake_Ast* dseq = Ake_AstGet(proto, 1);
         Ake_Ast* dec = dseq->head;
         int i = 0;
@@ -53,7 +57,7 @@ namespace Akela_llvm {
                                                    dec_id->data.id.value.buf);
             jd->Builder->CreateStore(dec_value, lhs);
 
-            Ake_Environment* env = Ake_get_current_env(n);
+            Ake_Environment* env = jd->st.top;
             Ake_symbol* sym = Ake_EnvironmentGet(env, &dec_id->data.id.value);
             sym->reference = lhs;
 
@@ -74,7 +78,9 @@ namespace Akela_llvm {
         BasicBlock* last_block = Get_last_block(jd, jd->toplevel);
         jd->Builder->SetInsertPoint(last_block);
 
-        Ake_Environment* env = Ake_get_current_env(n);
+        Ake_UpdateSymbolFunction(&jd->st, n);
+
+        Ake_Environment* env = jd->st.top;
         Ake_symbol* sym = Ake_EnvironmentGet(env, &id->data.id.value);
         sym->value = f;
 

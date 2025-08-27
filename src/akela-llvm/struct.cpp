@@ -1,5 +1,6 @@
 #include "tools.h"
 #include "akela/type.h"
+#include "akela/update_symbol.h"
 
 using namespace llvm;
 
@@ -47,7 +48,8 @@ namespace Akela_llvm {
     Value* Handle_struct(Jit_data* jd, Ake_Ast* n)
     {
         StructType* struct_type = GetStructTypeFromNode(jd, n);
-        Ake_Environment* env = Ake_get_current_env(n);
+        Ake_Environment* env = jd->st.top;
+        Ake_UpdateSymbolStruct(&jd->st, n);
         Ake_symbol* sym = Ake_EnvironmentGet(env, &n->struct_value);
         return nullptr;
     }
@@ -123,7 +125,7 @@ namespace Akela_llvm {
         Zinc_string_finish(&bf);
         Value* value;
         if (n->parent->kind == Ake_ast_type_const || n->parent->kind == Ake_ast_type_var) {
-            Ake_Environment* env = Ake_get_current_env(n->parent);
+            Ake_Environment* env = jd->st.top;
             Ake_Ast* lhs =  Ake_AstGet(n->parent, 0);
             Ake_Ast* type_node = Ake_AstGet(n->parent, 1);
             Ake_symbol* sym = Ake_EnvironmentGet(env, &lhs->data.id.value);

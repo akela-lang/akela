@@ -140,7 +140,6 @@ typedef struct Ake_Ast {
 	} data;
 	Ake_Type* type;
     Zinc_location loc;
-	Ake_Environment* env;
 	Ake_Ast* next;
 	Ake_Ast* prev;
 	Ake_Ast* head;

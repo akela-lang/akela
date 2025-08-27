@@ -8,6 +8,7 @@ extern "C" {
 #include "zinc/list.h"
 #include "zinc/vector.h"
 #include "akela/symbol.h"
+#include "akela/symbol_table.h"
 }
 
 #include "KaleidoscopeJIT.h"
@@ -65,6 +66,7 @@ namespace Akela_llvm {
         bool need_printf;
         bool need_exit;
         bool need_abort;
+        Ake_symbol_table st;
     } Jit_data;
 
     bool IsArray(Ake_TypeKind kind);

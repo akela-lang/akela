@@ -88,7 +88,7 @@ Ake_Ast* Ake_parse_function(struct Ake_parse_state* ps, bool is_method)
     Ake_AstAdd(n, proto);
 
     Ake_begin_environment(ps->st, n);
-    Ake_UpdateSymbolPrototype(ps, n);
+    Ake_UpdateSymbolPrototype(ps->st, n);
     Ake_set_current_function(ps->st, n);
     Ake_Type* type = Ake_proto2type_use(ps, proto);
     n->type = type;
@@ -117,7 +117,7 @@ Ake_Ast* Ake_parse_function(struct Ake_parse_state* ps, bool is_method)
         }
     }
 
-    Ake_UpdateSymbolFunction(ps, n);
+    Ake_UpdateSymbolFunction(ps->st, n);
 
 	return n;
 }

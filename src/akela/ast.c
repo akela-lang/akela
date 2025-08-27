@@ -20,7 +20,6 @@ void Ake_AstInit(Ake_Ast* n)
 	Zinc_string_init(&n->boolean_value);
 	n->type = NULL;
     Zinc_location_init(&n->loc);
-	n->env = NULL;
 	n->next = NULL;
 	n->prev = NULL;
 	n->head = NULL;
@@ -107,9 +106,6 @@ void Ake_AstDestroy(Ake_Ast* n)
     	Zinc_string_destroy(&n->boolean_value);
         Ake_TypeDestroy(n->type);
     	free(n->type);
-
-    	Ake_EnvironmentDestroy(n->env);
-    	free(n->env);
 
     	Ake_token_list_destroy(&n->token_list);
 

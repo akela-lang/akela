@@ -1,4 +1,5 @@
 #include "tools.h"
+#include "akela/update_symbol.h"
 
 using namespace llvm;
 
@@ -10,11 +11,13 @@ namespace Akela_llvm {
     /* NOLINTNEXTLINE(misc-no-recursion) */
     Value* Handle_variable_dec(Jit_data* jd, Ake_Ast* n)
     {
+        Ake_UpdateSymbolLet(&jd->st, n);
+
         Ake_Ast* lhs = Ake_AstGet(n, 0);
         Ake_Ast* type_node = Ake_AstGet(n, 1);
         Ake_Ast* rhs = Ake_AstGet(n, 2);
         Ake_Type* type = type_node->type;
-        Ake_Environment* env = Ake_get_current_env(type_node);
+        Ake_Environment* env = jd->st.top;
         Ake_symbol* sym = Ake_EnvironmentGet(env, &lhs->data.id.value);
         assert(sym);
         if (type->kind == AKE_TYPE_FUNCTION) {
@@ -110,7 +113,7 @@ namespace Akela_llvm {
 /* NOLINTNEXTLINE(misc-no-recursion) */
     Value* Assign_lhs_rhs_value(Jit_data* jd, Ake_Ast* lhs, Ake_Ast* rhs, Value* rhs_value)
     {
-        Ake_Environment* env = Ake_get_current_env(lhs);
+        Ake_Environment* env = jd->st.top;
         if (lhs->type->kind == AKE_TYPE_FUNCTION) {
             if (lhs->kind == AKE_AST_ID) {
                 Ake_symbol* sym = Ake_EnvironmentGet(env, &lhs->data.id.value);
@@ -154,7 +157,7 @@ namespace Akela_llvm {
 
     Value* Handle_identifier(Jit_data* jd, Ake_Ast* n)
     {
-        Ake_Environment* env = Ake_get_current_env(n);
+        Ake_Environment* env = jd->st.top;
         Ake_symbol* sym = Ake_EnvironmentGet(env, &n->data.id.value);
         if (sym->value) {
             return (Value*)sym->value;
@@ -176,7 +179,7 @@ namespace Akela_llvm {
         Type *t = Get_type(jd, n->type);
         Value* ptr;
         if (n->parent->kind == Ake_ast_type_const || n->parent->kind == Ake_ast_type_var) {
-            Ake_Environment* env = Ake_get_current_env(n->parent);
+            Ake_Environment* env = jd->st.top;
             Ake_Ast* lhs =  Ake_AstGet(n->parent, 0);
             Ake_Ast* type_node = Ake_AstGet(n->parent, 1);
             Ake_symbol* sym = Ake_EnvironmentGet(env, &lhs->data.id.value);

@@ -31,6 +31,7 @@ namespace Akela_llvm {
         jd->need_exit = false;
         jd->need_abort = false;
         jd->need_printf = false;
+        Ake_symbol_table_init(&jd->st);
     }
 
     /* NOLINTNEXTLINE(misc-no-recursion) */

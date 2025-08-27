@@ -13,15 +13,17 @@ void Ake_begin_environment(struct Ake_symbol_table* st, Ake_Ast* n)
 {
     Ake_Environment* env = NULL;
     Ake_EnvironmentCreate(&env, st->top);
+	env->prev = st->top;
     st->top = env;
-	if (n) {
-		n->env = env;
-	}
 }
 
 void Ake_end_environment(struct Ake_symbol_table* st)
 {
-    st->top = st->top->prev;
+	Ake_Environment* env = st->top;
+    st->top = env->prev;
+
+	env->prev = st->deactivated;
+	st->deactivated = env;
 }
 
 void Ake_symbol_table_add_reserved_word(Ake_symbol_table* st, const char* name, Ake_token_enum tk_type)
@@ -199,6 +201,7 @@ void Ake_symbol_table_init(struct Ake_symbol_table* st)
 	Zinc_list_init(&st->numeric_pool);
 	st->id_count = 0;
 	st->top = NULL;
+	st->deactivated = NULL;
 
 	Ake_begin_environment(st, NULL);
 	Ake_symbol_table_init_reserved(st);
@@ -215,6 +218,14 @@ void Ake_symbol_table_create(Ake_symbol_table** st)
 void Ake_symbol_table_destroy(Ake_symbol_table* st)
 {
 	Ake_Environment* env = st->top;
+	while (env) {
+		Ake_Environment* prev = env->prev;
+		Ake_EnvironmentDestroy(env);
+		free(env);
+		env = prev;
+	}
+
+	env = st->deactivated;
 	while (env) {
 		Ake_Environment* prev = env->prev;
 		Ake_EnvironmentDestroy(env);
@@ -272,16 +283,4 @@ Ake_Ast* Ake_get_current_function(Ake_symbol_table* st)
 size_t Ake_symbol_table_generate_id(struct Ake_symbol_table* st)
 {
     return st->id_count++;
-}
-
-Ake_Environment* Ake_get_current_env(Ake_Ast* n)
-{
-	while (n) {
-		if (n->env) {
-			return n->env;
-		}
-		n = n->parent;
-	}
-
-	return NULL;
 }

@@ -20,6 +20,7 @@ typedef struct Ake_Ast Ake_Ast;
 
 typedef struct Ake_symbol_table {
 	Ake_Environment* top;
+	Ake_Environment* deactivated;
 	Zinc_list numeric_pool;
     size_t id_count;
 } Ake_symbol_table;
@@ -34,7 +35,6 @@ AKELA_API bool Ake_is_numeric(Ake_Type* td);
 AKELA_API void Ake_set_current_function(Ake_symbol_table* st, Ake_Ast* fd);
 AKELA_API Ake_Ast* Ake_get_current_function(Ake_symbol_table* st);
 AKELA_API size_t Ake_symbol_table_generate_id(struct Ake_symbol_table* st);
-AKELA_API Ake_Environment* Ake_get_current_env(Ake_Ast* n);
 
 #ifdef __cplusplus
 }

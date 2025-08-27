@@ -132,7 +132,7 @@ Ake_Ast* Ake_parse_prototype(
  * @param ps
  * @param proto
  */
-void Ake_declare_params(Ake_parse_state* ps, Ake_Ast* proto)
+void Ake_declare_params(Ake_symbol_table* st, Ake_Ast* proto)
 {
     Ake_Ast* dseq = Ake_AstGet(proto, 1);
     Ake_Ast* dec = dseq->head;
@@ -140,7 +140,7 @@ void Ake_declare_params(Ake_parse_state* ps, Ake_Ast* proto)
         Ake_Ast* id_node = Ake_AstGet(dec, 0);
         Ake_Ast* type_node = Ake_AstGet(dec, 1);
         if (!dec->has_error && !type_node->has_error) {
-            Ake_declare_type(ps, type_node, id_node, true);
+            Ake_declare_type(st, type_node, id_node, true);
         }
         dec = dec->next;
     }
@@ -329,7 +329,7 @@ Ake_Ast* Ake_parse_declaration(
             }
             if (add_symbol) {
                 if (!n->has_error) {
-                    Ake_declare_type(ps, type_use, id_node, is_const);
+                    Ake_declare_type(ps->st, type_use, id_node, is_const);
                 }
             }
 
@@ -536,22 +536,22 @@ Ake_Type* Ake_parse_type_id(Ake_parse_state* ps, Ake_Ast* n)
     return type;
 }
 
-void Ake_create_variable_symbol(Ake_parse_state* ps, Zinc_string* name, Ake_Type* type, size_t seq, bool is_const)
+void Ake_create_variable_symbol(Ake_symbol_table* st, Zinc_string* name, Ake_Type* type, size_t seq, bool is_const)
 {
     Ake_symbol* new_sym = NULL;
     Ake_SymbolCreate(&new_sym);
     new_sym->kind = AKE_SYMBOL_VARIABLE;
     new_sym->tu = Ake_TypeClone(type);
     new_sym->is_const = is_const;
-    Ake_EnvironmentAdd(ps->st->top, name, new_sym);
+    Ake_EnvironmentAdd(st->top, name, new_sym);
 }
 
-void Ake_declare_type(Ake_parse_state* ps, Ake_Ast* type_node, Ake_Ast* id_node, bool is_const)
+void Ake_declare_type(Ake_symbol_table* st, Ake_Ast* type_node, Ake_Ast* id_node, bool is_const)
 {
     if (type_node && !type_node->has_error) {
         if (id_node) {
             if (id_node->kind == AKE_AST_ID) {
-                Ake_create_variable_symbol(ps, &id_node->data.id.value, type_node->type, type_node->loc.start, is_const);
+                Ake_create_variable_symbol(st, &id_node->data.id.value, type_node->type, type_node->loc.start, is_const);
             } else {
                 assert(false);
             }

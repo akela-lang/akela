@@ -3,11 +3,18 @@
 
 #include "parse_tools.h"
 
-void Ake_UpdateSymbolExtern(Ake_parse_state* ps, Ake_Ast* n);
-void Ake_UpdateSymbolFor(Ake_parse_state* ps, Ake_Ast* n);
-void Ake_UpdateSymbolStruct(Ake_parse_state* ps, Ake_Ast* n);
-void Ake_UpdateSymbolLet(Ake_parse_state* ps, Ake_Ast* n);
-void Ake_UpdateSymbolPrototype(Ake_parse_state* ps, Ake_Ast* n);
-void Ake_UpdateSymbolFunction(Ake_parse_state* ps, Ake_Ast* n);
+#ifdef __cplusplus
+extern "C" {
+#endif
+    void Ake_UpdateSymbolExtern(Ake_symbol_table* st, Ake_Ast* n);
+    void Ake_UpdateSymbolFor(Ake_symbol_table* st, Ake_Ast* n);
+    void Ake_UpdateSymbolStruct(Ake_symbol_table* st, Ake_Ast* n);
+    void Ake_UpdateSymbolLet(Ake_symbol_table* st, Ake_Ast* n);
+    void Ake_UpdateSymbolPrototype(Ake_symbol_table* st, Ake_Ast* n);
+    void Ake_UpdateSymbolFunction(Ake_symbol_table* st, Ake_Ast* n);
+#ifdef __cplusplus
+}
+#endif
+
 
 #endif

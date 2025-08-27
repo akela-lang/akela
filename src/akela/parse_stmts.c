@@ -162,7 +162,7 @@ Ake_Ast* Ake_parse_extern(struct Ake_parse_state* ps)
         Zinc_string_list_add_bf(ps->extern_list, &id_node->data.id.value);
     }
 
-	Ake_UpdateSymbolExtern(ps, n);
+	Ake_UpdateSymbolExtern(ps->st, n);
 
     return n;
 }
@@ -233,7 +233,7 @@ Ake_Ast* Ake_parse_for(struct Ake_parse_state* ps)
     	n->has_error = true;
     }
 
-	Ake_UpdateSymbolFor(ps, n);
+	Ake_UpdateSymbolFor(ps->st, n);
 
     Ake_consume_newline(ps, n);
 
@@ -482,7 +482,7 @@ Ake_Ast* Ake_parse_struct(struct Ake_parse_state* ps)
 		}
 	}
 
-	Ake_UpdateSymbolStruct(ps, n);
+	Ake_UpdateSymbolStruct(ps->st, n);
 
 	return n;
 }
@@ -636,7 +636,7 @@ Ake_Ast* Ake_parse_let(struct Ake_parse_state* ps)
         }
     }
 
-	Ake_UpdateSymbolLet(ps, n);
+	Ake_UpdateSymbolLet(ps->st, n);
 
     return n;
 }
