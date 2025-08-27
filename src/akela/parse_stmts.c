@@ -140,7 +140,7 @@ Ake_Ast* Ake_parse_extern(struct Ake_parse_state* ps)
     proto = Ake_parse_prototype(ps, false, true, false, false, &has_id);
     if (proto) {
         Ake_AstAdd(n, proto);
-        Ake_Type* type = Ake_proto2type_use(ps, proto, NULL);
+        Ake_Type* type = Ake_proto2type_use(ps, proto);
         n->type = type;
     }
 
@@ -675,7 +675,7 @@ Ake_Ast* Ake_parse_impl(struct Ake_parse_state* ps)
     while (true) {
         struct Ake_token* t = Ake_get_lookahead(ps);
         if (t->type == Ake_token_fn) {
-            Ake_Ast* func = Ake_parse_function(ps, true, struct_type);
+            Ake_Ast* func = Ake_parse_function(ps, true);
             Ake_AstAdd(n, func);
 
             struct Ake_token* t2 = Ake_get_lookahead(ps);

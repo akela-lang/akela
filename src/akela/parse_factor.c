@@ -42,7 +42,7 @@ Ake_Ast* Ake_parse_factor(struct Ake_parse_state* ps)
     assert(t0);
 
 	if (t0->type == Ake_token_fn) {
-        n = Ake_parse_function(ps, false, NULL);
+        n = Ake_parse_function(ps, false);
 
     } else if (t0->type == Ake_token_if) {
         n = Ake_parse_if(ps);
@@ -70,7 +70,7 @@ Ake_Ast* Ake_parse_factor(struct Ake_parse_state* ps)
 	return n;
 }
 
-Ake_Ast* Ake_parse_function(struct Ake_parse_state* ps, bool is_method, Ake_Type* struct_type)
+Ake_Ast* Ake_parse_function(struct Ake_parse_state* ps, bool is_method)
 {
     Ake_Ast* n = NULL;
 
@@ -88,9 +88,9 @@ Ake_Ast* Ake_parse_function(struct Ake_parse_state* ps, bool is_method, Ake_Type
     Ake_AstAdd(n, proto);
 
     Ake_begin_environment(ps->st, n);
-    Ake_declare_params(ps, proto, struct_type);
+    Ake_UpdateSymbolPrototype(ps, n);
     Ake_set_current_function(ps->st, n);
-    Ake_Type* type = Ake_proto2type_use(ps, proto, struct_type);
+    Ake_Type* type = Ake_proto2type_use(ps, proto);
     n->type = type;
 
     Ake_Ast* stmts_node = NULL;

@@ -53,6 +53,12 @@ void Ake_UpdateSymbolLet(Ake_parse_state* ps, Ake_Ast* n)
     }
 }
 
+void Ake_UpdateSymbolPrototype(Ake_parse_state* ps, Ake_Ast* n)
+{
+    Ake_Ast* proto = Ake_AstGet(n, 0);
+    Ake_declare_params(ps, proto);
+}
+
 void Ake_UpdateSymbolFunction(Ake_parse_state* ps, Ake_Ast* n)
 {
     if (!n->has_error) {

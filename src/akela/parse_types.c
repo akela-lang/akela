@@ -15,8 +15,7 @@ bool Ake_token_is_type(struct Ake_parse_state* ps, struct Ake_token* t);
 Ake_Type* Ake_Type_use_add_proto(
         Ake_parse_state* ps,
         Ake_Type* func,
-        Ake_Ast* proto,
-        Ake_Type* struct_type);
+        Ake_Ast* proto);
 Ake_Type* Ake_parse_type_dispatch(Ake_parse_state* ps, Ake_Ast* n);
 Ake_Type* Ake_parse_type_array(Ake_parse_state* ps, Ake_Ast* n);
 Ake_Type* Ake_parse_type_pointer(Ake_parse_state* ps, Ake_Ast* n);
@@ -133,7 +132,7 @@ Ake_Ast* Ake_parse_prototype(
  * @param ps
  * @param proto
  */
-void Ake_declare_params(Ake_parse_state* ps, Ake_Ast* proto, Ake_Type* struct_type)
+void Ake_declare_params(Ake_parse_state* ps, Ake_Ast* proto)
 {
     Ake_Ast* dseq = Ake_AstGet(proto, 1);
     Ake_Ast* dec = dseq->head;
@@ -492,7 +491,7 @@ Ake_Type* Ake_parse_type_function(Ake_parse_state* ps, Ake_Ast* n)
     if (proto->has_error) {
         n->has_error = true;
     } else {
-        Ake_Type_use_add_proto(ps, type, proto, NULL);
+        Ake_Type_use_add_proto(ps, type, proto);
     }
     Ake_AstDestroy(proto);
 
@@ -560,18 +559,17 @@ void Ake_declare_type(Ake_parse_state* ps, Ake_Ast* type_node, Ake_Ast* id_node,
     }
 }
 
-Ake_Type* Ake_proto2type_use(Ake_parse_state* ps, Ake_Ast* proto, Ake_Type* struct_type) {
+Ake_Type* Ake_proto2type_use(Ake_parse_state* ps, Ake_Ast* proto) {
     Ake_Type *func = NULL;
     Ake_TypeCreate(&func);
     Ake_TypeSet(func, AKE_TYPE_FUNCTION);
-    return Ake_Type_use_add_proto(ps, func, proto, struct_type);
+    return Ake_Type_use_add_proto(ps, func, proto);
 }
 
 Ake_Type* Ake_Type_use_add_proto(
     Ake_parse_state* ps,
     Ake_Type* func,
-    Ake_Ast* proto,
-    Ake_Type* struct_type)
+    Ake_Ast* proto)
 {
     Zinc_string bf;
     Zinc_string_init(&bf);

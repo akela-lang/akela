@@ -1,5 +1,7 @@
 # Akela
 * remove sequences from symbol lookup
+* get environments from symbol table not syntax tree
+  * rebuild syntax tree by calling update symbol on nodes during IR code gen
 * syntax tree with tagged union
   * none [x]
   * id [x]

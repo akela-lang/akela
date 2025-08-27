@@ -4,6 +4,6 @@
 #include "api.h"
 
 AKELA_API Ake_Ast* Ake_parse_factor(struct Ake_parse_state* ps);
-AKELA_API Ake_Ast* Ake_parse_function(struct Ake_parse_state* ps, bool is_method, Ake_Type* struct_type);
+AKELA_API Ake_Ast* Ake_parse_function(struct Ake_parse_state* ps, bool is_method);
 
 #endif
