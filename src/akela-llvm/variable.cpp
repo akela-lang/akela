@@ -9,7 +9,7 @@ namespace Akela_llvm {
     void Array_literal_element(Jit_data* jd, Ake_Ast* n, Value* ptr);
 
     /* NOLINTNEXTLINE(misc-no-recursion) */
-    Value* Handle_variable_dec(Jit_data* jd, Ake_Ast* n)
+    Value* Handle_let(Jit_data* jd, Ake_Ast* n)
     {
         Ake_UpdateSymbolLet(&jd->st, n);
 
