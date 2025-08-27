@@ -40,6 +40,7 @@ namespace Akela_llvm {
         BasicBlock* body_block = BasicBlock::Create(*jd->TheContext, "body", f);
         jd->Builder->SetInsertPoint(body_block);
 
+        Ake_begin_environment(&jd->st);
         Ake_UpdateSymbolPrototype(&jd->st, n);
 
         Ake_Ast* dseq = Ake_AstGet(proto, 1);
@@ -77,6 +78,7 @@ namespace Akela_llvm {
 
         BasicBlock* last_block = Get_last_block(jd, jd->toplevel);
         jd->Builder->SetInsertPoint(last_block);
+        Ake_end_environment(&jd->st);
 
         Ake_UpdateSymbolFunction(&jd->st, n);
 
