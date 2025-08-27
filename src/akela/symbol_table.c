@@ -9,7 +9,7 @@
 bool Ake_type_use_can_cast_prototype(Ake_Ast* a, Ake_Ast* b);
 bool Ake_type_use_match(Ake_type_use* a, Ake_type_use* b);
 
-void Ake_begin_environment(struct Ake_symbol_table* st, Ake_Ast* n)
+void Ake_begin_environment(Ake_symbol_table* st)
 {
     Ake_Environment* env = NULL;
     Ake_EnvironmentCreate(&env, st->top);
@@ -203,7 +203,7 @@ void Ake_symbol_table_init(struct Ake_symbol_table* st)
 	st->top = NULL;
 	st->deactivated = NULL;
 
-	Ake_begin_environment(st, NULL);
+	Ake_begin_environment(st);
 	Ake_symbol_table_init_reserved(st);
 	Ake_symbol_table_init_builtin_types(st);
 	Ake_symbol_table_numeric_pool_init(st);

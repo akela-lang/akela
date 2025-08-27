@@ -30,7 +30,7 @@ Ake_Ast* Ake_parse_assignment(struct Ake_parse_state* ps);
 /* stmts -> stmt stmts' */
 /* stmts' -> separator stmt stmts' | e */
 /* NOLINTNEXTLINE(misc-no-recursion) */
-Ake_Ast* Ake_parse_stmts(Ake_parse_state* ps, bool suppress_env, bool is_global)
+Ake_Ast* Ake_parse_stmts(Ake_parse_state* ps)
 {
 	Ake_Ast* n = NULL;
 	Ake_Ast* last = NULL;
@@ -41,12 +41,7 @@ Ake_Ast* Ake_parse_stmts(Ake_parse_state* ps, bool suppress_env, bool is_global)
 	Ake_AstCreate(&n);
 	n->kind = Ake_ast_type_stmts;
 
-	if (!suppress_env) {
-        Ake_begin_environment(ps->st, n);
-		if (is_global) {
-			ps->st->top->is_global = true;
-		}
-	}
+    Ake_begin_environment(ps->st);
 
 	Ake_Ast* a = NULL;
 	a = Ake_parse_stmt(ps);
@@ -73,9 +68,7 @@ Ake_Ast* Ake_parse_stmts(Ake_parse_state* ps, bool suppress_env, bool is_global)
 		}
 	}
 
-	if (!suppress_env) {
-        Ake_end_environment(ps->st);
-	}
+    Ake_end_environment(ps->st);
 
 	if (!n->has_error) {
 		if (last) {
@@ -150,14 +143,6 @@ Ake_Ast* Ake_parse_extern(struct Ake_parse_state* ps)
     }
 
     if (!n->has_error) {
-        if (!ps->st->top->is_global) {
-            Zinc_error_list_set(ps->el, &n->loc, "extern only allowed at top level scope");
-            n->has_error = true;
-        }
-
-    }
-
-    if (!n->has_error) {
         Ake_Ast* id_node = Ake_AstGet(proto, 0);
         Zinc_string_list_add_bf(ps->extern_list, &id_node->data.id.value);
     }
@@ -192,7 +177,7 @@ Ake_Ast* Ake_parse_while(struct Ake_parse_state* ps)
 	}
 
 	Ake_Ast* b = NULL;
-    b = Ake_parse_stmts(ps, false, false);
+    b = Ake_parse_stmts(ps);
 
     if (b) {
         Ake_AstAdd(n, b);
@@ -219,7 +204,7 @@ Ake_Ast* Ake_parse_for(struct Ake_parse_state* ps)
         n->has_error = true;
     }
 
-    Ake_begin_environment(ps->st, n);
+    Ake_begin_environment(ps->st);
 
     Ake_consume_newline(ps, n);
 
@@ -259,7 +244,7 @@ Ake_Ast* Ake_parse_for(struct Ake_parse_state* ps)
 	}
 
 	Ake_Ast* c = NULL;
-    c = Ake_parse_stmts(ps, true, false);
+    c = Ake_parse_stmts(ps);
 
 	struct Ake_token* end = NULL;
 	if (!Ake_match(ps, Ake_token_end, "expected end", &end, n)) {

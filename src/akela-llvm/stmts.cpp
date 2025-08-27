@@ -9,11 +9,13 @@ namespace Akela_llvm {
         Value* last_v = nullptr;
         Ake_Ast* last_n = nullptr;
         Ake_Ast* stmt = Ake_AstGet(n, 0);
+        Ake_begin_environment(&jd->st);
         while (stmt) {
             last_v = Dispatch(jd, stmt);
             last_n = stmt;
             stmt = stmt->next;
         }
+        Ake_end_environment(&jd->st);
         return last_v;
     }
 

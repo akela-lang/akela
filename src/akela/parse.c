@@ -13,7 +13,7 @@ Ake_parse_result Ake_parse(Ake_parse_state* ps)
 {
     Ake_Ast* n = NULL;
 
-    n = Ake_parse_stmts(ps, false, true);
+    n = Ake_parse_stmts(ps);
 
     Zinc_location next_loc = Ake_get_location(ps);
     Ake_token* t0 = Ake_get_lookahead(ps);

@@ -87,14 +87,14 @@ Ake_Ast* Ake_parse_function(struct Ake_parse_state* ps, bool is_method)
     proto = Ake_parse_prototype(ps, true, false, is_method, true, &has_id);
     Ake_AstAdd(n, proto);
 
-    Ake_begin_environment(ps->st, n);
+    Ake_begin_environment(ps->st);
     Ake_UpdateSymbolPrototype(ps->st, n);
     Ake_set_current_function(ps->st, n);
     Ake_Type* type = Ake_proto2type_use(ps, proto);
     n->type = type;
 
     Ake_Ast* stmts_node = NULL;
-    stmts_node = Ake_parse_stmts(ps, true, false);
+    stmts_node = Ake_parse_stmts(ps);
 
     /* 1 stmts */
     if (stmts_node) {
@@ -155,7 +155,7 @@ Ake_Ast* Ake_parse_if(struct Ake_parse_state* ps)
     }
 
     Ake_Ast* body = NULL;
-    body = Ake_parse_stmts(ps, false, false);
+    body = Ake_parse_stmts(ps);
     if (body && body->has_error) {
         n->has_error = true;
         cb->has_error = true;
@@ -239,7 +239,7 @@ void Ake_parse_elseif(struct Ake_parse_state* ps, Ake_Ast* parent)
         }
 
         Ake_Ast *body = NULL;
-        body = Ake_parse_stmts(ps, false, false);
+        body = Ake_parse_stmts(ps);
 
         if (body) {
             Ake_AstAdd(cb, body);
@@ -269,7 +269,7 @@ Ake_Ast* Ake_parse_else(struct Ake_parse_state* ps)
 
         /* stmts */
         Ake_Ast* body = NULL;
-        body = Ake_parse_stmts(ps, false, false);
+        body = Ake_parse_stmts(ps);
 
         if (body) {
             n->type = Ake_TypeClone(body->type);

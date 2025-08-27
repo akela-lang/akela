@@ -25,7 +25,7 @@ typedef struct Ake_symbol_table {
     size_t id_count;
 } Ake_symbol_table;
 
-AKELA_API void Ake_begin_environment(struct Ake_symbol_table* st, Ake_Ast* n);
+AKELA_API void Ake_begin_environment(struct Ake_symbol_table* st);
 AKELA_API void Ake_end_environment(struct Ake_symbol_table* st);
 
 AKELA_API void Ake_symbol_table_init(struct Ake_symbol_table* st);
