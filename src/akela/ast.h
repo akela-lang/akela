@@ -161,22 +161,23 @@ struct Ake_AstList {
 extern "C" {
 #endif
 
-AKELA_API void Ake_AstCreate(Ake_Ast** n);
-AKELA_API void Ake_AstInit(Ake_Ast* n);
-AKELA_API void Ake_AstSet(Ake_Ast* n, Ake_AstKind kind);
-AKELA_API void Ake_AstValidate(Ake_Ast* n);
-AKELA_API void Ake_AstDestroy(Ake_Ast* n);
-AKELA_API void Ake_AstAdd(Ake_Ast* p, Ake_Ast* c);
-AKELA_API Ake_Ast* Ake_AstGet(Ake_Ast* p, size_t pos);
-AKELA_API void Ake_AstCopy(Ake_Ast* src, Ake_Ast* dest);
-AKELA_API Ake_Ast* Ake_AstClone(Ake_Ast* n);
-AKELA_API bool Ake_AstMatch(Ake_Ast* a, Ake_Ast* b);
-AKELA_API size_t Ake_AstCountChildren(Ake_Ast* n);
+	AKELA_API void Ake_AstCreate(Ake_Ast** n);
+	AKELA_API void Ake_AstInit(Ake_Ast* n);
+	AKELA_API void Ake_AstSet(Ake_Ast* n, Ake_AstKind kind);
+	AKELA_API void Ake_AstValidate(Ake_Ast* n);
+	AKELA_API void Ake_AstDestroy(Ake_Ast* n);
+	AKELA_API void Ake_AstAdd(Ake_Ast* p, Ake_Ast* c);
+	AKELA_API void Ake_AstAdd2(Ake_Ast* p, Ake_Ast* c);
+	AKELA_API Ake_Ast* Ake_AstGet(Ake_Ast* p, size_t pos);
+	AKELA_API void Ake_AstCopy(Ake_Ast* src, Ake_Ast* dest);
+	AKELA_API Ake_Ast* Ake_AstClone(Ake_Ast* n);
+	AKELA_API bool Ake_AstMatch(Ake_Ast* a, Ake_Ast* b);
+	AKELA_API size_t Ake_AstCountChildren(Ake_Ast* n);
 
-AKELA_API void Ake_AstListInit(Ake_AstList* list);
-AKELA_API void Ake_AstListCreate(Ake_AstList** list);
-AKELA_API void Ake_AstListDestroy(Ake_AstList* list);
-AKELA_API void Ake_AstListAdd(Ake_AstList* list, Ake_Ast* n);
+	AKELA_API void Ake_AstListInit(Ake_AstList* list);
+	AKELA_API void Ake_AstListCreate(Ake_AstList** list);
+	AKELA_API void Ake_AstListDestroy(Ake_AstList* list);
+	AKELA_API void Ake_AstListAdd(Ake_AstList* list, Ake_Ast* n);
 
 #ifdef __cplusplus
 }

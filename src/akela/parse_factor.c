@@ -615,6 +615,7 @@ Ake_Ast* Ake_parse_sign(struct Ake_parse_state* ps)
     }
 
     n->data.sign.op = op;
+    Ake_AstAdd2(n, op);
 
     Ake_consume_newline(ps, n);
 
@@ -627,6 +628,7 @@ Ake_Ast* Ake_parse_sign(struct Ake_parse_state* ps)
         n->has_error = true;
 	} else {
 	    n->data.sign.right = right;
+	    Ake_AstAdd2(n, right);
 	}
 
 	if (!n->has_error) {

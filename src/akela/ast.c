@@ -137,6 +137,18 @@ void Ake_AstAdd(Ake_Ast* p, Ake_Ast* c)
 	}
 }
 
+void Ake_AstAdd2(Ake_Ast* p, Ake_Ast* c)
+{
+	Ake_AstValidate(p);
+	Ake_AstValidate(c);
+
+	Zinc_location_combine(&p->loc, &c->loc);
+	c->parent = p;
+	if (c->has_error) {
+		p->has_error = true;
+	}
+}
+
 Ake_Ast* Ake_AstGet(Ake_Ast* p, size_t pos)
 {
 	Ake_AstValidate(p);
