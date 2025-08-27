@@ -23,6 +23,7 @@ namespace Akela_llvm {
     void Destroy(Jit_data* jd)
     {
         free(jd->el);
+        Jit_data_destroy(jd);
         delete jd;
     }
 

@@ -34,6 +34,11 @@ namespace Akela_llvm {
         Ake_symbol_table_init(&jd->st);
     }
 
+    void Jit_data_destroy(Jit_data* jd)
+    {
+        Ake_symbol_table_destroy(&jd->st);
+    }
+
     /* NOLINTNEXTLINE(misc-no-recursion) */
     FunctionType *Get_function_type(Jit_data *jd, Ake_Type *type) {
         bool is_variadic = false;

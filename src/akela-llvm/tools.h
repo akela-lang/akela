@@ -71,6 +71,7 @@ namespace Akela_llvm {
 
     bool IsArray(Ake_TypeKind kind);
     void Jit_data_init(Jit_data* jd, Zinc_error_list* el);
+    void Jit_data_destroy(Jit_data* jd);
     llvm::FunctionType* Get_function_type(Jit_data* jd, Ake_Type* type);
     llvm::Type* Get_scalar_type(Jit_data * jd, Ake_Type* type);
     llvm::Type* Get_type(Jit_data * jd, Ake_Type* type);
