@@ -324,11 +324,11 @@ Ast::Stmts {
     }
   }
   Ast::Assign {
-    Ast::Id {
+    .left = Ast::Id {
       .value = "a"
       .type = type0
     }
-    Ast::Number {
+    .right = Ast::Number {
       .value = "1"
       .type = type0
     }
@@ -650,11 +650,11 @@ Ast::Stmts {
     }
   }
   Ast::Assign {
-    Ast::Id {
+    .left = Ast::Id {
       .value = "a"
       .type = type0
     }
-    Ast::Number {
+    .right = Ast::Number {
       .value = "1"
       .type = type0
     }
@@ -691,11 +691,11 @@ Ast::Stmts {
     }
   }
   Ast::Assign {
-    Ast::Id {
+    .left = Ast::Id {
       .value = "a"
       .type = type0
     }
-    Ast::Plus {
+    .right = Ast::Plus {
       .type = type0
       Ast::Number {
         .value = "1"
@@ -834,11 +834,11 @@ Ast::Stmts {
     }
   }
   Ast::Assign {
-    Ast::Id {
+    .left = Ast::Id {
       .value = "x"
       .type = type0
     }
-    Ast::Number {
+    .right = Ast::Number {
       .value = "5"
       .type = type0
     }

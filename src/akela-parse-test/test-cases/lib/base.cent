@@ -114,6 +114,13 @@ variant Ast::Number {
     }
 }
 
+variant Ast::Assign {
+    properties {
+        left: Ast
+        right: Ast
+    }
+}
+
 enum TypeKind {
   None
   Integer

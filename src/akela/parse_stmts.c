@@ -709,9 +709,9 @@ Ake_Ast* Ake_parse_assignment(struct Ake_parse_state* ps)
 	Ake_token* t0 = Ake_get_lookahead(ps);
 	if (t0->type == Ake_token_equal) {
 		Ake_AstCreate(&n);
-		n->kind = Ake_ast_type_assign;
-
-		Ake_AstAdd(n, a);
+		Ake_AstSet(n, AKE_AST_ASSIGN);
+		n->data.assign.left = a;
+		Ake_AstAdd2(n, a);
 
 		Ake_token *equal = NULL;
 		if (!Ake_match(ps, Ake_token_equal, "expecting assign operator", &equal, n)) {
@@ -726,13 +726,14 @@ Ake_Ast* Ake_parse_assignment(struct Ake_parse_state* ps)
 			Zinc_error_list_set(ps->el, &ps->lookahead->loc, "expected expression");
 			n->has_error = true;
 		} else {
-			Ake_AstAdd(n, b);
+			n->data.assign.right = b;
+			Ake_AstAdd2(n, b);
 		}
 	} else {
 		n = a;
 	}
 
-	if (n && n->kind == Ake_ast_type_assign && !n->has_error) {
+	if (n && n->kind == AKE_AST_ASSIGN && !n->has_error) {
 		if (!Ake_check_lvalue(ps, a, &n->loc)) {
 			n->has_error = true;
 		}

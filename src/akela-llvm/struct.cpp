@@ -63,8 +63,8 @@ namespace Akela_llvm {
             }
         }
 
-        if (n->parent->kind == Ake_ast_type_assign) {
-            Ake_Ast* p0 = Ake_AstGet(n->parent, 0);
+        if (n->parent->kind == AKE_AST_ASSIGN) {
+            Ake_Ast* p0 = n->parent->data.assign.left;
             if (p0 == n) {
                 return true;
             }

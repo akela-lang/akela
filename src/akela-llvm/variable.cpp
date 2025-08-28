@@ -94,8 +94,8 @@ namespace Akela_llvm {
 /* NOLINTNEXTLINE(misc-no-recursion) */
     Value* Handle_assign(Jit_data* jd, Ake_Ast* n)
     {
-        Ake_Ast* rhs = n->tail;
-        Ake_Ast* lhs = rhs->prev;
+        Ake_Ast* lhs = n->data.assign.left;
+        Ake_Ast* rhs = n->data.assign.right;
         Value* rhs_value = Dispatch(jd, rhs);
         while (lhs) {
             Assign_lhs_rhs_value(jd, lhs, rhs, rhs_value);
@@ -233,8 +233,8 @@ namespace Akela_llvm {
             return true;
         }
 
-        if (n->parent->kind == Ake_ast_type_assign) {
-            Ake_Ast* p0 = Ake_AstGet(n->parent, 0);
+        if (n->parent->kind == AKE_AST_ASSIGN) {
+            Ake_Ast* p0 = n->parent->data.assign.left;
             if (p0 == n) {
                 return true;
             }

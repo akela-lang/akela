@@ -52,6 +52,11 @@ void Ake_AstSet(Ake_Ast* n, Ake_AstKind kind)
 			Zinc_string_init(&n->data.string.value);
 			n->is_set = true;
 			break;
+		case AKE_AST_ASSIGN:
+			n->data.assign.left = NULL;
+			n->data.assign.right = NULL;
+			n->is_set = true;
+			break;
 		default:
 			break;
 	}
@@ -64,6 +69,7 @@ void Ake_AstValidate(Ake_Ast* n)
 		case AKE_AST_SIGN:
 		case AKE_AST_NUMBER:
 		case AKE_AST_STRING:
+		case AKE_AST_ASSIGN:
 			assert(n->is_set);
 			break;
 		default:
@@ -97,6 +103,10 @@ void Ake_AstDestroy(Ake_Ast* n)
     			break;
     		case AKE_AST_STRING:
     			Zinc_string_destroy(&n->data.string.value);
+    			break;
+    		case AKE_AST_ASSIGN:
+    			Ake_AstDestroy(n->data.assign.left);
+    			Ake_AstDestroy(n->data.assign.right);
     			break;
         	default:
     			break;
@@ -180,6 +190,11 @@ void Ake_AstCopy(Ake_Ast* src, Ake_Ast* dest)
 			break;
 		case AKE_AST_STRING:
 			Zinc_string_add_string(&src->data.string.value, &dest->data.string.value);
+			break;
+		case AKE_AST_ASSIGN:
+			dest->data.assign.left = Ake_AstClone(src->data.assign.left);
+			dest->data.assign.right = Ake_AstClone(src->data.assign.right);
+			break;
 		default:
 			break;
 	}
@@ -236,10 +251,20 @@ bool Ake_AstMatch(Ake_Ast* a, Ake_Ast* b)
 				if (!Zinc_string_compare(&a->data.number.value, &b->data.number.value)) {
 					return false;
 				}
+				break;
 			case AKE_AST_STRING:
 				if (!Zinc_string_compare(&a->data.string.value, &b->data.string.value)) {
 					return false;
 				}
+				break;
+			case AKE_AST_ASSIGN:
+				if (!Ake_AstMatch(a->data.assign.left, b->data.assign.left)) {
+					return false;
+				}
+				if (!Ake_AstMatch(a->data.assign.right, b->data.assign.right)) {
+					return false;
+				}
+				break;
 			default:
 				break;
 		}

@@ -5,7 +5,7 @@
   * sign [x]
   * number [x]
   * string [x]
-  * assign []
+  * assign [x]
   * plus []
   * minus []
   * mult []

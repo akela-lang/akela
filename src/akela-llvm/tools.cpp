@@ -372,7 +372,7 @@ namespace Akela_llvm {
             return Handle_function(jd, n);
         }
 
-        if (n->kind == Ake_ast_type_assign) {
+        if (n->kind == AKE_AST_ASSIGN) {
             return Handle_assign(jd, n);
         }
 

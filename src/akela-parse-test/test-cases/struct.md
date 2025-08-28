@@ -117,7 +117,7 @@ Ast::Stmts {
     }
   }
   Ast::Assign {
-    Ast::Dot {
+    .left = Ast::Dot {
       .type = type0
       Ast::Id {
         .value = "p"
@@ -127,7 +127,7 @@ Ast::Stmts {
         .value = "firstName"
       }
     }
-    Ast::String {
+    .right = Ast::String {
       .value = "John"
       .type = type3
     }
