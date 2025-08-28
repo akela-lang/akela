@@ -77,15 +77,15 @@ Ast::Stmts {
     }
   }
   Ast::Plus {
-    .type = type0
-    Ast::Id {
+    .left = Ast::Id {
       .value = "i"
       .type = type0
     }
-    Ast::Number {
+    .right = Ast::Number {
       .value = "1"
       .type = type0
     }
+    .type = type0
   }
   Ast::Mult {
     .type = type0
@@ -136,26 +136,26 @@ Ast::Stmts {
     }
   }
   Ast::Plus {
-    .type = type0
-    Ast::Id {
+    .left = Ast::Id {
       .value = "x"
       .type = type0
     }
-    Ast::Number {
+    .right = Ast::Number {
       .value = "1"
       .type = type0
     }
+    .type = type0
   }
   Ast::Minus {
-    .type = type0
-    Ast::Number {
+    .left = Ast::Number {
       .value = "5"
       .type = type0
     }
-    Ast::Number {
+    .right = Ast::Number {
       .value = "4"
       .type = type0
     }
+    .type = type0
   }
 }
 ```
@@ -222,37 +222,37 @@ Ast::Stmts {
     }
   }
   Ast::Plus {
-    .type = type0
-    Ast::Id {
+    .left = Ast::Id {
       .value = "x"
       .type = type0
     }
-    Ast::Number {
+    .right = Ast::Number {
       .value = "1"
       .type = type0
     }
+    .type = type0
   }
   Ast::Minus {
-    .type = type0
-    Ast::Number {
+    .left = Ast::Number {
       .value = "5"
       .type = type0
     }
-    Ast::Number {
+    .right = Ast::Number {
       .value = "4"
       .type = type0
     }
+    .type = type0
   }
   Ast::Plus {
-    .type = type0
-    Ast::Id {
+    .left = Ast::Id {
       .value = "y"
       .type = type0
     }
-    Ast::Id {
+    .right = Ast::Id {
       .value = "z"
       .type = type0
     }
+    .type = type0
   }
 }
 ```
@@ -319,37 +319,37 @@ Ast::Stmts {
     }
   }
   Ast::Plus {
-    .type = type0
-    Ast::Id {
+    .left = Ast::Id {
       .value = "x"
       .type = type0
     }
-    Ast::Number {
+    .right = Ast::Number {
       .value = "1"
       .type = type0
     }
+    .type = type0
   }
   Ast::Minus {
-    .type = type0
-    Ast::Number {
+    .left = Ast::Number {
       .value = "5"
       .type = type0
     }
-    Ast::Number {
+    .right = Ast::Number {
       .value = "4"
       .type = type0
     }
+    .type = type0
   }
   Ast::Plus {
-    .type = type0
-    Ast::Id {
+    .left = Ast::Id {
       .value = "y"
       .type = type0
     }
-    Ast::Id {
+    .right = Ast::Id {
       .value = "z"
       .type = type0
     }
+    .type = type0
   }
 }
 ```

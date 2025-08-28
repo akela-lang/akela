@@ -45,6 +45,7 @@ typedef union Cent_data
     } dag;
 } Cent_data;
 
+typedef struct Cent_ast Cent_ast;
 typedef struct Cent_value {
     Zinc_string name;
     Cent_value_type type;
@@ -52,7 +53,7 @@ typedef struct Cent_value {
     Cent_data data;
     struct Cent_value* next;
     struct Cent_value* prev;
-    void* n;
+    Cent_ast* n;
     void* parent;
 } Cent_value;
 

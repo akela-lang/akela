@@ -53,7 +53,6 @@ typedef struct Apt_top_data Apt_top_data;
 struct Apt_top_data
 {
     Zinc_string dir_path;
-    Zinc_error_list errors;
 };
 
 void Apt_case_data_init(Apt_case_data *case_data);

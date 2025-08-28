@@ -44,15 +44,15 @@ Ast::Stmts {
     }
   }
   Ast::Plus {
-    .type = type0
-    Ast::Id {
+    .left = Ast::Id {
       .value = "speed"
       .type = type0
     }
-    Ast::Number {
+    .right = Ast::Number {
       .value = "1"
       .type = type0
     }
+    .type = type0
   }
 }
 ```
@@ -224,15 +224,15 @@ const type1 = Type::Real {
 Ast::Stmts {
   .type = type0
   Ast::Plus {
-    .type = type0
-    Ast::Number {
+    .left = Ast::Number {
       .value = "1"
       .type = type0
     }
-    Ast::Number {
+    .right = Ast::Number {
       .value = "5.0"
       .type = type1
     }
+    .type = type0
   }
 }
 ```
@@ -276,12 +276,11 @@ Ast::Stmts {
     }
   }
   Ast::Plus {
-    .type = type0
-    Ast::Id {
+    .left = Ast::Id {
       .value = "speed"
       .type = type0
     }
-    Ast::Sign {
+    .right = Ast::Sign {
       .op = Ast::Plus {
       }
       .right = Ast::Number {
@@ -290,6 +289,7 @@ Ast::Stmts {
       }
       .type = type0
     }
+    .type = type0
   }
 }
 ```
@@ -325,12 +325,11 @@ Ast::Stmts {
     }
   }
   Ast::Plus {
-    .type = type0
-    Ast::Id {
+    .left = Ast::Id {
       .value = "speed"
       .type = type0
     }
-    Ast::Sign {
+    .right = Ast::Sign {
       .op = Ast::Minus {
       }
       .right = Ast::Number {
@@ -339,6 +338,7 @@ Ast::Stmts {
       }
       .type = type0
     }
+    .type = type0
   }
 }
 ```
@@ -382,15 +382,15 @@ Ast::Stmts {
     }
   }
   Ast::Minus {
-    .type = type0
-    Ast::Number {
+    .left = Ast::Number {
       .value = "100"
       .type = type0
     }
-    Ast::Id {
+    .right = Ast::Id {
       .value = "delta"
       .type = type0
     }
+    .type = type0
   }
 }
 ```
@@ -434,12 +434,11 @@ Ast::Stmts {
     }
   }
   Ast::Minus {
-    .type = type0
-    Ast::Id {
+    .left = Ast::Id {
       .value = "speed"
       .type = type0
     }
-    Ast::Sign {
+    .right = Ast::Sign {
       .op = Ast::Plus {
       }
       .right = Ast::Number {
@@ -448,6 +447,7 @@ Ast::Stmts {
       }
       .type = type0
     }
+    .type = type0
   }
 }
 ```
@@ -491,12 +491,11 @@ Ast::Stmts {
     }
   }
   Ast::Minus {
-    .type = type0
-    Ast::Id {
+    .left = Ast::Id {
       .value = "speed"
       .type = type0
     }
-    Ast::Sign {
+    .right = Ast::Sign {
       .op = Ast::Minus {
       }
       .right = Ast::Number {
@@ -505,6 +504,7 @@ Ast::Stmts {
       }
       .type = type0
     }
+    .type = type0
   }
 }
 ```
@@ -860,22 +860,22 @@ const type0 = Type::Integer {
 Ast::Stmts {
   .type = type0
   Ast::Plus {
-    .type = type0
-    Ast::Plus {
-      .type = type0
-      Ast::Number {
+    .left = Ast::Plus {
+      .left = Ast::Number {
         .value = "1"
         .type = type0
       }
-      Ast::Number {
+      .right = Ast::Number {
         .value = "2"
         .type = type0
       }
+      .type = type0
     }
-    Ast::Number {
+    .right = Ast::Number {
       .value = "3"
       .type = type0
     }
+    .type = type0
   }
 }
 ```
@@ -952,12 +952,11 @@ const type0 = Type::Integer {
 Ast::Stmts {
   .type = type0
   Ast::Plus {
-    .type = type0
-    Ast::Number {
+    .left = Ast::Number {
       .value = "5"
       .type = type0
     }
-    Ast::Mult {
+    .right = Ast::Mult {
       .type = type0
       Ast::Number {
         .value = "3"
@@ -968,6 +967,7 @@ Ast::Stmts {
         .type = type0
       }
     }
+    .type = type0
   }
 }
 ```
@@ -998,8 +998,7 @@ const type0 = Type::Integer {
 Ast::Stmts {
   .type = type0
   Ast::Plus {
-    .type = type0
-    Ast::Mult {
+    .left = Ast::Mult {
       .type = type0
       Ast::Number {
         .value = "4"
@@ -1010,10 +1009,11 @@ Ast::Stmts {
         .type = type0
       }
     }
-    Ast::Number {
+    .right = Ast::Number {
       .value = "2"
       .type = type0
     }
+    .type = type0
   }
 }
 ```
@@ -1221,15 +1221,15 @@ const type0 = Type::Integer {
 Ast::Stmts {
   .type = type0
   Ast::Plus {
-    .type = type0
-    Ast::Number {
+    .left = Ast::Number {
       .value = "1"
       .type = type0
     }
-    Ast::Number {
+    .right = Ast::Number {
       .value = "2"
       .type = type0
     }
+    .type = type0
   }
 }
 ```
@@ -1365,8 +1365,7 @@ const type0 = Type::Integer {
 Ast::Stmts {
   .type = type0
   Ast::Plus {
-    .type = type0
-    Ast::Sign {
+    .left = Ast::Sign {
       .op = Ast::Minus {
       }
       .right = Ast::Number {
@@ -1375,7 +1374,7 @@ Ast::Stmts {
       }
       .type = type0
     }
-    Ast::Sign {
+    .right = Ast::Sign {
       .op = Ast::Minus {
       }
       .right = Ast::Number {
@@ -1384,6 +1383,7 @@ Ast::Stmts {
       }
       .type = type0
     }
+    .type = type0
   }
 }
 ```

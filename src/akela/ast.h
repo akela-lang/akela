@@ -20,8 +20,8 @@ typedef enum Ake_AstKind {
 	AKE_AST_NUMBER,
 	AKE_AST_STRING,
 	AKE_AST_ASSIGN,
-	Ake_ast_type_plus,
-	Ake_ast_type_minus,
+	AKE_AST_PLUS,
+	AKE_AST_MINUS,
 	Ake_ast_type_mult,
 	Ake_ast_type_divide,
 	Ake_ast_type_stmts,
@@ -76,8 +76,8 @@ static char const* Ast_type_name(Ake_AstKind kind)
     name[AKE_AST_NUMBER] = "number";
     name[AKE_AST_STRING] = "string";
     name[AKE_AST_ASSIGN] = "assign";
-    name[Ake_ast_type_plus] = "plus";
-    name[Ake_ast_type_minus] = "minus";
+    name[AKE_AST_PLUS] = "plus";
+    name[AKE_AST_MINUS] = "minus";
     name[Ake_ast_type_mult] = "mult";
     name[Ake_ast_type_divide] = "divide";
     name[Ake_ast_type_stmts] = "stmts";
@@ -138,6 +138,8 @@ typedef struct Ake_Ast {
 		struct { Zinc_string value; } number;
 		struct { Zinc_string value; } string;
 		struct { Ake_Ast* left; Ake_Ast* right; } assign;
+		struct { Ake_Ast* left; Ake_Ast* right; } plus;
+		struct { Ake_Ast* left; Ake_Ast* right; } minus;
 	} data;
 	Ake_Type* type;
     Zinc_location loc;

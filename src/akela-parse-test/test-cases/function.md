@@ -59,26 +59,26 @@ Ast::Stmts {
         }
       }
       Ast::Plus {
-        .type = type1
-        Ast::Id {
+        .left = Ast::Id {
           .value = "x"
           .type = type1
         }
-        Ast::Number {
+        .right = Ast::Number {
           .value = "1"
           .type = type1
         }
+        .type = type1
       }
       Ast::Plus {
-        .type = type1
-        Ast::Number {
+        .left = Ast::Number {
           .value = "5"
           .type = type1
         }
-        Ast::Number {
+        .right = Ast::Number {
           .value = "4"
           .type = type1
         }
+        .type = type1
       }
     }
   }
@@ -142,26 +142,26 @@ Ast::Stmts {
     Ast::Stmts {
       .type = type1
       Ast::Plus {
-        .type = type1
-        Ast::Id {
+        .left = Ast::Id {
           .value = "x"
           .type = type1
         }
-        Ast::Number {
+        .right = Ast::Number {
           .value = "1"
           .type = type1
         }
+        .type = type1
       }
       Ast::Plus {
-        .type = type1
-        Ast::Number {
+        .left = Ast::Number {
           .value = "5"
           .type = type1
         }
-        Ast::Number {
+        .right = Ast::Number {
           .value = "4"
           .type = type1
         }
+        .type = type1
       }
     }
   }
@@ -240,23 +240,23 @@ Ast::Stmts {
     Ast::Stmts {
       .type = type1
       Ast::Plus {
-        .type = type1
-        Ast::Id {
+        .left = Ast::Id {
           .value = "x"
           .type = type1
         }
-        Ast::Number {
+        .right = Ast::Number {
           .value = "1"
           .type = type1
         }
+        .type = type1
       }
       Ast::Plus {
         .type = type1
-        Ast::Number {
+        .left = Ast::Number {
           .value = "5"
           .type = type1
         }
-        Ast::Number {
+        .right = Ast::Number {
           .value = "4"
           .type = type1
         }
@@ -360,26 +360,26 @@ Ast::Stmts {
     Ast::Stmts {
       .type = type1
       Ast::Plus {
-        .type = type1
-        Ast::Id {
+        .left = Ast::Id {
           .value = "x"
           .type = type1
         }
-        Ast::Number {
+        .right = Ast::Number {
           .value = "1"
           .type = type1
         }
+        .type = type1
       }
       Ast::Plus {
-        .type = type1
-        Ast::Number {
+        .left = Ast::Number {
           .value = "5"
           .type = type1
         }
-        Ast::Number {
+        .right = Ast::Number {
           .value = "4"
           .type = type1
         }
+        .type = type1
       }
     }
   }
@@ -801,22 +801,22 @@ Ast::Stmts {
       Ast::Stmts {
         .type = type2
         Ast::Plus {
-          .type = type2
-          Ast::Plus {
-            .type = type2
-            Ast::Id {
+          .left = Ast::Plus {
+            .left = Ast::Id {
               .value = "x"
               .type = type2
             }
-            Ast::Id {
+            .right = Ast::Id {
               .value = "y"
               .type = type2
             }
+            .type = type2
           }
-          Ast::Id {
+          .right = Ast::Id {
             .value = "z"
             .type = type2
           }
+          .type = type2
         }
       }
     }
@@ -952,22 +952,22 @@ Ast::Stmts {
       Ast::Stmts {
         .type = type2
         Ast::Plus {
-          .type = type2
-          Ast::Plus {
-            .type = type2
-            Ast::Id {
+          .left = Ast::Plus {
+            .left = Ast::Id {
               .value = "x"
               .type = type2
             }
-            Ast::Id {
+            .right = Ast::Id {
               .value = "y"
               .type = type2
             }
+            .type = type2
           }
-          Ast::Id {
+          .right = Ast::Id {
             .value = "z"
             .type = type2
           }
+          .type = type2
         }
       }
     }
@@ -1143,15 +1143,15 @@ Ast::Stmts {
       Ast::Stmts {
         .type = type2
         Ast::Plus {
-          .type = type2
-          Ast::Id {
+          .left = Ast::Id {
             .value = "a"
             .type = type2
           }
-          Ast::Number {
+          .right = Ast::Number {
             .value = "1"
             .type = type2
           }
+          .type = type2
         }
       }
     }
@@ -1306,8 +1306,7 @@ Ast::Stmts {
     }
   }
   Ast::Plus {
-    .type = type0
-    Ast::Call {
+    .left = Ast::Call {
       .type = type0
       Ast::Id {
         .value = "foo"
@@ -1316,10 +1315,11 @@ Ast::Stmts {
       Ast::Cseq {
       }
     }
-    Ast::Number {
+    .right = Ast::Number {
       .value = "2"
       .type = type0
     }
+    .type = type0
   }
 }
 ```
@@ -1973,22 +1973,22 @@ Ast::Stmts {
     Ast::Stmts {
       .type = type1
       Ast::Plus {
-        .type = type1
-        Ast::Plus {
-          .type = type1
-          Ast::Id {
+        .left = Ast::Plus {
+          .left = Ast::Id {
             .value = "a"
             .type = type1
           }
-          Ast::Id {
+          .right = Ast::Id {
             .value = "b"
             .type = type1
           }
+          .type = type1
         }
-        Ast::Id {
+        .right = Ast::Id {
           .value = "c"
           .type = type1
         }
+        .type = type1
       }
     }
   }
@@ -2129,22 +2129,22 @@ Ast::Stmts {
       Ast::Stmts {
         .type = type2
         Ast::Plus {
-          .type = type2
-          Ast::Plus {
-            .type = type2
-            Ast::Id {
+          .left = Ast::Plus {
+            .left = Ast::Id {
               .value = "a"
               .type = type2
             }
-            Ast::Id {
+            .right = Ast::Id {
               .value = "b"
               .type = type2
             }
+            .type = type2
           }
-          Ast::Id {
+          .right = Ast::Id {
             .value = "c"
             .type = type2
           }
+          .type = type2
         }
       }
     }
@@ -2321,15 +2321,15 @@ Ast::Stmts {
     Ast::Stmts {
       .type = type0
       Ast::Plus {
-        .type = type0
-        Ast::Id {
+        .left = Ast::Id {
           .value = "a"
           .type = type0
         }
-        Ast::Id {
+        .right = Ast::Id {
           .value = "b"
           .type = type0
         }
+        .type = type0
       }
     }
   }

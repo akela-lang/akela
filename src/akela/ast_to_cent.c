@@ -95,6 +95,30 @@ void Ake_ast_cent_print(Ake_Ast* n, size_t level, bool is_property, Ake_TypeSlot
                     Ake_ast_cent_print(n->data.assign.right, level, true, slots);
                 }
                 break;
+            case AKE_AST_PLUS:
+                if (n->data.plus.left) {
+                    Ake_indent_print(level);
+                    printf(".left = ");
+                    Ake_ast_cent_print(n->data.plus.left, level, true, slots);
+                }
+                if (n->data.plus.right) {
+                    Ake_indent_print(level);
+                    printf(".right = ");
+                    Ake_ast_cent_print(n->data.plus.right, level, true, slots);
+                }
+                break;
+            case AKE_AST_MINUS:
+                if (n->data.minus.left) {
+                    Ake_indent_print(level);
+                    printf(".left = ");
+                    Ake_ast_cent_print(n->data.minus.left, level, true, slots);
+                }
+                if (n->data.minus.right) {
+                    Ake_indent_print(level);
+                    printf(".right = ");
+                    Ake_ast_cent_print(n->data.minus.right, level, true, slots);
+                }
+                break;
             default:
                 break;
         }
@@ -143,11 +167,11 @@ char* Ake_ast_cent_name(Ake_AstKind type)
         return "Ast::Assign";
     }
 
-    if (type == Ake_ast_type_plus) {
+    if (type == AKE_AST_PLUS) {
         return "Ast::Plus";
     }
 
-    if (type == Ake_ast_type_minus) {
+    if (type == AKE_AST_MINUS) {
         return "Ast::Minus";
     }
 

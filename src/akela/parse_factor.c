@@ -607,9 +607,9 @@ Ake_Ast* Ake_parse_sign(struct Ake_parse_state* ps)
     Ake_AstCreate(&op);
 
     if (t0->type == Ake_token_plus) {
-        op->kind = Ake_ast_type_plus;
+        Ake_AstSet(op, AKE_AST_PLUS);
     } else if (t0->type == Ake_token_minus) {
-        op->kind = Ake_ast_type_minus;
+        Ake_AstSet(op, AKE_AST_MINUS);
     } else {
         assert(false && "not possible");
     }

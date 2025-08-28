@@ -697,11 +697,11 @@ Ast::Stmts {
     }
     .right = Ast::Plus {
       .type = type0
-      Ast::Number {
+      .left = Ast::Number {
         .value = "1"
         .type = type0
       }
-      Ast::Number {
+      .right = Ast::Number {
         .value = "2"
         .type = type0
       }

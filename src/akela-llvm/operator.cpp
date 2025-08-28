@@ -22,10 +22,10 @@ namespace Akela_llvm {
     /* NOLINTNEXTLINE(misc-no-recursion) */
     Value* Handle_add(Jit_data* jd, Ake_Ast* n)
     {
-        Ake_Ast* a = Ake_AstGet(n, 0);
+        Ake_Ast* a = n->data.plus.left;
         Value* lhs = Dispatch(jd, a);
 
-        Ake_Ast* b = Ake_AstGet(n, 1);
+        Ake_Ast* b = n->data.plus.right;
         Value* rhs = Dispatch(jd, b);
 
         if (a->type->kind == AKE_TYPE_REAL || b->type->kind == AKE_TYPE_REAL) {
@@ -38,10 +38,10 @@ namespace Akela_llvm {
     /* NOLINTNEXTLINE(misc-no-recursion) */
     Value* Handle_sub(Jit_data* jd, Ake_Ast* n)
     {
-        Ake_Ast* a = Ake_AstGet(n, 0);
+        Ake_Ast* a = n->data.minus.left;
         Value* lhs = Dispatch(jd, a);
 
-        Ake_Ast* b = Ake_AstGet(n, 1);
+        Ake_Ast* b = n->data.minus.right;
         Value* rhs = Dispatch(jd, b);
 
         return jd->Builder->CreateSub(lhs, rhs, "subtmp");
@@ -54,11 +54,11 @@ namespace Akela_llvm {
         Ake_Ast* number = n->data.sign.right;
         Value* number_value = Dispatch(jd, number);
 
-        if (op->kind == Ake_ast_type_plus) {
+        if (op->kind == AKE_AST_PLUS) {
             return number_value;
         }
 
-        assert(op->kind == Ake_ast_type_minus);
+        assert(op->kind == AKE_AST_MINUS);
 
         Type* number_type = Get_type(jd, number->type);
 

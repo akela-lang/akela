@@ -66,6 +66,7 @@ bool Apt_compare_type_function(
     Ake_Ast* n,
     Ake_Type* type,
     Cent_value* value);
+void Apt_compare_value_string(Zinc_test* case_test, Ake_Ast* n, Zinc_string* actual, Cent_value* value);
 
 void Apt_suite_run(Zinc_test* suite_test)
 {
@@ -91,7 +92,7 @@ void Apt_case_run(Zinc_test* case_test)
         Zinc_location loc;
         Zinc_location_init(&loc);
         Zinc_error_list_set(
-            &top_data->errors,
+            &case_data->errors,
             &loc,
             "fopen: %s: %s",
             Zinc_string_c_str(&suite_data->path),
@@ -124,7 +125,7 @@ void Apt_case_run(Zinc_test* case_test)
             Zinc_location loc;
             Zinc_location_init(&loc);
             Zinc_error_list_set(
-                &top_data->errors,
+                &case_data->errors,
                 &loc,
                 "fopen: %s: %s",
                 Zinc_string_c_str(&suite_data->path),
@@ -152,11 +153,11 @@ void Apt_case_run(Zinc_test* case_test)
             if (pr.errors->head) {
                 Zinc_error* e = pr.errors->head;
                 while (e) {
-                    Zinc_error_list_set(&top_data->errors, &e->loc, "%bf", &e->message);
+                    Zinc_error_list_set(&case_data->errors, &e->loc, "%bf", &e->message);
                     e = e->next;
                 }
                 Zinc_test_print_unseen(case_test);
-                Zinc_error_list_print(&top_data->errors);
+                Zinc_error_list_print(&case_data->errors);
                 Ake_comp_table_free(ct);
                 return;
             }
@@ -164,11 +165,11 @@ void Apt_case_run(Zinc_test* case_test)
             if (expected_ct->primary->errors.head) {
                 Zinc_error* e = expected_ct->primary->errors.head;
                 while (e) {
-                    Zinc_error_list_set(&top_data->errors, &e->loc, "%bf", &e->message);
+                    Zinc_error_list_set(&case_data->errors, &e->loc, "%bf", &e->message);
                     e = e->next;
                 }
                 Zinc_test_print_unseen(case_test);
-                Zinc_error_list_print(&top_data->errors);
+                Zinc_error_list_print(&case_data->errors);
 
                 Ake_comp_table_free(ct);
                 Cent_comp_table_destroy(expected_ct);
@@ -201,19 +202,7 @@ void Apt_case_run(Zinc_test* case_test)
 
 bool Apt_has_value(Ake_Ast* n)
 {
-    if (n->kind == AKE_AST_ID && n->data.id.value.size > 0) {
-        return true;
-    }
-
     if (n->struct_value.size > 0) {
-        return true;
-    }
-
-    if (n->kind == AKE_AST_NUMBER && n->data.number.value.size > 0) {
-        return true;
-    }
-
-    if (n->kind == AKE_AST_STRING && n->data.string.value.size > 0) {
         return true;
     }
 
@@ -226,20 +215,8 @@ bool Apt_has_value(Ake_Ast* n)
 
 Zinc_string* Apt_get_value(Ake_Ast* n)
 {
-    if (n->kind == AKE_AST_ID && n->data.id.value.size > 0) {
-        return &n->data.id.value;
-    }
-
     if (n->struct_value.size > 0) {
         return &n->struct_value;
-    }
-
-    if (n->kind == AKE_AST_NUMBER && n->data.number.value.size > 0) {
-        return &n->data.number.value;
-    }
-
-    if (n->kind == AKE_AST_STRING && n->data.string.value.size > 0) {
-        return &n->data.string.value;
     }
 
     if (n->boolean_value.size > 0) {
@@ -323,6 +300,53 @@ bool Apt_compare_ast(Zinc_test* top_test, Zinc_test* case_test, Ake_Ast* n, Cent
         Zinc_expect_passed(case_test);
     }
 
+    Cent_value* op = NULL;
+    Cent_value* left = NULL;
+    Cent_value* right = NULL;
+    Cent_value* value2 = NULL;
+    switch (n->kind) {
+        case AKE_AST_NONE:
+            break;
+        case AKE_AST_ID:
+            value2 = Cent_value_get_str(value, "value");
+            Apt_compare_value_string(case_test, n, &n->data.id.value, value2);
+            break;
+        case AKE_AST_SIGN:
+            op = Cent_value_get_str(value, "op");
+            right = Cent_value_get_str(value, "right");
+            Apt_compare_ast(top_test, case_test, n->data.sign.op, op);
+            Apt_compare_ast(top_test, case_test, n->data.sign.right, right);
+            break;
+        case AKE_AST_NUMBER:
+            value2 = Cent_value_get_str(value, "value");
+            Apt_compare_value_string(case_test, n, &n->data.number.value, value2);
+            break;
+        case AKE_AST_STRING:
+            value2 = Cent_value_get_str(value, "value");
+            Apt_compare_value_string(case_test, n, &n->data.string.value, value2);
+            break;
+        case AKE_AST_ASSIGN:
+            left = Cent_value_get_str(value, "left");
+            right = Cent_value_get_str(value, "right");
+            Apt_compare_ast(top_test, case_test, n->data.assign.left, left);
+            Apt_compare_ast(top_test, case_test, n->data.assign.right, right);
+            break;
+        case AKE_AST_PLUS:
+            left = Cent_value_get_str(value, "left");
+            right = Cent_value_get_str(value, "right");
+            Apt_compare_ast(top_test, case_test, n->data.plus.left, left);
+            Apt_compare_ast(top_test, case_test, n->data.plus.right, right);
+            break;
+        case AKE_AST_MINUS:
+            left = Cent_value_get_str(value, "left");
+            right = Cent_value_get_str(value, "right");
+            Apt_compare_ast(top_test, case_test, n->data.minus.left, left);
+            Apt_compare_ast(top_test, case_test, n->data.minus.right, right);
+            break;
+        default:
+            break;
+    }
+
     Cent_value* value_prop = Cent_value_get_str(value, "value");
     if (Apt_has_value(n)) {
         if (!value_prop) {
@@ -353,18 +377,7 @@ bool Apt_compare_ast(Zinc_test* top_test, Zinc_test* case_test, Ake_Ast* n, Cent
             }
         }
     } else {
-        if (value_prop && value_prop->data.string.size > 0) {
-            Zinc_expect_failed(case_test);
-            Zinc_spec_error_list_set(
-                &case_data->spec_errors,
-                case_test,
-                &n->loc,
-                &value_n->loc,
-                "value expected");
-            pass = false;
-        } else {
-            Zinc_expect_passed(case_test);
-        }
+        Zinc_expect_passed(case_test);
     }
 
     Ake_Type* type = n->type;
@@ -373,7 +386,7 @@ bool Apt_compare_ast(Zinc_test* top_test, Zinc_test* case_test, Ake_Ast* n, Cent
 
     /* children */
     Ake_Ast* n2 = NULL;
-    Cent_value* value2 = NULL;
+    value2 = NULL;
 
     n2 = n->head;
     if (value->type == Cent_value_type_dag) {
@@ -391,6 +404,48 @@ bool Apt_compare_ast(Zinc_test* top_test, Zinc_test* case_test, Ake_Ast* n, Cent
     }
 
     return pass;
+}
+
+void Apt_compare_value_string(Zinc_test* case_test, Ake_Ast* n, Zinc_string* actual, Cent_value* value)
+{
+    Apt_case_data* case_data = case_test->data;
+
+    if (value || actual->size > 0) {
+        if (!value) {
+            Zinc_spec_error_list_set(
+                &case_data->spec_errors,
+                case_test,
+                &n->loc,
+                NULL,
+                "no expected value");
+        } else if (actual->size == 0) {
+            Zinc_spec_error_list_set(
+                &case_data->spec_errors,
+                case_test,
+                NULL,
+                &value->n->loc,
+                "no actual value");
+        } else {
+            if (value->type == Cent_value_type_string) {
+                Zinc_string* a = actual;
+                Zinc_string* b = &value->data.string;
+                if (!Zinc_string_compare(a, b)) {
+                    Zinc_spec_error_list_set(
+                        &case_data->spec_errors,
+                        case_test,
+                        &n->loc,
+                        &value->n->loc,
+                        "value not equal: (%bf) (%bf)",
+                        a,
+                        b);
+                }
+            } else {
+                Zinc_test_print_unseen(case_test);
+                fprintf(stderr,"expected string\n");
+                Zinc_expect_failed(case_test);
+            }
+        }
+    }
 }
 
 /* NOLINTNEXTLINE(misc-no-recursion) */
@@ -423,7 +478,7 @@ bool Apt_compare_type(
         Zinc_expect_passed(case_test);
     }
 
-    Ake_Ast* value_n = value->n;
+    Cent_ast* value_n = value->n;
 
     if (!type && value) {
         Zinc_expect_failed(case_test);
@@ -522,7 +577,7 @@ bool Apt_compare_type_integer(
     Cent_value* value)
 {
     Apt_case_data* case_data = case_test->data;
-    Ake_Ast* value_n = value->n;
+    Cent_ast* value_n = value->n;
 
     bool pass = true;
 
@@ -566,7 +621,7 @@ bool Apt_compare_type_natural(
     Cent_value* value)
 {
     Apt_case_data* case_data = case_test->data;
-    Ake_Ast* value_n = value->n;
+    Cent_ast* value_n = value->n;
 
     bool pass = true;
 
@@ -610,7 +665,7 @@ bool Apt_compare_type_real(
     Cent_value* value)
 {
     Apt_case_data* case_data = case_test->data;
-    Ake_Ast* value_n = value->n;
+    Cent_ast* value_n = value->n;
 
     bool pass = true;
 
@@ -655,7 +710,7 @@ bool Apt_compare_type_struct(
     Cent_value* value)
 {
     Apt_case_data* case_data = case_test->data;
-    Ake_Ast* value_n = value->n;
+    Cent_ast* value_n = value->n;
 
     bool pass = true;
 

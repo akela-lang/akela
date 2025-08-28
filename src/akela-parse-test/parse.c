@@ -166,9 +166,9 @@ void Apt_parse_suite(
                 test_title = Zinc_trim(test_title);
                 Zinc_string_slice expected_title = Zinc_string_slice_from_str("Test");
                 if (!Zinc_string_slice_compare(&test_title, &expected_title)) {
-                    Zinc_error_list_set(&top_data->errors, &item->loc, "expected Test");
+                    Zinc_error_list_set(&suite_data->errors, &item->loc, "expected Test");
                 } else if (item->data.header.level != 2) {
-                    Zinc_error_list_set(&top_data->errors, &item->loc, "expected level 2");
+                    Zinc_error_list_set(&suite_data->errors, &item->loc, "expected level 2");
                 } else {
                     Apt_parse_case(top_test, path, suite_test, item, name);
                 }
@@ -191,6 +191,7 @@ void Apt_parse_suite(
 void Apt_parse_suite_meta(Zinc_test* top_test, Zinc_test* suite_test, Cent_value* value)
 {
     Apt_top_data* top_data = top_test->data;
+    Apt_suite_data* suite_data = suite_test->data;
 
     if (value->type == Cent_value_type_dag) {
         if (Zinc_string_compare_str(&value->name, "TestSuite")) {
@@ -201,7 +202,7 @@ void Apt_parse_suite_meta(Zinc_test* top_test, Zinc_test* suite_test, Cent_value
                 (Zinc_hash_map_string_func_name)Apt__parse_suite_meta_prop__);
         } else {
             Cent_ast* n = value->n;
-            Zinc_error_list_set(&top_data->errors, &n->loc, "expected TestSuite");
+            Zinc_error_list_set(&suite_data->errors, &n->loc, "expected TestSuite");
         }
     }
 }
@@ -218,18 +219,18 @@ void Apt__parse_suite_meta_prop__(Zinc_string* name, Cent_value* prop)
             suite_test->solo = prop->data.boolean;
         } else {
             Cent_ast* n = prop->n;
-            Zinc_error_list_set(&top_data->errors, &n->loc, "expected boolean");
+            Zinc_error_list_set(&suite_data->errors, &n->loc, "expected boolean");
         }
     } else if (Zinc_string_compare_str(name, "mute")) {
         if (prop->type == Cent_value_type_boolean) {
             suite_test->mute = prop->data.boolean;
         } else {
             Cent_ast* n = prop->n;
-            Zinc_error_list_set(&top_data->errors, &n->loc, "expected boolean");
+            Zinc_error_list_set(&suite_data->errors, &n->loc, "expected boolean");
         }
     } else {
         Cent_ast* n = prop->n;
-        Zinc_error_list_set(&top_data->errors, &n->loc, "expected solo or mute");
+        Zinc_error_list_set(&suite_data->errors, &n->loc, "expected solo or mute");
     }
 }
 
@@ -276,7 +277,7 @@ void Apt_parse_case(
                         Zinc_error* e = ct->primary->errors.head;
                         while (e) {
                             Zinc_error_list_set(
-                                &top_data->errors,
+                                &case_data->errors,
                                 &e->loc,
                                 "%s", Zinc_string_c_str(&e->message));
                             e = e->next;
@@ -309,19 +310,19 @@ void Apt_parse_case_meta(Zinc_test* top_test, Zinc_test* case_test, Cent_value* 
     Apt_case_data* case_data = case_test->data;
 
     if (!value) {
-        Zinc_error_list_set(&top_data->errors, NULL, "expected a value");
+        Zinc_error_list_set(&case_data->errors, NULL, "expected a value");
         return;
     }
 
     if (value->type != Cent_value_type_dag) {
         Cent_ast* n = value->n;
-        Zinc_error_list_set(&top_data->errors, &n->loc, "expected DAG type");
+        Zinc_error_list_set(&case_data->errors, &n->loc, "expected DAG type");
         return;
     }
 
     if (!Zinc_string_compare_str(&value->name, "Test")) {
         Cent_ast* n = value->n;
-        Zinc_error_list_set(&top_data->errors, &n->loc, "expected Test");
+        Zinc_error_list_set(&case_data->errors, &n->loc, "expected Test");
         return;
     }
 
@@ -344,31 +345,31 @@ void Apt__parse_case_meta_prop__(Zinc_string* name, Cent_value* prop)
             case_test->solo = prop->data.boolean;
         } else {
             Cent_ast* n = prop->n;
-            Zinc_error_list_set(&top_data->errors, &n->loc, "expected boolean");
+            Zinc_error_list_set(&case_data->errors, &n->loc, "expected boolean");
         }
     } else if (Zinc_string_compare_str(name, "mute")) {
         if (prop->type == Cent_value_type_boolean) {
             case_test->mute = prop->data.boolean;
         } else {
             Cent_ast* n = prop->n;
-            Zinc_error_list_set(&top_data->errors, &n->loc, "expected boolean");
+            Zinc_error_list_set(&case_data->errors, &n->loc, "expected boolean");
         }
     } else if (Zinc_string_compare_str(name, "snapshot")) {
         if (prop->type == Cent_value_type_boolean) {
             case_data->snapshot = prop->data.boolean;
         } else {
             Cent_ast* n = prop->n;
-            Zinc_error_list_set(&top_data->errors, &n->loc, "expected boolean");
+            Zinc_error_list_set(&case_data->errors, &n->loc, "expected boolean");
         }
     } else if (Zinc_string_compare_str(name, "has_error")) {
         if (prop->type == Cent_value_type_boolean) {
             case_data->has_error = prop->data.boolean;
         } else {
             Cent_ast* n = prop->n;
-            Zinc_error_list_set(&top_data->errors, &n->loc, "expected boolean");
+            Zinc_error_list_set(&case_data->errors, &n->loc, "expected boolean");
         }
     } else {
         Cent_ast* n = prop->n;
-        Zinc_error_list_set(&top_data->errors, &n->loc, "invalid property: %bf", name);
+        Zinc_error_list_set(&case_data->errors, &n->loc, "invalid property: %bf", name);
     }
 }

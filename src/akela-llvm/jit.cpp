@@ -30,15 +30,47 @@ namespace Akela_llvm {
     /* NOLINTNEXTLINE(misc-no-recursion) */
     void Check_subscript(Jit_data* jd, Ake_Ast* n)
     {
+        if (!n) {
+            return;
+        }
+
         if (n->kind == Ake_ast_type_array_subscript) {
             jd->need_printf = true;
             jd->need_exit = true;
         }
 
-        Ake_Ast* p = n->head;
-        while (p) {
-            Check_subscript(jd, p);
-            p = p->next;
+        switch (n->kind) {
+            case AKE_AST_NONE:
+                break;
+            case AKE_AST_ID:
+                break;
+            case AKE_AST_SIGN:
+                Check_subscript(jd, n->data.sign.op);
+                Check_subscript(jd, n->data.sign.right);
+                break;
+            case AKE_AST_NUMBER:
+                break;
+            case AKE_AST_STRING:
+                break;
+            case AKE_AST_ASSIGN:
+                Check_subscript(jd, n->data.assign.left);
+                Check_subscript(jd, n->data.assign.right);
+                break;
+            case AKE_AST_PLUS:
+                Check_subscript(jd, n->data.plus.left);
+                Check_subscript(jd, n->data.plus.right);
+                break;
+            case AKE_AST_MINUS:
+                Check_subscript(jd, n->data.minus.left);
+                Check_subscript(jd, n->data.minus.right);
+                break;
+            default:
+                Ake_Ast* p = n->head;
+                while (p) {
+                    Check_subscript(jd, p);
+                    p = p->next;
+                }
+                break;
         }
     }
 

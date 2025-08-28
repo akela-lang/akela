@@ -120,15 +120,15 @@ Ast::Stmts {
           }
         }
         Ast::Plus {
-          .type = type0
-          Ast::Number {
+          .left = Ast::Number {
             .value = "10"
             .type = type0
           }
-          Ast::Number {
+          .right = Ast::Number {
             .value = "20"
             .type = type0
           }
+          .type = type0
         }
         Ast::Mult {
           .type = type0
@@ -211,15 +211,15 @@ Ast::Stmts {
       Ast::Stmts {
         .type = type0
         Ast::Plus {
-          .type = type0
-          Ast::Number {
+          .left = Ast::Number {
             .value = "10"
             .type = type0
           }
-          Ast::Number {
+          .right = Ast::Number {
             .value = "20"
             .type = type0
           }
+          .type = type0
         }
         Ast::Mult {
           .type = type0
@@ -323,15 +323,15 @@ Ast::Stmts {
       Ast::Stmts {
         .type = type0
         Ast::Plus {
-          .type = type0
-          Ast::Number {
+          .left = Ast::Number {
             .value = "10"
             .type = type0
           }
-          Ast::Number {
+          .right = Ast::Number {
             .value = "20"
             .type = type0
           }
+          .type = type0
         }
         Ast::Mult {
           .type = type0

@@ -131,7 +131,6 @@ void Apt_suite_data_list_destroy(Apt_suite_data_list* list)
 void Apt_top_data_init(Apt_top_data* top_data)
 {
     Zinc_string_init(&top_data->dir_path);
-    Zinc_error_list_init(&top_data->errors);
 }
 
 void Apt_top_data_create(Apt_top_data** top_data)
@@ -143,5 +142,4 @@ void Apt_top_data_create(Apt_top_data** top_data)
 void Apt_top_data_destroy(Apt_top_data* top_data)
 {
     Zinc_string_destroy(&top_data->dir_path);
-    Zinc_error_list_destroy(&top_data->errors);
 }

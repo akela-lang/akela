@@ -121,6 +121,20 @@ variant Ast::Assign {
     }
 }
 
+variant Ast::Plus {
+    properties {
+        left: Ast
+        right: Ast
+    }
+}
+
+variant Ast::Minus {
+    properties {
+        left: Ast
+        right: Ast
+    }
+}
+
 enum TypeKind {
   None
   Integer

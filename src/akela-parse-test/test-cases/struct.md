@@ -784,7 +784,7 @@ Ast::Stmts {
           Ast::Cseq {
             Ast::Plus {
               .type = type1
-              Ast::Call {
+              .left = Ast::Call {
                 .type = type1
                 Ast::Id {
                   .value = "pow"
@@ -792,8 +792,7 @@ Ast::Stmts {
                 }
                 Ast::Cseq {
                   Ast::Minus {
-                    .type = type1
-                    Ast::Dot {
+                    .left = Ast::Dot {
                       .type = type1
                       Ast::Dot {
                         .type = type3
@@ -809,7 +808,7 @@ Ast::Stmts {
                         .value = "x"
                       }
                     }
-                    Ast::Dot {
+                    .right = Ast::Dot {
                       .type = type1
                       Ast::Dot {
                         .type = type3
@@ -825,6 +824,7 @@ Ast::Stmts {
                         .value = "x"
                       }
                     }
+                    .type = type1
                   }
                   Ast::Number {
                     .value = "2"
@@ -832,7 +832,7 @@ Ast::Stmts {
                   }
                 }
               }
-              Ast::Call {
+              .right = Ast::Call {
                 .type = type1
                 Ast::Id {
                   .value = "pow"
@@ -840,8 +840,7 @@ Ast::Stmts {
                 }
                 Ast::Cseq {
                   Ast::Minus {
-                    .type = type1
-                    Ast::Dot {
+                    .left = Ast::Dot {
                       .type = type1
                       Ast::Dot {
                         .type = type3
@@ -857,7 +856,7 @@ Ast::Stmts {
                         .value = "y"
                       }
                     }
-                    Ast::Dot {
+                    .right = Ast::Dot {
                       .type = type1
                       Ast::Dot {
                         .type = type3
@@ -873,6 +872,7 @@ Ast::Stmts {
                         .value = "y"
                       }
                     }
+                    .type = type1
                   }
                   Ast::Number {
                     .value = "2"

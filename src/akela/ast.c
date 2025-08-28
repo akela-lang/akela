@@ -57,6 +57,16 @@ void Ake_AstSet(Ake_Ast* n, Ake_AstKind kind)
 			n->data.assign.right = NULL;
 			n->is_set = true;
 			break;
+		case AKE_AST_PLUS:
+			n->data.plus.left = NULL;
+			n->data.plus.right = NULL;
+			n->is_set = true;
+			break;
+		case AKE_AST_MINUS:
+			n->data.minus.left = NULL;
+			n->data.minus.right = NULL;
+			n->is_set = true;
+			break;
 		default:
 			break;
 	}
@@ -70,6 +80,8 @@ void Ake_AstValidate(Ake_Ast* n)
 		case AKE_AST_NUMBER:
 		case AKE_AST_STRING:
 		case AKE_AST_ASSIGN:
+		case AKE_AST_PLUS:
+		case AKE_AST_MINUS:
 			assert(n->is_set);
 			break;
 		default:
@@ -107,6 +119,14 @@ void Ake_AstDestroy(Ake_Ast* n)
     		case AKE_AST_ASSIGN:
     			Ake_AstDestroy(n->data.assign.left);
     			Ake_AstDestroy(n->data.assign.right);
+    			break;
+    		case AKE_AST_PLUS:
+    			Ake_AstDestroy(n->data.plus.left);
+    			Ake_AstDestroy(n->data.plus.right);
+    			break;
+    		case AKE_AST_MINUS:
+    			Ake_AstDestroy(n->data.minus.left);
+    			Ake_AstDestroy(n->data.minus.right);
     			break;
         	default:
     			break;
@@ -195,6 +215,13 @@ void Ake_AstCopy(Ake_Ast* src, Ake_Ast* dest)
 			dest->data.assign.left = Ake_AstClone(src->data.assign.left);
 			dest->data.assign.right = Ake_AstClone(src->data.assign.right);
 			break;
+		case AKE_AST_PLUS:
+			dest->data.plus.left = Ake_AstClone(src->data.plus.left);
+			dest->data.plus.right = Ake_AstClone(src->data.plus.right);
+			break;
+		case AKE_AST_MINUS:
+			dest->data.minus.left = Ake_AstClone(src->data.minus.left);
+			dest->data.minus.right = Ake_AstClone(src->data.minus.right);
 		default:
 			break;
 	}
@@ -262,6 +289,22 @@ bool Ake_AstMatch(Ake_Ast* a, Ake_Ast* b)
 					return false;
 				}
 				if (!Ake_AstMatch(a->data.assign.right, b->data.assign.right)) {
+					return false;
+				}
+				break;
+			case AKE_AST_PLUS:
+				if (!Ake_AstMatch(a->data.plus.left, b->data.plus.left)) {
+					return false;
+				}
+				if (!Ake_AstMatch(a->data.plus.right, b->data.plus.right)) {
+					return false;
+				}
+				break;
+			case AKE_AST_MINUS:
+				if (!Ake_AstMatch(a->data.minus.left, b->data.minus.left)) {
+					return false;
+				}
+				if (!Ake_AstMatch(a->data.minus.right, b->data.minus.right)) {
 					return false;
 				}
 				break;

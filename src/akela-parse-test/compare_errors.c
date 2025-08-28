@@ -20,7 +20,7 @@ bool Apt_check_errors(
     Apt_case_data* case_data = case_test->data;
 
     if (!expected) {
-        Zinc_error_list_set(&top_data->errors, NULL, "expected Errors");
+        Zinc_error_list_set(&case_data->errors, NULL, "expected Errors");
         return false;
     }
 
@@ -81,34 +81,34 @@ bool Apt_check_error(
     bool valid = true;
 
     if (!message) {
-        Zinc_error_list_set(&top_data->errors, &n->loc, "expected message");
+        Zinc_error_list_set(&case_data->errors, &n->loc, "expected message");
         valid = false;
     }
 
     if (message && message->type != Cent_value_type_string) {
-        Zinc_error_list_set(&top_data->errors, &n->loc, "message is not a string");
+        Zinc_error_list_set(&case_data->errors, &n->loc, "message is not a string");
         valid = false;
     }
 
     Cent_value* line = Cent_value_get_str(expected_error, "line");
     if (!line) {
-        Zinc_error_list_set(&top_data->errors, &n->loc, "expected line");
+        Zinc_error_list_set(&case_data->errors, &n->loc, "expected line");
         valid = false;
     }
 
     if (line && line->type != Cent_value_type_natural) {
-        Zinc_error_list_set(&top_data->errors, &n->loc, "expected line to be a natural");
+        Zinc_error_list_set(&case_data->errors, &n->loc, "expected line to be a natural");
         valid = false;
     }
 
     Cent_value* col = Cent_value_get_str(expected_error, "col");
     if (!col) {
-        Zinc_error_list_set(&top_data->errors, &n->loc, "expected col");
+        Zinc_error_list_set(&case_data->errors, &n->loc, "expected col");
         valid = false;
     }
 
     if (col && col->type != Cent_value_type_natural) {
-        Zinc_error_list_set(&top_data->errors, &n->loc, "expected col to be a natural");
+        Zinc_error_list_set(&case_data->errors, &n->loc, "expected col to be a natural");
         valid = false;
     }
 

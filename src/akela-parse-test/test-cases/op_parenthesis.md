@@ -1,5 +1,5 @@
 # Test Suite
-operator precedence
+operator parenthesis
 
 ```cent
 TestSuite {
@@ -47,15 +47,15 @@ Ast::Stmts {
   Ast::Parenthesis {
     .type = type0
     Ast::Plus {
-      .type = type0
-      Ast::Id {
+      .left = Ast::Id {
         .value = "speed"
         .type = type0
       }
-      Ast::Number {
+      .right = Ast::Number {
         .value = "1"
         .type = type0
       }
+      .type = type0
     }
   }
 }
@@ -100,18 +100,18 @@ Ast::Stmts {
     }
   }
   Ast::Plus {
-    .type = type0
-    Ast::Parenthesis {
+    .left = Ast::Parenthesis {
       .type = type0
       Ast::Id {
         .value = "speed"
         .type = type0
       }
     }
-    Ast::Number {
+    .right = Ast::Number {
       .value = "1"
       .type = type0
     }
+    .type = type0
   }
 }
 ```
@@ -155,18 +155,18 @@ Ast::Stmts {
     }
   }
   Ast::Plus {
-    .type = type0
-    Ast::Id {
+    .left = Ast::Id {
       .value = "speed"
       .type = type0
     }
-    Ast::Parenthesis {
+    .right = Ast::Parenthesis {
       .type = type0
       Ast::Number {
         .value = "1"
         .type = type0
       }
     }
+    .type = type0
   }
 }
 ```
@@ -197,25 +197,25 @@ const type0 = Type::Integer {
 Ast::Stmts {
   .type = type0
   Ast::Plus {
-    .type = type0
-    Ast::Number {
+    .left = Ast::Number {
       .value = "1"
       .type = type0
     }
-    Ast::Parenthesis {
+    .right = Ast::Parenthesis {
       .type = type0
       Ast::Plus {
-        .type = type0
-        Ast::Number {
+        .left = Ast::Number {
           .value = "2"
           .type = type0
         }
-        Ast::Number {
+        .right = Ast::Number {
           .value = "3"
           .type = type0
         }
+        .type = type0
       }
     }
+    .type = type0
   }
 }
 ```
@@ -246,25 +246,25 @@ const type0 = Type::Integer {
 Ast::Stmts {
   .type = type0
   Ast::Plus {
-    .type = type0
-    Ast::Parenthesis {
+    .left = Ast::Parenthesis {
       .type = type0
       Ast::Plus {
-        .type = type0
-        Ast::Number {
+        .left = Ast::Number {
           .value = "1"
           .type = type0
         }
-        Ast::Number {
+        .right = Ast::Number {
           .value = "2"
           .type = type0
         }
+        .type = type0
       }
     }
-    Ast::Number {
+    .right = Ast::Number {
       .value = "3"
       .type = type0
     }
+    .type = type0
   }
 }
 ```

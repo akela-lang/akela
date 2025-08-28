@@ -257,17 +257,17 @@ Ake_Ast* Ake_parse_add(struct Ake_parse_state* ps)
 		/* operator */
 		enum Ake_AstKind type;
 		if (t0->type == Ake_token_plus) {
-			type = Ake_ast_type_plus;
+			type = AKE_AST_PLUS;
 			op_name = "addition";
 		} else if (t0->type == Ake_token_minus) {
-			type = Ake_ast_type_minus;
+			type = AKE_AST_MINUS;
 			op_name = "subtraction";
 		} else {
 			break;
 		}
 
         Ake_AstCreate(&n);
-        n->kind = type;
+        Ake_AstSet(n, type);
 
         struct Ake_token* op = NULL;
 		if (!Ake_match(ps, t0->type, "expecting + or -", &op, n)) {
@@ -289,11 +289,25 @@ Ake_Ast* Ake_parse_add(struct Ake_parse_state* ps)
 		}
 
         if (left) {
-            Ake_AstAdd(n, left);
+        	if (type == AKE_AST_PLUS) {
+        		n->data.plus.left = left;
+        	} else if (type == AKE_AST_MINUS) {
+        		n->data.minus.left = left;
+        	} else {
+        		assert(false && "not possible");
+        	}
+            Ake_AstAdd2(n, left);
         }
 
         if (b) {
-            Ake_AstAdd(n, b);
+        	if (type == AKE_AST_PLUS) {
+        		n->data.plus.right = b;
+        	} else if (type == AKE_AST_MINUS) {
+        		n->data.minus.right = b;
+        	} else {
+        		assert(false && "not possible");
+        	}
+            Ake_AstAdd2(n, b);
         }
 
 		if (!n->has_error) {

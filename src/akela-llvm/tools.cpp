@@ -380,11 +380,11 @@ namespace Akela_llvm {
             return Handle_mult(jd, n);
         }
 
-        if (n->kind == Ake_ast_type_plus) {
+        if (n->kind == AKE_AST_PLUS) {
             return Handle_add(jd, n);
         }
 
-        if (n->kind == Ake_ast_type_minus) {
+        if (n->kind == AKE_AST_MINUS) {
             return Handle_sub(jd, n);
         }
 
