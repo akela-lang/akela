@@ -67,6 +67,16 @@ void Ake_AstSet(Ake_Ast* n, Ake_AstKind kind)
 			n->data.minus.right = NULL;
 			n->is_set = true;
 			break;
+		case AKE_AST_MULT:
+			n->data.mult.left = NULL;
+			n->data.mult.right = NULL;
+			n->is_set = true;
+			break;
+		case AKE_AST_DIVIDE:
+			n->data.divide.left = NULL;
+			n->data.divide.right = NULL;
+			n->is_set = true;
+			break;
 		default:
 			break;
 	}
@@ -82,6 +92,8 @@ void Ake_AstValidate(Ake_Ast* n)
 		case AKE_AST_ASSIGN:
 		case AKE_AST_PLUS:
 		case AKE_AST_MINUS:
+		case AKE_AST_MULT:
+		case AKE_AST_DIVIDE:
 			assert(n->is_set);
 			break;
 		default:
@@ -127,6 +139,14 @@ void Ake_AstDestroy(Ake_Ast* n)
     		case AKE_AST_MINUS:
     			Ake_AstDestroy(n->data.minus.left);
     			Ake_AstDestroy(n->data.minus.right);
+    			break;
+    		case AKE_AST_MULT:
+    			Ake_AstDestroy(n->data.mult.left);
+    			Ake_AstDestroy(n->data.mult.right);
+    			break;
+    		case AKE_AST_DIVIDE:
+    			Ake_AstDestroy(n->data.divide.left);
+    			Ake_AstDestroy(n->data.divide.right);
     			break;
         	default:
     			break;
@@ -222,6 +242,15 @@ void Ake_AstCopy(Ake_Ast* src, Ake_Ast* dest)
 		case AKE_AST_MINUS:
 			dest->data.minus.left = Ake_AstClone(src->data.minus.left);
 			dest->data.minus.right = Ake_AstClone(src->data.minus.right);
+			break;
+		case AKE_AST_MULT:
+			dest->data.mult.left = Ake_AstClone(src->data.mult.left);
+			dest->data.mult.right = Ake_AstClone(src->data.mult.right);
+			break;
+		case AKE_AST_DIVIDE:
+			dest->data.divide.left = Ake_AstClone(src->data.divide.left);
+			dest->data.divide.right = Ake_AstClone(src->data.divide.right);
+			break;
 		default:
 			break;
 	}
@@ -305,6 +334,22 @@ bool Ake_AstMatch(Ake_Ast* a, Ake_Ast* b)
 					return false;
 				}
 				if (!Ake_AstMatch(a->data.minus.right, b->data.minus.right)) {
+					return false;
+				}
+				break;
+			case AKE_AST_MULT:
+				if (!Ake_AstMatch(a->data.mult.left, b->data.mult.left)) {
+					return false;
+				}
+				if (!Ake_AstMatch(a->data.mult.right, b->data.mult.right)) {
+					return false;
+				}
+				break;
+			case AKE_AST_DIVIDE:
+				if (!Ake_AstMatch(a->data.divide.left, b->data.divide.left)) {
+					return false;
+				}
+				if (!Ake_AstMatch(a->data.divide.right, b->data.divide.right)) {
 					return false;
 				}
 				break;

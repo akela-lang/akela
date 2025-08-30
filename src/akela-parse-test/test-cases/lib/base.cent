@@ -135,6 +135,20 @@ variant Ast::Minus {
     }
 }
 
+variant Ast::Mult {
+    properties {
+        left: Ast
+        right: Ast
+    }
+}
+
+variant Ast::Divide {
+    properties {
+        left: Ast
+        right: Ast
+    }
+}
+
 enum TypeKind {
   None
   Integer

@@ -343,6 +343,18 @@ bool Apt_compare_ast(Zinc_test* top_test, Zinc_test* case_test, Ake_Ast* n, Cent
             Apt_compare_ast(top_test, case_test, n->data.minus.left, left);
             Apt_compare_ast(top_test, case_test, n->data.minus.right, right);
             break;
+        case AKE_AST_MULT:
+            left = Cent_value_get_str(value, "left");
+            right = Cent_value_get_str(value, "right");
+            Apt_compare_ast(top_test, case_test, n->data.mult.left, left);
+            Apt_compare_ast(top_test, case_test, n->data.mult.right, right);
+            break;
+        case AKE_AST_DIVIDE:
+            left = Cent_value_get_str(value, "left");
+            right = Cent_value_get_str(value, "right");
+            Apt_compare_ast(top_test, case_test, n->data.divide.left, left);
+            Apt_compare_ast(top_test, case_test, n->data.divide.right, right);
+            break;
         default:
             break;
     }

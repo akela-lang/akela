@@ -131,15 +131,15 @@ Ast::Stmts {
           .type = type0
         }
         Ast::Mult {
-          .type = type0
-          Ast::Id {
+          .left = Ast::Id {
             .value = "x"
             .type = type0
           }
-          Ast::Id {
+          .right = Ast::Id {
             .value = "y"
             .type = type0
           }
+          .type = type0
         }
       }
     }
@@ -222,15 +222,15 @@ Ast::Stmts {
           .type = type0
         }
         Ast::Mult {
-          .type = type0
-          Ast::Id {
+          .left = Ast::Id {
             .value = "x"
             .type = type0
           }
-          Ast::Id {
+          .right = Ast::Id {
             .value = "y"
             .type = type0
           }
+          .type = type0
         }
       }
     }
@@ -334,15 +334,15 @@ Ast::Stmts {
           .type = type0
         }
         Ast::Mult {
-          .type = type0
-          Ast::Id {
+          .left = Ast::Id {
             .value = "x"
             .type = type0
           }
-          Ast::Id {
+          .right = Ast::Id {
             .value = "y"
             .type = type0
           }
+          .type = type0
         }
       }
     }

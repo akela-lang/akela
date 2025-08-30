@@ -376,7 +376,7 @@ namespace Akela_llvm {
             return Handle_assign(jd, n);
         }
 
-        if (n->kind == Ake_ast_type_mult) {
+        if (n->kind == AKE_AST_MULT) {
             return Handle_mult(jd, n);
         }
 

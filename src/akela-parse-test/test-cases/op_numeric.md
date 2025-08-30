@@ -535,15 +535,15 @@ const type0 = Type::Integer {
 Ast::Stmts {
   .type = type0
   Ast::Mult {
-    .type = type0
-    Ast::Number {
+    .left = Ast::Number {
       .value = "5"
       .type = type0
     }
-    Ast::Number {
+    .right = Ast::Number {
       .value = "2"
       .type = type0
     }
+    .type = type0
   }
 }
 ```
@@ -720,12 +720,11 @@ Ast::Stmts {
     }
   }
   Ast::Mult {
-    .type = type0
-    Ast::Id {
+    .left = Ast::Id {
       .value = "speed"
       .type = type0
     }
-    Ast::Sign {
+    .right = Ast::Sign {
       .op = Ast::Plus {
       }
       .right = Ast::Number {
@@ -734,6 +733,7 @@ Ast::Stmts {
       }
       .type = type0
     }
+    .type = type0
   }
 }
 ```
@@ -777,12 +777,11 @@ Ast::Stmts {
     }
   }
   Ast::Mult {
-    .type = type0
-    Ast::Id {
+    .left = Ast::Id {
       .value = "speed"
       .type = type0
     }
-    Ast::Sign {
+    .right = Ast::Sign {
       .op = Ast::Minus {
       }
       .right = Ast::Number {
@@ -791,6 +790,7 @@ Ast::Stmts {
       }
       .type = type0
     }
+    .type = type0
   }
 }
 ```
@@ -821,15 +821,15 @@ const type0 = Type::Integer {
 Ast::Stmts {
   .type = type0
   Ast::Divide {
-    .type = type0
-    Ast::Number {
+    .left = Ast::Number {
       .value = "52"
       .type = type0
     }
-    Ast::Number {
+    .right = Ast::Number {
       .value = "2"
       .type = type0
     }
+    .type = type0
   }
 }
 ```
@@ -906,22 +906,22 @@ const type0 = Type::Integer {
 Ast::Stmts {
   .type = type0
   Ast::Mult {
-    .type = type0
-    Ast::Mult {
-      .type = type0
-      Ast::Number {
+    .left = Ast::Mult {
+      .left = Ast::Number {
         .value = "1"
         .type = type0
       }
-      Ast::Number {
+      .right = Ast::Number {
         .value = "2"
         .type = type0
       }
+      .type = type0
     }
-    Ast::Number {
+    .right = Ast::Number {
       .value = "3"
       .type = type0
     }
+    .type = type0
   }
 }
 ```
@@ -957,15 +957,15 @@ Ast::Stmts {
       .type = type0
     }
     .right = Ast::Mult {
-      .type = type0
-      Ast::Number {
+      .left = Ast::Number {
         .value = "3"
         .type = type0
       }
-      Ast::Number {
+      .right = Ast::Number {
         .value = "2"
         .type = type0
       }
+      .type = type0
     }
     .type = type0
   }
@@ -999,15 +999,15 @@ Ast::Stmts {
   .type = type0
   Ast::Plus {
     .left = Ast::Mult {
-      .type = type0
-      Ast::Number {
+      .left = Ast::Number {
         .value = "4"
         .type = type0
       }
-      Ast::Number {
+      .right = Ast::Number {
         .value = "3"
         .type = type0
       }
+      .type = type0
     }
     .right = Ast::Number {
       .value = "2"
@@ -1261,15 +1261,15 @@ const type0 = Type::Integer {
 Ast::Stmts {
   .type = type0
   Ast::Mult {
-    .type = type0
-    Ast::Number {
+    .left = Ast::Number {
       .value = "1"
       .type = type0
     }
-    Ast::Number {
+    .right = Ast::Number {
       .value = "2"
       .type = type0
     }
+    .type = type0
   }
 }
 ```

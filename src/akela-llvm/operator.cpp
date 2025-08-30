@@ -6,10 +6,10 @@ namespace Akela_llvm {
     /* NOLINTNEXTLINE(misc-no-recursion) */
     Value* Handle_mult(Jit_data* jd, Ake_Ast* n)
     {
-        Ake_Ast* a = Ake_AstGet(n, 0);
+        Ake_Ast* a = n->data.mult.left;
         Value* lhs = Dispatch(jd, a);
 
-        Ake_Ast* b = Ake_AstGet(n, 1);
+        Ake_Ast* b = n->data.mult.right;
         Value* rhs = Dispatch(jd, b);
 
         if (a->type->kind == AKE_TYPE_REAL || b->type->kind == AKE_TYPE_REAL) {

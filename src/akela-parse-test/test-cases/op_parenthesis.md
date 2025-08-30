@@ -297,15 +297,15 @@ Ast::Stmts {
   Ast::Parenthesis {
     .type = type0
     Ast::Mult {
-      .type = type0
-      Ast::Number {
+      .left = Ast::Number {
         .value = "5"
         .type = type0
       }
-      Ast::Number {
+      .right = Ast::Number {
         .value = "2"
         .type = type0
       }
+      .type = type0
     }
   }
 }
@@ -337,25 +337,25 @@ const type0 = Type::Integer {
 Ast::Stmts {
   .type = type0
   Ast::Mult {
-    .type = type0
-    Ast::Number {
+    .left = Ast::Number {
       .value = "1"
       .type = type0
     }
-    Ast::Parenthesis {
+    .right = Ast::Parenthesis {
       .type = type0
       Ast::Mult {
-        .type = type0
-        Ast::Number {
+        .left = Ast::Number {
           .value = "2"
           .type = type0
         }
-        Ast::Number {
+        .right = Ast::Number {
           .value = "3"
           .type = type0
         }
+        .type = type0
       }
     }
+    .type = type0
   }
 }
 ```
@@ -386,25 +386,25 @@ const type0 = Type::Integer {
 Ast::Stmts {
   .type = type0
   Ast::Mult {
-    .type = type0
-    Ast::Parenthesis {
+    .left = Ast::Parenthesis {
       .type = type0
       Ast::Mult {
-        .type = type0
-        Ast::Number {
+        .left = Ast::Number {
           .value = "1"
           .type = type0
         }
-        Ast::Number {
+        .right = Ast::Number {
           .value = "2"
           .type = type0
         }
+        .type = type0
       }
     }
-    Ast::Number {
+    .right = Ast::Number {
       .value = "3"
       .type = type0
     }
+    .type = type0
   }
 }
 ```

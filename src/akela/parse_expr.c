@@ -383,17 +383,17 @@ Ake_Ast* Ake_parse_mult(struct Ake_parse_state* ps)
 		/* operator */
 		enum Ake_AstKind type;
 		if (t0->type == Ake_token_mult) {
-			type = Ake_ast_type_mult;
+			type = AKE_AST_MULT;
 			op_name = "multiplication";
 		} else if (t0->type == Ake_token_divide) {
-			type = Ake_ast_type_divide;
+			type = AKE_AST_DIVIDE;
 			op_name = "division";
 		} else {
 			break;
 		}
 
         Ake_AstCreate(&n);
-        n->kind = type;
+		Ake_AstSet(n, type);
 
         struct Ake_token* op = NULL;
 		if (!Ake_match(ps, t0->type, "expecting * or /", &op, n)) {
@@ -416,11 +416,25 @@ Ake_Ast* Ake_parse_mult(struct Ake_parse_state* ps)
 		}
 
         if (left) {
-            Ake_AstAdd(n, left);
+        	if (type == AKE_AST_MULT) {
+        		n->data.mult.left = left;
+        		Ake_AstAdd2(n, left);
+        	}
+        	if (type == AKE_AST_DIVIDE) {
+        		n->data.divide.left = left;
+        		Ake_AstAdd2(n, left);
+        	}
         }
 
         if (b) {
-            Ake_AstAdd(n, b);
+        	if (type == AKE_AST_MULT) {
+        		n->data.mult.right = b;
+				Ake_AstAdd2(n, b);
+        	}
+        	if (type == AKE_AST_DIVIDE) {
+        		n->data.divide.right = b;
+        		Ake_AstAdd2(n, b);
+        	}
         }
 
 		if (!n->has_error) {
