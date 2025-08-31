@@ -135,7 +135,7 @@ Ake_Ast* Ake_parse_prototype(
 void Ake_declare_params(Ake_symbol_table* st, Ake_Ast* proto)
 {
     Ake_Ast* dseq = Ake_AstGet(proto, 1);
-    Ake_Ast* dec = dseq->head;
+    Ake_Ast* dec = dseq->data.dseq.list.head;
     while (dec) {
         Ake_Ast* id_node = Ake_AstGet(dec, 0);
         Ake_Ast* type_node = Ake_AstGet(dec, 1);
@@ -162,7 +162,7 @@ Ake_Ast* Ake_parse_dseq(
 {
 	Ake_Ast* n = NULL;
     Ake_AstCreate(&n);
-	n->kind = Ake_ast_type_dseq;
+    Ake_AstSet(n, AKE_AST_DSEQ);
 
 	Ake_Ast* dec = NULL;
 	dec = Ake_parse_declaration(ps, false, is_method, require_param_name, true);
@@ -171,7 +171,8 @@ Ake_Ast* Ake_parse_dseq(
 		return n;
 	}
 
-    Ake_AstAdd(n, dec);
+    Ake_AstListAdd(&n->data.dseq.list, dec);
+    Ake_AstAdd2(n, dec);
 
 	while (true)
 	{
@@ -218,7 +219,8 @@ Ake_Ast* Ake_parse_dseq(
 			break;
 		}
 
-        Ake_AstAdd(n, dec);
+	    Ake_AstListAdd(&n->data.dseq.list, dec);
+        Ake_AstAdd2(n, dec);
 	}
 
 	return n;
@@ -584,8 +586,8 @@ Ake_Type* Ake_Type_use_add_proto(
 
     Zinc_string_copy(&id_node->data.id.value, &func->name);
 
-    if (dseq->head) {
-        Ake_Ast* dec = dseq->head;
+    if (dseq->data.dseq.list.head) {
+        Ake_Ast* dec = dseq->data.dseq.list.head;
         while (dec) {
             Ake_Ast* id_node = Ake_AstGet(dec, 0);
             Ake_Ast* type_node = Ake_AstGet(dec, 1);

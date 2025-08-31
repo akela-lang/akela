@@ -12,7 +12,7 @@
   * divide [x]
   * stmts [x]
   * function [x]
-  * dseq []
+  * dseq [x]
   * dret []
   * call []
   * cseq []

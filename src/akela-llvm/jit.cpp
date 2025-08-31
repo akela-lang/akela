@@ -84,6 +84,13 @@ namespace Akela_llvm {
                 Check_subscript(jd, n->data.function.proto);
                 Check_subscript(jd, n->data.function.body);
                 break;
+            case AKE_AST_DSEQ:
+                p = n->data.dseq.list.head;
+                while (p) {
+                    Check_subscript(jd, p);
+                    p = p->next;
+                }
+                break;
             default:
                 p = n->head;
                 while (p) {

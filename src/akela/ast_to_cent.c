@@ -71,6 +71,8 @@ void Ake_ast_cent_print(Ake_Ast* n, size_t level, bool is_property, Ake_TypeSlot
             printf(".type = type%zu\n", slot);
         }
 
+        Ake_Ast* p = NULL;
+
         switch (n->kind) {
             case AKE_AST_SIGN:
                 Ake_indent_print(level);
@@ -144,13 +146,11 @@ void Ake_ast_cent_print(Ake_Ast* n, size_t level, bool is_property, Ake_TypeSlot
                 }
                 break;
             case AKE_AST_STMTS:
-                level++;
-                Ake_Ast* p = n->data.stmts.list.head;
+                p = n->data.stmts.list.head;
                 while (p) {
                     Ake_ast_cent_print(p, level, false, slots);
                     p = p->next;
                 }
-                level--;
                 break;
             case AKE_AST_FUNCTION:
                 if (n->data.function.proto) {
@@ -164,14 +164,20 @@ void Ake_ast_cent_print(Ake_Ast* n, size_t level, bool is_property, Ake_TypeSlot
                     Ake_ast_cent_print(n->data.function.body, level, true, slots);
                 }
                 break;
-            default:
+            case AKE_AST_DSEQ:
+                p = n->data.dseq.list.head;
+                while (p) {
+                    Ake_ast_cent_print(p, level, false, slots);
+                    p = p->next;
+                }
                 break;
-        }
-
-        Ake_Ast* p = n->head;
-        while (p) {
-            Ake_ast_cent_print(p, level, false, slots);
-            p = p->next;
+            default:
+                p = n->head;
+                while (p) {
+                    Ake_ast_cent_print(p, level, false, slots);
+                    p = p->next;
+                }
+                break;
         }
 
         level--;
@@ -236,7 +242,7 @@ char* Ake_ast_cent_name(Ake_AstKind type)
         return "Ast::Function";
     }
 
-    if (type == Ake_ast_type_dseq) {
+    if (type == AKE_AST_DSEQ) {
         return "Ast::Dseq";
     }
 

@@ -44,7 +44,7 @@ namespace Akela_llvm {
         Ake_UpdateSymbolPrototype(&jd->st, n);
 
         Ake_Ast* dseq = Ake_AstGet(proto, 1);
-        Ake_Ast* dec = dseq->head;
+        Ake_Ast* dec = dseq->data.dseq.list.head;
         int i = 0;
         while (dec) {
             Ake_Ast* dec_id = Ake_AstGet(dec, 0);

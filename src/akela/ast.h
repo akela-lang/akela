@@ -26,7 +26,7 @@ typedef enum Ake_AstKind {
 	AKE_AST_DIVIDE,
 	AKE_AST_STMTS,
 	AKE_AST_FUNCTION,
-	Ake_ast_type_dseq,
+	AKE_AST_DSEQ,
 	Ake_ast_type_dret,
 	Ake_ast_type_call,
 	Ake_ast_type_cseq,
@@ -82,7 +82,7 @@ static char const* Ast_type_name(Ake_AstKind kind)
     name[AKE_AST_DIVIDE] = "divide";
     name[AKE_AST_STMTS] = "stmts";
     name[AKE_AST_FUNCTION] = "function";
-    name[Ake_ast_type_dseq] = "dseq";
+    name[AKE_AST_DSEQ] = "dseq";
     name[Ake_ast_type_dret] = "dret";
     name[Ake_ast_type_call] = "call";
     name[Ake_ast_type_cseq] = "cseq";
@@ -150,6 +150,7 @@ typedef struct Ake_Ast {
 		struct { Ake_Ast* left; Ake_Ast* right; } divide;
 		struct { Ake_AstList list; } stmts;
 		struct { Ake_Ast* proto; Ake_Ast* body; } function;
+		struct { Ake_AstList list; } dseq;
 	} data;
 	Ake_Type* type;
     Zinc_location loc;

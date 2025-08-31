@@ -86,6 +86,10 @@ void Ake_AstSet(Ake_Ast* n, Ake_AstKind kind)
 			n->data.function.body = NULL;
 			n->is_set = true;
 			break;
+		case AKE_AST_DSEQ:
+			Ake_AstListInit(&n->data.dseq.list);
+			n->is_set = true;
+			break;
 		default:
 			break;
 	}
@@ -105,6 +109,7 @@ void Ake_AstValidate(Ake_Ast* n)
 		case AKE_AST_DIVIDE:
 		case AKE_AST_STMTS:
 		case AKE_AST_FUNCTION:
+		case AKE_AST_DSEQ:
 			assert(n->is_set);
 			break;
 		default:
@@ -165,6 +170,9 @@ void Ake_AstDestroy(Ake_Ast* n)
     		case AKE_AST_FUNCTION:
     			Ake_AstDestroy(n->data.function.proto);
     			Ake_AstDestroy(n->data.function.body);
+    			break;
+    		case AKE_AST_DSEQ:
+    			Ake_AstListDestroy(&n->data.dseq.list);
     			break;
         	default:
     			break;
@@ -236,6 +244,7 @@ void Ake_AstCopy(Ake_Ast* src, Ake_Ast* dest)
     Ake_AstSet(dest, src->kind);
     dest->type = Ake_TypeClone(src->type);
     dest->loc = src->loc;
+	Ake_Ast* p = NULL;
 	switch (src->kind) {
 		case AKE_AST_ID:
 			Zinc_string_add_string(&src->data.id.value, &dest->data.id.value);
@@ -270,7 +279,7 @@ void Ake_AstCopy(Ake_Ast* src, Ake_Ast* dest)
 			dest->data.divide.right = Ake_AstClone(src->data.divide.right);
 			break;
 		case AKE_AST_STMTS:
-			Ake_Ast* p = src->data.stmts.list.head;
+			p = src->data.stmts.list.head;
 			while (p) {
 				Ake_AstListAdd(&dest->data.stmts.list, Ake_AstClone(p));
 				p = p->next;
@@ -279,6 +288,13 @@ void Ake_AstCopy(Ake_Ast* src, Ake_Ast* dest)
 		case AKE_AST_FUNCTION:
 			dest->data.function.proto = Ake_AstClone(src->data.function.proto);
 			dest->data.function.body = Ake_AstClone(src->data.function.body);
+			break;
+		case AKE_AST_DSEQ:
+			p = src->data.dseq.list.head;
+			while (p) {
+				Ake_AstListAdd(&dest->data.dseq.list, Ake_AstClone(p));
+				p = p->next;
+			}
 			break;
 		default:
 			break;
@@ -320,6 +336,9 @@ bool Ake_AstMatch(Ake_Ast* a, Ake_Ast* b)
 
 		Ake_AstValidate(a);
 		Ake_AstValidate(b);
+
+		Ake_Ast* a2 = NULL;
+		Ake_Ast* b2 = NULL;
 
 		switch (a->kind) {
 			case AKE_AST_ID:
@@ -383,8 +402,8 @@ bool Ake_AstMatch(Ake_Ast* a, Ake_Ast* b)
 				}
 				break;
 			case AKE_AST_STMTS:
-				Ake_Ast* a2 = a->data.stmts.list.head;
-				Ake_Ast* b2 = b->data.stmts.list.head;
+				a2 = a->data.stmts.list.head;
+				b2 = b->data.stmts.list.head;
 				while (a2 || b2) {
 					if (!a2) {
 						return false;
@@ -405,6 +424,23 @@ bool Ake_AstMatch(Ake_Ast* a, Ake_Ast* b)
 				}
 				if (!Ake_AstMatch(a->data.function.body, b->data.function.body)) {
 					return false;
+				}
+				break;
+			case AKE_AST_DSEQ:
+				a2 = a->data.dseq.list.head;
+				b2 = b->data.dseq.list.head;
+				while (a2 || b2) {
+					if (!a2) {
+						return false;
+					}
+					if (!b2) {
+						return false;
+					}
+					if (!Ake_AstMatch(a2, b2)) {
+						return false;
+					}
+					a2 = a2->next;
+					b2 = b2->next;
 				}
 				break;
 			default:
