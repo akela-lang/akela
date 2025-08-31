@@ -171,6 +171,11 @@ void Ake_ast_cent_print(Ake_Ast* n, size_t level, bool is_property, Ake_TypeSlot
                     p = p->next;
                 }
                 break;
+            case AKE_AST_DRET:
+                Ake_indent_print(level);
+                printf(".node = ");
+                Ake_ast_cent_print(n->data.dret.node, level, true, slots);
+                break;
             default:
                 p = n->head;
                 while (p) {
@@ -246,7 +251,7 @@ char* Ake_ast_cent_name(Ake_AstKind type)
         return "Ast::Dseq";
     }
 
-    if (type == Ake_ast_type_dret) {
+    if (type == AKE_AST_DRET) {
         return "Ast::Dret";
     }
 

@@ -13,7 +13,7 @@
   * stmts [x]
   * function [x]
   * dseq [x]
-  * dret []
+  * dret [x]
   * call []
   * cseq []
   * if []

@@ -91,6 +91,9 @@ namespace Akela_llvm {
                     p = p->next;
                 }
                 break;
+            case AKE_AST_DRET:
+                Check_subscript(jd, n->data.dret.node);
+                break;
             default:
                 p = n->head;
                 while (p) {

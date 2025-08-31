@@ -421,6 +421,10 @@ bool Apt_compare_ast(Zinc_test* top_test, Zinc_test* case_test, Ake_Ast* n, Cent
                 }
             }
             break;
+        case AKE_AST_DRET:
+            value2 = Cent_value_get_str(value, "node");
+            Apt_compare_ast(top_test, case_test, n->data.dret.node, value2);
+            break;
         default:
             Cent_value* value_prop = Cent_value_get_str(value, "value");
             if (Apt_has_value(n)) {

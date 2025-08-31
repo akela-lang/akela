@@ -117,9 +117,10 @@ Ake_Ast* Ake_parse_prototype(
 
     Ake_Ast* ret = NULL;
     Ake_AstCreate(&ret);
-    ret->kind = Ake_ast_type_dret;
+    Ake_AstSet(ret, AKE_AST_DRET);
     if (ret_type) {
-        Ake_AstAdd(ret, ret_type);
+        ret->data.dret.node = ret_type;
+        Ake_AstAdd2(ret, ret_type);
     }
 
     Ake_AstAdd(n, ret);
@@ -608,7 +609,7 @@ Ake_Type* Ake_Type_use_add_proto(
         }
     }
 
-    Ake_Ast* ret_type_node = Ake_AstGet(dret, 0);
+    Ake_Ast* ret_type_node = dret->data.dret.node;
     if (ret_type_node) {
         func->data.function.output = Ake_TypeClone(ret_type_node->type);
     }
@@ -622,7 +623,7 @@ bool Ake_check_return_type(Ake_parse_state* ps, Ake_Ast* proto, Ake_Ast* stmts_n
 
     if (!proto->has_error && !stmts_node->has_error) {
         Ake_Ast *dret = Ake_AstGet(proto, 2);
-        Ake_Ast *ret_type = Ake_AstGet(dret, 0);
+        Ake_Ast *ret_type = dret->data.dret.node;
         if (ret_type) {
             if (!Ake_TypeMatch(ret_type->type, stmts_node->type, NULL)) {
                 valid = Zinc_error_list_set(ps->el, loc, "returned type does not match function return type");

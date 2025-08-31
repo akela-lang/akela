@@ -90,6 +90,10 @@ void Ake_AstSet(Ake_Ast* n, Ake_AstKind kind)
 			Ake_AstListInit(&n->data.dseq.list);
 			n->is_set = true;
 			break;
+		case AKE_AST_DRET:
+			n->data.dret.node = NULL;
+			n->is_set = true;
+			break;
 		default:
 			break;
 	}
@@ -110,6 +114,7 @@ void Ake_AstValidate(Ake_Ast* n)
 		case AKE_AST_STMTS:
 		case AKE_AST_FUNCTION:
 		case AKE_AST_DSEQ:
+		case AKE_AST_DRET:
 			assert(n->is_set);
 			break;
 		default:
@@ -173,6 +178,9 @@ void Ake_AstDestroy(Ake_Ast* n)
     			break;
     		case AKE_AST_DSEQ:
     			Ake_AstListDestroy(&n->data.dseq.list);
+    			break;
+    		case AKE_AST_DRET:
+    			Ake_AstDestroy(n->data.dret.node);
     			break;
         	default:
     			break;
@@ -295,6 +303,9 @@ void Ake_AstCopy(Ake_Ast* src, Ake_Ast* dest)
 				Ake_AstListAdd(&dest->data.dseq.list, Ake_AstClone(p));
 				p = p->next;
 			}
+			break;
+		case AKE_AST_DRET:
+			dest->data.dret.node = Ake_AstClone(src->data.dret.node);
 			break;
 		default:
 			break;
@@ -443,31 +454,36 @@ bool Ake_AstMatch(Ake_Ast* a, Ake_Ast* b)
 					b2 = b2->next;
 				}
 				break;
+			case AKE_AST_DRET:
+				if (!Ake_AstMatch(a->data.dret.node, b->data.dret.node)) {
+					return false;
+				}
+				break;
 			default:
+				if (!Zinc_string_compare(&a->struct_value, &b->struct_value)) {
+					return false;
+				}
+
+				if (!Zinc_string_compare(&a->boolean_value, &b->boolean_value)) {
+					return false;
+				}
+
+				if (!Ake_TypeMatch(a->type, b->type, NULL)) {
+					return false;
+				}
+
+				Ake_Ast* c = a->head;
+				Ake_Ast* d = b->head;
+				do {
+					if (!Ake_AstMatch(c, d)) {
+						return false;
+					}
+					if (c) c = c->next;
+					if (d) d = d->next;
+				} while (c || d);
 				break;
 		}
 
-		if (!Zinc_string_compare(&a->struct_value, &b->struct_value)) {
-			return false;
-		}
-
-		if (!Zinc_string_compare(&a->boolean_value, &b->boolean_value)) {
-			return false;
-		}
-
-		if (!Ake_TypeMatch(a->type, b->type, NULL)) {
-			return false;
-		}
-
-		Ake_Ast* c = a->head;
-		Ake_Ast* d = b->head;
-		do {
-			if (!Ake_AstMatch(c, d)) {
-				return false;
-			}
-			if (c) c = c->next;
-			if (d) d = d->next;
-		} while (c || d);
 	} else if (!a && !b) {
 		return true;
 	} else {

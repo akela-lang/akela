@@ -812,7 +812,7 @@ Ast::Stmts {
         }
       }
       Ast::Dret {
-        Ast::Type {
+        .node = Ast::Type {
           .type = type0
         }
       }

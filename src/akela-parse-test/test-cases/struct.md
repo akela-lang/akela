@@ -684,7 +684,7 @@ Ast::Stmts {
         }
       }
       Ast::Dret {
-        Ast::Type {
+        .node = Ast::Type {
           .type = type1
         }
       }
@@ -706,7 +706,7 @@ Ast::Stmts {
         }
       }
       Ast::Dret {
-        Ast::Type {
+        .node = Ast::Type {
           .type = type1
         }
       }
@@ -767,7 +767,7 @@ Ast::Stmts {
           }
         }
         Ast::Dret {
-          Ast::Type {
+          .node = Ast::Type {
             .type = type1
           }
         }

@@ -162,6 +162,12 @@ variant Ast::Function {
     }
 }
 
+variant Ast::Dret {
+    properties {
+        node: Ast
+    }
+}
+
 enum TypeKind {
   None
   Integer
