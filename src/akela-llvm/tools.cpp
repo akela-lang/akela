@@ -352,7 +352,7 @@ namespace Akela_llvm {
     /* NOLINTNEXTLINE(misc-no-recursion) */
     Value* Dispatch(Jit_data* jd, Ake_Ast* n)
     {
-        if (n->kind == Ake_ast_type_stmts) {
+        if (n->kind == AKE_AST_STMTS) {
             return Handle_stmts(jd, n);
         }
 

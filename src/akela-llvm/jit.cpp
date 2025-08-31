@@ -39,6 +39,7 @@ namespace Akela_llvm {
             jd->need_exit = true;
         }
 
+        Ake_Ast* p = nullptr;
         switch (n->kind) {
             case AKE_AST_NONE:
                 break;
@@ -64,8 +65,23 @@ namespace Akela_llvm {
                 Check_subscript(jd, n->data.minus.left);
                 Check_subscript(jd, n->data.minus.right);
                 break;
+            case AKE_AST_MULT:
+                Check_subscript(jd, n->data.mult.left);
+                Check_subscript(jd, n->data.mult.right);
+                break;
+            case AKE_AST_DIVIDE:
+                Check_subscript(jd, n->data.divide.left);
+                Check_subscript(jd, n->data.divide.right);
+                break;
+            case AKE_AST_STMTS:
+                p = n->data.stmts.list.head;
+                while (p) {
+                    Check_subscript(jd, p);
+                    p = p->next;
+                }
+                break;
             default:
-                Ake_Ast* p = n->head;
+                p = n->head;
                 while (p) {
                     Check_subscript(jd, p);
                     p = p->next;

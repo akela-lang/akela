@@ -41,9 +41,9 @@ void AkeUnit_comp_table_compile(Zinc_test* test)
 	if (!Zinc_expect_ptr(test, root, "ptr root")) {
 		return Zinc_assert();
 	}
-	Zinc_expect_int_equal(test, root->kind, Ake_ast_type_stmts, "parse_stmts root");
+	Zinc_expect_int_equal(test, root->kind, AKE_AST_STMTS, "parse_stmts root");
 
-	Ake_Ast* number = Ake_AstGet(root, 0);
+	Ake_Ast* number = Ake_AstListGet(&root->data.stmts.list, 0);
 	if (!Zinc_expect_ptr(test, number, "ptr number")) {
 		return Zinc_assert();
 	}

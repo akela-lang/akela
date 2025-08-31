@@ -39,7 +39,7 @@ Ake_Ast* Ake_parse_stmts(Ake_parse_state* ps)
 	struct Ake_environment* env = NULL;
 
 	Ake_AstCreate(&n);
-	n->kind = Ake_ast_type_stmts;
+	Ake_AstSet(n, AKE_AST_STMTS);
 
     Ake_begin_environment(ps->st);
 
@@ -47,7 +47,8 @@ Ake_Ast* Ake_parse_stmts(Ake_parse_state* ps)
 	a = Ake_parse_stmt(ps);
 
 	if (a) {
-        Ake_AstAdd(n, a);
+		Ake_AstListAdd(&n->data.stmts.list, a);
+        Ake_AstAdd2(n, a);
 		last = a;
 	}
 
@@ -63,7 +64,8 @@ Ake_Ast* Ake_parse_stmts(Ake_parse_state* ps)
 		b = Ake_parse_stmt(ps);
 
 		if (b) {
-            Ake_AstAdd(n, b);
+			Ake_AstListAdd(&n->data.stmts.list, b);
+            Ake_AstAdd2(n, b);
 			last = b;
 		}
 	}

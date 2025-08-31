@@ -8,7 +8,7 @@ namespace Akela_llvm {
     {
         Value* last_v = nullptr;
         Ake_Ast* last_n = nullptr;
-        Ake_Ast* stmt = Ake_AstGet(n, 0);
+        Ake_Ast* stmt = n->data.stmts.list.head;
         Ake_begin_environment(&jd->st);
         while (stmt) {
             last_v = Dispatch(jd, stmt);

@@ -143,6 +143,14 @@ void Ake_ast_cent_print(Ake_Ast* n, size_t level, bool is_property, Ake_TypeSlot
                     Ake_ast_cent_print(n->data.divide.right, level, true, slots);
                 }
                 break;
+            case AKE_AST_STMTS:
+                level++;
+                Ake_Ast* p = n->data.stmts.list.head;
+                while (p) {
+                    Ake_ast_cent_print(p, level, false, slots);
+                    p = p->next;
+                }
+                level--;
             default:
                 break;
         }
@@ -207,7 +215,7 @@ char* Ake_ast_cent_name(Ake_AstKind type)
         return "Ast::Divide";
     }
 
-    if (type == Ake_ast_type_stmts) {
+    if (type == AKE_AST_STMTS) {
         return "Ast::Stmts";
     }
 

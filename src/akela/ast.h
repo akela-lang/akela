@@ -24,7 +24,7 @@ typedef enum Ake_AstKind {
 	AKE_AST_MINUS,
 	AKE_AST_MULT,
 	AKE_AST_DIVIDE,
-	Ake_ast_type_stmts,
+	AKE_AST_STMTS,
 	Ake_ast_type_function,
 	Ake_ast_type_dseq,
 	Ake_ast_type_dret,
@@ -80,7 +80,7 @@ static char const* Ast_type_name(Ake_AstKind kind)
     name[AKE_AST_MINUS] = "minus";
     name[AKE_AST_MULT] = "mult";
     name[AKE_AST_DIVIDE] = "divide";
-    name[Ake_ast_type_stmts] = "stmts";
+    name[AKE_AST_STMTS] = "stmts";
     name[Ake_ast_type_function] = "function";
     name[Ake_ast_type_dseq] = "dseq";
     name[Ake_ast_type_dret] = "dret";
@@ -128,6 +128,12 @@ static char const* Ast_type_name(Ake_AstKind kind)
 	return "Invalid Ake_ast_type";
 }
 
+struct Ake_AstList {
+	Ake_Ast* head;
+	Ake_Ast* tail;
+};
+
+typedef struct Ake_AstList Ake_AstList;
 typedef struct Ake_Ast {
 	Ake_AstKind kind;
 	Zinc_string struct_value;
@@ -142,6 +148,7 @@ typedef struct Ake_Ast {
 		struct { Ake_Ast* left; Ake_Ast* right; } minus;
 		struct { Ake_Ast* left; Ake_Ast* right; } mult;
 		struct { Ake_Ast* left; Ake_Ast* right; } divide;
+		struct { Ake_AstList list; } stmts;
 	} data;
 	Ake_Type* type;
     Zinc_location loc;
@@ -154,12 +161,6 @@ typedef struct Ake_Ast {
 	bool is_set;
 	Ake_token_list token_list;
 } Ake_Ast;
-
-typedef struct Ake_AstList Ake_AstList;
-struct Ake_AstList {
-	Ake_Ast* head;
-	Ake_Ast* tail;
-};
 
 #ifdef __cplusplus
 extern "C" {
@@ -182,6 +183,7 @@ extern "C" {
 	AKELA_API void Ake_AstListCreate(Ake_AstList** list);
 	AKELA_API void Ake_AstListDestroy(Ake_AstList* list);
 	AKELA_API void Ake_AstListAdd(Ake_AstList* list, Ake_Ast* n);
+	AKELA_API Ake_Ast* Ake_AstListGet(Ake_AstList* list, size_t index);
 
 #ifdef __cplusplus
 }

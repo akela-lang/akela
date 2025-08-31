@@ -77,6 +77,10 @@ void Ake_AstSet(Ake_Ast* n, Ake_AstKind kind)
 			n->data.divide.right = NULL;
 			n->is_set = true;
 			break;
+		case AKE_AST_STMTS:
+			Ake_AstListInit(&n->data.stmts.list);
+			n->is_set = true;
+			break;
 		default:
 			break;
 	}
@@ -94,6 +98,7 @@ void Ake_AstValidate(Ake_Ast* n)
 		case AKE_AST_MINUS:
 		case AKE_AST_MULT:
 		case AKE_AST_DIVIDE:
+		case AKE_AST_STMTS:
 			assert(n->is_set);
 			break;
 		default:
@@ -147,6 +152,9 @@ void Ake_AstDestroy(Ake_Ast* n)
     		case AKE_AST_DIVIDE:
     			Ake_AstDestroy(n->data.divide.left);
     			Ake_AstDestroy(n->data.divide.right);
+    			break;
+    		case AKE_AST_STMTS:
+    			Ake_AstListDestroy(&n->data.stmts.list);
     			break;
         	default:
     			break;
@@ -251,6 +259,13 @@ void Ake_AstCopy(Ake_Ast* src, Ake_Ast* dest)
 			dest->data.divide.left = Ake_AstClone(src->data.divide.left);
 			dest->data.divide.right = Ake_AstClone(src->data.divide.right);
 			break;
+		case AKE_AST_STMTS:
+			Ake_Ast* p = src->data.stmts.list.head;
+			while (p) {
+				Ake_AstListAdd(&dest->data.stmts.list, Ake_AstClone(p));
+				p = p->next;
+			}
+			break;
 		default:
 			break;
 	}
@@ -353,6 +368,23 @@ bool Ake_AstMatch(Ake_Ast* a, Ake_Ast* b)
 					return false;
 				}
 				break;
+			case AKE_AST_STMTS:
+				Ake_Ast* a2 = a->data.stmts.list.head;
+				Ake_Ast* b2 = b->data.stmts.list.head;
+				while (a2 || b2) {
+					if (!a2) {
+						return false;
+					}
+					if (!b2) {
+						return false;
+					}
+					if (!Ake_AstMatch(a2, b2)) {
+						return false;
+					}
+					a2 = a2->next;
+					b2 = b2->next;
+				}
+				break;
 			default:
 				break;
 		}
@@ -436,4 +468,18 @@ void Ake_AstListAdd(Ake_AstList* list, Ake_Ast* n)
 		list->head = n;
 		list->tail = n;
 	}
+}
+
+Ake_Ast* Ake_AstListGet(Ake_AstList* list, size_t index)
+{
+	size_t i = 0;
+	Ake_Ast* p = list->head;
+	while (p) {
+		if (i == index) {
+			return p;
+		}
+		p = p->next;
+	}
+
+	return NULL;
 }
