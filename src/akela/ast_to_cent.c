@@ -151,6 +151,19 @@ void Ake_ast_cent_print(Ake_Ast* n, size_t level, bool is_property, Ake_TypeSlot
                     p = p->next;
                 }
                 level--;
+                break;
+            case AKE_AST_FUNCTION:
+                if (n->data.function.proto) {
+                    Ake_indent_print(level);
+                    printf(".proto = ");
+                    Ake_ast_cent_print(n->data.function.proto, level, true, slots);
+                }
+                if (n->data.function.body) {
+                    Ake_indent_print(level);
+                    printf(".body = ");
+                    Ake_ast_cent_print(n->data.function.body, level, true, slots);
+                }
+                break;
             default:
                 break;
         }
@@ -219,7 +232,7 @@ char* Ake_ast_cent_name(Ake_AstKind type)
         return "Ast::Stmts";
     }
 
-    if (type == Ake_ast_type_function) {
+    if (type == AKE_AST_FUNCTION) {
         return "Ast::Function";
     }
 

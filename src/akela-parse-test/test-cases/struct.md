@@ -752,8 +752,7 @@ Ast::Stmts {
   }
   Ast::Impl {
     Ast::Function {
-      .type = type4
-      Ast::Prototype {
+      .proto = Ast::Prototype {
         Ast::Id {
           .value = "length"
         }
@@ -773,7 +772,7 @@ Ast::Stmts {
           }
         }
       }
-      Ast::Stmts {
+      .body = Ast::Stmts {
         .type = type1
         Ast::Call {
           .type = type1
@@ -884,6 +883,7 @@ Ast::Stmts {
           }
         }
       }
+      .type = type4
     }
   }
 }

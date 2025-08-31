@@ -55,7 +55,7 @@ void Ake_UpdateSymbolLet(Ake_symbol_table* st, Ake_Ast* n)
 
 void Ake_UpdateSymbolPrototype(Ake_symbol_table* st, Ake_Ast* n)
 {
-    Ake_Ast* proto = Ake_AstGet(n, 0);
+    Ake_Ast* proto = n->data.function.proto;
     Ake_declare_params(st, proto);
 }
 
@@ -63,7 +63,7 @@ void Ake_UpdateSymbolFunction(Ake_symbol_table* st, Ake_Ast* n)
 {
     if (!n->has_error) {
         if (!n->parent || (n->parent->kind != Ake_ast_type_struct)) {
-            Ake_Ast* proto = Ake_AstGet(n, 0);
+            Ake_Ast* proto = n->data.function.proto;
             Ake_Ast* id_node = Ake_AstGet(proto, 0);
             struct Ake_Symbol* new_sym = NULL;
             Zinc_malloc_safe((void**)&new_sym, sizeof(struct Ake_Symbol));

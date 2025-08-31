@@ -81,6 +81,11 @@ void Ake_AstSet(Ake_Ast* n, Ake_AstKind kind)
 			Ake_AstListInit(&n->data.stmts.list);
 			n->is_set = true;
 			break;
+		case AKE_AST_FUNCTION:
+			n->data.function.proto = NULL;
+			n->data.function.body = NULL;
+			n->is_set = true;
+			break;
 		default:
 			break;
 	}
@@ -99,6 +104,7 @@ void Ake_AstValidate(Ake_Ast* n)
 		case AKE_AST_MULT:
 		case AKE_AST_DIVIDE:
 		case AKE_AST_STMTS:
+		case AKE_AST_FUNCTION:
 			assert(n->is_set);
 			break;
 		default:
@@ -155,6 +161,10 @@ void Ake_AstDestroy(Ake_Ast* n)
     			break;
     		case AKE_AST_STMTS:
     			Ake_AstListDestroy(&n->data.stmts.list);
+    			break;
+    		case AKE_AST_FUNCTION:
+    			Ake_AstDestroy(n->data.function.proto);
+    			Ake_AstDestroy(n->data.function.body);
     			break;
         	default:
     			break;
@@ -265,6 +275,10 @@ void Ake_AstCopy(Ake_Ast* src, Ake_Ast* dest)
 				Ake_AstListAdd(&dest->data.stmts.list, Ake_AstClone(p));
 				p = p->next;
 			}
+			break;
+		case AKE_AST_FUNCTION:
+			dest->data.function.proto = Ake_AstClone(src->data.function.proto);
+			dest->data.function.body = Ake_AstClone(src->data.function.body);
 			break;
 		default:
 			break;
@@ -383,6 +397,14 @@ bool Ake_AstMatch(Ake_Ast* a, Ake_Ast* b)
 					}
 					a2 = a2->next;
 					b2 = b2->next;
+				}
+				break;
+			case AKE_AST_FUNCTION:
+				if (!Ake_AstMatch(a->data.function.proto, b->data.function.proto)) {
+					return false;
+				}
+				if (!Ake_AstMatch(a->data.function.body, b->data.function.body)) {
+					return false;
 				}
 				break;
 			default:

@@ -30,7 +30,7 @@ namespace Akela_llvm {
     Value* Handle_function(Jit_data* jd, Ake_Ast* n)
     {
         FunctionType* func_type = Get_function_type(jd, n->type);
-        Ake_Ast *proto = Ake_AstGet(n, 0);
+        Ake_Ast *proto = n->data.function.proto;
         Ake_Ast *id = Ake_AstGet(proto, 0);
         Zinc_string_finish(&id->data.id.value);
         Function* f = Function::Create(func_type,
@@ -67,7 +67,7 @@ namespace Akela_llvm {
         }
 
         jd->current_function.push_back(f);
-        Ake_Ast* body = Ake_AstGet(n, 1);
+        Ake_Ast* body = n->data.function.body;
         Value* ret_value = Dispatch(jd, body);
         if (body->type) {
             jd->Builder->CreateRet(ret_value);

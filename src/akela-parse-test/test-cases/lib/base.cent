@@ -149,6 +149,19 @@ variant Ast::Divide {
     }
 }
 
+variant Ast::Stmts {
+    children {
+        Ast
+    }
+}
+
+variant Ast::Function {
+    properties {
+        proto: Ast
+        body: Ast
+    }
+}
+
 enum TypeKind {
   None
   Integer

@@ -781,8 +781,7 @@ const type2 = Type::Integer {
 Ast::Stmts {
   .type = type0
   Ast::Function {
-    .type = type1
-    Ast::Prototype {
+    .proto = Ast::Prototype {
       Ast::Id {
         .value = "foo"
       }
@@ -818,13 +817,14 @@ Ast::Stmts {
         }
       }
     }
-    Ast::Stmts {
+    .body = Ast::Stmts {
       .type = type0
       Ast::String {
         .value = "hello"
         .type = type0
       }
     }
+    .type = type1
   }
   Ast::Call {
     .type = type0

@@ -34,8 +34,7 @@ const type1 = Type::Integer {
 Ast::Stmts {
   .type = type0
   Ast::Function {
-    .type = type0
-    Ast::Prototype {
+    .proto = Ast::Prototype {
       Ast::Id {
         .value = "foo"
       }
@@ -44,7 +43,7 @@ Ast::Stmts {
       Ast::Dret {
       }
     }
-    Ast::Stmts {
+    .body = Ast::Stmts {
       .type = type1
       Ast::Const {
         Ast::Id {
@@ -81,6 +80,7 @@ Ast::Stmts {
         .type = type1
       }
     }
+    .type = type0
   }
 }
 ```
@@ -121,8 +121,7 @@ const type1 = Type::Integer {
 Ast::Stmts {
   .type = type0
   Ast::Function {
-    .type = type0
-    Ast::Prototype {
+    .proto = Ast::Prototype {
       Ast::Id {
         .value = "foo"
       }
@@ -139,7 +138,7 @@ Ast::Stmts {
       Ast::Dret {
       }
     }
-    Ast::Stmts {
+    .body = Ast::Stmts {
       .type = type1
       Ast::Plus {
         .left = Ast::Id {
@@ -164,6 +163,7 @@ Ast::Stmts {
         .type = type1
       }
     }
+    .type = type0
   }
 }
 ```
@@ -211,8 +211,7 @@ const type1 = Type::Integer {
 Ast::Stmts {
   .type = type0
   Ast::Function {
-    .type = type0
-    Ast::Prototype {
+    .proto = Ast::Prototype {
       Ast::Id {
         .value = "foo"
       }
@@ -237,7 +236,7 @@ Ast::Stmts {
       Ast::Dret {
       }
     }
-    Ast::Stmts {
+    .body = Ast::Stmts {
       .type = type1
       Ast::Plus {
         .left = Ast::Id {
@@ -262,6 +261,7 @@ Ast::Stmts {
         }
       }
     }
+    .type = type0
   }
 }
 ```
@@ -320,8 +320,7 @@ const type1 = Type::Integer {
 Ast::Stmts {
   .type = type0
   Ast::Function {
-    .type = type0
-    Ast::Prototype {
+    .proto = Ast::Prototype {
       Ast::Id {
         .value = "foo"
       }
@@ -357,7 +356,7 @@ Ast::Stmts {
         }
       }
     }
-    Ast::Stmts {
+    .body = Ast::Stmts {
       .type = type1
       Ast::Plus {
         .left = Ast::Id {
@@ -382,6 +381,7 @@ Ast::Stmts {
         .type = type1
       }
     }
+    .type = type0
   }
 }
 ```
@@ -565,8 +565,7 @@ const type1 = Type::Integer {
 Ast::Stmts {
   .type = type0
   Ast::Function {
-    .type = type0
-    Ast::Prototype {
+    .proto = Ast::Prototype {
       Ast::Id {
         .value = "foo"
       }
@@ -594,13 +593,14 @@ Ast::Stmts {
         }
       }
     }
-    Ast::Stmts {
+    .body = Ast::Stmts {
       .type = type1
       Ast::Number {
         .value = "1"
         .type = type1
       }
     }
+    .type = type0
   }
 }
 ```
@@ -633,8 +633,7 @@ const type1 = Type::Integer {
 Ast::Stmts {
   .type = type0
   Ast::Function {
-    .type = type0
-    Ast::Prototype {
+    .proto = Ast::Prototype {
       Ast::Id {
         .value = "foo"
       }
@@ -646,7 +645,7 @@ Ast::Stmts {
         }
       }
     }
-    Ast::Stmts {
+    .body = Ast::Stmts {
       .type = type1
       Ast::Return {
         .type = type1
@@ -656,6 +655,7 @@ Ast::Stmts {
         }
       }
     }
+    .type = type0
   }
 }
 ```
@@ -764,8 +764,7 @@ Ast::Stmts {
       .type = type0
     }
     Ast::Function {
-      .type = type1
-      Ast::Prototype {
+      .proto = Ast::Prototype {
         Ast::Id {
           .value = "__anonymous_function_0"
         }
@@ -798,7 +797,7 @@ Ast::Stmts {
         Ast::Dret {
         }
       }
-      Ast::Stmts {
+      .body = Ast::Stmts {
         .type = type2
         Ast::Plus {
           .left = Ast::Plus {
@@ -819,6 +818,7 @@ Ast::Stmts {
           .type = type2
         }
       }
+      .type = type1
     }
   }
 }
@@ -912,8 +912,7 @@ Ast::Stmts {
       .type = type0
     }
     Ast::Function {
-      .type = type1
-      Ast::Prototype {
+      .proto = Ast::Prototype {
         Ast::Id {
           .value = "__anonymous_function_0"
         }
@@ -949,7 +948,7 @@ Ast::Stmts {
           }
         }
       }
-      Ast::Stmts {
+      .body = Ast::Stmts {
         .type = type2
         Ast::Plus {
           .left = Ast::Plus {
@@ -970,6 +969,7 @@ Ast::Stmts {
           .type = type2
         }
       }
+      .type = type1
     }
   }
 }
@@ -1119,8 +1119,7 @@ Ast::Stmts {
       .type = type0
     }
     Ast::Function {
-      .type = type1
-      Ast::Prototype {
+      .proto = Ast::Prototype {
         Ast::Id {
           .value = "__anonymous_function_0"
         }
@@ -1140,7 +1139,7 @@ Ast::Stmts {
           }
         }
       }
-      Ast::Stmts {
+      .body = Ast::Stmts {
         .type = type2
         Ast::Plus {
           .left = Ast::Id {
@@ -1154,6 +1153,7 @@ Ast::Stmts {
           .type = type2
         }
       }
+      .type = type1
     }
   }
 }
@@ -1226,8 +1226,7 @@ const type1 = Type::Integer {
 }
 Ast::Stmts {
   Ast::Function {
-    .type = type0
-    Ast::Prototype {
+    .proto = Ast::Prototype {
       Ast::Id {
         .value = "foo"
       }
@@ -1236,13 +1235,14 @@ Ast::Stmts {
       Ast::Dret {
       }
     }
-    Ast::Stmts {
+    .body = Ast::Stmts {
       .type = type1
       Ast::Number {
         .value = "1"
         .type = type1
       }
     }
+    .type = type0
   }
   Ast::Call {
     Ast::Id {
@@ -1284,8 +1284,7 @@ const type1 = Type::Function {
 Ast::Stmts {
   .type = type0
   Ast::Function {
-    .type = type1
-    Ast::Prototype {
+    .proto = Ast::Prototype {
       Ast::Id {
         .value = "foo"
       }
@@ -1297,13 +1296,14 @@ Ast::Stmts {
         }
       }
     }
-    Ast::Stmts {
+    .body = Ast::Stmts {
       .type = type0
       Ast::Number {
         .value = "1"
         .type = type0
       }
     }
+    .type = type1
   }
   Ast::Plus {
     .left = Ast::Call {
@@ -1379,8 +1379,7 @@ const type1 = Type::Integer {
 }
 Ast::Stmts {
   Ast::Function {
-    .type = type0
-    Ast::Prototype {
+    .proto = Ast::Prototype {
       Ast::Id {
         .value = "foo"
       }
@@ -1397,13 +1396,14 @@ Ast::Stmts {
       Ast::Dret {
       }
     }
-    Ast::Stmts {
+    .body = Ast::Stmts {
       .type = type1
       Ast::Id {
         .value = "arg1"
         .type = type1
       }
     }
+    .type = type0
   }
   Ast::Call {
     Ast::Id {
@@ -1469,8 +1469,7 @@ const type1 = Type::Function {
 Ast::Stmts {
   .type = type0
   Ast::Function {
-    .type = type1
-    Ast::Prototype {
+    .proto = Ast::Prototype {
       Ast::Id {
         .value = "foo"
       }
@@ -1498,13 +1497,14 @@ Ast::Stmts {
         }
       }
     }
-    Ast::Stmts {
+    .body = Ast::Stmts {
       .type = type0
       Ast::Number {
         .value = "1"
         .type = type0
       }
     }
+    .type = type1
   }
   Ast::Const {
     Ast::Id {
@@ -1606,8 +1606,7 @@ const type1 = Type::Function {
 Ast::Stmts {
   .type = type0
   Ast::Function {
-    .type = type1
-    Ast::Prototype {
+    .proto = Ast::Prototype {
       Ast::Id {
         .value = "foo"
       }
@@ -1643,13 +1642,14 @@ Ast::Stmts {
         }
       }
     }
-    Ast::Stmts {
+    .body = Ast::Stmts {
       .type = type0
       Ast::Number {
         .value = "100"
         .type = type0
       }
     }
+    .type = type1
   }
   Ast::Const {
     Ast::Id {
@@ -1933,8 +1933,7 @@ const type1 = Type::Integer {
 Ast::Stmts {
   .type = type0
   Ast::Function {
-    .type = type0
-    Ast::Prototype {
+    .proto = Ast::Prototype {
       Ast::Id {
         .value = "__anonymous_function_0"
       }
@@ -1970,7 +1969,7 @@ Ast::Stmts {
         }
       }
     }
-    Ast::Stmts {
+    .body = Ast::Stmts {
       .type = type1
       Ast::Plus {
         .left = Ast::Plus {
@@ -1991,6 +1990,7 @@ Ast::Stmts {
         .type = type1
       }
     }
+    .type = type0
   }
 }
 ```
@@ -2089,8 +2089,7 @@ Ast::Stmts {
       .type = type0
     }
     Ast::Function {
-      .type = type1
-      Ast::Prototype {
+      .proto = Ast::Prototype {
         Ast::Id {
           .value = "__anonymous_function_0"
         }
@@ -2126,7 +2125,7 @@ Ast::Stmts {
           }
         }
       }
-      Ast::Stmts {
+      .body = Ast::Stmts {
         .type = type2
         Ast::Plus {
           .left = Ast::Plus {
@@ -2147,6 +2146,7 @@ Ast::Stmts {
           .type = type2
         }
       }
+      .type = type1
     }
   }
 }
@@ -2289,8 +2289,7 @@ const type1 = Type::Function {
 Ast::Stmts {
   .type = type0
   Ast::Function {
-    .type = type1
-    Ast::Prototype {
+    .proto = Ast::Prototype {
       Ast::Id {
         .value = "foo"
       }
@@ -2318,7 +2317,7 @@ Ast::Stmts {
         }
       }
     }
-    Ast::Stmts {
+    .body = Ast::Stmts {
       .type = type0
       Ast::Plus {
         .left = Ast::Id {
@@ -2332,6 +2331,7 @@ Ast::Stmts {
         .type = type0
       }
     }
+    .type = type1
   }
   Ast::Call {
     .type = type0

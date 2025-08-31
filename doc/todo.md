@@ -11,7 +11,7 @@
   * mult [x]
   * divide [x]
   * stmts [x]
-  * function []
+  * function [x]
   * dseq []
   * dret []
   * call []

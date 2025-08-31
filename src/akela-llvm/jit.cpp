@@ -80,6 +80,10 @@ namespace Akela_llvm {
                     p = p->next;
                 }
                 break;
+            case AKE_AST_FUNCTION:
+                Check_subscript(jd, n->data.function.proto);
+                Check_subscript(jd, n->data.function.body);
+                break;
             default:
                 p = n->head;
                 while (p) {

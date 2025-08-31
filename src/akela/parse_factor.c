@@ -75,7 +75,7 @@ Ake_Ast* Ake_parse_function(struct Ake_parse_state* ps, bool is_method)
     Ake_Ast* n = NULL;
 
     Ake_AstCreate(&n);
-    n->kind = Ake_ast_type_function;
+    Ake_AstSet(n, AKE_AST_FUNCTION);
 
     Ake_token* f = NULL;
     Ake_match(ps, Ake_token_fn, "expected fn", &f, n);
@@ -85,9 +85,11 @@ Ake_Ast* Ake_parse_function(struct Ake_parse_state* ps, bool is_method)
     Ake_Ast* proto = NULL;
     bool has_id;
     proto = Ake_parse_prototype(ps, true, false, is_method, true, &has_id);
-    Ake_AstAdd(n, proto);
+    n->data.function.proto = proto;
+    Ake_AstAdd2(n, proto);
 
     Ake_begin_environment(ps->st);
+
     Ake_UpdateSymbolPrototype(ps->st, n);
     Ake_set_current_function(ps->st, n);
     Ake_Type* type = Ake_proto2type_use(ps, proto);
@@ -98,7 +100,8 @@ Ake_Ast* Ake_parse_function(struct Ake_parse_state* ps, bool is_method)
 
     /* 1 stmts */
     if (stmts_node) {
-        Ake_AstAdd(n, stmts_node);
+        n->data.function.body = stmts_node;
+        Ake_AstAdd2(n, stmts_node);
     }
 
     Ake_end_environment(ps->st);

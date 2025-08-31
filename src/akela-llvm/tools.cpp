@@ -368,7 +368,7 @@ namespace Akela_llvm {
             return Handle_let(jd, n);
         }
 
-        if (n->kind == Ake_ast_type_function) {
+        if (n->kind == AKE_AST_FUNCTION) {
             return Handle_function(jd, n);
         }
 

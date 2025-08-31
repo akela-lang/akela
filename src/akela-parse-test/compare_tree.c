@@ -383,8 +383,15 @@ bool Apt_compare_ast(Zinc_test* top_test, Zinc_test* case_test, Ake_Ast* n, Cent
                     p = p->next;
                     value2 = value2->next;
                 }
-                break;
             }
+            break;
+        case AKE_AST_FUNCTION:
+            Cent_value* proto_value = Cent_value_get_str(value, "proto");
+            Apt_compare_ast(top_test, case_test, n->data.function.proto, proto_value);
+
+            Cent_value* body_value = Cent_value_get_str(value, "body");
+            Apt_compare_ast(top_test, case_test, n->data.function.body, body_value);
+            break;
         default:
             Cent_value* value_prop = Cent_value_get_str(value, "value");
             if (Apt_has_value(n)) {

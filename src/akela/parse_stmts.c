@@ -508,7 +508,7 @@ Ake_Ast* Ake_parse_return(struct Ake_parse_state* ps)
 					/* test case: test_parse_return_error_outside_of_function */
                     n->has_error = true;
 				} else {
-                    Ake_Ast* proto = Ake_AstGet(fd, 0);
+                    Ake_Ast* proto = fd->data.function.proto;
                     if (!Ake_check_return_type(ps, proto, n, &ret->loc)) {
                         /* test case: test_parse_return_error_type_does_not_match */
                         n->has_error = true;
