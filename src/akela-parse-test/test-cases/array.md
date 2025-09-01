@@ -827,12 +827,11 @@ Ast::Stmts {
     .type = type1
   }
   Ast::Call {
-    .type = type0
-    Ast::Id {
+    .func = Ast::Id {
       .value = "foo"
       .type = type1
     }
-    Ast::Cseq {
+    .args = AstList {
       Ast::Number {
         .value = "1"
         .type = type2
@@ -846,6 +845,7 @@ Ast::Stmts {
         .type = type2
       }
     }
+    .type = type0
   }
 }
 ```

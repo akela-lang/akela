@@ -78,7 +78,7 @@ void Ake_AstSet(Ake_Ast* n, Ake_AstKind kind)
 			n->is_set = true;
 			break;
 		case AKE_AST_STMTS:
-			Ake_AstListInit(&n->data.stmts.list);
+			Ake_AstListInit(&n->data.stmts.list, n);
 			n->is_set = true;
 			break;
 		case AKE_AST_FUNCTION:
@@ -87,11 +87,16 @@ void Ake_AstSet(Ake_Ast* n, Ake_AstKind kind)
 			n->is_set = true;
 			break;
 		case AKE_AST_DSEQ:
-			Ake_AstListInit(&n->data.dseq.list);
+			Ake_AstListInit(&n->data.dseq.list, n);
 			n->is_set = true;
 			break;
 		case AKE_AST_DRET:
 			n->data.dret.node = NULL;
+			n->is_set = true;
+			break;
+		case AKE_AST_CALL:
+			n->data.call.func = NULL;
+			Ake_AstListInit(&n->data.call.args, n);
 			n->is_set = true;
 			break;
 		default:
@@ -115,6 +120,7 @@ void Ake_AstValidate(Ake_Ast* n)
 		case AKE_AST_FUNCTION:
 		case AKE_AST_DSEQ:
 		case AKE_AST_DRET:
+		case AKE_AST_CALL:
 			assert(n->is_set);
 			break;
 		default:
@@ -128,13 +134,7 @@ void Ake_AstDestroy(Ake_Ast* n)
     if (n) {
     	Ake_AstValidate(n);
 
-        Ake_Ast* p = n->head;
-        while (p) {
-            Ake_Ast* temp = p;
-            p = p->next;
-            Ake_AstDestroy(temp);
-        }
-
+    	Ake_Ast* p = NULL;
     	switch(n->kind) {
     		case AKE_AST_ID:
     			Zinc_string_destroy(&n->data.id.value);
@@ -182,7 +182,17 @@ void Ake_AstDestroy(Ake_Ast* n)
     		case AKE_AST_DRET:
     			Ake_AstDestroy(n->data.dret.node);
     			break;
+    		case AKE_AST_CALL:
+    			Ake_AstDestroy(n->data.call.func);
+    			Ake_AstListDestroy(&n->data.call.args);
+    			break;
         	default:
+    			p = n->head;
+    			while (p) {
+    				Ake_Ast* temp = p;
+    				p = p->next;
+    				Ake_AstDestroy(temp);
+    			}
     			break;
     	}
 
@@ -306,6 +316,14 @@ void Ake_AstCopy(Ake_Ast* src, Ake_Ast* dest)
 			break;
 		case AKE_AST_DRET:
 			dest->data.dret.node = Ake_AstClone(src->data.dret.node);
+			break;
+		case AKE_AST_CALL:
+			dest->data.call.func = Ake_AstClone(src->data.call.func);
+			p = src->data.call.args.head;
+			while (p) {
+				Ake_AstListAdd(&dest->data.call.args, Ake_AstClone(p));
+				p = p->next;
+			}
 			break;
 		default:
 			break;
@@ -459,6 +477,26 @@ bool Ake_AstMatch(Ake_Ast* a, Ake_Ast* b)
 					return false;
 				}
 				break;
+			case AKE_AST_CALL:
+				if (!Ake_AstMatch(a->data.call.func, b->data.call.func)) {
+					return false;
+				}
+				a2 = a->data.call.args.head;
+				b2 = b->data.call.args.head;
+				while (a2 || b2) {
+					if (!a2) {
+						return false;
+					}
+					if (!b2) {
+						return false;
+					}
+					if (!Ake_AstMatch(a2, b2)) {
+						return false;
+					}
+					a2 = a2->next;
+					b2 = b2->next;
+				}
+				break;
 			default:
 				if (!Zinc_string_compare(&a->struct_value, &b->struct_value)) {
 					return false;
@@ -508,16 +546,19 @@ size_t Ake_AstCountChildren(Ake_Ast* n)
     return count;
 }
 
-void Ake_AstListInit(Ake_AstList* list)
+void Ake_AstListInit(Ake_AstList* list, Ake_Ast* parent)
 {
 	list->head = NULL;
 	list->tail = NULL;
+	Zinc_location_init(&list->loc);
+	list->parent = parent;
+	list->has_error = true;
 }
 
-void Ake_AstListCreate(Ake_AstList** list)
+void Ake_AstListCreate(Ake_AstList** list, Ake_Ast* parent)
 {
 	Zinc_malloc_safe((void**)list, sizeof (Ake_AstList));
-	Ake_AstListInit(*list);
+	Ake_AstListInit(*list, parent);
 }
 
 void Ake_AstListDestroy(Ake_AstList* list)
@@ -542,6 +583,17 @@ void Ake_AstListAdd(Ake_AstList* list, Ake_Ast* n)
 		list->head = n;
 		list->tail = n;
 	}
+
+	Zinc_location_combine(&list->loc, &n->loc);
+	if (list->parent) {
+		Zinc_location_combine(&list->parent->loc, &n->loc);
+	}
+	if (n->has_error) {
+		list->has_error = true;
+		if (list->parent) {
+			list->parent->has_error = true;
+		}
+	}
 }
 
 Ake_Ast* Ake_AstListGet(Ake_AstList* list, size_t index)
@@ -556,4 +608,15 @@ Ake_Ast* Ake_AstListGet(Ake_AstList* list, size_t index)
 	}
 
 	return NULL;
+}
+
+size_t Ake_AstListCount(Ake_AstList* list)
+{
+	size_t count = 0;
+	Ake_Ast* p = list->head;
+	while (p) {
+		count++;
+		p = p->next;
+	}
+	return count;
 }

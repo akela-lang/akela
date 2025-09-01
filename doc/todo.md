@@ -14,8 +14,7 @@
   * function [x]
   * dseq [x]
   * dret [x]
-  * call []
-  * cseq []
+  * call [x]
   * if []
   * conditional branch []
   * default branch []
@@ -60,6 +59,10 @@
   * factor
     * literal []
     * struct literal []
+* remove Ast::Type nodes
+  * let []
+  * dret []
+  * declaration []
 * modules
 * print function
 * insert error context lines related to current check; used for line and col numbers

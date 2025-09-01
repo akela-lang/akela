@@ -28,8 +28,7 @@ typedef enum Ake_AstKind {
 	AKE_AST_FUNCTION,
 	AKE_AST_DSEQ,
 	AKE_AST_DRET,
-	Ake_ast_type_call,
-	Ake_ast_type_cseq,
+	AKE_AST_CALL,
 	Ake_ast_type_if,
 	Ake_ast_type_conditional_branch,
 	Ake_ast_type_default_branch,
@@ -84,8 +83,7 @@ static char const* Ast_type_name(Ake_AstKind kind)
     name[AKE_AST_FUNCTION] = "function";
     name[AKE_AST_DSEQ] = "dseq";
     name[AKE_AST_DRET] = "dret";
-    name[Ake_ast_type_call] = "call";
-    name[Ake_ast_type_cseq] = "cseq";
+    name[AKE_AST_CALL] = "call";
     name[Ake_ast_type_if] = "if";
     name[Ake_ast_type_conditional_branch] = "conditional-branch";
     name[Ake_ast_type_default_branch] = "default-branch";
@@ -131,6 +129,9 @@ static char const* Ast_type_name(Ake_AstKind kind)
 struct Ake_AstList {
 	Ake_Ast* head;
 	Ake_Ast* tail;
+	Ake_Ast* parent;
+	Zinc_location loc;
+	bool has_error;
 };
 
 typedef struct Ake_AstList Ake_AstList;
@@ -152,6 +153,7 @@ typedef struct Ake_Ast {
 		struct { Ake_Ast* proto; Ake_Ast* body; } function;
 		struct { Ake_AstList list; } dseq;
 		struct { Ake_Ast* node; } dret;
+		struct { Ake_Ast* func; Ake_AstList args; } call;
 	} data;
 	Ake_Type* type;
     Zinc_location loc;
@@ -182,11 +184,12 @@ extern "C" {
 	AKELA_API bool Ake_AstMatch(Ake_Ast* a, Ake_Ast* b);
 	AKELA_API size_t Ake_AstCountChildren(Ake_Ast* n);
 
-	AKELA_API void Ake_AstListInit(Ake_AstList* list);
-	AKELA_API void Ake_AstListCreate(Ake_AstList** list);
+	AKELA_API void Ake_AstListInit(Ake_AstList* list, Ake_Ast* parent);
+	AKELA_API void Ake_AstListCreate(Ake_AstList** list, Ake_Ast* parent);
 	AKELA_API void Ake_AstListDestroy(Ake_AstList* list);
 	AKELA_API void Ake_AstListAdd(Ake_AstList* list, Ake_Ast* n);
 	AKELA_API Ake_Ast* Ake_AstListGet(Ake_AstList* list, size_t index);
+	AKELA_API size_t Ake_AstListCount(Ake_AstList* list);
 
 #ifdef __cplusplus
 }

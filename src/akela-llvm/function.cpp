@@ -92,14 +92,14 @@ namespace Akela_llvm {
     /* NOLINTNEXTLINE(misc-no-recursion) */
     Value* Handle_call(Jit_data* jd, Ake_Ast* n)
     {
-        Ake_Ast* callee = Ake_AstGet(n, 0);
-        Ake_Ast* cseq = Ake_AstGet(n, 1);
+        Ake_Ast* callee = n->data.call.func;
+        Ake_AstList* args = &n->data.call.args;
 
         assert(callee && callee->type && callee->type->kind == AKE_TYPE_FUNCTION);
         Value* callee_value = Dispatch(jd, callee);
 
         std::vector<Value*> arg_list;
-        Ake_Ast* arg = cseq->head;
+        Ake_Ast* arg = args->head;
         Ake_Type* func_type = callee->type;
 
         Ake_TypeParam* tp = func_type->data.function.input_head;

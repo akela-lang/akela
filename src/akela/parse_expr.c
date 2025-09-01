@@ -18,7 +18,7 @@ Ake_Ast* Ake_parse_mult(struct Ake_parse_state* ps);
 Ake_Ast* Ake_parse_power(struct Ake_parse_state* ps);
 void Ake_parse_subscript(struct Ake_parse_state* ps, Ake_Ast* left, Ake_Ast* n);
 void Ake_parse_call(struct Ake_parse_state* ps, Ake_Ast* left, Ake_Ast* n);
-Ake_Ast* Ake_parse_cseq(struct Ake_parse_state* ps, Ake_Ast* left);
+void Ake_parse_args(struct Ake_parse_state* ps, Ake_Ast* n);
 Ake_Ast* Ake_parse_dot(struct Ake_parse_state* ps);
 
 /* expr -> assignment */
@@ -679,7 +679,7 @@ void Ake_parse_subscript(struct Ake_parse_state* ps, Ake_Ast* left, Ake_Ast* n)
 
 /* NOLINTNEXTLINE(misc-no-recursion) */
 void Ake_parse_call(struct Ake_parse_state* ps, Ake_Ast* left, Ake_Ast* n) {
-    n->kind = Ake_ast_type_call;
+	Ake_AstSet(n, AKE_AST_CALL);
 
     struct Ake_token *lp = NULL;
     if (!Ake_match(ps, Ake_token_left_paren, "expected left parenthesis", &lp, n)) {
@@ -687,18 +687,12 @@ void Ake_parse_call(struct Ake_parse_state* ps, Ake_Ast* left, Ake_Ast* n) {
         n->has_error = true;
     }
 
-    if (!Ake_consume_newline(ps, n)) {
-        n->has_error = true;
-    }
+    Ake_consume_newline(ps, n);
 
-    Ake_Ast *cseq_node = NULL;
-    cseq_node = Ake_parse_cseq(ps, left);
+	n->data.call.func = left;
+	Ake_AstAdd2(n, left);
 
-    Ake_AstAdd(n, left);
-
-    if (cseq_node) {
-        Ake_AstAdd(n, cseq_node);
-    }
+    Ake_parse_args(ps, n);
 
     Ake_consume_newline(ps, n);
 
@@ -729,9 +723,7 @@ void Ake_parse_call(struct Ake_parse_state* ps, Ake_Ast* left, Ake_Ast* n) {
             	tp = tp->next;
             }
             size_t ccount = 0;
-            if (cseq_node) {
-                ccount = Ake_AstCountChildren(cseq_node);
-            }
+            ccount = Ake_AstListCount(&n->data.call.args);
 
             if (ccount < tcount) {
                 Zinc_error_list_set(ps->el, &rp->loc, "not enough arguments in function call");
@@ -755,32 +747,29 @@ void Ake_parse_call(struct Ake_parse_state* ps, Ake_Ast* left, Ake_Ast* n) {
 /* cseq -> expr cseq' | e */
 /* cseq' -> , expr cseq' | e */
 /* NOLINTNEXTLINE(misc-no-recursion) */
-Ake_Ast* Ake_parse_cseq(Ake_parse_state* ps, Ake_Ast* left)
+void Ake_parse_args(Ake_parse_state* ps, Ake_Ast* n)
 {
-    Ake_Ast* n = NULL;
-    Ake_AstCreate(&n);
-    n->kind = Ake_ast_type_cseq;
-
-    if (!left->type || left->type->kind != AKE_TYPE_FUNCTION) {
-        Zinc_error_list_set(ps->el, &left->loc, "not a function type");
+    if (!n->data.call.func->type || n->data.call.func->type->kind != AKE_TYPE_FUNCTION) {
+        Zinc_error_list_set(ps->el, &n->data.call.func->loc, "not a function type");
         /* test case: no test case needed */
 		n->has_error = true;
-        return n;
+        return;
     }
 
     Ake_Ast* a = NULL;
     a = Ake_parse_expr(ps);
 
     if (!a) {
-        return n;
+        return;
     }
+
     int i = 0;
-    if (!Ake_check_input_type(ps, left->type, i, a)) {
+    if (!Ake_check_input_type(ps, n->data.call.func->type, i, a)) {
 		n->has_error = true;
     }
     i++;
 
-    Ake_AstAdd(n, a);
+	Ake_AstListAdd(&n->data.call.args, a);
 
     while (true) {
         struct Ake_token* t0 = Ake_get_lookahead(ps);
@@ -805,18 +794,15 @@ Ake_Ast* Ake_parse_cseq(Ake_parse_state* ps, Ake_Ast* left)
             /* test case: test_parse_call_error_expected_expression */
 			n->has_error = true;
         } else {
-            /* transfer a -> parent */
-            Ake_AstAdd(n, a);
+            Ake_AstListAdd(&n->data.call.args, a);
 
-            if (!Ake_check_input_type(ps, left->type, i, a)) {
+            if (!Ake_check_input_type(ps, n->data.call.func->type, i, a)) {
 				n->has_error = true;
             }
         }
 
         i++;
     }
-
-    return n;
 }
 
 /* dot -> factor dot' */

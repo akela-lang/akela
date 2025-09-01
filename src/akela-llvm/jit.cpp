@@ -94,6 +94,14 @@ namespace Akela_llvm {
             case AKE_AST_DRET:
                 Check_subscript(jd, n->data.dret.node);
                 break;
+            case AKE_AST_CALL:
+                Check_subscript(jd, n->data.call.func);
+                p = n->data.call.args.head;
+                while (p) {
+                    Check_subscript(jd, p);
+                    p = p->next;
+                }
+                break;
             default:
                 p = n->head;
                 while (p) {

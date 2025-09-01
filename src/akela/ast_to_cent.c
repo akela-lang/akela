@@ -7,6 +7,7 @@ void Ake_print_types(Ake_TypeSlots* slots);
 void Ake_ast_cent_print(Ake_Ast* n, size_t level, bool is_property, Ake_TypeSlots* slots);
 void Ake_indent_print(size_t level);
 char* Ake_ast_cent_name(Ake_AstKind type);
+void Ake_ast_list_cent_print(Ake_AstList *list, size_t level, bool is_property, Ake_TypeSlots* slots);
 void Ake_type_cent_print(Ake_Type* type, size_t level, bool is_property);
 char* Ake_type_def_cent_name(Ake_TypeKind kind);
 char* Ake_type_param_cent_name(Ake_TypeParamKind kind);
@@ -176,6 +177,15 @@ void Ake_ast_cent_print(Ake_Ast* n, size_t level, bool is_property, Ake_TypeSlot
                 printf(".node = ");
                 Ake_ast_cent_print(n->data.dret.node, level, true, slots);
                 break;
+            case AKE_AST_CALL:
+                Ake_indent_print(level);
+                printf(".func = ");
+                Ake_ast_cent_print(n->data.call.func, level, true, slots);
+
+                Ake_indent_print(level);
+                printf(".args = ");
+                Ake_ast_list_cent_print(&n->data.call.args, level, true, slots);
+                break;
             default:
                 p = n->head;
                 while (p) {
@@ -255,12 +265,8 @@ char* Ake_ast_cent_name(Ake_AstKind type)
         return "Ast::Dret";
     }
 
-    if (type == Ake_ast_type_call) {
+    if (type == AKE_AST_CALL) {
         return "Ast::Call";
-    }
-
-    if (type == Ake_ast_type_cseq) {
-        return "Ast::Cseq";
     }
 
     if (type == Ake_ast_type_if) {
@@ -400,6 +406,24 @@ char* Ake_ast_cent_name(Ake_AstKind type)
     }
 
     assert(false && "unknown type");
+}
+
+void Ake_ast_list_cent_print(Ake_AstList *list, size_t level, bool is_property, Ake_TypeSlots* slots)
+{
+    if (!is_property) {
+        Ake_indent_print(level);
+    }
+    printf("AstList {\n");
+    level++;
+    Ake_Ast* p = list->head;
+    while (p) {
+        Ake_ast_cent_print(p, level, false, slots);
+        p = p->next;
+    }
+
+    level--;
+    Ake_indent_print(level);
+    printf("}\n");
 }
 
 /* NOLINTNEXTLINE(misc-no-recursion) */

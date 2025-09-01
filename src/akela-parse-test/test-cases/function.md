@@ -1245,11 +1245,9 @@ Ast::Stmts {
     .type = type0
   }
   Ast::Call {
-    Ast::Id {
+    .func = Ast::Id {
       .value = "foo"
       .type = type0
-    }
-    Ast::Cseq {
     }
   }
 }
@@ -1307,13 +1305,11 @@ Ast::Stmts {
   }
   Ast::Plus {
     .left = Ast::Call {
-      .type = type0
-      Ast::Id {
+      .func = Ast::Id {
         .value = "foo"
         .type = type1
       }
-      Ast::Cseq {
-      }
+      .type = type0
     }
     .right = Ast::Number {
       .value = "2"
@@ -1406,11 +1402,11 @@ Ast::Stmts {
     .type = type0
   }
   Ast::Call {
-    Ast::Id {
+    .func = Ast::Id {
       .value = "foo"
       .type = type0
     }
-    Ast::Cseq {
+    .args = AstList {
       Ast::Number {
         .value = "2"
         .type = type1
@@ -1531,12 +1527,11 @@ Ast::Stmts {
     }
   }
   Ast::Call {
-    .type = type0
-    Ast::Id {
+    .func = Ast::Id {
       .value = "foo"
       .type = type1
     }
-    Ast::Cseq {
+    .args = AstList {
       Ast::Id {
         .value = "x"
         .type = type0
@@ -1546,6 +1541,7 @@ Ast::Stmts {
         .type = type0
       }
     }
+    .type = type0
   }
 }
 ```
@@ -1676,12 +1672,11 @@ Ast::Stmts {
     }
   }
   Ast::Call {
-    .type = type0
-    Ast::Id {
+    .func = Ast::Id {
       .value = "foo"
       .type = type1
     }
-    Ast::Cseq {
+    .args = AstList {
       Ast::Id {
         .value = "x"
         .type = type0
@@ -1695,6 +1690,7 @@ Ast::Stmts {
         .type = type0
       }
     }
+    .type = type0
   }
 }
 ```
@@ -2177,12 +2173,11 @@ Ast::Stmts {
     .type = type1
   }
   Ast::Call {
-    .type = type0
-    Ast::Id {
+    .func = Ast::Id {
       .value = "foo"
       .type = type1
     }
-    Ast::Cseq {
+    .args = AstList {
       Ast::Number {
         .value = "1"
         .type = type0
@@ -2192,6 +2187,7 @@ Ast::Stmts {
         .type = type0
       }
     }
+    .type = type0
   }
 }
 ```
@@ -2249,11 +2245,11 @@ Ast::Stmts {
     }
   }
   Ast::Call {
-    Ast::Id {
+    .func = Ast::Id {
       .value = "foo"
       .type = type0
     }
-    Ast::Cseq {
+    .args = AstList {
       Ast::Number {
         .value = "1"
         .type = type1

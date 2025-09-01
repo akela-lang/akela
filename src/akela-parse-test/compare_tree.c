@@ -67,6 +67,7 @@ bool Apt_compare_type_function(
     Ake_Type* type,
     Cent_value* value);
 void Apt_compare_value_string(Zinc_test* case_test, Ake_Ast* n, Zinc_string* actual, Cent_value* value);
+bool Apt_compare_ast_list(Zinc_test* top_test, Zinc_test* case_test, Ake_AstList* n, Cent_value* value);
 
 void Apt_suite_run(Zinc_test* suite_test)
 {
@@ -425,6 +426,13 @@ bool Apt_compare_ast(Zinc_test* top_test, Zinc_test* case_test, Ake_Ast* n, Cent
             value2 = Cent_value_get_str(value, "node");
             Apt_compare_ast(top_test, case_test, n->data.dret.node, value2);
             break;
+        case AKE_AST_CALL:
+            value2 = Cent_value_get_str(value, "func");
+            Apt_compare_ast(top_test, case_test, n->data.call.func, value2);
+
+            value2 = Cent_value_get_str(value, "args");
+            Apt_compare_ast_list(top_test, case_test, &n->data.call.args, value2);
+            break;
         default:
             Cent_value* value_prop = Cent_value_get_str(value, "value");
             if (Apt_has_value(n)) {
@@ -527,6 +535,58 @@ void Apt_compare_value_string(Zinc_test* case_test, Ake_Ast* n, Zinc_string* act
             }
         }
     }
+}
+
+bool Apt_compare_ast_list(Zinc_test* top_test, Zinc_test* case_test, Ake_AstList* n, Cent_value* value)
+{
+    Apt_case_data* case_data = case_test->data;
+    if (!n->head && !value) {
+        return true;
+    }
+
+    if (!n->head) {
+        Zinc_spec_error_list_set(
+            &case_data->spec_errors,
+            case_test,
+            NULL,
+            &value->n->loc,
+            "actual AST List is NULL"
+            );
+        return false;
+    }
+
+    if (!value) {
+        Zinc_spec_error_list_set(
+            &case_data->spec_errors,
+            case_test,
+            &n->loc,
+            NULL,
+            "expected AST List is NULL"
+            );
+        return false;
+    }
+
+    if (value->type != Cent_value_type_dag) {
+        Zinc_spec_error_list_set(
+            &case_data->spec_errors,
+            case_test,
+            &n->loc,
+            &value->n->loc,
+            "expected AST List to be a dag"
+            );
+        return false;
+    }
+
+    bool pass = true;
+    Ake_Ast* n2 = n->head;
+    Cent_value* value2 = value->data.dag.head;
+    while (n2 || value2) {
+        pass = Apt_compare_ast(top_test, case_test, n2, value2) && pass;
+        n2 = n2->next;
+        value2 = value2->next;
+    }
+
+    return pass;
 }
 
 /* NOLINTNEXTLINE(misc-no-recursion) */

@@ -51,7 +51,7 @@ void AkeUnit_AstListAdd(Zinc_test* test)
 	}
 
 	Ake_AstList list;
-	Ake_AstListInit(&list);
+	Ake_AstListInit(&list, NULL);
 
 	Ake_Ast* n0 = NULL;
 	Ake_AstCreate(&n0);

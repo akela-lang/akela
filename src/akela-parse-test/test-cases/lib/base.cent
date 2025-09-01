@@ -58,7 +58,6 @@ enum AstType {
   Dseq
   Dret
   Call
-  Cseq
   If
   ConditionalBranch
   DefaultBranch
@@ -165,6 +164,19 @@ variant Ast::Function {
 variant Ast::Dret {
     properties {
         node: Ast
+    }
+}
+
+variant Ast::Call {
+    properties {
+        func: Ast
+        args: AstList
+    }
+}
+
+element AstList {
+    children {
+        Ast
     }
 }
 

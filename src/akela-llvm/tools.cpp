@@ -388,7 +388,7 @@ namespace Akela_llvm {
             return Handle_sub(jd, n);
         }
 
-        if (n->kind == Ake_ast_type_call) {
+        if (n->kind == AKE_AST_CALL) {
             return Handle_call(jd, n);
         }
 

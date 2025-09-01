@@ -775,21 +775,19 @@ Ast::Stmts {
       .body = Ast::Stmts {
         .type = type1
         Ast::Call {
-          .type = type1
-          Ast::Id {
+          .func = Ast::Id {
             .value = "sqrt"
             .type = type2
           }
-          Ast::Cseq {
+          .args = AstList {
             Ast::Plus {
               .type = type1
               .left = Ast::Call {
-                .type = type1
-                Ast::Id {
+                .func = Ast::Id {
                   .value = "pow"
                   .type = type0
                 }
-                Ast::Cseq {
+                .args = AstList {
                   Ast::Minus {
                     .left = Ast::Dot {
                       .type = type1
@@ -830,14 +828,14 @@ Ast::Stmts {
                     .type = type6
                   }
                 }
+                .type = type1
               }
               .right = Ast::Call {
-                .type = type1
-                Ast::Id {
+                .func = Ast::Id {
                   .value = "pow"
                   .type = type0
                 }
-                Ast::Cseq {
+                .args = AstList {
                   Ast::Minus {
                     .left = Ast::Dot {
                       .type = type1
@@ -878,9 +876,11 @@ Ast::Stmts {
                     .type = type6
                   }
                 }
+                .type = type1
               }
             }
           }
+          .type = type1
         }
       }
       .type = type4
