@@ -186,6 +186,13 @@ void Ake_ast_cent_print(Ake_Ast* n, size_t level, bool is_property, Ake_TypeSlot
                 printf(".args = ");
                 Ake_ast_list_cent_print(&n->data.call.args, level, true, slots);
                 break;
+            case AKE_AST_IF:
+                p = n->data._if_.branches.head;
+                while (p) {
+                    Ake_ast_cent_print(p, level, false, slots);
+                    p = p->next;
+                }
+                break;
             default:
                 p = n->head;
                 while (p) {
@@ -269,7 +276,7 @@ char* Ake_ast_cent_name(Ake_AstKind type)
         return "Ast::Call";
     }
 
-    if (type == Ake_ast_type_if) {
+    if (type == AKE_AST_IF) {
         return "Ast::If";
     }
 

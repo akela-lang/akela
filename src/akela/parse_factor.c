@@ -130,7 +130,7 @@ Ake_Ast* Ake_parse_if(struct Ake_parse_state* ps)
 {
     Ake_Ast* n = NULL;
     Ake_AstCreate(&n);
-    n->kind = Ake_ast_type_if;
+    Ake_AstSet(n, AKE_AST_IF);
 
     struct Ake_token* ift = NULL;
     if (!Ake_match(ps, Ake_token_if, "expecting if", &ift, n)) {
@@ -142,7 +142,7 @@ Ake_Ast* Ake_parse_if(struct Ake_parse_state* ps)
     Ake_AstCreate(&cb);
     cb->kind = Ake_ast_type_conditional_branch;
 
-    Ake_AstAdd(n, cb);
+    Ake_AstListAdd(&n->data._if_.branches, cb);
 
     Ake_Ast* cond = NULL;
     cond = Ake_parse_expr(ps);
@@ -175,7 +175,7 @@ Ake_Ast* Ake_parse_if(struct Ake_parse_state* ps)
     b = Ake_parse_else(ps);
 
     if (b) {
-        Ake_AstAdd(n, b);
+        Ake_AstListAdd(&n->data._if_.branches, b);
     }
 
     struct Ake_token* end = NULL;
@@ -187,7 +187,7 @@ Ake_Ast* Ake_parse_if(struct Ake_parse_state* ps)
     if (!n->has_error) {
         if (b) {
             /* only return a value if else exists */
-            Ake_Ast* p = n->head;
+            Ake_Ast* p = n->data._if_.branches.head;
             Ake_Type* type = NULL;
             if (p) {
                 type = Ake_TypeClone(p->type);
@@ -249,7 +249,7 @@ void Ake_parse_elseif(struct Ake_parse_state* ps, Ake_Ast* parent)
             cb->type = Ake_TypeClone(body->type);
         }
 
-        Ake_AstAdd(parent, cb);
+        Ake_AstListAdd(&parent->data._if_.branches, cb);
     }
 }
 

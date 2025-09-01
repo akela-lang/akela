@@ -99,6 +99,10 @@ void Ake_AstSet(Ake_Ast* n, Ake_AstKind kind)
 			Ake_AstListInit(&n->data.call.args, n);
 			n->is_set = true;
 			break;
+		case AKE_AST_IF:
+			Ake_AstListInit(&n->data._if_.branches, n);
+			n->is_set = true;
+			break;
 		default:
 			break;
 	}
@@ -121,6 +125,7 @@ void Ake_AstValidate(Ake_Ast* n)
 		case AKE_AST_DSEQ:
 		case AKE_AST_DRET:
 		case AKE_AST_CALL:
+		case AKE_AST_IF:
 			assert(n->is_set);
 			break;
 		default:
@@ -185,6 +190,9 @@ void Ake_AstDestroy(Ake_Ast* n)
     		case AKE_AST_CALL:
     			Ake_AstDestroy(n->data.call.func);
     			Ake_AstListDestroy(&n->data.call.args);
+    			break;
+    		case AKE_AST_IF:
+    			Ake_AstListDestroy(&n->data._if_.branches);
     			break;
         	default:
     			p = n->head;
@@ -322,6 +330,13 @@ void Ake_AstCopy(Ake_Ast* src, Ake_Ast* dest)
 			p = src->data.call.args.head;
 			while (p) {
 				Ake_AstListAdd(&dest->data.call.args, Ake_AstClone(p));
+				p = p->next;
+			}
+			break;
+		case AKE_AST_IF:
+			p = src->data._if_.branches.head;
+			while (p) {
+				Ake_AstListAdd(&dest->data._if_.branches, Ake_AstClone(p));
 				p = p->next;
 			}
 			break;
@@ -483,6 +498,23 @@ bool Ake_AstMatch(Ake_Ast* a, Ake_Ast* b)
 				}
 				a2 = a->data.call.args.head;
 				b2 = b->data.call.args.head;
+				while (a2 || b2) {
+					if (!a2) {
+						return false;
+					}
+					if (!b2) {
+						return false;
+					}
+					if (!Ake_AstMatch(a2, b2)) {
+						return false;
+					}
+					a2 = a2->next;
+					b2 = b2->next;
+				}
+				break;
+			case AKE_AST_IF:
+				a2 = a->data._if_.branches.head;
+				b2 = b->data._if_.branches.head;
 				while (a2 || b2) {
 					if (!a2) {
 						return false;

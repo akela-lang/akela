@@ -433,6 +433,36 @@ bool Apt_compare_ast(Zinc_test* top_test, Zinc_test* case_test, Ake_Ast* n, Cent
             value2 = Cent_value_get_str(value, "args");
             Apt_compare_ast_list(top_test, case_test, &n->data.call.args, value2);
             break;
+        case AKE_AST_IF:
+            p = n->data._if_.branches.head;
+            assert(value->type == Cent_value_type_dag);
+            value2 = value->data.dag.head;
+            while (p || value2) {
+                if (!p) {
+                    Zinc_spec_error_list_set(
+                        &case_data->spec_errors,
+                        case_test,
+                        NULL,
+                        &value2->n->loc,
+                        "actual is NULL");
+                    break;
+                }
+
+                if (!value2) {
+                    Zinc_spec_error_list_set(
+                        &case_data->spec_errors,
+                        case_test,
+                        &p->loc,
+                        NULL,
+                        "expected is NULL");
+                    break;
+                }
+
+                Apt_compare_ast(top_test, case_test, p, value2);
+                p = p->next;
+                value2 = value2->next;
+            }
+            break;
         default:
             Cent_value* value_prop = Cent_value_get_str(value, "value");
             if (Apt_has_value(n)) {

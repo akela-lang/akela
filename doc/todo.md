@@ -15,7 +15,7 @@
   * dseq [x]
   * dret [x]
   * call [x]
-  * if []
+  * if [x]
   * conditional branch []
   * default branch []
   * equality []

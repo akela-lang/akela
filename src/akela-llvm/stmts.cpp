@@ -39,13 +39,9 @@ namespace Akela_llvm {
         BasicBlock* cond_block = nullptr;
         BasicBlock* then_block = nullptr;
         BasicBlock* next_block = nullptr;
-        int i = 0;
-        while (true) {
-            Ake_Ast* branch = Ake_AstGet(n, i);
-            if (!branch) {
-                break;
-            }
-
+        Ake_Ast* branch = n->data._if_.branches.head;
+        size_t i = 0;
+        while (branch) {
             if (branch->kind == Ake_ast_type_conditional_branch) {
                 Ake_Ast* cond = Ake_AstGet(branch, 0);
                 Ake_Ast* body = Ake_AstGet(branch, 1);
@@ -89,6 +85,7 @@ namespace Akela_llvm {
                 assert(false);
             }
 
+            branch = branch->next;
             i++;
         }
 

@@ -360,7 +360,7 @@ namespace Akela_llvm {
             return Handle_extern(jd, n);
         }
 
-        if (n->kind == Ake_ast_type_if) {
+        if (n->kind == AKE_AST_IF) {
             return Handle_if(jd, n);
         }
 

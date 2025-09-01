@@ -102,6 +102,13 @@ namespace Akela_llvm {
                     p = p->next;
                 }
                 break;
+            case AKE_AST_IF:
+                p = n->data._if_.branches.head;
+                while (p) {
+                    Check_subscript(jd, p);
+                    p = p->next;
+                }
+                break;
             default:
                 p = n->head;
                 while (p) {
