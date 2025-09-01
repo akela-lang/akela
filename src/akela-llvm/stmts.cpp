@@ -42,9 +42,9 @@ namespace Akela_llvm {
         Ake_Ast* branch = n->data._if_.branches.head;
         size_t i = 0;
         while (branch) {
-            if (branch->kind == Ake_ast_type_conditional_branch) {
-                Ake_Ast* cond = Ake_AstGet(branch, 0);
-                Ake_Ast* body = Ake_AstGet(branch, 1);
+            if (branch->kind == AKE_AST_COND_BRANCH) {
+                Ake_Ast* cond = branch->data.cond_branch.cond;
+                Ake_Ast* body = branch->data.cond_branch.body;
 
                 if (next_block) {
                     cond_block = next_block;

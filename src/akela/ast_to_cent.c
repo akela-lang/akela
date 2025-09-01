@@ -193,6 +193,15 @@ void Ake_ast_cent_print(Ake_Ast* n, size_t level, bool is_property, Ake_TypeSlot
                     p = p->next;
                 }
                 break;
+            case AKE_AST_COND_BRANCH:
+                Ake_indent_print(level);
+                printf(".cond = ");
+                Ake_ast_cent_print(n->data.cond_branch.cond, level, true, slots);
+
+                Ake_indent_print(level);
+                printf(".body = ");
+                Ake_ast_cent_print(n->data.cond_branch.body, level, true, slots);
+                break;
             default:
                 p = n->head;
                 while (p) {
@@ -280,7 +289,7 @@ char* Ake_ast_cent_name(Ake_AstKind type)
         return "Ast::If";
     }
 
-    if (type == Ake_ast_type_conditional_branch) {
+    if (type == AKE_AST_COND_BRANCH) {
         return "Ast::ConditionalBranch";
     }
 

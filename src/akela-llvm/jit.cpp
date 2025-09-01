@@ -109,6 +109,10 @@ namespace Akela_llvm {
                     p = p->next;
                 }
                 break;
+            case AKE_AST_COND_BRANCH:
+                Check_subscript(jd, n->data.cond_branch.cond);
+                Check_subscript(jd, n->data.cond_branch.body);
+                break;
             default:
                 p = n->head;
                 while (p) {

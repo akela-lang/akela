@@ -32,18 +32,18 @@ Ast::Stmts {
   Ast::If {
     .type = type0
     Ast::ConditionalBranch {
-      .type = type0
-      Ast::Boolean {
+      .cond = Ast::Boolean {
         .value = "true"
         .type = type1
       }
-      Ast::Stmts {
+      .body = Ast::Stmts {
         .type = type0
         Ast::Number {
           .value = "1"
           .type = type0
         }
       }
+      .type = type0
     }
     Ast::DefaultBranch {
       .type = type0
@@ -88,12 +88,11 @@ const type1 = Type::Boolean {
 Ast::Stmts {
   Ast::If {
     Ast::ConditionalBranch {
-      .type = type0
-      Ast::Boolean {
+      .cond = Ast::Boolean {
         .value = "true"
         .type = type1
       }
-      Ast::Stmts {
+      .body = Ast::Stmts {
         .type = type0
         Ast::Const {
           Ast::Id {
@@ -142,6 +141,7 @@ Ast::Stmts {
           .type = type0
         }
       }
+      .type = type0
     }
   }
 }
@@ -203,12 +203,11 @@ Ast::Stmts {
   }
   Ast::If {
     Ast::ConditionalBranch {
-      .type = type0
-      Ast::Boolean {
+      .cond = Ast::Boolean {
         .value = "true"
         .type = type1
       }
-      Ast::Stmts {
+      .body = Ast::Stmts {
         .type = type0
         Ast::Plus {
           .left = Ast::Number {
@@ -233,14 +232,14 @@ Ast::Stmts {
           .type = type0
         }
       }
+      .type = type0
     }
     Ast::ConditionalBranch {
-      .type = type0
-      Ast::Boolean {
+      .cond = Ast::Boolean {
         .value = "true"
         .type = type1
       }
-      Ast::Stmts {
+      .body = Ast::Stmts {
         .type = type0
         Ast::Number {
           .value = "1"
@@ -251,6 +250,7 @@ Ast::Stmts {
           .type = type0
         }
       }
+      .type = type0
     }
   }
 }
@@ -315,12 +315,11 @@ Ast::Stmts {
   }
   Ast::If {
     Ast::ConditionalBranch {
-      .type = type0
-      Ast::Boolean {
+      .cond = Ast::Boolean {
         .value = "true"
         .type = type1
       }
-      Ast::Stmts {
+      .body = Ast::Stmts {
         .type = type0
         Ast::Plus {
           .left = Ast::Number {
@@ -345,14 +344,14 @@ Ast::Stmts {
           .type = type0
         }
       }
+      .type = type0
     }
     Ast::ConditionalBranch {
-      .type = type0
-      Ast::Boolean {
+      .cond = Ast::Boolean {
         .value = "true"
         .type = type1
       }
-      Ast::Stmts {
+      .body = Ast::Stmts {
         .type = type0
         Ast::Number {
           .value = "1"
@@ -363,14 +362,14 @@ Ast::Stmts {
           .type = type0
         }
       }
+      .type = type0
     }
     Ast::ConditionalBranch {
-      .type = type0
-      Ast::Boolean {
+      .cond = Ast::Boolean {
         .value = "true"
         .type = type1
       }
-      Ast::Stmts {
+      .body = Ast::Stmts {
         .type = type0
         Ast::Id {
           .value = "x"
@@ -381,6 +380,7 @@ Ast::Stmts {
           .type = type0
         }
       }
+      .type = type0
     }
   }
 }
@@ -443,18 +443,18 @@ Ast::Stmts {
   Ast::If {
     .type = type0
     Ast::ConditionalBranch {
-      .type = type0
-      Ast::Boolean {
+      .cond = Ast::Boolean {
         .value = "false"
         .type = type1
       }
-      Ast::Stmts {
+      .body = Ast::Stmts {
         .type = type0
         Ast::Number {
           .value = "10"
           .type = type0
         }
       }
+      .type = type0
     }
     Ast::DefaultBranch {
       .type = type0
@@ -533,32 +533,32 @@ Ast::Stmts {
   Ast::If {
     .type = type0
     Ast::ConditionalBranch {
-      .type = type0
-      Ast::Boolean {
+      .cond = Ast::Boolean {
         .value = "false"
         .type = type1
       }
-      Ast::Stmts {
+      .body = Ast::Stmts {
         .type = type0
         Ast::Number {
           .value = "10"
           .type = type0
         }
       }
+      .type = type0
     }
     Ast::ConditionalBranch {
-      .type = type0
-      Ast::Boolean {
+      .cond = Ast::Boolean {
         .value = "false"
         .type = type1
       }
-      Ast::Stmts {
+      .body = Ast::Stmts {
         .type = type0
         Ast::Number {
           .value = "20"
           .type = type0
         }
       }
+      .type = type0
     }
     Ast::DefaultBranch {
       .type = type0

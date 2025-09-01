@@ -140,7 +140,7 @@ Ake_Ast* Ake_parse_if(struct Ake_parse_state* ps)
 
     Ake_Ast* cb = NULL;
     Ake_AstCreate(&cb);
-    cb->kind = Ake_ast_type_conditional_branch;
+    Ake_AstSet(cb, AKE_AST_COND_BRANCH);
 
     Ake_AstListAdd(&n->data._if_.branches, cb);
 
@@ -154,7 +154,8 @@ Ake_Ast* Ake_parse_if(struct Ake_parse_state* ps)
         n->has_error = true;
         cb->has_error = true;
     } else {
-        Ake_AstAdd(cb, cond);
+        cb->data.cond_branch.cond = cond;
+        Ake_AstAdd2(cb, cond);
     }
 
     Ake_Ast* body = NULL;
@@ -166,7 +167,8 @@ Ake_Ast* Ake_parse_if(struct Ake_parse_state* ps)
 
     if (body) {
         cb->type = Ake_TypeClone(body->type);
-        Ake_AstAdd(cb, body);
+        cb->data.cond_branch.body = body;
+        Ake_AstAdd2(cb, body);
     }
 
     Ake_parse_elseif(ps, n);
@@ -227,7 +229,7 @@ void Ake_parse_elseif(struct Ake_parse_state* ps, Ake_Ast* parent)
 
         Ake_Ast *cb = NULL;
         Ake_AstCreate(&cb);
-        cb->kind = Ake_ast_type_conditional_branch;
+        Ake_AstSet(cb, AKE_AST_COND_BRANCH);
 
         Ake_Ast *cond = NULL;
         cond = Ake_parse_expr(ps);
@@ -238,14 +240,16 @@ void Ake_parse_elseif(struct Ake_parse_state* ps, Ake_Ast* parent)
             /* test case: test_parse_if_error_expected_elseif_expression */
             cb->has_error = true;
         } else {
-            Ake_AstAdd(cb, cond);
+            cb->data.cond_branch.cond = cond;
+            Ake_AstAdd2(cb, cond);
         }
 
         Ake_Ast *body = NULL;
         body = Ake_parse_stmts(ps);
 
         if (body) {
-            Ake_AstAdd(cb, body);
+            cb->data.cond_branch.body = body;
+            Ake_AstAdd2(cb, body);
             cb->type = Ake_TypeClone(body->type);
         }
 

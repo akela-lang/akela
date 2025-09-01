@@ -463,6 +463,13 @@ bool Apt_compare_ast(Zinc_test* top_test, Zinc_test* case_test, Ake_Ast* n, Cent
                 value2 = value2->next;
             }
             break;
+        case AKE_AST_COND_BRANCH:
+            value2 = Cent_value_get_str(value, "cond");
+            Apt_compare_ast(top_test, case_test, n->data.cond_branch.cond, value2);
+
+            value2 = Cent_value_get_str(value, "body");
+            Apt_compare_ast(top_test, case_test, n->data.cond_branch.body, value2);
+            break;
         default:
             Cent_value* value_prop = Cent_value_get_str(value, "value");
             if (Apt_has_value(n)) {

@@ -16,7 +16,7 @@
   * dret [x]
   * call [x]
   * if [x]
-  * conditional branch []
+  * conditional branch [x]
   * default branch []
   * equality []
   * not equal []
