@@ -132,6 +132,10 @@ namespace Akela_llvm {
                 Check_subscript(jd, n->data.less_than_or_equal.left);
                 Check_subscript(jd, n->data.less_than_or_equal.right);
                 break;
+            case AKE_AST_GREATER_THAN:
+                Check_subscript(jd, n->data.greater_than.left);
+                Check_subscript(jd, n->data.greater_than.right);
+                break;
             default:
                 p = n->head;
                 while (p) {

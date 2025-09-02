@@ -21,6 +21,8 @@ count == 10
 count != 11.1
 count <= 12
 count >= 13
+count < 14
+count > 15
 ```
 
 ```cent
@@ -90,6 +92,28 @@ Ast::Stmts {
       .value = "13"
       .type = type0
     }
+  }
+  Ast::LessThan {
+    .left = Ast::Id {
+      .value = "count"
+      .type = type0
+    }
+    .right = Ast::Number {
+      .value = "14"
+      .type = type0
+    }
+    .type = type0
+  }
+  Ast::GreaterThan {
+    .left = Ast::Id {
+      .value = "count"
+      .type = type0
+    }
+    .right = Ast::Number {
+      .value = "15"
+      .type = type0
+    }
+    .type = type0
   }
 }
 ```
