@@ -214,6 +214,13 @@ variant Ast::LessThan {
     }
 }
 
+variant Ast::LessThanOrEqual {
+    properties {
+        left: Ast
+        right: Ast
+    }
+}
+
 element AstList {
     children {
         Ast

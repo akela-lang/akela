@@ -127,6 +127,11 @@ void Ake_AstSet(Ake_Ast* n, Ake_AstKind kind)
 			n->data.less_than.right = NULL;
 			n->is_set = true;
 			break;
+		case AKE_AST_LESS_THAN_OR_EQUAL:
+			n->data.less_than_or_equal.left = NULL;
+			n->data.less_than_or_equal.right = NULL;
+			n->is_set = true;
+			break;
 		default:
 			break;
 	}
@@ -155,6 +160,7 @@ void Ake_AstValidate(Ake_Ast* n)
 		case AKE_AST_EQUALITY:
 		case AKE_AST_NOT_EQUAL:
 		case AKE_AST_LESS_THAN:
+		case AKE_AST_LESS_THAN_OR_EQUAL:
 			assert(n->is_set);
 			break;
 		default:
@@ -241,6 +247,10 @@ void Ake_AstDestroy(Ake_Ast* n)
     		case AKE_AST_LESS_THAN:
     			Ake_AstDestroy(n->data.less_than.left);
     			Ake_AstDestroy(n->data.less_than.right);
+    			break;
+    		case AKE_AST_LESS_THAN_OR_EQUAL:
+    			Ake_AstDestroy(n->data.less_than_or_equal.left);
+    			Ake_AstDestroy(n->data.less_than_or_equal.right);
     			break;
         	default:
     			p = n->head;
@@ -406,6 +416,10 @@ void Ake_AstCopy(Ake_Ast* src, Ake_Ast* dest)
 		case AKE_AST_LESS_THAN:
 			dest->data.less_than.left = Ake_AstClone(src->data.less_than.left);
 			dest->data.less_than.right = Ake_AstClone(src->data.less_than.right);
+			break;
+		case AKE_AST_LESS_THAN_OR_EQUAL:
+			dest->data.less_than_or_equal.left = Ake_AstClone(src->data.less_than_or_equal.left);
+			dest->data.less_than_or_equal.right = Ake_AstClone(src->data.less_than_or_equal.right);
 			break;
 		default:
 			break;
@@ -630,6 +644,14 @@ bool Ake_AstMatch(Ake_Ast* a, Ake_Ast* b)
 					return false;
 				}
 				if (!Ake_AstMatch(a->data.less_than.right, b->data.less_than.right)) {
+					return false;
+				}
+				break;
+			case AKE_AST_LESS_THAN_OR_EQUAL:
+				if (!Ake_AstMatch(a->data.less_than_or_equal.left, b->data.less_than_or_equal.left)) {
+					return false;
+				}
+				if (!Ake_AstMatch(a->data.less_than_or_equal.right, b->data.less_than_or_equal.right)) {
 					return false;
 				}
 				break;

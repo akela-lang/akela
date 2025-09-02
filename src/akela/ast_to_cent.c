@@ -234,6 +234,15 @@ void Ake_ast_cent_print(Ake_Ast* n, size_t level, bool is_property, Ake_TypeSlot
                 printf(".right = ");
                 Ake_ast_cent_print(n->data.less_than.right, level, true, slots);
                 break;
+            case AKE_AST_LESS_THAN_OR_EQUAL:
+                Ake_indent_print(level);
+                printf(".left = ");
+                Ake_ast_cent_print(n->data.less_than_or_equal.left, level, true, slots);
+
+                Ake_indent_print(level);
+                printf(".right = ");
+                Ake_ast_cent_print(n->data.less_than_or_equal.right, level, true, slots);
+                break;
             default:
                 p = n->head;
                 while (p) {
@@ -341,7 +350,7 @@ char* Ake_ast_cent_name(Ake_AstKind type)
         return "Ast::LessThan";
     }
 
-    if (type == Ake_ast_type_less_than_or_equal) {
+    if (type == AKE_AST_LESS_THAN_OR_EQUAL) {
         return "Ast::LessThanOrEqual";
     }
 
