@@ -202,6 +202,11 @@ void Ake_ast_cent_print(Ake_Ast* n, size_t level, bool is_property, Ake_TypeSlot
                 printf(".body = ");
                 Ake_ast_cent_print(n->data.cond_branch.body, level, true, slots);
                 break;
+            case AKE_AST_DEFAULT_BRANCH:
+                Ake_indent_print(level);
+                printf(".body  = ");
+                Ake_ast_cent_print(n->data.default_branch.body, level, true, slots);
+                break;
             default:
                 p = n->head;
                 while (p) {
@@ -293,7 +298,7 @@ char* Ake_ast_cent_name(Ake_AstKind type)
         return "Ast::ConditionalBranch";
     }
 
-    if (type == Ake_ast_type_default_branch) {
+    if (type == AKE_AST_DEFAULT_BRANCH) {
         return "Ast::DefaultBranch";
     }
 

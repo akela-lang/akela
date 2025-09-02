@@ -71,8 +71,8 @@ namespace Akela_llvm {
 
                 jd->Builder->SetInsertPoint(next_block);
 
-            } else if (branch->kind == Ake_ast_type_default_branch) {
-                Ake_Ast* body = Ake_AstGet(branch, 0);
+            } else if (branch->kind == AKE_AST_DEFAULT_BRANCH) {
+                Ake_Ast* body = branch->data.default_branch.body;
 
                 Value* body_value = Handle_stmts(jd, body);
                 if (type) {

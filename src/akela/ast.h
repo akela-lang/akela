@@ -31,7 +31,7 @@ typedef enum Ake_AstKind {
 	AKE_AST_CALL,
 	AKE_AST_IF,
 	AKE_AST_COND_BRANCH,
-	Ake_ast_type_default_branch,
+	AKE_AST_DEFAULT_BRANCH,
 	Ake_ast_type_equality,
 	Ake_ast_type_not_equal,
 	Ake_ast_type_less_than,
@@ -86,7 +86,7 @@ static char const* Ast_type_name(Ake_AstKind kind)
     name[AKE_AST_CALL] = "call";
     name[AKE_AST_IF] = "if";
     name[AKE_AST_COND_BRANCH] = "conditional-branch";
-    name[Ake_ast_type_default_branch] = "default-branch";
+    name[AKE_AST_DEFAULT_BRANCH] = "default-branch";
     name[Ake_ast_type_equality] = "equality";
     name[Ake_ast_type_not_equal] = "not-equal";
     name[Ake_ast_type_less_than] = "less-than";
@@ -156,6 +156,7 @@ typedef struct Ake_Ast {
 		struct { Ake_Ast* func; Ake_AstList args; } call;
 		struct { Ake_AstList branches; } _if_;
 		struct { Ake_Ast* cond; Ake_Ast* body; } cond_branch;
+		struct { Ake_Ast* body; } default_branch;
 	} data;
 	Ake_Type* type;
     Zinc_location loc;

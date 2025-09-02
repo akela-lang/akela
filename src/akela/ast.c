@@ -108,6 +108,10 @@ void Ake_AstSet(Ake_Ast* n, Ake_AstKind kind)
 			n->data.cond_branch.body = NULL;
 			n->is_set = true;
 			break;
+		case AKE_AST_DEFAULT_BRANCH:
+			n->data.default_branch.body = NULL;
+			n->is_set = true;
+			break;
 		default:
 			break;
 	}
@@ -132,6 +136,7 @@ void Ake_AstValidate(Ake_Ast* n)
 		case AKE_AST_CALL:
 		case AKE_AST_IF:
 		case AKE_AST_COND_BRANCH:
+		case AKE_AST_DEFAULT_BRANCH:
 			assert(n->is_set);
 			break;
 		default:
@@ -203,6 +208,9 @@ void Ake_AstDestroy(Ake_Ast* n)
     		case AKE_AST_COND_BRANCH:
     			Ake_AstDestroy(n->data.cond_branch.cond);
     			Ake_AstDestroy(n->data.cond_branch.body);
+    			break;
+    		case AKE_AST_DEFAULT_BRANCH:
+    			Ake_AstDestroy(n->data.default_branch.body);
     			break;
         	default:
     			p = n->head;
@@ -353,6 +361,9 @@ void Ake_AstCopy(Ake_Ast* src, Ake_Ast* dest)
 		case AKE_AST_COND_BRANCH:
 			dest->data.cond_branch.cond = Ake_AstClone(src->data.cond_branch.cond);
 			dest->data.cond_branch.body = Ake_AstClone(src->data.cond_branch.body);
+			break;
+		case AKE_AST_DEFAULT_BRANCH:
+			dest->data.default_branch.body = Ake_AstClone(src->data.default_branch.body);
 			break;
 		default:
 			break;
@@ -548,6 +559,11 @@ bool Ake_AstMatch(Ake_Ast* a, Ake_Ast* b)
 					return false;
 				}
 				if (!Ake_AstMatch(a->data.cond_branch.body, b->data.cond_branch.body)) {
+					return false;
+				}
+				break;
+			case AKE_AST_DEFAULT_BRANCH:
+				if (!Ake_AstMatch(a->data.default_branch.body, b->data.default_branch.body)) {
 					return false;
 				}
 				break;

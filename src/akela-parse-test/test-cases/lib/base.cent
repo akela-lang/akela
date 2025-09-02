@@ -187,6 +187,12 @@ variant Ast::ConditionalBranch {
     }
 }
 
+variant Ast::DefaultBranch {
+    properties {
+        body: Ast
+    }
+}
+
 element AstList {
     children {
         Ast

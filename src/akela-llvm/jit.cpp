@@ -113,6 +113,9 @@ namespace Akela_llvm {
                 Check_subscript(jd, n->data.cond_branch.cond);
                 Check_subscript(jd, n->data.cond_branch.body);
                 break;
+            case AKE_AST_DEFAULT_BRANCH:
+                Check_subscript(jd, n->data.default_branch.body);
+                break;
             default:
                 p = n->head;
                 while (p) {

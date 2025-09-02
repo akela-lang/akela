@@ -46,14 +46,14 @@ Ast::Stmts {
       .type = type0
     }
     Ast::DefaultBranch {
-      .type = type0
-      Ast::Stmts {
+      .body = Ast::Stmts {
         .type = type0
         Ast::Number {
           .value = "2"
           .type = type0
         }
       }
+      .type = type0
     }
   }
 }
@@ -457,8 +457,7 @@ Ast::Stmts {
       .type = type0
     }
     Ast::DefaultBranch {
-      .type = type0
-      Ast::Stmts {
+      .body = Ast::Stmts {
         .type = type0
         Ast::Id {
           .value = "x"
@@ -469,6 +468,7 @@ Ast::Stmts {
           .type = type0
         }
       }
+      .type = type0
     }
   }
 }
@@ -561,8 +561,7 @@ Ast::Stmts {
       .type = type0
     }
     Ast::DefaultBranch {
-      .type = type0
-      Ast::Stmts {
+      .body = Ast::Stmts {
         .type = type0
         Ast::Id {
           .value = "x"
@@ -573,6 +572,7 @@ Ast::Stmts {
           .type = type0
         }
       }
+      .type = type0
     }
   }
 }

@@ -266,7 +266,7 @@ Ake_Ast* Ake_parse_else(struct Ake_parse_state* ps)
     struct Ake_token* t0 = Ake_get_lookahead(ps);
     if (t0 && t0->type == Ake_token_else) {
         Ake_AstCreate(&n);
-        n->kind = Ake_ast_type_default_branch;
+        Ake_AstSet(n, AKE_AST_DEFAULT_BRANCH);
 
         struct Ake_token* et = NULL;
         if (!Ake_match(ps, Ake_token_else, "expected else", &et, n)) {
@@ -283,7 +283,8 @@ Ake_Ast* Ake_parse_else(struct Ake_parse_state* ps)
         }
 
         if (body) {
-            Ake_AstAdd(n, body);
+            n->data.default_branch.body = body;
+            Ake_AstAdd2(n, body);
         }
     }
 

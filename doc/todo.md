@@ -17,7 +17,7 @@
   * call [x]
   * if [x]
   * conditional branch [x]
-  * default branch []
+  * default branch [x]
   * equality []
   * not equal []
   * less than []
