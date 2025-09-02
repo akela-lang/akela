@@ -308,15 +308,15 @@ const type0 = Type::Integer {
 Ast::Stmts {
   .type = type0
   Ast::LessThan {
-    .type = type0
-    Ast::Number {
+    .left = Ast::Number {
       .value = "1"
       .type = type0
     }
-    Ast::Number {
+    .right = Ast::Number {
       .value = "2"
       .type = type0
     }
+    .type = type0
   }
 }
 ```

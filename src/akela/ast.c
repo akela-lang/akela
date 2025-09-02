@@ -122,6 +122,11 @@ void Ake_AstSet(Ake_Ast* n, Ake_AstKind kind)
 			n->data.not_equal.right = NULL;
 			n->is_set = true;
 			break;
+		case AKE_AST_LESS_THAN:
+			n->data.less_than.left = NULL;
+			n->data.less_than.right = NULL;
+			n->is_set = true;
+			break;
 		default:
 			break;
 	}
@@ -149,6 +154,7 @@ void Ake_AstValidate(Ake_Ast* n)
 		case AKE_AST_DEFAULT_BRANCH:
 		case AKE_AST_EQUALITY:
 		case AKE_AST_NOT_EQUAL:
+		case AKE_AST_LESS_THAN:
 			assert(n->is_set);
 			break;
 		default:
@@ -231,6 +237,10 @@ void Ake_AstDestroy(Ake_Ast* n)
     		case AKE_AST_NOT_EQUAL:
     			Ake_AstDestroy(n->data.not_equal.left);
     			Ake_AstDestroy(n->data.not_equal.right);
+    			break;
+    		case AKE_AST_LESS_THAN:
+    			Ake_AstDestroy(n->data.less_than.left);
+    			Ake_AstDestroy(n->data.less_than.right);
     			break;
         	default:
     			p = n->head;
@@ -392,6 +402,10 @@ void Ake_AstCopy(Ake_Ast* src, Ake_Ast* dest)
 		case AKE_AST_NOT_EQUAL:
 			dest->data.not_equal.left = Ake_AstClone(src->data.not_equal.left);
 			dest->data.not_equal.right = Ake_AstClone(src->data.not_equal.right);
+			break;
+		case AKE_AST_LESS_THAN:
+			dest->data.less_than.left = Ake_AstClone(src->data.less_than.left);
+			dest->data.less_than.right = Ake_AstClone(src->data.less_than.right);
 			break;
 		default:
 			break;
@@ -608,6 +622,14 @@ bool Ake_AstMatch(Ake_Ast* a, Ake_Ast* b)
 					return false;
 				}
 				if (!Ake_AstMatch(a->data.not_equal.right, b->data.not_equal.right)) {
+					return false;
+				}
+				break;
+			case AKE_AST_LESS_THAN:
+				if (!Ake_AstMatch(a->data.less_than.left, b->data.less_than.left)) {
+					return false;
+				}
+				if (!Ake_AstMatch(a->data.less_than.right, b->data.less_than.right)) {
 					return false;
 				}
 				break;
