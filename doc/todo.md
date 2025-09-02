@@ -19,7 +19,7 @@
   * conditional branch [x]
   * default branch [x]
   * equality [x]
-  * not equal []
+  * not equal [x]
   * less than []
   * less than or equal []
   * greater than []

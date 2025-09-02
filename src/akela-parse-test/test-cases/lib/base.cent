@@ -200,6 +200,13 @@ variant Ast::Equality {
     }
 }
 
+variant Ast::NotEqual {
+    properties {
+        left: Ast
+        right: Ast
+    }
+}
+
 element AstList {
     children {
         Ast

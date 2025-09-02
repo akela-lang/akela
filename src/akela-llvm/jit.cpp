@@ -120,6 +120,10 @@ namespace Akela_llvm {
                 Check_subscript(jd, n->data.equality.left);
                 Check_subscript(jd, n->data.equality.right);
                 break;
+            case AKE_AST_NOT_EQUAL:
+                Check_subscript(jd, n->data.not_equal.left);
+                Check_subscript(jd, n->data.not_equal.right);
+                break;
             default:
                 p = n->head;
                 while (p) {

@@ -12,10 +12,6 @@ comparison
 ```cent
 use lib::base::*
 Test {
-  .solo = false
-  .mute = false
-  .snapshot = false
-  .has_error = false
 }
 ```
 
@@ -63,15 +59,15 @@ Ast::Stmts {
     .type = type0
   }
   Ast::NotEqual {
-    .type = type0
-    Ast::Id {
+    .left = Ast::Id {
       .value = "count"
       .type = type0
     }
-    Ast::Number {
+    .right = Ast::Number {
       .value = "11.1"
       .type = type1
     }
+    .type = type0
   }
   Ast::LessThanOrEqual {
     .type = type0
@@ -135,15 +131,15 @@ Ast::Stmts {
     }
   }
   Ast::NotEqual {
+    .left = Ast::Boolean {
+      .value = "true"
+      .type = type0
+    }
+    .right = Ast::Boolean {
+      .value = "true"
+      .type = type0
+    }
     .type = type0
-    Ast::Boolean {
-      .value = "true"
-      .type = type0
-    }
-    Ast::Boolean {
-      .value = "true"
-      .type = type0
-    }
   }
 }
 ```
