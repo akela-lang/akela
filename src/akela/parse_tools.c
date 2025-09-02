@@ -116,7 +116,7 @@ struct Zinc_location Ake_get_location(struct Ake_parse_state* ps)
 
 bool Ake_is_identity_comparison(enum Ake_AstKind type)
 {
-	return type == Ake_ast_type_equality || type == Ake_ast_type_not_equal;
+	return type == AKE_AST_EQUALITY || type == Ake_ast_type_not_equal;
 }
 
 struct Ake_token* Ake_get_lookahead(struct Ake_parse_state* ps)

@@ -18,7 +18,7 @@
   * if [x]
   * conditional branch [x]
   * default branch [x]
-  * equality []
+  * equality [x]
   * not equal []
   * less than []
   * less than or equal []

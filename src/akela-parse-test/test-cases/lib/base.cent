@@ -193,6 +193,13 @@ variant Ast::DefaultBranch {
     }
 }
 
+variant Ast::Equality {
+    properties {
+        left: Ast
+        right: Ast
+    }
+}
+
 element AstList {
     children {
         Ast

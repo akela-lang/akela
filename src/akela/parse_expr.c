@@ -147,7 +147,7 @@ Ake_Ast* Ake_parse_comparison(struct Ake_parse_state* ps)
 		}
 
 		if (t0->type == Ake_token_double_equal) {
-			type = Ake_ast_type_equality;
+			type = AKE_AST_EQUALITY;
 		} else if (t0->type == Ake_token_not_equal) {
 			type = Ake_ast_type_not_equal;
 		} else if (t0->type == Ake_token_less_than) {
@@ -183,14 +183,24 @@ Ake_Ast* Ake_parse_comparison(struct Ake_parse_state* ps)
 		}
 
         Ake_AstCreate(&n);
-        n->kind = type;
+		Ake_AstSet(n, type);
 
         if (left) {
-            Ake_AstAdd(n, left);
+        	if (n->kind == AKE_AST_EQUALITY) {
+        		n->data.equality.left = left;
+        		Ake_AstAdd2(n, left);
+        	} else {
+        		Ake_AstAdd(n, left);
+        	}
         }
 
         if (b) {
-            Ake_AstAdd(n, b);
+        	if (n->kind == AKE_AST_EQUALITY) {
+        		n->data.equality.right = b;
+        		Ake_AstAdd2(n, b);
+        	} else {
+        		Ake_AstAdd(n, b);
+        	}
         }
 
 		if (!n->has_error) {

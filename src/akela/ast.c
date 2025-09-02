@@ -112,6 +112,11 @@ void Ake_AstSet(Ake_Ast* n, Ake_AstKind kind)
 			n->data.default_branch.body = NULL;
 			n->is_set = true;
 			break;
+		case AKE_AST_EQUALITY:
+			n->data.equality.left = NULL;
+			n->data.equality.right = NULL;
+			n->is_set = true;
+			break;
 		default:
 			break;
 	}
@@ -137,6 +142,7 @@ void Ake_AstValidate(Ake_Ast* n)
 		case AKE_AST_IF:
 		case AKE_AST_COND_BRANCH:
 		case AKE_AST_DEFAULT_BRANCH:
+		case AKE_AST_EQUALITY:
 			assert(n->is_set);
 			break;
 		default:
@@ -211,6 +217,10 @@ void Ake_AstDestroy(Ake_Ast* n)
     			break;
     		case AKE_AST_DEFAULT_BRANCH:
     			Ake_AstDestroy(n->data.default_branch.body);
+    			break;
+    		case AKE_AST_EQUALITY:
+    			Ake_AstDestroy(n->data.equality.left);
+    			Ake_AstDestroy(n->data.equality.right);
     			break;
         	default:
     			p = n->head;
@@ -364,6 +374,10 @@ void Ake_AstCopy(Ake_Ast* src, Ake_Ast* dest)
 			break;
 		case AKE_AST_DEFAULT_BRANCH:
 			dest->data.default_branch.body = Ake_AstClone(src->data.default_branch.body);
+			break;
+		case AKE_AST_EQUALITY:
+			dest->data.equality.left = Ake_AstClone(src->data.equality.left);
+			dest->data.equality.right = Ake_AstClone(src->data.equality.right);
 			break;
 		default:
 			break;
@@ -564,6 +578,14 @@ bool Ake_AstMatch(Ake_Ast* a, Ake_Ast* b)
 				break;
 			case AKE_AST_DEFAULT_BRANCH:
 				if (!Ake_AstMatch(a->data.default_branch.body, b->data.default_branch.body)) {
+					return false;
+				}
+				break;
+			case AKE_AST_EQUALITY:
+				if (!Ake_AstMatch(a->data.equality.left, b->data.equality.left)) {
+					return false;
+				}
+				if (!Ake_AstMatch(a->data.equality.right, b->data.equality.right)) {
 					return false;
 				}
 				break;

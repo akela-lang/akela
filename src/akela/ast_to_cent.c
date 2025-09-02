@@ -207,6 +207,15 @@ void Ake_ast_cent_print(Ake_Ast* n, size_t level, bool is_property, Ake_TypeSlot
                 printf(".body  = ");
                 Ake_ast_cent_print(n->data.default_branch.body, level, true, slots);
                 break;
+            case AKE_AST_EQUALITY:
+                Ake_indent_print(level);
+                printf(".left = ");
+                Ake_ast_cent_print(n->data.equality.left, level, true, slots);
+
+                Ake_indent_print(level);
+                printf(".right = ");
+                Ake_ast_cent_print(n->data.equality.right, level, true, slots);
+                break;
             default:
                 p = n->head;
                 while (p) {
@@ -302,7 +311,7 @@ char* Ake_ast_cent_name(Ake_AstKind type)
         return "Ast::DefaultBranch";
     }
 
-    if (type == Ake_ast_type_equality) {
+    if (type == AKE_AST_EQUALITY) {
         return "Ast::Equality";
     }
 

@@ -52,15 +52,15 @@ Ast::Stmts {
     }
   }
   Ast::Equality {
-    .type = type0
-    Ast::Id {
+    .left = Ast::Id {
       .value = "count"
       .type = type0
     }
-    Ast::Number {
+    .right = Ast::Number {
       .value = "10"
       .type = type0
     }
+    .type = type0
   }
   Ast::NotEqual {
     .type = type0
@@ -125,11 +125,11 @@ Ast::Stmts {
   .type = type0
   Ast::Equality {
     .type = type0
-    Ast::Boolean {
+    .left = Ast::Boolean {
       .value = "true"
       .type = type0
     }
-    Ast::Boolean {
+    .right = Ast::Boolean {
       .value = "true"
       .type = type0
     }
