@@ -83,15 +83,15 @@ Ast::Stmts {
     .type = type0
   }
   Ast::GreaterThanOrEqual {
-    .type = type0
-    Ast::Id {
+    .left = Ast::Id {
       .value = "count"
       .type = type0
     }
-    Ast::Number {
+    .right = Ast::Number {
       .value = "13"
       .type = type0
     }
+    .type = type0
   }
   Ast::LessThan {
     .left = Ast::Id {

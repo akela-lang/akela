@@ -37,7 +37,7 @@ typedef enum Ake_AstKind {
 	AKE_AST_LESS_THAN,
 	AKE_AST_LESS_THAN_OR_EQUAL,
 	AKE_AST_GREATER_THAN,
-	Ake_ast_type_greater_than_or_equal,
+	AKE_AST_GREATER_THAN_OR_EQUAL,
 	Ake_ast_type_not,
 	Ake_ast_type_and,
 	Ake_ast_type_or,
@@ -92,7 +92,7 @@ static char const* Ast_type_name(Ake_AstKind kind)
     name[AKE_AST_LESS_THAN] = "less-than";
     name[AKE_AST_LESS_THAN_OR_EQUAL] = "less-than-or-equal";
     name[AKE_AST_GREATER_THAN] = "greater-than";
-    name[Ake_ast_type_greater_than_or_equal] = "greater-than-or-equal";
+    name[AKE_AST_GREATER_THAN_OR_EQUAL] = "greater-than-or-equal";
     name[Ake_ast_type_not] = "not";
     name[Ake_ast_type_and] = "and";
     name[Ake_ast_type_or] = "or";
@@ -162,6 +162,7 @@ typedef struct Ake_Ast {
 		struct { Ake_Ast* left; Ake_Ast* right; } less_than;
 		struct { Ake_Ast* left; Ake_Ast* right; } less_than_or_equal;
 		struct { Ake_Ast* left; Ake_Ast* right; } greater_than;
+		struct { Ake_Ast* left; Ake_Ast* right; } greater_than_or_equal;
 	} data;
 	Ake_Type* type;
     Zinc_location loc;

@@ -23,7 +23,7 @@
   * less than [x]
   * less than or equal [x]
   * greater than [x]
-  * greater than or equal []
+  * greater than or equal [x]
   * not []
   * and []
   * or []
