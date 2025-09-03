@@ -432,7 +432,7 @@ namespace Akela_llvm {
             return Handle_string(jd, n);
         }
 
-        if (n->kind == Ake_ast_type_and) {
+        if (n->kind == AKE_AST_AND) {
             return Handle_and(jd, n);
         }
 

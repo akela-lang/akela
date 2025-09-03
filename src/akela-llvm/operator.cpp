@@ -86,8 +86,8 @@ namespace Akela_llvm {
 
     Value* Handle_and(Jit_data* jd, Ake_Ast* n)
     {
-        Ake_Ast* lhs = Ake_AstGet(n, 0);
-        Ake_Ast* rhs = Ake_AstGet(n, 1);
+        Ake_Ast* lhs = n->data._and_.left;
+        Ake_Ast* rhs = n->data._and_.right;
 
         Value* lhs_value = Dispatch(jd, lhs);
         BasicBlock* curBB = jd->Builder->GetInsertBlock();

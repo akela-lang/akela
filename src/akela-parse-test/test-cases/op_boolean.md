@@ -57,15 +57,15 @@ Ast::Stmts {
     }
   }
   Ast::And {
-    .type = type0
-    Ast::Id {
+    .left = Ast::Id {
       .value = "a"
       .type = type0
     }
-    Ast::Id {
+    .right = Ast::Id {
       .value = "b"
       .type = type0
     }
+    .type = type0
   }
 }
 ```
@@ -342,15 +342,15 @@ const type0 = Type::Boolean {
 Ast::Stmts {
   .type = type0
   Ast::And {
-    .type = type0
-    Ast::Boolean {
+    .left = Ast::Boolean {
       .value = "true"
       .type = type0
     }
-    Ast::Boolean {
+    .right = Ast::Boolean {
       .value = "false"
       .type = type0
     }
+    .type = type0
   }
 }
 ```

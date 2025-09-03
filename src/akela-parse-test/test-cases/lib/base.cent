@@ -241,6 +241,13 @@ variant Ast::Not {
     }
 }
 
+variant Ast::And {
+    properties {
+        left: Ast
+        right: Ast
+    }
+}
+
 element AstList {
     children {
         Ast

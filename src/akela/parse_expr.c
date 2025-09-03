@@ -50,7 +50,7 @@ Ake_Ast* Ake_parse_boolean(struct Ake_parse_state* ps)
 		/* operator */
 		enum Ake_AstKind type;
 		if (t0 && t0->type == Ake_token_and) {
-			type = Ake_ast_type_and;
+			type = AKE_AST_AND;
 		} else if (t0 && t0->type == Ake_token_or) {
 			type = Ake_ast_type_or;
 		} else {
@@ -58,7 +58,7 @@ Ake_Ast* Ake_parse_boolean(struct Ake_parse_state* ps)
 		}
 
         Ake_AstCreate(&n);
-		n->kind = type;
+		Ake_AstSet(n, type);
 
 		struct Ake_token* op = NULL;
 		if (!Ake_match(ps, t0->type, "expecting && or ||", &op, n)) {
@@ -80,10 +80,24 @@ Ake_Ast* Ake_parse_boolean(struct Ake_parse_state* ps)
 		}
 
         if (left) {
-            Ake_AstAdd(n, left);
+        	if (type == AKE_AST_AND) {
+        		n->data._and_.left = left;
+        		Ake_AstAdd2(n, left);
+        	} else if (type == Ake_ast_type_or) {
+        		Ake_AstAdd(n, left);
+        	} else {
+        		assert(false && "not possible");
+        	}
         }
         if (b) {
-            Ake_AstAdd(n, b);
+        	if (type == AKE_AST_AND) {
+        		n->data._and_.right = b;
+        		Ake_AstAdd2(n, b);
+        	} else if (type == Ake_ast_type_or) {
+        		Ake_AstAdd(n, b);
+        	} else {
+        		assert(false && "not possible");
+        	}
         }
 
 		if (!n->has_error) {

@@ -520,6 +520,13 @@ bool Apt_compare_ast(Zinc_test* top_test, Zinc_test* case_test, Ake_Ast* n, Cent
             value2 = Cent_value_get_str(value, "right");
             Apt_compare_ast(top_test, case_test, n->data._not_.right, value2);
             break;
+        case AKE_AST_AND:
+            value2 = Cent_value_get_str(value, "left");
+            Apt_compare_ast(top_test, case_test, n->data._and_.left, value2);
+
+            value2 = Cent_value_get_str(value, "right");
+            Apt_compare_ast(top_test, case_test, n->data._and_.right, value2);
+            break;
         default:
             Cent_value* value_prop = Cent_value_get_str(value, "value");
             if (Apt_has_value(n)) {
