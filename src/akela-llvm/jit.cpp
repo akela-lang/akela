@@ -147,6 +147,10 @@ namespace Akela_llvm {
                 Check_subscript(jd, n->data._and_.left);
                 Check_subscript(jd, n->data._and_.right);
                 break;
+            case AKE_AST_OR:
+                Check_subscript(jd, n->data._or_.left);
+                Check_subscript(jd, n->data._or_.right);
+                break;
             default:
                 p = n->head;
                 while (p) {

@@ -52,7 +52,7 @@ Ake_Ast* Ake_parse_boolean(struct Ake_parse_state* ps)
 		if (t0 && t0->type == Ake_token_and) {
 			type = AKE_AST_AND;
 		} else if (t0 && t0->type == Ake_token_or) {
-			type = Ake_ast_type_or;
+			type = AKE_AST_OR;
 		} else {
 			break;
 		}
@@ -83,8 +83,9 @@ Ake_Ast* Ake_parse_boolean(struct Ake_parse_state* ps)
         	if (type == AKE_AST_AND) {
         		n->data._and_.left = left;
         		Ake_AstAdd2(n, left);
-        	} else if (type == Ake_ast_type_or) {
-        		Ake_AstAdd(n, left);
+        	} else if (type == AKE_AST_OR) {
+        		n->data._or_.left = left;
+        		Ake_AstAdd2(n, left);
         	} else {
         		assert(false && "not possible");
         	}
@@ -93,8 +94,9 @@ Ake_Ast* Ake_parse_boolean(struct Ake_parse_state* ps)
         	if (type == AKE_AST_AND) {
         		n->data._and_.right = b;
         		Ake_AstAdd2(n, b);
-        	} else if (type == Ake_ast_type_or) {
-        		Ake_AstAdd(n, b);
+        	} else if (type == AKE_AST_OR) {
+        		n->data._or_.right = b;
+        		Ake_AstAdd2(n, b);
         	} else {
         		assert(false && "not possible");
         	}
