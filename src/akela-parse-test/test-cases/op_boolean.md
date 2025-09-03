@@ -388,11 +388,11 @@ Ast::Stmts {
     }
   }
   Ast::Not {
-    .type = type0
-    Ast::Id {
+    .right = Ast::Id {
       .value = "a"
       .type = type0
     }
+    .type = type0
   }
 }
 ```
@@ -417,11 +417,11 @@ const type0 = Type::Boolean {
 Ast::Stmts {
   .type = type0
   Ast::Not {
-    .type = type0
-    Ast::Boolean {
+    .right = Ast::Boolean {
       .value = "true"
       .type = type0
     }
+    .type = type0
   }
 }
 ```
@@ -537,11 +537,11 @@ const type0 = Type::Boolean {
 Ast::Stmts {
   .type = type0
   Ast::Not {
-    .type = type0
-    Ast::Boolean {
+    .right = Ast::Boolean {
       .value = "true"
       .type = type0
     }
+    .type = type0
   }
 }
 ```

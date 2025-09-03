@@ -142,6 +142,10 @@ void Ake_AstSet(Ake_Ast* n, Ake_AstKind kind)
 			n->data.greater_than_or_equal.right = NULL;
 			n->is_set = true;
 			break;
+		case AKE_AST_NOT:
+			n->data._not_.right = NULL;
+			n->is_set = true;
+			break;
 		default:
 			break;
 	}
@@ -172,6 +176,7 @@ void Ake_AstValidate(Ake_Ast* n)
 		case AKE_AST_LESS_THAN:
 		case AKE_AST_LESS_THAN_OR_EQUAL:
 		case AKE_AST_GREATER_THAN:
+		case AKE_AST_NOT:
 			assert(n->is_set);
 			break;
 		default:
@@ -270,6 +275,9 @@ void Ake_AstDestroy(Ake_Ast* n)
     		case AKE_AST_GREATER_THAN_OR_EQUAL:
     			Ake_AstDestroy(n->data.greater_than_or_equal.left);
     			Ake_AstDestroy(n->data.greater_than_or_equal.right);
+    			break;
+    		case AKE_AST_NOT:
+    			Ake_AstDestroy(n->data._not_.right);
     			break;
         	default:
     			p = n->head;
@@ -447,6 +455,9 @@ void Ake_AstCopy(Ake_Ast* src, Ake_Ast* dest)
 		case AKE_AST_GREATER_THAN_OR_EQUAL:
 			dest->data.greater_than_or_equal.left = Ake_AstClone(src->data.greater_than_or_equal.left);
 			dest->data.greater_than_or_equal.right = Ake_AstClone(src->data.greater_than_or_equal.right);
+			break;
+		case AKE_AST_NOT:
+			dest->data._not_.right = Ake_AstClone(src->data._not_.right);
 			break;
 		default:
 			break;
@@ -695,6 +706,11 @@ bool Ake_AstMatch(Ake_Ast* a, Ake_Ast* b)
 					return false;
 				}
 				if (!Ake_AstMatch(a->data.greater_than_or_equal.right, b->data.greater_than_or_equal.right)) {
+					return false;
+				}
+				break;
+			case AKE_AST_NOT:
+				if (!Ake_AstMatch(a->data._not_.right, b->data._not_.right)) {
 					return false;
 				}
 				break;

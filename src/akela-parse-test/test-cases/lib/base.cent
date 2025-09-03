@@ -235,6 +235,12 @@ variant Ast::GreaterThanOrEqual {
     }
 }
 
+variant Ast::Not {
+    properties {
+        right: Ast
+    }
+}
+
 element AstList {
     children {
         Ast

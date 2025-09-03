@@ -295,7 +295,7 @@ Ake_Ast* Ake_parse_not(struct Ake_parse_state* ps)
 {
 	Ake_Ast* n = NULL;
     Ake_AstCreate(&n);
-    n->kind = Ake_ast_type_not;
+    Ake_AstSet(n, AKE_AST_NOT);
 
     struct Ake_token* not = NULL;
 	if (!Ake_match(ps, Ake_token_not, "expecting not", &not, n)) {
@@ -314,7 +314,8 @@ Ake_Ast* Ake_parse_not(struct Ake_parse_state* ps)
 		/* test case: test_parse_not_error_expected_factor */
         n->has_error = true;
 	} else {
-	    Ake_AstAdd(n, a);
+	    n->data._not_.right = a;
+	    Ake_AstAdd2(n, a);
 	}
 
 	if (!n->has_error) {
