@@ -284,6 +284,15 @@ void Ake_ast_cent_print(Ake_Ast* n, size_t level, bool is_property, Ake_TypeSlot
                 printf(".right = ");
                 Ake_ast_cent_print(n->data._or_.right, level, true, slots);
                 break;
+            case AKE_AST_WHILE:
+                Ake_indent_print(level);
+                printf(".cond = ");
+                Ake_ast_cent_print(n->data._while_.cond, level, true, slots);
+
+                Ake_indent_print(level);
+                printf(".body  = ");
+                Ake_ast_cent_print(n->data._while_.body, level, true, slots);
+                break;
             default:
                 p = n->head;
                 while (p) {
@@ -415,7 +424,7 @@ char* Ake_ast_cent_name(Ake_AstKind type)
         return "Ast::Or";
     }
 
-    if (type == Ake_ast_type_while) {
+    if (type == AKE_AST_WHILE) {
         return "Ast::While";
     }
 

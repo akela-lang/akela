@@ -29,11 +29,11 @@ const type1 = Type::Integer {
 }
 Ast::Stmts {
   Ast::While {
-    Ast::Boolean {
+    .cond = Ast::Boolean {
       .value = "true"
       .type = type0
     }
-    Ast::Stmts {
+    .body = Ast::Stmts {
       .type = type1
       Ast::Number {
         .value = "1"

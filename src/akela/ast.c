@@ -156,6 +156,11 @@ void Ake_AstSet(Ake_Ast* n, Ake_AstKind kind)
 			n->data._or_.right = NULL;
 			n->is_set = true;
 			break;
+		case AKE_AST_WHILE:
+			n->data._while_.cond = NULL;
+			n->data._while_.body = NULL;
+			n->is_set = true;
+			break;
 		default:
 			break;
 	}
@@ -189,6 +194,7 @@ void Ake_AstValidate(Ake_Ast* n)
 		case AKE_AST_NOT:
 		case AKE_AST_AND:
 		case AKE_AST_OR:
+		case AKE_AST_WHILE:
 			assert(n->is_set);
 			break;
 		default:
@@ -298,6 +304,10 @@ void Ake_AstDestroy(Ake_Ast* n)
     		case AKE_AST_OR:
     			Ake_AstDestroy(n->data._or_.left);
     			Ake_AstDestroy(n->data._or_.right);
+    			break;
+    		case AKE_AST_WHILE:
+    			Ake_AstDestroy(n->data._while_.cond);
+    			Ake_AstDestroy(n->data._while_.body);
     			break;
         	default:
     			p = n->head;
@@ -486,6 +496,10 @@ void Ake_AstCopy(Ake_Ast* src, Ake_Ast* dest)
 		case AKE_AST_OR:
 			dest->data._or_.left = Ake_AstClone(src->data._or_.left);
 			dest->data._or_.right = Ake_AstClone(src->data._or_.right);
+			break;
+		case AKE_AST_WHILE:
+			dest->data._while_.cond = Ake_AstClone(src->data._while_.cond);
+			dest->data._while_.body = Ake_AstClone(src->data._while_.body);
 			break;
 		default:
 			break;
@@ -755,6 +769,14 @@ bool Ake_AstMatch(Ake_Ast* a, Ake_Ast* b)
 					return false;
 				}
 				if (!Ake_AstMatch(a->data._or_.right, b->data._or_.right)) {
+					return false;
+				}
+				break;
+			case AKE_AST_WHILE:
+				if (!Ake_AstMatch(a->data._while_.cond, b->data._while_.cond)) {
+					return false;
+				}
+				if (!Ake_AstMatch(a->data._while_.body, b->data._while_.body)) {
 					return false;
 				}
 				break;

@@ -26,7 +26,7 @@
   * greater than or equal [x]
   * not [x]
   * and [x]
-  * or []
+  * or [x]
   * while []
   * for range []
   * for iteration []

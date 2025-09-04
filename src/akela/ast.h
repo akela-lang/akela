@@ -41,7 +41,7 @@ typedef enum Ake_AstKind {
 	AKE_AST_NOT,
 	AKE_AST_AND,
 	AKE_AST_OR,
-	Ake_ast_type_while,
+	AKE_AST_WHILE,
 	Ake_ast_type_for_range,
 	Ake_ast_type_for_iteration,
 	Ake_ast_type_declaration,
@@ -96,7 +96,7 @@ static char const* Ast_type_name(Ake_AstKind kind)
     name[AKE_AST_NOT] = "not";
     name[AKE_AST_AND] = "and";
     name[AKE_AST_OR] = "or";
-    name[Ake_ast_type_while] = "while";
+    name[AKE_AST_WHILE] = "while";
     name[Ake_ast_type_for_range] = "for-range";
     name[Ake_ast_type_for_iteration] = "for-iteration";
     name[Ake_ast_type_declaration] = "declaration";
@@ -166,6 +166,7 @@ typedef struct Ake_Ast {
 		struct { Ake_Ast* right; } _not_;
 		struct { Ake_Ast* left; Ake_Ast* right; } _and_;
 		struct { Ake_Ast* left; Ake_Ast* right; } _or_;
+		struct { Ake_Ast* cond; Ake_Ast* body; } _while_;
 	} data;
 	Ake_Type* type;
     Zinc_location loc;

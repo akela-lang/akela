@@ -159,7 +159,7 @@ Ake_Ast* Ake_parse_while(struct Ake_parse_state* ps)
 {
 	Ake_Ast* n = NULL;
     Ake_AstCreate(&n);
-    n->kind = Ake_ast_type_while;
+	Ake_AstSet(n, AKE_AST_WHILE);
 
 	struct Ake_token* whl = NULL;
 	if (!Ake_match(ps, Ake_token_while, "expecting while", &whl, n)) {
@@ -170,7 +170,8 @@ Ake_Ast* Ake_parse_while(struct Ake_parse_state* ps)
     a = Ake_parse_expr(ps);
 
     if (a) {
-        Ake_AstAdd(n, a);
+    	n->data._while_.cond = a;
+        Ake_AstAdd2(n, a);
     } else {
         struct Zinc_location a_loc = Ake_get_location(ps);
 		Zinc_error_list_set(ps->el, &a_loc, "expected expression after while");
@@ -182,7 +183,8 @@ Ake_Ast* Ake_parse_while(struct Ake_parse_state* ps)
     b = Ake_parse_stmts(ps);
 
     if (b) {
-        Ake_AstAdd(n, b);
+    	n->data._while_.body = b;
+        Ake_AstAdd2(n, b);
     }
 
 	struct Ake_token* end = NULL;

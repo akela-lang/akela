@@ -255,6 +255,13 @@ variant Ast::Or {
     }
 }
 
+variant Ast::While {
+    properties {
+        cond: Ast
+        body: Ast
+    }
+}
+
 element AstList {
     children {
         Ast

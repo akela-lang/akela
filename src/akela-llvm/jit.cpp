@@ -151,6 +151,10 @@ namespace Akela_llvm {
                 Check_subscript(jd, n->data._or_.left);
                 Check_subscript(jd, n->data._or_.right);
                 break;
+            case AKE_AST_WHILE:
+                Check_subscript(jd, n->data._while_.cond);
+                Check_subscript(jd, n->data._while_.body);
+                break;
             default:
                 p = n->head;
                 while (p) {
