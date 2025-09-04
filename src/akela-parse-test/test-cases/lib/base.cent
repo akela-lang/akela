@@ -262,6 +262,15 @@ variant Ast::While {
     }
 }
 
+variant Ast::ForRange {
+    properties {
+        dec: Ast
+        start: Ast
+        end: Ast
+        body: Ast
+    }
+}
+
 element AstList {
     children {
         Ast

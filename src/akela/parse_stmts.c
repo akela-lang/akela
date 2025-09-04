@@ -215,37 +215,45 @@ Ake_Ast* Ake_parse_for(struct Ake_parse_state* ps)
 	Ake_Ast* dec = NULL;
     dec = Ake_parse_declaration(ps, false, false, true, true);
 
-    if (dec) {
-    	Ake_AstAdd(n, dec);
-    } else {
-	    Zinc_error_list_set(ps->el, &n->loc, "expected declaration");
-    	n->has_error = true;
-    }
-
-	Ake_UpdateSymbolFor(ps->st, n);
-
     Ake_consume_newline(ps, n);
 
 	struct Ake_token* t0 = Ake_get_lookahead(ps);
 
 	if (t0 && t0->type == Ake_token_equal) {
         if (n->kind == AKE_AST_NONE) {
-            n->kind = Ake_ast_type_for_range;
+        	Ake_AstSet(n, AKE_AST_FOR_RANGE);
         }
+
+		if (dec) {
+			n->data.for_range.dec = dec;
+			Ake_AstAdd2(n, dec);
+		} else {
+			Zinc_error_list_set(ps->el, &n->loc, "expected declaration");
+			n->has_error = true;
+		}
+
 		Ake_parse_for_range(ps, n);
 
 	} else if (t0 && t0->type == Ake_token_in) {
         if (n->kind == AKE_AST_NONE) {
             n->kind = Ake_ast_type_for_iteration;
         }
+		if (dec) {
+			Ake_AstAdd(n, dec);
+		}
 		Ake_parse_for_iteration(ps, n);
 
 	} else {
+		if (dec) {
+			Ake_AstDestroy(dec);
+		}
 		struct Zinc_location loc_error = Ake_get_location(ps);
 		Zinc_error_list_set(ps->el, &loc_error, "expected '=' or 'in' after for element declaration");
         n->has_error = true;
 		/* test case: test_parse_for_error_after_declaration */
 	}
+
+	Ake_UpdateSymbolFor(ps->st, n);
 
 	Ake_Ast* c = NULL;
     c = Ake_parse_stmts(ps);
@@ -257,7 +265,14 @@ Ake_Ast* Ake_parse_for(struct Ake_parse_state* ps)
     }
 
     if (c) {
-        Ake_AstAdd(n, c);
+    	if (n->kind == AKE_AST_FOR_RANGE) {
+    		n->data.for_range.body = c;
+    		Ake_AstAdd2(n, c);
+    	} else if (n->kind == Ake_ast_type_for_iteration){
+    		Ake_AstAdd(n, c);
+    	} else {
+    		Ake_AstDestroy(c);
+    	}
     }
 
     Ake_end_environment(ps->st);
@@ -309,10 +324,12 @@ void Ake_parse_for_range(struct Ake_parse_state* ps, Ake_Ast* parent)
 	}
 
 	if (a) {
-        Ake_AstAdd(parent, a);
+		parent->data.for_range.start = a;
+        Ake_AstAdd2(parent, a);
     }
     if (b) {
-        Ake_AstAdd(parent, b);
+    	parent->data.for_range.end = b;
+        Ake_AstAdd2(parent, b);
 	}
 
 	if (!parent->has_error) {

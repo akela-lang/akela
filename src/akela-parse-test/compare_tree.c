@@ -541,6 +541,19 @@ bool Apt_compare_ast(Zinc_test* top_test, Zinc_test* case_test, Ake_Ast* n, Cent
             value2 = Cent_value_get_str(value, "body");
             Apt_compare_ast(top_test, case_test, n->data._while_.body, value2);
             break;
+        case AKE_AST_FOR_RANGE:
+            value2 = Cent_value_get_str(value, "dec");
+            Apt_compare_ast(top_test, case_test, n->data.for_range.dec, value2);
+
+            value2 = Cent_value_get_str(value, "start");
+            Apt_compare_ast(top_test, case_test, n->data.for_range.start, value2);
+
+            value2 = Cent_value_get_str(value, "end");
+            Apt_compare_ast(top_test, case_test, n->data.for_range.end, value2);
+
+            value2 = Cent_value_get_str(value, "body");
+            Apt_compare_ast(top_test, case_test, n->data.for_range.body, value2);
+            break;
         default:
             Cent_value* value_prop = Cent_value_get_str(value, "value");
             if (Apt_has_value(n)) {

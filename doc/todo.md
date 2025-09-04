@@ -27,7 +27,7 @@
   * not [x]
   * and [x]
   * or [x]
-  * while []
+  * while [x]
   * for range []
   * for iteration []
   * declaration []

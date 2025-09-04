@@ -293,6 +293,23 @@ void Ake_ast_cent_print(Ake_Ast* n, size_t level, bool is_property, Ake_TypeSlot
                 printf(".body  = ");
                 Ake_ast_cent_print(n->data._while_.body, level, true, slots);
                 break;
+            case AKE_AST_FOR_RANGE:
+                Ake_indent_print(level);
+                printf(".dec = ");
+                Ake_ast_cent_print(n->data.for_range.dec,  level, true, slots);
+
+                Ake_indent_print(level);
+                printf(".start = ");
+                Ake_ast_cent_print(n->data.for_range.start,  level, true, slots);
+
+                Ake_indent_print(level);
+                printf(".end = ");
+                Ake_ast_cent_print(n->data.for_range.end,  level, true, slots);
+
+                Ake_indent_print(level);
+                printf(".body = ");
+                Ake_ast_cent_print(n->data.for_range.body, level, true, slots);
+                break;
             default:
                 p = n->head;
                 while (p) {
@@ -428,7 +445,7 @@ char* Ake_ast_cent_name(Ake_AstKind type)
         return "Ast::While";
     }
 
-    if (type == Ake_ast_type_for_range) {
+    if (type == AKE_AST_FOR_RANGE) {
         return "Ast::ForRange";
     }
 

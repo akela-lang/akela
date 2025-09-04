@@ -23,7 +23,12 @@ void Ake_UpdateSymbolExtern(Ake_symbol_table* st, Ake_Ast* n)
 void Ake_UpdateSymbolFor(Ake_symbol_table* st, Ake_Ast* n)
 {
     if (!n->has_error) {
-        Ake_Ast* dec = Ake_AstGet(n, 0);
+        Ake_Ast* dec = NULL;
+        if (n->kind == AKE_AST_FOR_RANGE) {
+            dec = n->data.for_range.dec;
+        } else {
+            dec = Ake_AstGet(n, 0);
+        }
         if (!dec->has_error) {
             Ake_Ast* id_node = Ake_AstGet(dec, 0);
             Ake_Ast* type_node = Ake_AstGet(dec, 1);

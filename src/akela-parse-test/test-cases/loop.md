@@ -108,7 +108,7 @@ const type0 = Type::Integer {
 }
 Ast::Stmts {
   Ast::ForRange {
-    Ast::Declaration {
+    .dec = Ast::Declaration {
       Ast::Id {
         .value = "i"
       }
@@ -116,15 +116,15 @@ Ast::Stmts {
         .type = type0
       }
     }
-    Ast::Number {
+    .start = Ast::Number {
       .value = "0"
       .type = type0
     }
-    Ast::Number {
+    .end = Ast::Number {
       .value = "10"
       .type = type0
     }
-    Ast::Stmts {
+    .body = Ast::Stmts {
       .type = type0
       Ast::Number {
         .value = "1"
@@ -561,7 +561,7 @@ const type0 = Type::Integer {
 }
 Ast::Stmts {
   Ast::ForRange {
-    Ast::Declaration {
+    .dec = Ast::Declaration {
       Ast::Id {
         .value = "i"
       }
@@ -569,15 +569,15 @@ Ast::Stmts {
         .type = type0
       }
     }
-    Ast::Number {
+    .start = Ast::Number {
       .value = "0"
       .type = type0
     }
-    Ast::Number {
+    .end = Ast::Number {
       .value = "10"
       .type = type0
     }
-    Ast::Stmts {
+    .body = Ast::Stmts {
       .type = type0
       Ast::Id {
         .value = "i"
