@@ -167,6 +167,13 @@ void Ake_AstSet(Ake_Ast* n, Ake_AstKind kind)
 			n->data.for_range.end = NULL;
 			n->data.for_range.body = NULL;
 			n->is_set = true;
+			break;
+		case AKE_AST_FOR_ITERATION:
+			n->data.for_iteration.dec = NULL;
+			n->data.for_iteration.iterator = NULL;
+			n->data.for_iteration.body = NULL;
+			n->is_set = true;
+			break;
 		default:
 			break;
 	}
@@ -202,6 +209,7 @@ void Ake_AstValidate(Ake_Ast* n)
 		case AKE_AST_OR:
 		case AKE_AST_WHILE:
 		case AKE_AST_FOR_RANGE:
+		case AKE_AST_FOR_ITERATION:
 			assert(n->is_set);
 			break;
 		default:
@@ -321,6 +329,11 @@ void Ake_AstDestroy(Ake_Ast* n)
     			Ake_AstDestroy(n->data.for_range.start);
     			Ake_AstDestroy(n->data.for_range.end);
     			Ake_AstDestroy(n->data.for_range.body);
+    			break;
+    		case AKE_AST_FOR_ITERATION:
+    			Ake_AstDestroy(n->data.for_iteration.dec);
+    			Ake_AstDestroy(n->data.for_iteration.iterator);
+    			Ake_AstDestroy(n->data.for_iteration.body);
     			break;
         	default:
     			p = n->head;
@@ -520,6 +533,10 @@ void Ake_AstCopy(Ake_Ast* src, Ake_Ast* dest)
 			dest->data.for_range.end = Ake_AstClone(src->data.for_range.end);
 			dest->data.for_range.body = Ake_AstClone(src->data.for_range.body);
 			break;
+		case AKE_AST_FOR_ITERATION:
+			dest->data.for_iteration.dec = Ake_AstClone(src->data.for_iteration.dec);
+			dest->data.for_iteration.iterator = Ake_AstClone(src->data.for_iteration.iterator);
+			dest->data.for_iteration.body = Ake_AstClone(src->data.for_iteration.body);
 		default:
 			break;
 	}
@@ -810,6 +827,17 @@ bool Ake_AstMatch(Ake_Ast* a, Ake_Ast* b)
 					return false;
 				}
 				if (!Ake_AstMatch(a->data.for_range.body, b->data.for_range.body)) {
+					return false;
+				}
+				break;
+			case AKE_AST_FOR_ITERATION:
+				if (!Ake_AstMatch(a->data.for_iteration.dec, b->data.for_iteration.dec)) {
+					return false;
+				}
+				if (!Ake_AstMatch(a->data.for_iteration.iterator, b->data.for_iteration.iterator)) {
+					return false;
+				}
+				if (!Ake_AstMatch(a->data.for_iteration.body, b->data.for_iteration.body)) {
 					return false;
 				}
 				break;

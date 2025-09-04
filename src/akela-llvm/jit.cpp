@@ -161,6 +161,11 @@ namespace Akela_llvm {
                 Check_subscript(jd, n->data.for_range.end);
                 Check_subscript(jd, n->data.for_range.body);
                 break;
+            case AKE_AST_FOR_ITERATION:
+                Check_subscript(jd, n->data.for_iteration.dec);
+                Check_subscript(jd, n->data.for_iteration.iterator);
+                Check_subscript(jd, n->data.for_iteration.body);
+                break;
             default:
                 p = n->head;
                 while (p) {

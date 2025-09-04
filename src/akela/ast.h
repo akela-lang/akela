@@ -43,7 +43,7 @@ typedef enum Ake_AstKind {
 	AKE_AST_OR,
 	AKE_AST_WHILE,
 	AKE_AST_FOR_RANGE,
-	Ake_ast_type_for_iteration,
+	AKE_AST_FOR_ITERATION,
 	Ake_ast_type_declaration,
 	Ake_ast_type_array_literal,
 	Ake_ast_type_array_subscript,
@@ -98,7 +98,7 @@ static char const* Ast_type_name(Ake_AstKind kind)
     name[AKE_AST_OR] = "or";
     name[AKE_AST_WHILE] = "while";
     name[AKE_AST_FOR_RANGE] = "for-range";
-    name[Ake_ast_type_for_iteration] = "for-iteration";
+    name[AKE_AST_FOR_ITERATION] = "for-iteration";
     name[Ake_ast_type_declaration] = "declaration";
     name[Ake_ast_type_array_literal] = "array-literal";
     name[Ake_ast_type_array_subscript] = "array-subscript";
@@ -168,6 +168,7 @@ typedef struct Ake_Ast {
 		struct { Ake_Ast* left; Ake_Ast* right; } _or_;
 		struct { Ake_Ast* cond; Ake_Ast* body; } _while_;
 		struct { Ake_Ast* dec; Ake_Ast* start; Ake_Ast* end; Ake_Ast* body; } for_range;
+		struct { Ake_Ast* dec; Ake_Ast* iterator; Ake_Ast* body; } for_iteration;
 	} data;
 	Ake_Type* type;
     Zinc_location loc;

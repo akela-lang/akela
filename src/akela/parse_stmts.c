@@ -236,10 +236,11 @@ Ake_Ast* Ake_parse_for(struct Ake_parse_state* ps)
 
 	} else if (t0 && t0->type == Ake_token_in) {
         if (n->kind == AKE_AST_NONE) {
-            n->kind = Ake_ast_type_for_iteration;
+        	Ake_AstSet(n, AKE_AST_FOR_ITERATION);
         }
 		if (dec) {
-			Ake_AstAdd(n, dec);
+			n->data.for_iteration.dec = dec;
+			Ake_AstAdd2(n, dec);
 		}
 		Ake_parse_for_iteration(ps, n);
 
@@ -268,8 +269,9 @@ Ake_Ast* Ake_parse_for(struct Ake_parse_state* ps)
     	if (n->kind == AKE_AST_FOR_RANGE) {
     		n->data.for_range.body = c;
     		Ake_AstAdd2(n, c);
-    	} else if (n->kind == Ake_ast_type_for_iteration){
-    		Ake_AstAdd(n, c);
+    	} else if (n->kind == AKE_AST_FOR_ITERATION){
+    		n->data.for_iteration.body = c;
+    		Ake_AstAdd2(n, c);
     	} else {
     		Ake_AstDestroy(c);
     	}
@@ -385,11 +387,12 @@ void Ake_parse_for_iteration(struct Ake_parse_state* ps, Ake_Ast* parent)
 	}
 
     if (list) {
+    	parent->data.for_iteration.iterator = list;
         Ake_AstAdd(parent, list);
     }
 
 	if (!parent->has_error) {
-		Ake_Ast* element = Ake_AstGet(parent, 0);
+		Ake_Ast* element = parent->data.for_iteration.dec;
 		Ake_Ast* element_type_node = Ake_AstGet(element, 1);
 
 		Ake_Type* list_type = list->type;

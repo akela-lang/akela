@@ -217,7 +217,7 @@ Ast::Stmts {
     }
   }
   Ast::ForIteration {
-    Ast::Declaration {
+    .dec = Ast::Declaration {
       Ast::Id {
         .value = "i"
       }
@@ -225,11 +225,11 @@ Ast::Stmts {
         .type = type1
       }
     }
-    Ast::Id {
+    .iterator = Ast::Id {
       .value = "list"
       .type = type0
     }
-    Ast::Stmts {
+    .body = Ast::Stmts {
       .type = type1
       Ast::Id {
         .value = "i"
@@ -674,7 +674,7 @@ Ast::Stmts {
     }
   }
   Ast::ForIteration {
-    Ast::Declaration {
+    .dec = Ast::Declaration {
       Ast::Id {
         .value = "x"
       }
@@ -682,11 +682,11 @@ Ast::Stmts {
         .type = type1
       }
     }
-    Ast::Id {
+    .iterator = Ast::Id {
       .value = "v"
       .type = type0
     }
-    Ast::Stmts {
+    .body = Ast::Stmts {
       .type = type1
       Ast::Id {
         .value = "x"

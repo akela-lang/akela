@@ -271,6 +271,14 @@ variant Ast::ForRange {
     }
 }
 
+variant Ast::ForIteration {
+    properties {
+        dec: Ast
+        iterator: Ast
+        body: Ast
+    }
+}
+
 element AstList {
     children {
         Ast

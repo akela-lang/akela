@@ -310,6 +310,19 @@ void Ake_ast_cent_print(Ake_Ast* n, size_t level, bool is_property, Ake_TypeSlot
                 printf(".body = ");
                 Ake_ast_cent_print(n->data.for_range.body, level, true, slots);
                 break;
+            case AKE_AST_FOR_ITERATION:
+                Ake_indent_print(level);
+                printf(".dec = ");
+                Ake_ast_cent_print(n->data.for_iteration.dec,  level, true, slots);
+
+                Ake_indent_print(level);
+                printf(".iterator = ");
+                Ake_ast_cent_print(n->data.for_iteration.iterator, level, true, slots);
+
+                Ake_indent_print(level);
+                printf(".body = ");
+                Ake_ast_cent_print(n->data.for_iteration.body, level, true, slots);
+                break;
             default:
                 p = n->head;
                 while (p) {
@@ -449,7 +462,7 @@ char* Ake_ast_cent_name(Ake_AstKind type)
         return "Ast::ForRange";
     }
 
-    if (type == Ake_ast_type_for_iteration) {
+    if (type == AKE_AST_FOR_ITERATION) {
         return "Ast::ForIteration";
     }
 
