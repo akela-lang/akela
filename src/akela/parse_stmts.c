@@ -393,7 +393,7 @@ void Ake_parse_for_iteration(struct Ake_parse_state* ps, Ake_Ast* parent)
 
 	if (!parent->has_error) {
 		Ake_Ast* element = parent->data.for_iteration.dec;
-		Ake_Ast* element_type_node = Ake_AstGet(element, 1);
+		Ake_Ast* element_type_node = element->data.declaration.type;
 
 		Ake_Type* list_type = list->type;
 

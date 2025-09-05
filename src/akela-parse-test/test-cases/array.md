@@ -787,26 +787,26 @@ Ast::Stmts {
       }
       Ast::Dseq {
         Ast::Declaration {
-          Ast::Id {
+          .id = Ast::Id {
             .value = "a"
           }
-          Ast::Type {
+          .type = Ast::Type {
             .type = type2
           }
         }
         Ast::Declaration {
-          Ast::Id {
+          .id = Ast::Id {
             .value = "b"
           }
-          Ast::Type {
+          .type = Ast::Type {
             .type = type2
           }
         }
         Ast::Declaration {
-          Ast::Id {
+          .id = Ast::Id {
             .value = "c"
           }
-          Ast::Type {
+          .type = Ast::Type {
             .type = type2
           }
         }

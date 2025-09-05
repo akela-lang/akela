@@ -279,6 +279,13 @@ variant Ast::ForIteration {
     }
 }
 
+variant Ast::Declaration {
+    properties {
+        id: Ast
+        type: Ast
+    }
+}
+
 element AstList {
     children {
         Ast

@@ -166,6 +166,10 @@ namespace Akela_llvm {
                 Check_subscript(jd, n->data.for_iteration.iterator);
                 Check_subscript(jd, n->data.for_iteration.body);
                 break;
+            case AKE_AST_DECLARATION:
+                Check_subscript(jd, n->data.declaration.id);
+                Check_subscript(jd, n->data.declaration.type);
+                break;
             default:
                 p = n->head;
                 while (p) {

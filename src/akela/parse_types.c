@@ -138,8 +138,8 @@ void Ake_declare_params(Ake_symbol_table* st, Ake_Ast* proto)
     Ake_Ast* dseq = Ake_AstGet(proto, 1);
     Ake_Ast* dec = dseq->data.dseq.list.head;
     while (dec) {
-        Ake_Ast* id_node = Ake_AstGet(dec, 0);
-        Ake_Ast* type_node = Ake_AstGet(dec, 1);
+        Ake_Ast* id_node = dec->data.declaration.id;
+        Ake_Ast* type_node = dec->data.declaration.type;
         if (!dec->has_error && !type_node->has_error) {
             Ake_declare_type(st, type_node, id_node, true);
         }
@@ -279,13 +279,14 @@ Ake_Ast* Ake_parse_declaration(
     bool type_only = !require_param_name && Ake_token_is_type(ps, t0);
     if (t0->type == Ake_token_id || type_only) {
         Ake_AstCreate(&n);
-        n->kind = Ake_ast_type_declaration;
+        Ake_AstSet(n, AKE_AST_DECLARATION);
 
         if (type_only) {
             Ake_Ast* id_node = NULL;
             Ake_AstCreate(&id_node);
             Ake_AstSet(id_node, AKE_AST_ID);
-            Ake_AstAdd(n, id_node);
+            n->data.declaration.id = id_node;
+            Ake_AstAdd2(n, id_node);
 
             Ake_Ast* type_use = NULL;
             type_use = Ake_parse_type(ps);
@@ -298,13 +299,15 @@ Ake_Ast* Ake_parse_declaration(
             }
 
             if (type_use) {
-                Ake_AstAdd(n, type_use);
+                n->data.declaration.type = type_use;
+                Ake_AstAdd2(n, type_use);
             }
         } else if (t0->type == Ake_token_id) {
             Ake_Ast* id_node = NULL;
             Ake_AstCreate(&id_node);
             Ake_AstSet(id_node, AKE_AST_ID);
-            Ake_AstAdd(n, id_node);
+            n->data.declaration.id = id_node;
+            Ake_AstAdd2(n, id_node);
 
             struct Ake_token *id = NULL;
             if (!Ake_match(ps, Ake_token_id, "expected id", &id, n)) {
@@ -337,7 +340,8 @@ Ake_Ast* Ake_parse_declaration(
             }
 
             if (type_use) {
-                Ake_AstAdd(n, type_use);
+                n->data.declaration.type = type_use;
+                Ake_AstAdd2(n, type_use);
             }
         } else {
             assert(false);
@@ -590,8 +594,8 @@ Ake_Type* Ake_Type_use_add_proto(
     if (dseq->data.dseq.list.head) {
         Ake_Ast* dec = dseq->data.dseq.list.head;
         while (dec) {
-            Ake_Ast* id_node = Ake_AstGet(dec, 0);
-            Ake_Ast* type_node = Ake_AstGet(dec, 1);
+            Ake_Ast* id_node = dec->data.declaration.id;
+            Ake_Ast* type_node = dec->data.declaration.type;
 
             Ake_TypeParam* tp = NULL;
             Ake_TypeParamCreate(&tp);
@@ -817,12 +821,12 @@ Ake_Type* Ake_StructToType(Ake_Ast* n)
         Ake_TypeField* tf = NULL;
         Ake_TypeFieldCreate(&tf);
 
-        Ake_Ast* id_node = dec->head;
+        Ake_Ast* id_node = dec->data.declaration.id;
         assert(id_node);
 
         Zinc_string_add_string(&tf->name, &id_node->data.id.value);
 
-        Ake_Ast* type_node = id_node->next;
+        Ake_Ast* type_node = dec->data.declaration.type;
         assert(type_node);
 
         tf->type = Ake_TypeClone(type_node->type);

@@ -33,8 +33,8 @@ void Ake_UpdateSymbolFor(Ake_symbol_table* st, Ake_Ast* n)
         }
 
         if (!dec->has_error) {
-            Ake_Ast* id_node = Ake_AstGet(dec, 0);
-            Ake_Ast* type_node = Ake_AstGet(dec, 1);
+            Ake_Ast* id_node = dec->data.declaration.id;
+            Ake_Ast* type_node = dec->data.declaration.type;
             Ake_declare_type(st, type_node, id_node, true);
         }
     }

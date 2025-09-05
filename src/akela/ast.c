@@ -174,6 +174,11 @@ void Ake_AstSet(Ake_Ast* n, Ake_AstKind kind)
 			n->data.for_iteration.body = NULL;
 			n->is_set = true;
 			break;
+		case AKE_AST_DECLARATION:
+			n->data.declaration.id = NULL;
+			n->data.declaration.type = NULL;
+			n->is_set = true;
+			break;
 		default:
 			break;
 	}
@@ -210,6 +215,7 @@ void Ake_AstValidate(Ake_Ast* n)
 		case AKE_AST_WHILE:
 		case AKE_AST_FOR_RANGE:
 		case AKE_AST_FOR_ITERATION:
+		case AKE_AST_DECLARATION:
 			assert(n->is_set);
 			break;
 		default:
@@ -334,6 +340,10 @@ void Ake_AstDestroy(Ake_Ast* n)
     			Ake_AstDestroy(n->data.for_iteration.dec);
     			Ake_AstDestroy(n->data.for_iteration.iterator);
     			Ake_AstDestroy(n->data.for_iteration.body);
+    			break;
+    		case AKE_AST_DECLARATION:
+    			Ake_AstDestroy(n->data.declaration.id);
+    			Ake_AstDestroy(n->data.declaration.type);
     			break;
         	default:
     			p = n->head;
@@ -537,6 +547,10 @@ void Ake_AstCopy(Ake_Ast* src, Ake_Ast* dest)
 			dest->data.for_iteration.dec = Ake_AstClone(src->data.for_iteration.dec);
 			dest->data.for_iteration.iterator = Ake_AstClone(src->data.for_iteration.iterator);
 			dest->data.for_iteration.body = Ake_AstClone(src->data.for_iteration.body);
+		case AKE_AST_DECLARATION:
+			dest->data.declaration.id = Ake_AstClone(src->data.declaration.id);
+			dest->data.declaration.type = Ake_AstClone(src->data.declaration.type);
+			break;
 		default:
 			break;
 	}
@@ -838,6 +852,14 @@ bool Ake_AstMatch(Ake_Ast* a, Ake_Ast* b)
 					return false;
 				}
 				if (!Ake_AstMatch(a->data.for_iteration.body, b->data.for_iteration.body)) {
+					return false;
+				}
+				break;
+			case AKE_AST_DECLARATION:
+				if (!Ake_AstMatch(a->data.declaration.id, b->data.declaration.id)) {
+					return false;
+				}
+				if (!Ake_AstMatch(a->data.declaration.type, b->data.declaration.type)) {
 					return false;
 				}
 				break;

@@ -127,10 +127,10 @@ Ast::Stmts {
       }
       Ast::Dseq {
         Ast::Declaration {
-          Ast::Id {
+          .id = Ast::Id {
             .value = "x"
           }
-          Ast::Type {
+          .type = Ast::Type {
             .type = type1
           }
         }
@@ -217,18 +217,18 @@ Ast::Stmts {
       }
       Ast::Dseq {
         Ast::Declaration {
-          Ast::Id {
+          .id = Ast::Id {
             .value = "x"
           }
-          Ast::Type {
+          .type = Ast::Type {
             .type = type1
           }
         }
         Ast::Declaration {
-          Ast::Id {
+          .id = Ast::Id {
             .value = "y"
           }
-          Ast::Type {
+          .type = Ast::Type {
             .type = type1
           }
         }
@@ -326,26 +326,26 @@ Ast::Stmts {
       }
       Ast::Dseq {
         Ast::Declaration {
-          Ast::Id {
+          .id = Ast::Id {
             .value = "x"
           }
-          Ast::Type {
+          .type = Ast::Type {
             .type = type1
           }
         }
         Ast::Declaration {
-          Ast::Id {
+          .id = Ast::Id {
             .value = "y"
           }
-          Ast::Type {
+          .type = Ast::Type {
             .type = type1
           }
         }
         Ast::Declaration {
-          Ast::Id {
+          .id = Ast::Id {
             .value = "z"
           }
-          Ast::Type {
+          .type = Ast::Type {
             .type = type1
           }
         }
@@ -571,18 +571,18 @@ Ast::Stmts {
       }
       Ast::Dseq {
         Ast::Declaration {
-          Ast::Id {
+          .id = Ast::Id {
             .value = "a"
           }
-          Ast::Type {
+          .type = Ast::Type {
             .type = type1
           }
         }
         Ast::Declaration {
-          Ast::Id {
+          .id = Ast::Id {
             .value = "b"
           }
-          Ast::Type {
+          .type = Ast::Type {
             .type = type1
           }
         }
@@ -770,26 +770,26 @@ Ast::Stmts {
         }
         Ast::Dseq {
           Ast::Declaration {
-            Ast::Id {
+            .id = Ast::Id {
               .value = "x"
             }
-            Ast::Type {
+            .type = Ast::Type {
               .type = type2
             }
           }
           Ast::Declaration {
-            Ast::Id {
+            .id = Ast::Id {
               .value = "y"
             }
-            Ast::Type {
+            .type = Ast::Type {
               .type = type2
             }
           }
           Ast::Declaration {
-            Ast::Id {
+            .id = Ast::Id {
               .value = "z"
             }
-            Ast::Type {
+            .type = Ast::Type {
               .type = type2
             }
           }
@@ -918,26 +918,26 @@ Ast::Stmts {
         }
         Ast::Dseq {
           Ast::Declaration {
-            Ast::Id {
+            .id = Ast::Id {
               .value = "x"
             }
-            Ast::Type {
+            .type = Ast::Type {
               .type = type2
             }
           }
           Ast::Declaration {
-            Ast::Id {
+            .id = Ast::Id {
               .value = "y"
             }
-            Ast::Type {
+            .type = Ast::Type {
               .type = type2
             }
           }
           Ast::Declaration {
-            Ast::Id {
+            .id = Ast::Id {
               .value = "z"
             }
-            Ast::Type {
+            .type = Ast::Type {
               .type = type2
             }
           }
@@ -1125,10 +1125,10 @@ Ast::Stmts {
         }
         Ast::Dseq {
           Ast::Declaration {
-            Ast::Id {
+            .id = Ast::Id {
               .value = "a"
             }
-            Ast::Type {
+            .type = Ast::Type {
               .type = type2
             }
           }
@@ -1381,10 +1381,10 @@ Ast::Stmts {
       }
       Ast::Dseq {
         Ast::Declaration {
-          Ast::Id {
+          .id = Ast::Id {
             .value = "arg1"
           }
-          Ast::Type {
+          .type = Ast::Type {
             .type = type1
           }
         }
@@ -1471,18 +1471,18 @@ Ast::Stmts {
       }
       Ast::Dseq {
         Ast::Declaration {
-          Ast::Id {
+          .id = Ast::Id {
             .value = "arg1"
           }
-          Ast::Type {
+          .type = Ast::Type {
             .type = type0
           }
         }
         Ast::Declaration {
-          Ast::Id {
+          .id = Ast::Id {
             .value = "arg2"
           }
-          Ast::Type {
+          .type = Ast::Type {
             .type = type0
           }
         }
@@ -1608,26 +1608,26 @@ Ast::Stmts {
       }
       Ast::Dseq {
         Ast::Declaration {
-          Ast::Id {
+          .id = Ast::Id {
             .value = "arg0"
           }
-          Ast::Type {
+          .type = Ast::Type {
             .type = type0
           }
         }
         Ast::Declaration {
-          Ast::Id {
+          .id = Ast::Id {
             .value = "arg1"
           }
-          Ast::Type {
+          .type = Ast::Type {
             .type = type0
           }
         }
         Ast::Declaration {
-          Ast::Id {
+          .id = Ast::Id {
             .value = "arg2"
           }
-          Ast::Type {
+          .type = Ast::Type {
             .type = type0
           }
         }
@@ -1935,26 +1935,26 @@ Ast::Stmts {
       }
       Ast::Dseq {
         Ast::Declaration {
-          Ast::Id {
+          .id = Ast::Id {
             .value = "a"
           }
-          Ast::Type {
+          .type = Ast::Type {
             .type = type1
           }
         }
         Ast::Declaration {
-          Ast::Id {
+          .id = Ast::Id {
             .value = "b"
           }
-          Ast::Type {
+          .type = Ast::Type {
             .type = type1
           }
         }
         Ast::Declaration {
-          Ast::Id {
+          .id = Ast::Id {
             .value = "c"
           }
-          Ast::Type {
+          .type = Ast::Type {
             .type = type1
           }
         }
@@ -2134,18 +2134,18 @@ Ast::Stmts {
       }
       Ast::Dseq {
         Ast::Declaration {
-          Ast::Id {
+          .id = Ast::Id {
             .value = "a"
           }
-          Ast::Type {
+          .type = Ast::Type {
             .type = type0
           }
         }
         Ast::Declaration {
-          Ast::Id {
+          .id = Ast::Id {
             .value = "b"
           }
-          Ast::Type {
+          .type = Ast::Type {
             .type = type0
           }
         }
@@ -2232,10 +2232,10 @@ Ast::Stmts {
       }
       Ast::Dseq {
         Ast::Declaration {
-          Ast::Id {
+          .id = Ast::Id {
             .value = "a"
           }
-          Ast::Type {
+          .type = Ast::Type {
             .type = type1
           }
         }
