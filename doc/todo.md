@@ -30,8 +30,8 @@
   * while [x]
   * for range [x]
   * for iteration [x]
-  * declaration []
-  * array literal []
+  * declaration [x]
+  * array literal [x]
   * array subscript []
   * boolean []
   * parenthesis []
@@ -60,7 +60,7 @@
     * literal []
     * struct literal []
 * remove Ast::Type nodes
-  * let []
+  * var/const []
   * dret []
   * declaration []
 * modules

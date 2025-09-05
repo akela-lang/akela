@@ -170,6 +170,13 @@ namespace Akela_llvm {
                 Check_subscript(jd, n->data.declaration.id);
                 Check_subscript(jd, n->data.declaration.type);
                 break;
+            case AKE_AST_ARRAY_LITERAL:
+                p = n->data.array_literal.list.head;
+                while (p) {
+                    Check_subscript(jd, p);
+                    p = p->next;
+                }
+                break;
             default:
                 p = n->head;
                 while (p) {

@@ -179,6 +179,9 @@ void Ake_AstSet(Ake_Ast* n, Ake_AstKind kind)
 			n->data.declaration.type = NULL;
 			n->is_set = true;
 			break;
+		case AKE_AST_ARRAY_LITERAL:
+			Ake_AstListInit(&n->data.array_literal.list, n);
+			n->is_set = true;
 		default:
 			break;
 	}
@@ -216,6 +219,7 @@ void Ake_AstValidate(Ake_Ast* n)
 		case AKE_AST_FOR_RANGE:
 		case AKE_AST_FOR_ITERATION:
 		case AKE_AST_DECLARATION:
+		case AKE_AST_ARRAY_LITERAL:
 			assert(n->is_set);
 			break;
 		default:
@@ -344,6 +348,9 @@ void Ake_AstDestroy(Ake_Ast* n)
     		case AKE_AST_DECLARATION:
     			Ake_AstDestroy(n->data.declaration.id);
     			Ake_AstDestroy(n->data.declaration.type);
+    			break;
+    		case AKE_AST_ARRAY_LITERAL:
+    			Ake_AstListDestroy(&n->data.array_literal.list);
     			break;
         	default:
     			p = n->head;
@@ -550,6 +557,13 @@ void Ake_AstCopy(Ake_Ast* src, Ake_Ast* dest)
 		case AKE_AST_DECLARATION:
 			dest->data.declaration.id = Ake_AstClone(src->data.declaration.id);
 			dest->data.declaration.type = Ake_AstClone(src->data.declaration.type);
+			break;
+		case AKE_AST_ARRAY_LITERAL:
+			p = src->data.array_literal.list.head;
+			while (p) {
+				Ake_AstListAdd(&dest->data.array_literal.list, Ake_AstClone(p));
+				p = p->next;
+			}
 			break;
 		default:
 			break;
@@ -861,6 +875,23 @@ bool Ake_AstMatch(Ake_Ast* a, Ake_Ast* b)
 				}
 				if (!Ake_AstMatch(a->data.declaration.type, b->data.declaration.type)) {
 					return false;
+				}
+				break;
+			case AKE_AST_ARRAY_LITERAL:
+				a2 = a->data.array_literal.list.head;
+				b2 = b->data.array_literal.list.head;
+				while (a2 || b2) {
+					if (!a2) {
+						return false;
+					}
+					if (!b2) {
+						return false;
+					}
+					if (!Ake_AstMatch(a2, b2)) {
+						return false;
+					}
+					a2 = a2->next;
+					b2 = b2->next;
 				}
 				break;
 			default:

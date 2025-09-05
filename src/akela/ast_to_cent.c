@@ -331,7 +331,13 @@ void Ake_ast_cent_print(Ake_Ast* n, size_t level, bool is_property, Ake_TypeSlot
                 Ake_indent_print(level);
                 printf(".type = ");
                 Ake_ast_cent_print(n->data.declaration.type, level, true, slots);
-                Ake_indent_print(level);
+                break;
+            case AKE_AST_ARRAY_LITERAL:
+                p = n->data.array_literal.list.head;
+                while (p) {
+                    Ake_ast_cent_print(p, level, false, slots);
+                    p = p->next;
+                }
                 break;
             default:
                 p = n->head;
@@ -480,7 +486,7 @@ char* Ake_ast_cent_name(Ake_AstKind type)
         return "Ast::Declaration";
     }
 
-    if (type == Ake_ast_type_array_literal) {
+    if (type == AKE_AST_ARRAY_LITERAL) {
         return "Ast::ArrayLiteral";
     }
 

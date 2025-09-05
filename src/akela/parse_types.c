@@ -701,14 +701,14 @@ void Ake_Override_rhs(Ake_Type* type, Ake_Ast* rhs)
         return;
     }
 
-    if (rhs->kind == Ake_ast_type_array_literal) {
+    if (rhs->kind == AKE_AST_ARRAY_LITERAL) {
         Ake_TypeCopy(type, rhs->type);
 
         if (type->kind == AKE_TYPE_ARRAY) {
             if (type->data.array.is_const && !rhs->type->data.array.is_const) {
                 rhs->type->data.array.is_const = true;
             }
-            Ake_Ast* p = rhs->head;
+            Ake_Ast* p = rhs->data.array_literal.list.head;
             while (p) {
                 Ake_Override_rhs(type->data.array.type, p);
                 p = p->next;

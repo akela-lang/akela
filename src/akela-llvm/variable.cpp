@@ -41,7 +41,7 @@ namespace Akela_llvm {
                 Zinc_string_finish(&lhs->data.id.value);
                 AllocaInst *lhs_value = jd->Builder->CreateAlloca(t, nullptr, lhs->data.id.value.buf);
                 sym->value = lhs_value;
-                if (rhs->kind == Ake_ast_type_array_literal) {
+                if (rhs->kind == AKE_AST_ARRAY_LITERAL) {
                     Value *rhs_value = Dispatch(jd, rhs);
                 } else {
                     Value *rhs_value = Dispatch(jd, rhs);
@@ -204,7 +204,7 @@ namespace Akela_llvm {
             list.push_back(
                     ConstantInt::get(Type::getInt64Ty(*jd->TheContext),
                                      APInt(64, 0, false)));
-            Ake_Ast* p = n->head;
+            Ake_Ast* p = n->data.array_literal.list.head;
             while (p) {
                 Value* ptr2 = jd->Builder->CreateInBoundsGEP(t, ptr, list, "arrayelementtmp");
                 Array_literal_element(jd, p, ptr2);

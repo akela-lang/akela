@@ -408,7 +408,7 @@ namespace Akela_llvm {
             return Handle_struct_literal(jd, n);
         }
 
-        if (n->kind == Ake_ast_type_array_literal) {
+        if (n->kind == AKE_AST_ARRAY_LITERAL) {
             return Handle_array_literal(jd, n);
         }
 

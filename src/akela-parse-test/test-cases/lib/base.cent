@@ -286,6 +286,12 @@ variant Ast::Declaration {
     }
 }
 
+variant Ast::ArrayLiteral {
+    children {
+        Ast
+    }
+}
+
 element AstList {
     children {
         Ast

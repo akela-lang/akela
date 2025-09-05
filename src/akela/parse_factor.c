@@ -662,7 +662,7 @@ Ake_Ast* Ake_parse_array_literal(struct Ake_parse_state* ps)
 {
 	Ake_Ast* n = NULL;
     Ake_AstCreate(&n);
-    n->kind = Ake_ast_type_array_literal;
+    Ake_AstSet(n, AKE_AST_ARRAY_LITERAL);
 
     struct Ake_token* lsb = NULL;
     if (!Ake_match(ps, Ake_token_left_square_bracket, "expected left square bracket", &lsb, n)) {
@@ -684,7 +684,7 @@ Ake_Ast* Ake_parse_array_literal(struct Ake_parse_state* ps)
 
     if (!n->has_error) {
         size_t count = 0;
-        Ake_Ast* first = n->head;
+        Ake_Ast* first = n->data.array_literal.list.head;
 
         if (!first) {
             Zinc_error_list_set(ps->el, &rsb->loc, "array literal has no elements");
@@ -727,7 +727,7 @@ void Ake_parse_aseq(struct Ake_parse_state* ps, Ake_Ast* parent)
     a = Ake_parse_expr(ps);
 
 	if (a) {
-        Ake_AstAdd(parent, a);
+        Ake_AstListAdd(&parent->data.array_literal.list, a);
 
 		while (true) {
 			struct Ake_token* t0 = Ake_get_lookahead(ps);
@@ -753,7 +753,7 @@ void Ake_parse_aseq(struct Ake_parse_state* ps, Ake_Ast* parent)
 				break;
 			}
 
-            Ake_AstAdd(parent, a);
+            Ake_AstListAdd(&parent->data.array_literal.list, a);
 		}
 	}
 }
