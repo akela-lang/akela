@@ -131,7 +131,7 @@ namespace Akela_llvm {
                     sym->reference = lhs_value;
                 }
                 jd->Builder->CreateStore(rhs_value, lhs_value);
-            } else if (lhs->kind == Ake_ast_type_array_subscript) {
+            } else if (lhs->kind == AKE_AST_ARRAY_SUBSCRIPT) {
                 Value* lhs_value = Dispatch(jd, lhs);
                 jd->Builder->CreateStore(rhs_value, lhs_value);
             } else {
@@ -240,7 +240,7 @@ namespace Akela_llvm {
             }
         }
 
-        if (n->parent->kind == Ake_ast_type_array_subscript) {
+        if (n->parent->kind == AKE_AST_ARRAY_SUBSCRIPT) {
             return true;
         }
 
@@ -255,12 +255,12 @@ namespace Akela_llvm {
             element_type = PointerType::get(*jd->TheContext, 0);
         }
 
-        Ake_Ast* array = n->head;
+        Ake_Ast* array = n->data.array_subscript.array;
         assert(IsArray(array->type->kind));
         Value* array_value = Dispatch(jd, array);
         assert(array_value);
 
-        Ake_Ast* subscript = array->next;
+        Ake_Ast* subscript = n->data.array_subscript.index;
         Value* subscript_value = Dispatch(jd, subscript);
         size_t dim = 0;
         if (array->type->kind == AKE_TYPE_ARRAY) {

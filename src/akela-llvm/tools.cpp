@@ -412,7 +412,7 @@ namespace Akela_llvm {
             return Handle_array_literal(jd, n);
         }
 
-        if (n->kind == Ake_ast_type_array_subscript) {
+        if (n->kind == AKE_AST_ARRAY_SUBSCRIPT) {
             return Handle_subscript(jd, n);
         }
 

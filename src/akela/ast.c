@@ -179,6 +179,11 @@ void Ake_AstSet(Ake_Ast* n, Ake_AstKind kind)
 			n->data.declaration.type = NULL;
 			n->is_set = true;
 			break;
+		case AKE_AST_ARRAY_SUBSCRIPT:
+			n->data.array_subscript.array = NULL;
+			n->data.array_subscript.index = NULL;
+			n->is_set = true;
+			break;
 		case AKE_AST_ARRAY_LITERAL:
 			Ake_AstListInit(&n->data.array_literal.list, n);
 			n->is_set = true;
@@ -220,6 +225,7 @@ void Ake_AstValidate(Ake_Ast* n)
 		case AKE_AST_FOR_ITERATION:
 		case AKE_AST_DECLARATION:
 		case AKE_AST_ARRAY_LITERAL:
+		case AKE_AST_ARRAY_SUBSCRIPT:
 			assert(n->is_set);
 			break;
 		default:
@@ -351,6 +357,10 @@ void Ake_AstDestroy(Ake_Ast* n)
     			break;
     		case AKE_AST_ARRAY_LITERAL:
     			Ake_AstListDestroy(&n->data.array_literal.list);
+    			break;
+    		case AKE_AST_ARRAY_SUBSCRIPT:
+    			Ake_AstDestroy(n->data.array_subscript.array);
+    			Ake_AstDestroy(n->data.array_subscript.index);
     			break;
         	default:
     			p = n->head;
@@ -564,6 +574,10 @@ void Ake_AstCopy(Ake_Ast* src, Ake_Ast* dest)
 				Ake_AstListAdd(&dest->data.array_literal.list, Ake_AstClone(p));
 				p = p->next;
 			}
+			break;
+		case AKE_AST_ARRAY_SUBSCRIPT:
+			dest->data.array_subscript.array = Ake_AstClone(src->data.array_subscript.array);
+			dest->data.array_subscript.index = Ake_AstClone(src->data.array_subscript.index);
 			break;
 		default:
 			break;
@@ -892,6 +906,14 @@ bool Ake_AstMatch(Ake_Ast* a, Ake_Ast* b)
 					}
 					a2 = a2->next;
 					b2 = b2->next;
+				}
+				break;
+			case AKE_AST_ARRAY_SUBSCRIPT:
+				if (!Ake_AstMatch(a->data.array_subscript.array, b->data.array_subscript.array)) {
+					return false;
+				}
+				if (!Ake_AstMatch(a->data.array_subscript.index, b->data.array_subscript.index)) {
+					return false;
 				}
 				break;
 			default:

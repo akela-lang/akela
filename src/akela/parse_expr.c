@@ -678,7 +678,7 @@ Ake_Ast* Ake_parse_complex_operators(struct Ake_parse_state* ps)
 /* NOLINTNEXTLINE(misc-no-recursion) */
 void Ake_parse_subscript(struct Ake_parse_state* ps, Ake_Ast* left, Ake_Ast* n)
 {
-    n->kind = Ake_ast_type_array_subscript;
+	Ake_AstSet(n, AKE_AST_ARRAY_SUBSCRIPT);
 
     if (!left->type) {
         Zinc_error_list_set(ps->el, &left->loc, "expression has subscript but has no value");
@@ -726,10 +726,12 @@ void Ake_parse_subscript(struct Ake_parse_state* ps, Ake_Ast* left, Ake_Ast* n)
         n->has_error = true;
     }
 
-    Ake_AstAdd(n, left);
+	n->data.array_subscript.array = left;
+    Ake_AstAdd2(n, left);
 
     if (b) {
-        Ake_AstAdd(n, b);
+    	n->data.array_subscript.index = b;
+        Ake_AstAdd2(n, b);
     }
 }
 

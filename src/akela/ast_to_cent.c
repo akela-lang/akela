@@ -339,6 +339,15 @@ void Ake_ast_cent_print(Ake_Ast* n, size_t level, bool is_property, Ake_TypeSlot
                     p = p->next;
                 }
                 break;
+            case AKE_AST_ARRAY_SUBSCRIPT:
+                Ake_indent_print(level);
+                printf(".array = ");
+                Ake_ast_cent_print(n->data.array_subscript.array, level, true, slots);
+
+                Ake_indent_print(level);
+                printf(".index = ");
+                Ake_ast_cent_print(n->data.array_subscript.index, level, true, slots);
+                break;
             default:
                 p = n->head;
                 while (p) {
@@ -490,7 +499,7 @@ char* Ake_ast_cent_name(Ake_AstKind type)
         return "Ast::ArrayLiteral";
     }
 
-    if (type == Ake_ast_type_array_subscript) {
+    if (type == AKE_AST_ARRAY_SUBSCRIPT) {
         return "Ast::ArraySubscript";
     }
 

@@ -292,6 +292,13 @@ variant Ast::ArrayLiteral {
     }
 }
 
+variant Ast::ArraySubscript {
+    properties {
+        array: Ast
+        index: Ast
+    }
+}
+
 element AstList {
     children {
         Ast

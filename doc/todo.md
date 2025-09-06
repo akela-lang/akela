@@ -32,7 +32,7 @@
   * for iteration [x]
   * declaration [x]
   * array literal [x]
-  * array subscript []
+  * array subscript [x]
   * boolean []
   * parenthesis []
   * type []
@@ -63,6 +63,8 @@
   * var/const []
   * dret []
   * declaration []
+* convert Cent_value to Ake_Ast
+* match stack output with Ake_AstMatch
 * modules
 * print function
 * insert error context lines related to current check; used for line and col numbers

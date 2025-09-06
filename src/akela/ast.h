@@ -46,7 +46,7 @@ typedef enum Ake_AstKind {
 	AKE_AST_FOR_ITERATION,
 	AKE_AST_DECLARATION,
 	AKE_AST_ARRAY_LITERAL,
-	Ake_ast_type_array_subscript,
+	AKE_AST_ARRAY_SUBSCRIPT,
 	Ake_ast_type_boolean,
 	Ake_ast_type_parenthesis,
 	Ake_ast_type_type,
@@ -101,7 +101,7 @@ static char const* Ast_type_name(Ake_AstKind kind)
     name[AKE_AST_FOR_ITERATION] = "for-iteration";
     name[AKE_AST_DECLARATION] = "declaration";
     name[AKE_AST_ARRAY_LITERAL] = "array-literal";
-    name[Ake_ast_type_array_subscript] = "array-subscript";
+    name[AKE_AST_ARRAY_SUBSCRIPT] = "array-subscript";
     name[Ake_ast_type_boolean] = "boolean";
     name[Ake_ast_type_parenthesis] = "parenthesis";
     name[Ake_ast_type_type] = "type";
@@ -171,6 +171,7 @@ typedef struct Ake_Ast {
 		struct { Ake_Ast* dec; Ake_Ast* iterator; Ake_Ast* body; } for_iteration;
 		struct { Ake_Ast* id; Ake_Ast* type; } declaration;
 		struct { Ake_AstList list; } array_literal;
+		struct { Ake_Ast* array; Ake_Ast* index; } array_subscript;
 	} data;
 	Ake_Type* type;
     Zinc_location loc;

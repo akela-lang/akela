@@ -76,15 +76,15 @@ Ast::Stmts {
     }
   }
   Ast::ArraySubscript {
-    .type = type0
-    Ast::Id {
+    .array = Ast::Id {
       .value = "a"
       .type = type1
     }
-    Ast::Number {
+    .index = Ast::Number {
       .value = "0"
       .type = type2
     }
+    .type = type0
   }
 }
 ```
@@ -200,22 +200,22 @@ Ast::Stmts {
     }
   }
   Ast::ArraySubscript {
-    .type = type0
-    Ast::ArraySubscript {
-      .type = type2
-      Ast::Id {
+    .array = Ast::ArraySubscript {
+      .array = Ast::Id {
         .value = "a"
         .type = type1
       }
-      Ast::Number {
+      .index = Ast::Number {
         .value = "1"
         .type = type3
       }
+      .type = type2
     }
-    Ast::Number {
+    .index = Ast::Number {
       .value = "1"
       .type = type3
     }
+    .type = type0
   }
 }
 ```
@@ -299,15 +299,15 @@ Ast::Stmts {
     }
   }
   Ast::ArraySubscript {
-    .type = type0
-    Ast::Id {
+    .array = Ast::Id {
       .value = "a"
       .type = type1
     }
-    Ast::Id {
+    .index = Ast::Id {
       .value = "b"
       .type = type2
     }
+    .type = type0
   }
 }
 ```
@@ -522,35 +522,35 @@ Ast::Stmts {
     }
   }
   Ast::ArraySubscript {
-    .type = type0
-    Ast::ArraySubscript {
-      .type = type3
-      Ast::ArraySubscript {
-        .type = type2
-        Ast::Id {
+    .array = Ast::ArraySubscript {
+      .array = Ast::ArraySubscript {
+        .array = Ast::Id {
           .value = "x"
           .type = type1
         }
-        Ast::Number {
+        .index = Ast::Number {
           .value = "0"
           .type = type4
         }
+        .type = type2
       }
-      Ast::Number {
+      .index = Ast::Number {
         .value = "1"
         .type = type4
       }
+      .type = type3
     }
-    Ast::Number {
+    .index = Ast::Number {
       .value = "2"
       .type = type4
     }
+    .type = type0
   }
 }
 ```
 
 ## Test
-array subscript 4
+array subscript (array expression has no value)
 
 ```cent
 use lib::base::*
@@ -697,15 +697,15 @@ Ast::Stmts {
     }
   }
   Ast::ArraySubscript {
-    .type = type0
-    Ast::Id {
+    .array = Ast::Id {
       .value = "a"
       .type = type1
     }
-    Ast::Number {
+    .index = Ast::Number {
       .value = "0"
       .type = type2
     }
+    .type = type0
   }
 }
 ```
@@ -935,15 +935,15 @@ Ast::Stmts {
     }
   }
   Ast::ArraySubscript {
-    .type = type0
-    Ast::Id {
+    .array = Ast::Id {
       .value = "a"
       .type = type1
     }
-    Ast::Number {
+    .index = Ast::Number {
       .value = "1"
       .type = type2
     }
+    .type = type0
   }
 }
 ```
@@ -1337,15 +1337,15 @@ Ast::Stmts {
     }
   }
   Ast::ArraySubscript {
-    .type = type0
-    Ast::Id {
+    .array = Ast::Id {
       .value = "a"
       .type = type1
     }
-    Ast::Number {
+    .index = Ast::Number {
       .value = "0"
       .type = type2
     }
+    .type = type0
   }
 }
 ```

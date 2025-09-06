@@ -723,7 +723,7 @@ bool Ake_is_lvalue(enum Ake_AstKind type)
         return true;
     }
 
-    if (type == Ake_ast_type_array_subscript) {
+    if (type == AKE_AST_ARRAY_SUBSCRIPT) {
         return true;
     }
 
@@ -736,56 +736,40 @@ bool Ake_is_lvalue(enum Ake_AstKind type)
 
 bool Ake_check_lvalue(Ake_parse_state* ps, Ake_Ast* n, Zinc_location* loc)
 {
+    if (!Ake_is_lvalue(n->kind)) {
+        Zinc_error_list_set(ps->el, loc, "invalid lvalue");
+        n->has_error = true;
+        return false;
+    }
+
     Ake_Ast* p = n;
-    Ake_symbol* sym = NULL;
-    Ake_Ast* first = NULL;
     while (p) {
-        if (!Ake_is_lvalue(p->kind)) {
-            Zinc_error_list_set(ps->el, loc, "invalid lvalue");
-            n->has_error = true;
-            p->has_error = true;
-            return false;
-        }
-        if (!p->head) {
-            assert(p->type);
-            if (p->kind != AKE_AST_ID) {
-                Zinc_error_list_set(ps->el, loc, "invalid lvalue");
-                n->has_error = true;
-                p->has_error = true;
-                return false;
-            }
-            Ake_get_lookahead(ps);
-            size_t seq = ps->lookahead->loc.start;
-            sym = Ake_EnvironmentGet(ps->st->top, &p->data.id.value);
+        if (p->kind == AKE_AST_ID) {
+            Ake_symbol* sym = Ake_EnvironmentGet(ps->st->top, &p->data.id.value);
             if (sym->is_const) {
                 Zinc_error_list_set(ps->el, loc, "immutable variable changed in assignment");
                 n->has_error = true;
+                return false;
             }
-            first = p;
+            break;
         }
-        p = p->head;
+        if (p->kind == AKE_AST_ARRAY_SUBSCRIPT) {
+            p = p->data.array_subscript.array;
+        } else if (p->kind == Ake_ast_type_dot) {
+            p = p->head;
+        } else {
+            break;
+        }
     }
 
-    if (!n->type) {
-        Zinc_error_list_set(ps->el, loc, "invalid lvalue");
-        n->has_error = true;
-        return false;
-    }
-
-    if (!sym) {
-        Zinc_error_list_set(ps->el, loc, "invalid lvalue");
-        n->has_error = true;
-        return false;
-    }
-
-    if (!n->has_error) {
-        if (n->kind == Ake_ast_type_array_subscript) {
-            Ake_Ast* left = n->head;
-            if (left->type->kind == AKE_TYPE_ARRAY && left->type->data.array.is_const) {
-                Zinc_error_list_set(ps->el, loc, "immutable variable changed in assignment");
+    if (n->kind == AKE_AST_ARRAY_SUBSCRIPT) {
+        Ake_Ast* array = n->data.array_subscript.array;
+        if (array->type->kind == AKE_TYPE_ARRAY) {
+            if (array->type->data.array.is_const) {
+                Zinc_error_list_set(ps->el, loc, "const array changed in assignment");
                 n->has_error = true;
+                return false;
             }
-
         }
     }
 

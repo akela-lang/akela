@@ -34,7 +34,7 @@ namespace Akela_llvm {
             return;
         }
 
-        if (n->kind == Ake_ast_type_array_subscript) {
+        if (n->kind == AKE_AST_ARRAY_SUBSCRIPT) {
             jd->need_printf = true;
             jd->need_exit = true;
         }
@@ -176,6 +176,10 @@ namespace Akela_llvm {
                     Check_subscript(jd, p);
                     p = p->next;
                 }
+                break;
+            case AKE_AST_ARRAY_SUBSCRIPT:
+                Check_subscript(jd, n->data.array_subscript.array);
+                Check_subscript(jd, n->data.array_subscript.index);
                 break;
             default:
                 p = n->head;
