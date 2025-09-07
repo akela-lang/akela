@@ -183,6 +183,9 @@ namespace Akela_llvm {
                 break;
             case AKE_AST_BOOLEAN:
                 break;
+            case AKE_AST_PARENTHESIS:
+                Check_subscript(jd, n->data.parenthesis.expr);
+                break;
             default:
                 p = n->head;
                 while (p) {

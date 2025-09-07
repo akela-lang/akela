@@ -45,8 +45,7 @@ Ast::Stmts {
     }
   }
   Ast::Parenthesis {
-    .type = type0
-    Ast::Plus {
+    .expr = Ast::Plus {
       .left = Ast::Id {
         .value = "speed"
         .type = type0
@@ -57,6 +56,7 @@ Ast::Stmts {
       }
       .type = type0
     }
+    .type = type0
   }
 }
 ```
@@ -101,11 +101,11 @@ Ast::Stmts {
   }
   Ast::Plus {
     .left = Ast::Parenthesis {
-      .type = type0
-      Ast::Id {
+      .expr = Ast::Id {
         .value = "speed"
         .type = type0
       }
+      .type = type0
     }
     .right = Ast::Number {
       .value = "1"
@@ -160,11 +160,11 @@ Ast::Stmts {
       .type = type0
     }
     .right = Ast::Parenthesis {
-      .type = type0
-      Ast::Number {
+      .expr = Ast::Number {
         .value = "1"
         .type = type0
       }
+      .type = type0
     }
     .type = type0
   }
@@ -202,8 +202,7 @@ Ast::Stmts {
       .type = type0
     }
     .right = Ast::Parenthesis {
-      .type = type0
-      Ast::Plus {
+      .expr = Ast::Plus {
         .left = Ast::Number {
           .value = "2"
           .type = type0
@@ -214,6 +213,7 @@ Ast::Stmts {
         }
         .type = type0
       }
+      .type = type0
     }
     .type = type0
   }
@@ -247,8 +247,7 @@ Ast::Stmts {
   .type = type0
   Ast::Plus {
     .left = Ast::Parenthesis {
-      .type = type0
-      Ast::Plus {
+      .expr = Ast::Plus {
         .left = Ast::Number {
           .value = "1"
           .type = type0
@@ -259,6 +258,7 @@ Ast::Stmts {
         }
         .type = type0
       }
+      .type = type0
     }
     .right = Ast::Number {
       .value = "3"
@@ -295,8 +295,7 @@ const type0 = Type::Integer {
 Ast::Stmts {
   .type = type0
   Ast::Parenthesis {
-    .type = type0
-    Ast::Mult {
+    .expr = Ast::Mult {
       .left = Ast::Number {
         .value = "5"
         .type = type0
@@ -307,6 +306,7 @@ Ast::Stmts {
       }
       .type = type0
     }
+    .type = type0
   }
 }
 ```
@@ -342,8 +342,7 @@ Ast::Stmts {
       .type = type0
     }
     .right = Ast::Parenthesis {
-      .type = type0
-      Ast::Mult {
+      .expr = Ast::Mult {
         .left = Ast::Number {
           .value = "2"
           .type = type0
@@ -354,6 +353,7 @@ Ast::Stmts {
         }
         .type = type0
       }
+      .type = type0
     }
     .type = type0
   }
@@ -387,8 +387,7 @@ Ast::Stmts {
   .type = type0
   Ast::Mult {
     .left = Ast::Parenthesis {
-      .type = type0
-      Ast::Mult {
+      .expr = Ast::Mult {
         .left = Ast::Number {
           .value = "1"
           .type = type0
@@ -399,6 +398,7 @@ Ast::Stmts {
         }
         .type = type0
       }
+      .type = type0
     }
     .right = Ast::Number {
       .value = "3"
@@ -430,11 +430,11 @@ const type0 = Type::Integer {
 Ast::Stmts {
   .type = type0
   Ast::Parenthesis {
-    .type = type0
-    Ast::Number {
+    .expr = Ast::Number {
       .value = "32"
       .type = type0
     }
+    .type = type0
   }
 }
 ```
@@ -532,11 +532,11 @@ const type0 = Type::Integer {
 Ast::Stmts {
   .type = type0
   Ast::Parenthesis {
-    .type = type0
-    Ast::Number {
+    .expr = Ast::Number {
       .value = "200"
       .type = type0
     }
+    .type = type0
   }
 }
 ```

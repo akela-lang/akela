@@ -589,6 +589,10 @@ bool Apt_compare_ast(Zinc_test* top_test, Zinc_test* case_test, Ake_Ast* n, Cent
             value2 = Cent_value_get_str(value, "value");
             Apt_compare_value_string(case_test, n, &n->data.boolean.value, value2);
             break;
+        case AKE_AST_PARENTHESIS:
+            value2 = Cent_value_get_str(value, "expr");
+            Apt_compare_ast(top_test, case_test, n->data.parenthesis.expr, value2);
+            break;
         default:
             Cent_value* value_prop = Cent_value_get_str(value, "value");
             if (Apt_has_value(n)) {

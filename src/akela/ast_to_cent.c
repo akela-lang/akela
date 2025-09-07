@@ -349,6 +349,11 @@ void Ake_ast_cent_print(Ake_Ast* n, size_t level, bool is_property, Ake_TypeSlot
                 Ake_indent_print(level);
                 printf(".value = \"%s\"", Zinc_string_c_str(&n->data.boolean.value));
                 break;
+            case AKE_AST_PARENTHESIS:
+                Ake_indent_print(level);
+                printf(".expr = ");
+                Ake_ast_cent_print(n->data.parenthesis.expr, level, true, slots);
+                break;
             default:
                 p = n->head;
                 while (p) {
@@ -508,7 +513,7 @@ char* Ake_ast_cent_name(Ake_AstKind type)
         return "Ast::Boolean";
     }
 
-    if (type == Ake_ast_type_parenthesis) {
+    if (type == AKE_AST_PARENTHESIS) {
         return "Ast::Parenthesis";
     }
 

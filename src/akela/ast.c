@@ -190,6 +190,10 @@ void Ake_AstSet(Ake_Ast* n, Ake_AstKind kind)
 			Zinc_string_init(&n->data.boolean.value);
 			n->is_set = true;
 			break;
+		case AKE_AST_PARENTHESIS:
+			n->data.parenthesis.expr = NULL;
+			n->is_set = true;
+			break;
 		default:
 			break;
 	}
@@ -230,6 +234,7 @@ void Ake_AstValidate(Ake_Ast* n)
 		case AKE_AST_ARRAY_LITERAL:
 		case AKE_AST_ARRAY_SUBSCRIPT:
 		case AKE_AST_BOOLEAN:
+		case AKE_AST_PARENTHESIS:
 			assert(n->is_set);
 			break;
 		default:
@@ -368,6 +373,9 @@ void Ake_AstDestroy(Ake_Ast* n)
     			break;
     		case AKE_AST_BOOLEAN:
     			Zinc_string_destroy(&n->data.boolean.value);
+    			break;
+    		case AKE_AST_PARENTHESIS:
+    			Ake_AstDestroy(n->data.parenthesis.expr);
     			break;
         	default:
     			p = n->head;
@@ -588,6 +596,8 @@ void Ake_AstCopy(Ake_Ast* src, Ake_Ast* dest)
 		case AKE_AST_BOOLEAN:
 			Zinc_string_add_string(&dest->data.boolean.value, &src->data.boolean.value);
 			break;
+		case AKE_AST_PARENTHESIS:
+			dest->data.parenthesis.expr = Ake_AstClone(src->data.parenthesis.expr);
 		default:
 			break;
 	}
@@ -926,6 +936,11 @@ bool Ake_AstMatch(Ake_Ast* a, Ake_Ast* b)
 				break;
 			case AKE_AST_BOOLEAN:
 				if (!Zinc_string_compare(&a->data.boolean.value, &b->data.boolean.value)) {
+					return false;
+				}
+				break;
+			case AKE_AST_PARENTHESIS:
+				if (!Ake_AstMatch(a->data.parenthesis.expr, b->data.parenthesis.expr)) {
 					return false;
 				}
 				break;

@@ -762,7 +762,7 @@ Ake_Ast* Ake_parse_parenthesis(struct Ake_parse_state* ps)
 {
 	Ake_Ast* n = NULL;
     Ake_AstCreate(&n);
-    n->kind = Ake_ast_type_parenthesis;
+    Ake_AstSet(n, AKE_AST_PARENTHESIS);
 
 	struct Ake_token* lp = NULL;
 	if (!Ake_match(ps, Ake_token_left_paren, "expecting left parenthesis", &lp, n)) {
@@ -776,7 +776,8 @@ Ake_Ast* Ake_parse_parenthesis(struct Ake_parse_state* ps)
     a = Ake_parse_expr(ps);
 
     if (a) {
-        Ake_AstAdd(n, a);
+        n->data.parenthesis.expr = a;
+        Ake_AstAdd2(n, a);
     }
 
 	if (!a) {

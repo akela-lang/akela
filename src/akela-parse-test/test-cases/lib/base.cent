@@ -305,6 +305,12 @@ variant Ast::Boolean {
     }
 }
 
+variant Ast::Parenthesis {
+    properties {
+        expr: Ast
+    }
+}
+
 element AstList {
     children {
         Ast
