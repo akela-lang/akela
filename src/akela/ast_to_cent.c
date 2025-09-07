@@ -49,18 +49,9 @@ void Ake_ast_cent_print(Ake_Ast* n, size_t level, bool is_property, Ake_TypeSlot
 
         level++;
 
-        if (n->kind == AKE_AST_ID && n->data.id.value.size > 0) {
-            Ake_indent_print(level);
-            printf(".value = \"%s\"\n", Zinc_string_c_str(&n->data.id.value));
-        } else if (n->struct_value.size > 0) {
+        if (n->struct_value.size > 0) {
             Ake_indent_print(level);
             printf(".value = \"%s\"\n", Zinc_string_c_str(&n->struct_value));
-        } else if (n->kind == AKE_AST_NUMBER && n->data.number.value.size > 0) {
-            Ake_indent_print(level);
-            printf(".value = \"%s\"\n", Zinc_string_c_str(&n->data.number.value));
-        } else if (n->kind == AKE_AST_STRING && n->data.string.value.size > 0) {
-            Ake_indent_print(level);
-            printf(".value = \"%s\"\n", Zinc_string_c_str(&n->data.string.value));
         }
 
         if (n->type) {
@@ -72,6 +63,10 @@ void Ake_ast_cent_print(Ake_Ast* n, size_t level, bool is_property, Ake_TypeSlot
         Ake_Ast* p = NULL;
 
         switch (n->kind) {
+            case AKE_AST_ID:
+                Ake_indent_print(level);
+                printf(".value = \"%s\"\n", Zinc_string_c_str(&n->data.id.value));
+                break;
             case AKE_AST_SIGN:
                 Ake_indent_print(level);
                 printf(".op = ");
@@ -81,8 +76,12 @@ void Ake_ast_cent_print(Ake_Ast* n, size_t level, bool is_property, Ake_TypeSlot
                 printf(".right = ");
                 Ake_ast_cent_print(n->data.sign.right, level, true, slots);
                 break;
-            case AKE_AST_ID:
-                break;
+            case AKE_AST_NUMBER:
+                Ake_indent_print(level);
+                printf(".value = \"%s\"\n", Zinc_string_c_str(&n->data.number.value));
+            case AKE_AST_STRING:
+                Ake_indent_print(level);
+                printf(".value = \"%s\"\n", Zinc_string_c_str(&n->data.string.value));
             case AKE_AST_ASSIGN:
                 if (n->data.assign.left) {
                     Ake_indent_print(level);
