@@ -17,7 +17,6 @@ void Ake_AstInit(Ake_Ast* n)
 {
 	n->kind = AKE_AST_NONE;
 	Zinc_string_init(&n->struct_value);
-	Zinc_string_init(&n->boolean_value);
 	n->type = NULL;
     Zinc_location_init(&n->loc);
 	n->next = NULL;
@@ -179,14 +178,18 @@ void Ake_AstSet(Ake_Ast* n, Ake_AstKind kind)
 			n->data.declaration.type = NULL;
 			n->is_set = true;
 			break;
+		case AKE_AST_ARRAY_LITERAL:
+			Ake_AstListInit(&n->data.array_literal.list, n);
+			n->is_set = true;
 		case AKE_AST_ARRAY_SUBSCRIPT:
 			n->data.array_subscript.array = NULL;
 			n->data.array_subscript.index = NULL;
 			n->is_set = true;
 			break;
-		case AKE_AST_ARRAY_LITERAL:
-			Ake_AstListInit(&n->data.array_literal.list, n);
+		case AKE_AST_BOOLEAN:
+			Zinc_string_init(&n->data.boolean.value);
 			n->is_set = true;
+			break;
 		default:
 			break;
 	}
@@ -226,6 +229,7 @@ void Ake_AstValidate(Ake_Ast* n)
 		case AKE_AST_DECLARATION:
 		case AKE_AST_ARRAY_LITERAL:
 		case AKE_AST_ARRAY_SUBSCRIPT:
+		case AKE_AST_BOOLEAN:
 			assert(n->is_set);
 			break;
 		default:
@@ -362,6 +366,9 @@ void Ake_AstDestroy(Ake_Ast* n)
     			Ake_AstDestroy(n->data.array_subscript.array);
     			Ake_AstDestroy(n->data.array_subscript.index);
     			break;
+    		case AKE_AST_BOOLEAN:
+    			Zinc_string_destroy(&n->data.boolean.value);
+    			break;
         	default:
     			p = n->head;
     			while (p) {
@@ -373,7 +380,6 @@ void Ake_AstDestroy(Ake_Ast* n)
     	}
 
     	Zinc_string_destroy(&n->struct_value);
-    	Zinc_string_destroy(&n->boolean_value);
         Ake_TypeDestroy(n->type);
     	free(n->type);
 
@@ -579,11 +585,13 @@ void Ake_AstCopy(Ake_Ast* src, Ake_Ast* dest)
 			dest->data.array_subscript.array = Ake_AstClone(src->data.array_subscript.array);
 			dest->data.array_subscript.index = Ake_AstClone(src->data.array_subscript.index);
 			break;
+		case AKE_AST_BOOLEAN:
+			Zinc_string_add_string(&dest->data.boolean.value, &src->data.boolean.value);
+			break;
 		default:
 			break;
 	}
 	Zinc_string_copy(&src->struct_value, &dest->struct_value);
-	Zinc_string_copy(&src->boolean_value, &dest->boolean_value);
 }
 
 /* NOLINTNEXTLINE(misc-no-recursion) */
@@ -916,12 +924,13 @@ bool Ake_AstMatch(Ake_Ast* a, Ake_Ast* b)
 					return false;
 				}
 				break;
-			default:
-				if (!Zinc_string_compare(&a->struct_value, &b->struct_value)) {
+			case AKE_AST_BOOLEAN:
+				if (!Zinc_string_compare(&a->data.boolean.value, &b->data.boolean.value)) {
 					return false;
 				}
-
-				if (!Zinc_string_compare(&a->boolean_value, &b->boolean_value)) {
+				break;
+			default:
+				if (!Zinc_string_compare(&a->struct_value, &b->struct_value)) {
 					return false;
 				}
 

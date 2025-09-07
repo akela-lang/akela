@@ -53,10 +53,10 @@ namespace Akela_llvm {
 
     Value* Handle_boolean(Jit_data* jd, Ake_Ast* n)
     {
-        if (Zinc_string_compare_str(&n->boolean_value, "true")) {
+        if (Zinc_string_compare_str(&n->data.boolean.value, "true")) {
             Type* t = Type::getInt1Ty(*jd->TheContext);
             return ConstantInt::get(t, APInt(1, 1, false));
-        } else if (Zinc_string_compare_str(&n->boolean_value, "false")) {
+        } else if (Zinc_string_compare_str(&n->data.boolean.value, "false")) {
             Type* t = Type::getInt1Ty(*jd->TheContext);
             return ConstantInt::get(t, APInt(1, 0, false));
         }

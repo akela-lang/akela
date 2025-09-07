@@ -207,10 +207,6 @@ bool Apt_has_value(Ake_Ast* n)
         return true;
     }
 
-    if (n->boolean_value.size > 0) {
-        return true;
-    }
-
     return false;
 }
 
@@ -218,10 +214,6 @@ Zinc_string* Apt_get_value(Ake_Ast* n)
 {
     if (n->struct_value.size > 0) {
         return &n->struct_value;
-    }
-
-    if (n->boolean_value.size > 0) {
-        return &n->boolean_value;
     }
 
     return NULL;
@@ -592,6 +584,10 @@ bool Apt_compare_ast(Zinc_test* top_test, Zinc_test* case_test, Ake_Ast* n, Cent
 
             value2 = Cent_value_get_str(value, "index");
             Apt_compare_ast(top_test, case_test, n->data.array_subscript.index, value2);
+            break;
+        case AKE_AST_BOOLEAN:
+            value2 = Cent_value_get_str(value, "value");
+            Apt_compare_value_string(case_test, n, &n->data.boolean.value, value2);
             break;
         default:
             Cent_value* value_prop = Cent_value_get_str(value, "value");

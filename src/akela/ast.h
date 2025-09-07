@@ -47,7 +47,7 @@ typedef enum Ake_AstKind {
 	AKE_AST_DECLARATION,
 	AKE_AST_ARRAY_LITERAL,
 	AKE_AST_ARRAY_SUBSCRIPT,
-	Ake_ast_type_boolean,
+	AKE_AST_BOOLEAN,
 	Ake_ast_type_parenthesis,
 	Ake_ast_type_type,
 	Ake_ast_type_power,
@@ -102,7 +102,7 @@ static char const* Ast_type_name(Ake_AstKind kind)
     name[AKE_AST_DECLARATION] = "declaration";
     name[AKE_AST_ARRAY_LITERAL] = "array-literal";
     name[AKE_AST_ARRAY_SUBSCRIPT] = "array-subscript";
-    name[Ake_ast_type_boolean] = "boolean";
+    name[AKE_AST_BOOLEAN] = "boolean";
     name[Ake_ast_type_parenthesis] = "parenthesis";
     name[Ake_ast_type_type] = "type";
     name[Ake_ast_type_power] = "power";
@@ -138,7 +138,6 @@ typedef struct Ake_AstList Ake_AstList;
 typedef struct Ake_Ast {
 	Ake_AstKind kind;
 	Zinc_string struct_value;
-	Zinc_string boolean_value;
 	union {
 		struct { Zinc_string value; } id;
 		struct { Ake_Ast* op; Ake_Ast* right; } sign;
@@ -172,6 +171,7 @@ typedef struct Ake_Ast {
 		struct { Ake_Ast* id; Ake_Ast* type; } declaration;
 		struct { Ake_AstList list; } array_literal;
 		struct { Ake_Ast* array; Ake_Ast* index; } array_subscript;
+		struct { Zinc_string value; } boolean;
 	} data;
 	Ake_Type* type;
     Zinc_location loc;

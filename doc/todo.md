@@ -33,7 +33,7 @@
   * declaration [x]
   * array literal [x]
   * array subscript [x]
-  * boolean []
+  * boolean [x]
   * parenthesis []
   * type []
   * power []
@@ -63,6 +63,7 @@
   * var/const []
   * dret []
   * declaration []
+* test case for const array changed
 * convert Cent_value to Ake_Ast
 * match stack output with Ake_AstMatch
 * modules

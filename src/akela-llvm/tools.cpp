@@ -424,7 +424,7 @@ namespace Akela_llvm {
             return Handle_number(jd, n);
         }
 
-        if (n->kind == Ake_ast_type_boolean) {
+        if (n->kind == AKE_AST_BOOLEAN) {
             return Handle_boolean(jd, n);
         }
 

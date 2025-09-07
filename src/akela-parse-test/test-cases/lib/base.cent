@@ -299,6 +299,12 @@ variant Ast::ArraySubscript {
     }
 }
 
+variant Ast::Boolean {
+    properties {
+        value: String
+    }
+}
+
 element AstList {
     children {
         Ast

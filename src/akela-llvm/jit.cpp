@@ -181,6 +181,8 @@ namespace Akela_llvm {
                 Check_subscript(jd, n->data.array_subscript.array);
                 Check_subscript(jd, n->data.array_subscript.index);
                 break;
+            case AKE_AST_BOOLEAN:
+                break;
             default:
                 p = n->head;
                 while (p) {

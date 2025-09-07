@@ -61,9 +61,6 @@ void Ake_ast_cent_print(Ake_Ast* n, size_t level, bool is_property, Ake_TypeSlot
         } else if (n->kind == AKE_AST_STRING && n->data.string.value.size > 0) {
             Ake_indent_print(level);
             printf(".value = \"%s\"\n", Zinc_string_c_str(&n->data.string.value));
-        } else if (n->boolean_value.size > 0) {
-            Ake_indent_print(level);
-            printf(".value = \"%s\"\n", Zinc_string_c_str(&n->boolean_value));
         }
 
         if (n->type) {
@@ -348,6 +345,10 @@ void Ake_ast_cent_print(Ake_Ast* n, size_t level, bool is_property, Ake_TypeSlot
                 printf(".index = ");
                 Ake_ast_cent_print(n->data.array_subscript.index, level, true, slots);
                 break;
+            case AKE_AST_BOOLEAN:
+                Ake_indent_print(level);
+                printf(".value = \"%s\"", Zinc_string_c_str(&n->data.boolean.value));
+                break;
             default:
                 p = n->head;
                 while (p) {
@@ -503,7 +504,7 @@ char* Ake_ast_cent_name(Ake_AstKind type)
         return "Ast::ArraySubscript";
     }
 
-    if (type == Ake_ast_type_boolean) {
+    if (type == AKE_AST_BOOLEAN) {
         return "Ast::Boolean";
     }
 

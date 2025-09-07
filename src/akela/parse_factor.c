@@ -376,9 +376,9 @@ Ake_Ast* Ake_parse_literal(struct Ake_parse_state* ps)
             is_string = true;
 		    Zinc_string_copy(&x->value, &n->data.string.value);
 		} else if (x->type == Ake_token_boolean) {
-			n->kind = Ake_ast_type_boolean;
+		    Ake_AstSet(n, AKE_AST_BOOLEAN);
 			type_name = "Bool";
-		    Zinc_string_copy(&x->value, &n->boolean_value);
+		    Zinc_string_copy(&x->value, &n->data.boolean.value);
 		} else {
             assert(false);
         }
