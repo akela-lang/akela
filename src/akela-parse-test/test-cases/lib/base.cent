@@ -281,8 +281,8 @@ variant Ast::ForIteration {
 
 variant Ast::Declaration {
     properties {
-        id: Ast
-        type: Ast
+        id_node: Ast
+        type_node: Ast
     }
 }
 

@@ -557,11 +557,11 @@ bool Apt_compare_ast(Zinc_test* top_test, Zinc_test* case_test, Ake_Ast* n, Cent
             Apt_compare_ast(top_test, case_test, n->data.for_iteration.body, value2);
             break;
         case AKE_AST_DECLARATION:
-            value2 = Cent_value_get_str(value, "id");
-            Apt_compare_ast(top_test, case_test, n->data.declaration.id, value2);
+            value2 = Cent_value_get_str(value, "id_node");
+            Apt_compare_ast(top_test, case_test, n->data.declaration.id_node, value2);
 
-            value2 = Cent_value_get_str(value, "type");
-            Apt_compare_ast(top_test, case_test, n->data.declaration.type, value2);
+            value2 = Cent_value_get_str(value, "type_node");
+            Apt_compare_ast(top_test, case_test, n->data.declaration.type_node, value2);
             break;
         case AKE_AST_ARRAY_LITERAL:
             if (value->type == Cent_value_type_dag) {
@@ -592,6 +592,8 @@ bool Apt_compare_ast(Zinc_test* top_test, Zinc_test* case_test, Ake_Ast* n, Cent
         case AKE_AST_PARENTHESIS:
             value2 = Cent_value_get_str(value, "expr");
             Apt_compare_ast(top_test, case_test, n->data.parenthesis.expr, value2);
+            break;
+        case AKE_AST_TYPE:
             break;
         default:
             Cent_value* value_prop = Cent_value_get_str(value, "value");
@@ -627,10 +629,6 @@ bool Apt_compare_ast(Zinc_test* top_test, Zinc_test* case_test, Ake_Ast* n, Cent
                 Zinc_expect_passed(case_test);
             }
 
-            Ake_Type* type = n->type;
-            Cent_value* tu_value = Cent_value_get_str(value, "type");
-            pass = Apt_compare_type(case_test, n, type, tu_value) && pass;
-
             /* children */
             Ake_Ast* n2 = NULL;
             value2 = NULL;
@@ -651,6 +649,10 @@ bool Apt_compare_ast(Zinc_test* top_test, Zinc_test* case_test, Ake_Ast* n, Cent
             }
             break;
     }
+
+    Ake_Type* type = n->type;
+    Cent_value* tu_value = Cent_value_get_str(value, "type");
+    pass = Apt_compare_type(case_test, n, type, tu_value) && pass;
 
     return pass;
 }

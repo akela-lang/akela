@@ -3,7 +3,7 @@
 #include "zinc/test.h"
 #include "zinc/expect.h"
 
-void AkeUnit_type_use1(Zinc_test* test)
+void AkeUnit_add(Zinc_test* test)
 {
 	if (test->dry_run) {
 		Zinc_string_add_str(&test->name, __func__);
@@ -14,29 +14,33 @@ void AkeUnit_type_use1(Zinc_test* test)
 
 	Ake_Ast* n;
     Ake_AstCreate(&n);
-	n->kind = Ake_ast_type_type;
+	Ake_AstSet(n, AKE_AST_PLUS);
 
 	Ake_Ast* a;
     Ake_AstCreate(&a);
-	a->kind = Ake_ast_type_type;
-    Ake_AstAdd(n, a);
+	Ake_AstSet(a, AKE_AST_NUMBER);
+	Zinc_string_add_str(&a->data.number.value, "1");
+	n->data.plus.left = a;
+    Ake_AstAdd2(n, a);
 
 	Ake_Ast* b;
     Ake_AstCreate(&b);
-	b->kind = Ake_ast_type_type;
-    Ake_AstAdd(n, b);
+	Ake_AstSet(b, AKE_AST_NUMBER);
+	Zinc_string_add_str(&b->data.number.value, "3");
+	n->data.plus.right = b;
+    Ake_AstAdd2(n, b);
 
 	if (!Zinc_expect_ptr(test, n, "ptr n")) {
 		return Zinc_assert();
 	}
 
-	Ake_Ast* n0 = Ake_AstGet(n, 0);
+	Ake_Ast* n0 = n->data.plus.left;
 	if (!Zinc_expect_ptr(test, n0, "ptr a")) {
 		return Zinc_assert();
 	}
 	Zinc_expect_ptr_equal(test, n0, a, "a");
 
-	Ake_Ast* n1 = Ake_AstGet(n, 1);
+	Ake_Ast* n1 = n->data.plus.right;
 	if (!Zinc_expect_ptr(test, n1, "ptr b")) {
 		return Zinc_assert();
 	}
@@ -1219,7 +1223,7 @@ void AkeUnit_type(Zinc_test* test)
 		test->mute = false;
 		test->solo = false;
 
-		Zinc_test_register(test, AkeUnit_type_use1);
+		Zinc_test_register(test, AkeUnit_add);
 		Zinc_test_register(test, AkeUnit_TypeDefMatchIntegerTrue);
 		Zinc_test_register(test, AkeUnit_TypeDefMatchIntegerFalse);
 		Zinc_test_register(test, AkeUnit_TypeDefMatchNaturalTrue);

@@ -49,7 +49,7 @@ typedef enum Ake_AstKind {
 	AKE_AST_ARRAY_SUBSCRIPT,
 	AKE_AST_BOOLEAN,
 	AKE_AST_PARENTHESIS,
-	Ake_ast_type_type,
+	AKE_AST_TYPE,
 	Ake_ast_type_power,
 	Ake_ast_type_type_pool,
 	Ake_ast_type_dot,
@@ -104,7 +104,7 @@ static char const* Ast_type_name(Ake_AstKind kind)
     name[AKE_AST_ARRAY_SUBSCRIPT] = "array-subscript";
     name[AKE_AST_BOOLEAN] = "boolean";
     name[AKE_AST_PARENTHESIS] = "parenthesis";
-    name[Ake_ast_type_type] = "type";
+    name[AKE_AST_TYPE] = "type";
     name[Ake_ast_type_power] = "power";
     name[Ake_ast_type_type_pool] = "type-pool";
     name[Ake_ast_type_dot] = "dot";
@@ -168,11 +168,12 @@ typedef struct Ake_Ast {
 		struct { Ake_Ast* cond; Ake_Ast* body; } _while_;
 		struct { Ake_Ast* dec; Ake_Ast* start; Ake_Ast* end; Ake_Ast* body; } for_range;
 		struct { Ake_Ast* dec; Ake_Ast* iterator; Ake_Ast* body; } for_iteration;
-		struct { Ake_Ast* id; Ake_Ast* type; } declaration;
+		struct { Ake_Ast* id_node; Ake_Ast* type_node; } declaration;
 		struct { Ake_AstList list; } array_literal;
 		struct { Ake_Ast* array; Ake_Ast* index; } array_subscript;
 		struct { Zinc_string value; } boolean;
 		struct { Ake_Ast* expr; } parenthesis;
+		struct { } type;
 	} data;
 	Ake_Type* type;
     Zinc_location loc;

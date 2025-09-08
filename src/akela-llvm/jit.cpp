@@ -167,8 +167,8 @@ namespace Akela_llvm {
                 Check_subscript(jd, n->data.for_iteration.body);
                 break;
             case AKE_AST_DECLARATION:
-                Check_subscript(jd, n->data.declaration.id);
-                Check_subscript(jd, n->data.declaration.type);
+                Check_subscript(jd, n->data.declaration.id_node);
+                Check_subscript(jd, n->data.declaration.type_node);
                 break;
             case AKE_AST_ARRAY_LITERAL:
                 p = n->data.array_literal.list.head;
@@ -185,6 +185,8 @@ namespace Akela_llvm {
                 break;
             case AKE_AST_PARENTHESIS:
                 Check_subscript(jd, n->data.parenthesis.expr);
+                break;
+            case AKE_AST_TYPE:
                 break;
             default:
                 p = n->head;

@@ -84,26 +84,26 @@ Ast::Stmts {
   Ast::Struct {
     .value = "Person"
     Ast::Declaration {
-      .id = Ast::Id {
+      .id_node = Ast::Id {
         .value = "firstName"
       }
-      .type = Ast::Type {
+      .type_node = Ast::Type {
         .type = type0
       }
     }
     Ast::Declaration {
-      .id = Ast::Id {
+      .id_node = Ast::Id {
         .value = "lastName"
       }
-      .type = Ast::Type {
+      .type_node = Ast::Type {
         .type = type0
       }
     }
     Ast::Declaration {
-      .id = Ast::Id {
+      .id_node = Ast::Id {
         .value = "age"
       }
-      .type = Ast::Type {
+      .type_node = Ast::Type {
         .type = type1
       }
     }
@@ -232,26 +232,26 @@ Ast::Stmts {
   Ast::Struct {
     .value = "Person"
     Ast::Declaration {
-      .id = Ast::Id {
+      .id_node = Ast::Id {
         .value = "first_name"
       }
-      .type = Ast::Type {
+      .type_node = Ast::Type {
         .type = type0
       }
     }
     Ast::Declaration {
-      .id = Ast::Id {
+      .id_node = Ast::Id {
         .value = "last_name"
       }
-      .type = Ast::Type {
+      .type_node = Ast::Type {
         .type = type0
       }
     }
     Ast::Declaration {
-      .id = Ast::Id {
+      .id_node = Ast::Id {
         .value = "age"
       }
-      .type = Ast::Type {
+      .type_node = Ast::Type {
         .type = type1
       }
     }
@@ -669,16 +669,16 @@ Ast::Stmts {
       }
       Ast::Dseq {
         Ast::Declaration {
-          .id = Ast::Id {
+          .id_node = Ast::Id {
           }
-          .type = Ast::Type {
+          .type_node = Ast::Type {
             .type = type1
           }
         }
         Ast::Declaration {
-          .id = Ast::Id {
+          .id_node = Ast::Id {
           }
-          .type = Ast::Type {
+          .type_node = Ast::Type {
             .type = type1
           }
         }
@@ -698,9 +698,9 @@ Ast::Stmts {
       }
       Ast::Dseq {
         Ast::Declaration {
-          .id = Ast::Id {
+          .id_node = Ast::Id {
           }
-          .type = Ast::Type {
+          .type_node = Ast::Type {
             .type = type1
           }
         }
@@ -715,18 +715,18 @@ Ast::Stmts {
   Ast::Struct {
     .value = "Point"
     Ast::Declaration {
-      .id = Ast::Id {
+      .id_node = Ast::Id {
         .value = "x"
       }
-      .type = Ast::Type {
+      .type_node = Ast::Type {
         .type = type1
       }
     }
     Ast::Declaration {
-      .id = Ast::Id {
+      .id_node = Ast::Id {
         .value = "y"
       }
-      .type = Ast::Type {
+      .type_node = Ast::Type {
         .type = type1
       }
     }
@@ -734,18 +734,18 @@ Ast::Stmts {
   Ast::Struct {
     .value = "Line"
     Ast::Declaration {
-      .id = Ast::Id {
+      .id_node = Ast::Id {
         .value = "p0"
       }
-      .type = Ast::Type {
+      .type_node = Ast::Type {
         .type = type3
       }
     }
     Ast::Declaration {
-      .id = Ast::Id {
+      .id_node = Ast::Id {
         .value = "p1"
       }
-      .type = Ast::Type {
+      .type_node = Ast::Type {
         .type = type3
       }
     }
@@ -758,10 +758,10 @@ Ast::Stmts {
         }
         Ast::Dseq {
           Ast::Declaration {
-            .id = Ast::Id {
+            .id_node = Ast::Id {
               .value = "self"
             }
-            .type = Ast::Type {
+            .type_node = Ast::Type {
               .type = type5
             }
           }

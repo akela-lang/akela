@@ -47,8 +47,8 @@ namespace Akela_llvm {
         Ake_Ast* dec = dseq->data.dseq.list.head;
         int i = 0;
         while (dec) {
-            Ake_Ast* dec_id = dec->data.declaration.id;
-            Ake_Ast* dec_type = dec->data.declaration.type;
+            Ake_Ast* dec_id = dec->data.declaration.id_node;
+            Ake_Ast* dec_type = dec->data.declaration.type_node;
             Value* dec_value = &f->arg_begin()[i];
 
             Zinc_string_finish(&dec_id->data.id.value);

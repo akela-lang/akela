@@ -54,12 +54,6 @@ void Ake_ast_cent_print(Ake_Ast* n, size_t level, bool is_property, Ake_TypeSlot
             printf(".value = \"%s\"\n", Zinc_string_c_str(&n->struct_value));
         }
 
-        if (n->type) {
-            Ake_indent_print(level);
-            size_t slot = Ake_TypeSlotsGetSlot(slots, n->type);
-            printf(".type = type%zu\n", slot);
-        }
-
         Ake_Ast* p = NULL;
 
         switch (n->kind) {
@@ -322,11 +316,11 @@ void Ake_ast_cent_print(Ake_Ast* n, size_t level, bool is_property, Ake_TypeSlot
             case AKE_AST_DECLARATION:
                 Ake_indent_print(level);
                 printf("id = ");
-                Ake_ast_cent_print(n->data.declaration.id,  level, true, slots);
+                Ake_ast_cent_print(n->data.declaration.id_node,  level, true, slots);
 
                 Ake_indent_print(level);
                 printf(".type = ");
-                Ake_ast_cent_print(n->data.declaration.type, level, true, slots);
+                Ake_ast_cent_print(n->data.declaration.type_node, level, true, slots);
                 break;
             case AKE_AST_ARRAY_LITERAL:
                 p = n->data.array_literal.list.head;
@@ -353,6 +347,8 @@ void Ake_ast_cent_print(Ake_Ast* n, size_t level, bool is_property, Ake_TypeSlot
                 printf(".expr = ");
                 Ake_ast_cent_print(n->data.parenthesis.expr, level, true, slots);
                 break;
+            case AKE_AST_TYPE:
+                break;
             default:
                 p = n->head;
                 while (p) {
@@ -360,6 +356,12 @@ void Ake_ast_cent_print(Ake_Ast* n, size_t level, bool is_property, Ake_TypeSlot
                     p = p->next;
                 }
                 break;
+        }
+
+        if (n->type) {
+            Ake_indent_print(level);
+            size_t slot = Ake_TypeSlotsGetSlot(slots, n->type);
+            printf(".type = type%zu\n", slot);
         }
 
         level--;
@@ -516,7 +518,7 @@ char* Ake_ast_cent_name(Ake_AstKind type)
         return "Ast::Parenthesis";
     }
 
-    if (type == Ake_ast_type_type) {
+    if (type == AKE_AST_TYPE) {
         return "Ast::Type";
     }
 

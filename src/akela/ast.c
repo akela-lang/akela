@@ -174,8 +174,8 @@ void Ake_AstSet(Ake_Ast* n, Ake_AstKind kind)
 			n->is_set = true;
 			break;
 		case AKE_AST_DECLARATION:
-			n->data.declaration.id = NULL;
-			n->data.declaration.type = NULL;
+			n->data.declaration.id_node = NULL;
+			n->data.declaration.type_node = NULL;
 			n->is_set = true;
 			break;
 		case AKE_AST_ARRAY_LITERAL:
@@ -192,6 +192,9 @@ void Ake_AstSet(Ake_Ast* n, Ake_AstKind kind)
 			break;
 		case AKE_AST_PARENTHESIS:
 			n->data.parenthesis.expr = NULL;
+			n->is_set = true;
+			break;
+		case AKE_AST_TYPE:
 			n->is_set = true;
 			break;
 		default:
@@ -235,6 +238,7 @@ void Ake_AstValidate(Ake_Ast* n)
 		case AKE_AST_ARRAY_SUBSCRIPT:
 		case AKE_AST_BOOLEAN:
 		case AKE_AST_PARENTHESIS:
+		case AKE_AST_TYPE:
 			assert(n->is_set);
 			break;
 		default:
@@ -361,8 +365,8 @@ void Ake_AstDestroy(Ake_Ast* n)
     			Ake_AstDestroy(n->data.for_iteration.body);
     			break;
     		case AKE_AST_DECLARATION:
-    			Ake_AstDestroy(n->data.declaration.id);
-    			Ake_AstDestroy(n->data.declaration.type);
+    			Ake_AstDestroy(n->data.declaration.id_node);
+    			Ake_AstDestroy(n->data.declaration.type_node);
     			break;
     		case AKE_AST_ARRAY_LITERAL:
     			Ake_AstListDestroy(&n->data.array_literal.list);
@@ -376,6 +380,8 @@ void Ake_AstDestroy(Ake_Ast* n)
     			break;
     		case AKE_AST_PARENTHESIS:
     			Ake_AstDestroy(n->data.parenthesis.expr);
+    			break;
+    		case AKE_AST_TYPE:
     			break;
         	default:
     			p = n->head;
@@ -579,8 +585,8 @@ void Ake_AstCopy(Ake_Ast* src, Ake_Ast* dest)
 			dest->data.for_iteration.iterator = Ake_AstClone(src->data.for_iteration.iterator);
 			dest->data.for_iteration.body = Ake_AstClone(src->data.for_iteration.body);
 		case AKE_AST_DECLARATION:
-			dest->data.declaration.id = Ake_AstClone(src->data.declaration.id);
-			dest->data.declaration.type = Ake_AstClone(src->data.declaration.type);
+			dest->data.declaration.id_node = Ake_AstClone(src->data.declaration.id_node);
+			dest->data.declaration.type_node = Ake_AstClone(src->data.declaration.type_node);
 			break;
 		case AKE_AST_ARRAY_LITERAL:
 			p = src->data.array_literal.list.head;
@@ -598,6 +604,9 @@ void Ake_AstCopy(Ake_Ast* src, Ake_Ast* dest)
 			break;
 		case AKE_AST_PARENTHESIS:
 			dest->data.parenthesis.expr = Ake_AstClone(src->data.parenthesis.expr);
+			break;
+		case AKE_AST_TYPE:
+			break;
 		default:
 			break;
 	}
@@ -902,10 +911,10 @@ bool Ake_AstMatch(Ake_Ast* a, Ake_Ast* b)
 				}
 				break;
 			case AKE_AST_DECLARATION:
-				if (!Ake_AstMatch(a->data.declaration.id, b->data.declaration.id)) {
+				if (!Ake_AstMatch(a->data.declaration.id_node, b->data.declaration.id_node)) {
 					return false;
 				}
-				if (!Ake_AstMatch(a->data.declaration.type, b->data.declaration.type)) {
+				if (!Ake_AstMatch(a->data.declaration.type_node, b->data.declaration.type_node)) {
 					return false;
 				}
 				break;
@@ -943,6 +952,8 @@ bool Ake_AstMatch(Ake_Ast* a, Ake_Ast* b)
 				if (!Ake_AstMatch(a->data.parenthesis.expr, b->data.parenthesis.expr)) {
 					return false;
 				}
+				break;
+			case AKE_AST_TYPE:
 				break;
 			default:
 				if (!Zinc_string_compare(&a->struct_value, &b->struct_value)) {

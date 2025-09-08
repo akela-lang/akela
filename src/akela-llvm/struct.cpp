@@ -13,7 +13,7 @@ namespace Akela_llvm {
         Zinc_string_finish(&n->struct_value);
         struct Ake_Ast* element_dec = n->head;
         while (element_dec) {
-            Ake_Ast* element_type_node = element_dec->data.declaration.type;
+            Ake_Ast* element_type_node = element_dec->data.declaration.type_node;
             Ake_Type* element_type = element_type_node->type;
             Type* element_type2 = Get_type(jd, element_type);
             if (element_type->kind == AKE_TYPE_FUNCTION) {

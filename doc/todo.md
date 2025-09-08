@@ -35,7 +35,7 @@
   * array subscript [x]
   * boolean [x]
   * parenthesis [x]
-  * type []
+  * type [x]
   * power []
   * type pool []
   * dot []
