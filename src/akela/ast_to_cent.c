@@ -315,11 +315,11 @@ void Ake_ast_cent_print(Ake_Ast* n, size_t level, bool is_property, Ake_TypeSlot
                 break;
             case AKE_AST_DECLARATION:
                 Ake_indent_print(level);
-                printf("id = ");
+                printf("id_node = ");
                 Ake_ast_cent_print(n->data.declaration.id_node,  level, true, slots);
 
                 Ake_indent_print(level);
-                printf(".type = ");
+                printf(".type_node = ");
                 Ake_ast_cent_print(n->data.declaration.type_node, level, true, slots);
                 break;
             case AKE_AST_ARRAY_LITERAL:
@@ -348,6 +348,15 @@ void Ake_ast_cent_print(Ake_Ast* n, size_t level, bool is_property, Ake_TypeSlot
                 Ake_ast_cent_print(n->data.parenthesis.expr, level, true, slots);
                 break;
             case AKE_AST_TYPE:
+                break;
+            case AKE_AST_POWER:
+                Ake_indent_print(level);
+                printf(".left = ");
+                Ake_ast_cent_print(n->data.power.left, level, true, slots);
+
+                Ake_indent_print(level);
+                printf(".right = ");
+                Ake_ast_cent_print(n->data.power.right, level, true, slots);
                 break;
             default:
                 p = n->head;
@@ -522,7 +531,7 @@ char* Ake_ast_cent_name(Ake_AstKind type)
         return "Ast::Type";
     }
 
-    if (type == Ake_ast_type_power) {
+    if (type == AKE_AST_POWER) {
         return "Ast::Power";
     }
 

@@ -563,9 +563,10 @@ Ake_Ast* Ake_parse_power(struct Ake_parse_state* ps)
 		}
 
         Ake_AstCreate(&n);
-        n->kind = Ake_ast_type_power;
+		Ake_AstSet(n, AKE_AST_POWER);
         if (left) {
-            Ake_AstAdd(n, left);
+        	n->data.power.left = left;
+            Ake_AstAdd2(n, left);
         }
 
         struct Ake_token* caret = NULL;
@@ -580,7 +581,8 @@ Ake_Ast* Ake_parse_power(struct Ake_parse_state* ps)
 		b = Ake_parse_complex_operators(ps);
 
         if (b) {
-            Ake_AstAdd(n, b);
+        	n->data.power.right = b;
+            Ake_AstAdd2(n, b);
         }
 
         if (!b) {

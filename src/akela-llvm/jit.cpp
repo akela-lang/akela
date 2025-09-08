@@ -188,6 +188,10 @@ namespace Akela_llvm {
                 break;
             case AKE_AST_TYPE:
                 break;
+            case AKE_AST_POWER:
+                Check_subscript(jd, n->data.power.left);
+                Check_subscript(jd, n->data.power.right);
+                break;
             default:
                 p = n->head;
                 while (p) {

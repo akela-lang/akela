@@ -1024,10 +1024,6 @@ power
 ```cent
 use lib::base::*
 Test {
-  .solo = false
-  .mute = false
-  .snapshot = false
-  .has_error = false
 }
 ```
 
@@ -1044,15 +1040,15 @@ const type0 = Type::Integer {
 Ast::Stmts {
   .type = type0
   Ast::Power {
-    .type = type0
-    Ast::Number {
+    .left = Ast::Number {
       .value = "5"
       .type = type0
     }
-    Ast::Number {
+    .right = Ast::Number {
       .value = "2"
       .type = type0
     }
+    .type = type0
   }
 }
 ```
@@ -1301,15 +1297,15 @@ const type0 = Type::Integer {
 Ast::Stmts {
   .type = type0
   Ast::Power {
-    .type = type0
-    Ast::Number {
+    .left = Ast::Number {
       .value = "1"
       .type = type0
     }
-    Ast::Number {
+    .right = Ast::Number {
       .value = "2"
       .type = type0
     }
+    .type = type0
   }
 }
 ```

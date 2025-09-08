@@ -311,6 +311,13 @@ variant Ast::Parenthesis {
     }
 }
 
+variant Ast::Power {
+    properties {
+        left: Ast
+        right: Ast
+    }
+}
+
 element AstList {
     children {
         Ast

@@ -197,6 +197,11 @@ void Ake_AstSet(Ake_Ast* n, Ake_AstKind kind)
 		case AKE_AST_TYPE:
 			n->is_set = true;
 			break;
+		case AKE_AST_POWER:
+			n->data.power.left = NULL;
+			n->data.power.right = NULL;
+			n->is_set = true;
+			break;
 		default:
 			break;
 	}
@@ -239,6 +244,7 @@ void Ake_AstValidate(Ake_Ast* n)
 		case AKE_AST_BOOLEAN:
 		case AKE_AST_PARENTHESIS:
 		case AKE_AST_TYPE:
+		case AKE_AST_POWER:
 			assert(n->is_set);
 			break;
 		default:
@@ -382,6 +388,10 @@ void Ake_AstDestroy(Ake_Ast* n)
     			Ake_AstDestroy(n->data.parenthesis.expr);
     			break;
     		case AKE_AST_TYPE:
+    			break;
+    		case AKE_AST_POWER:
+    			Ake_AstDestroy(n->data.power.left);
+    			Ake_AstDestroy(n->data.power.right);
     			break;
         	default:
     			p = n->head;
@@ -606,6 +616,10 @@ void Ake_AstCopy(Ake_Ast* src, Ake_Ast* dest)
 			dest->data.parenthesis.expr = Ake_AstClone(src->data.parenthesis.expr);
 			break;
 		case AKE_AST_TYPE:
+			break;
+		case AKE_AST_POWER:
+			dest->data.power.left = Ake_AstClone(src->data.power.left);
+			dest->data.power.right = Ake_AstClone(src->data.power.right);
 			break;
 		default:
 			break;
@@ -954,6 +968,14 @@ bool Ake_AstMatch(Ake_Ast* a, Ake_Ast* b)
 				}
 				break;
 			case AKE_AST_TYPE:
+				break;
+			case AKE_AST_POWER:
+				if (!Ake_AstMatch(a->data.power.left, b->data.power.left)) {
+					return false;
+				}
+				if (!Ake_AstMatch(a->data.power.right, b->data.power.right)) {
+					return false;
+				}
 				break;
 			default:
 				if (!Zinc_string_compare(&a->struct_value, &b->struct_value)) {

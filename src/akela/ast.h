@@ -50,7 +50,7 @@ typedef enum Ake_AstKind {
 	AKE_AST_BOOLEAN,
 	AKE_AST_PARENTHESIS,
 	AKE_AST_TYPE,
-	Ake_ast_type_power,
+	AKE_AST_POWER,
 	Ake_ast_type_type_pool,
 	Ake_ast_type_dot,
 	Ake_ast_type_struct,
@@ -105,7 +105,7 @@ static char const* Ast_type_name(Ake_AstKind kind)
     name[AKE_AST_BOOLEAN] = "boolean";
     name[AKE_AST_PARENTHESIS] = "parenthesis";
     name[AKE_AST_TYPE] = "type";
-    name[Ake_ast_type_power] = "power";
+    name[AKE_AST_POWER] = "power";
     name[Ake_ast_type_type_pool] = "type-pool";
     name[Ake_ast_type_dot] = "dot";
     name[Ake_ast_type_struct] = "struct";
@@ -174,6 +174,7 @@ typedef struct Ake_Ast {
 		struct { Zinc_string value; } boolean;
 		struct { Ake_Ast* expr; } parenthesis;
 		struct { } type;
+		struct { Ake_Ast* left; Ake_Ast* right; } power;
 	} data;
 	Ake_Type* type;
     Zinc_location loc;
