@@ -535,10 +535,6 @@ char* Ake_ast_cent_name(Ake_AstKind type)
         return "Ast::Power";
     }
 
-    if (type == Ake_ast_type_type_pool) {
-        return "Ast::TypePool";
-    }
-
     if (type == Ake_ast_type_dot) {
         return "Ast::Dot";
     }

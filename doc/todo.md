@@ -37,7 +37,6 @@
   * parenthesis [x]
   * type [x]
   * power [x]
-  * type pool []
   * dot []
   * struct []
   * return []

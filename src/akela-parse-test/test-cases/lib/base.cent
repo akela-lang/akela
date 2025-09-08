@@ -80,7 +80,6 @@ enum AstType {
   Parenthesis
   Type
   Power
-  Type_pool
   Dot
   Struct
   Return

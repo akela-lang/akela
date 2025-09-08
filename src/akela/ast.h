@@ -51,7 +51,6 @@ typedef enum Ake_AstKind {
 	AKE_AST_PARENTHESIS,
 	AKE_AST_TYPE,
 	AKE_AST_POWER,
-	Ake_ast_type_type_pool,
 	Ake_ast_type_dot,
 	Ake_ast_type_struct,
 	Ake_ast_type_return,
@@ -106,7 +105,6 @@ static char const* Ast_type_name(Ake_AstKind kind)
     name[AKE_AST_PARENTHESIS] = "parenthesis";
     name[AKE_AST_TYPE] = "type";
     name[AKE_AST_POWER] = "power";
-    name[Ake_ast_type_type_pool] = "type-pool";
     name[Ake_ast_type_dot] = "dot";
     name[Ake_ast_type_struct] = "struct";
     name[Ake_ast_type_return] = "return";
