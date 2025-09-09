@@ -37,7 +37,7 @@
   * parenthesis [x]
   * type [x]
   * power [x]
-  * dot []
+  * dot [x]
   * struct []
   * return []
   * eseq []
@@ -62,6 +62,7 @@
   * var/const []
   * dret []
   * declaration []
+* remove id node from dot
 * test case for const array changed
 * convert Cent_value to Ake_Ast
 * match stack output with Ake_AstMatch

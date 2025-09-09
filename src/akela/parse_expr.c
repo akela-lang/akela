@@ -887,7 +887,7 @@ Ake_Ast* Ake_parse_dot(struct Ake_parse_state* ps)
         }
 
         Ake_AstCreate(&n);
-        n->kind = Ake_ast_type_dot;
+    	Ake_AstSet(n, AKE_AST_DOT);
 
         struct Ake_token* dot = NULL;
         if (!Ake_match(ps, Ake_token_dot, "expected a dot", &dot, n)) {
@@ -911,9 +911,11 @@ Ake_Ast* Ake_parse_dot(struct Ake_parse_state* ps)
             Zinc_string_copy(&id->value, &b->data.id.value);
         }
 
-        Ake_AstAdd(n, left);
+    	n->data.dot.left = left;
+        Ake_AstAdd2(n, left);
 
-        Ake_AstAdd(n, b);
+    	n->data.dot.right = b;
+        Ake_AstAdd2(n, b);
 
         if (!n->has_error) {
             if (!left->type) {

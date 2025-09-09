@@ -202,6 +202,11 @@ void Ake_AstSet(Ake_Ast* n, Ake_AstKind kind)
 			n->data.power.right = NULL;
 			n->is_set = true;
 			break;
+		case AKE_AST_DOT:
+			n->data.dot.left = NULL;
+			n->data.dot.right = NULL;
+			n->is_set = true;
+			break;
 		default:
 			break;
 	}
@@ -245,6 +250,7 @@ void Ake_AstValidate(Ake_Ast* n)
 		case AKE_AST_PARENTHESIS:
 		case AKE_AST_TYPE:
 		case AKE_AST_POWER:
+		case AKE_AST_DOT:
 			assert(n->is_set);
 			break;
 		default:
@@ -392,6 +398,10 @@ void Ake_AstDestroy(Ake_Ast* n)
     		case AKE_AST_POWER:
     			Ake_AstDestroy(n->data.power.left);
     			Ake_AstDestroy(n->data.power.right);
+    			break;
+    		case AKE_AST_DOT:
+    			Ake_AstDestroy(n->data.dot.left);
+    			Ake_AstDestroy(n->data.dot.right);
     			break;
         	default:
     			p = n->head;
@@ -620,6 +630,10 @@ void Ake_AstCopy(Ake_Ast* src, Ake_Ast* dest)
 		case AKE_AST_POWER:
 			dest->data.power.left = Ake_AstClone(src->data.power.left);
 			dest->data.power.right = Ake_AstClone(src->data.power.right);
+			break;
+		case AKE_AST_DOT:
+			dest->data.dot.left = Ake_AstClone(src->data.dot.left);
+			dest->data.dot.right = Ake_AstClone(src->data.dot.right);
 			break;
 		default:
 			break;
@@ -974,6 +988,14 @@ bool Ake_AstMatch(Ake_Ast* a, Ake_Ast* b)
 					return false;
 				}
 				if (!Ake_AstMatch(a->data.power.right, b->data.power.right)) {
+					return false;
+				}
+				break;
+			case AKE_AST_DOT:
+				if (!Ake_AstMatch(a->data.dot.left, b->data.dot.left)) {
+					return false;
+				}
+				if (!Ake_AstMatch(a->data.dot.right, b->data.dot.right)) {
 					return false;
 				}
 				break;

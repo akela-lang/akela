@@ -727,7 +727,7 @@ bool Ake_is_lvalue(enum Ake_AstKind type)
         return true;
     }
 
-    if (type == Ake_ast_type_dot) {
+    if (type == AKE_AST_DOT) {
         return true;
     }
 
@@ -755,8 +755,8 @@ bool Ake_check_lvalue(Ake_parse_state* ps, Ake_Ast* n, Zinc_location* loc)
         }
         if (p->kind == AKE_AST_ARRAY_SUBSCRIPT) {
             p = p->data.array_subscript.array;
-        } else if (p->kind == Ake_ast_type_dot) {
-            p = p->head;
+        } else if (p->kind == AKE_AST_DOT) {
+            p = p->data.dot.left;
         } else {
             break;
         }

@@ -392,7 +392,7 @@ namespace Akela_llvm {
             return Handle_call(jd, n);
         }
 
-        if (n->kind == Ake_ast_type_dot) {
+        if (n->kind == AKE_AST_DOT) {
             return Handle_dot(jd, n);
         }
 

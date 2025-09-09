@@ -118,14 +118,14 @@ Ast::Stmts {
   }
   Ast::Assign {
     .left = Ast::Dot {
-      .type = type0
-      Ast::Id {
+      .left = Ast::Id {
         .value = "p"
         .type = type2
       }
-      Ast::Id {
+      .right = Ast::Id {
         .value = "firstName"
       }
+      .type = type0
     }
     .right = Ast::String {
       .value = "John"
@@ -133,14 +133,14 @@ Ast::Stmts {
     }
   }
   Ast::Dot {
-    .type = type0
-    Ast::Id {
+    .left = Ast::Id {
       .value = "p"
       .type = type2
     }
-    Ast::Id {
+    .right = Ast::Id {
       .value = "firstName"
     }
+    .type = type0
   }
 }
 ```
@@ -790,36 +790,36 @@ Ast::Stmts {
                 .args = AstList {
                   Ast::Minus {
                     .left = Ast::Dot {
-                      .type = type1
-                      Ast::Dot {
-                        .type = type3
-                        Ast::Id {
+                      .left = Ast::Dot {
+                        .left = Ast::Id {
                           .value = "self"
                           .type = type5
                         }
-                        Ast::Id {
+                        .right = Ast::Id {
                           .value = "p1"
                         }
+                        .type = type3
                       }
-                      Ast::Id {
+                      .right = Ast::Id {
                         .value = "x"
                       }
+                      .type = type1
                     }
                     .right = Ast::Dot {
-                      .type = type1
-                      Ast::Dot {
-                        .type = type3
-                        Ast::Id {
+                      .left = Ast::Dot {
+                        .left = Ast::Id {
                           .value = "self"
                           .type = type5
                         }
-                        Ast::Id {
+                        .right = Ast::Id {
                           .value = "p0"
                         }
+                        .type = type3
                       }
-                      Ast::Id {
+                      .right = Ast::Id {
                         .value = "x"
                       }
+                      .type = type1
                     }
                     .type = type1
                   }
@@ -838,36 +838,36 @@ Ast::Stmts {
                 .args = AstList {
                   Ast::Minus {
                     .left = Ast::Dot {
-                      .type = type1
-                      Ast::Dot {
-                        .type = type3
-                        Ast::Id {
+                      .left = Ast::Dot {
+                        .left = Ast::Id {
                           .value = "self"
                           .type = type5
                         }
-                        Ast::Id {
+                        .right = Ast::Id {
                           .value = "p1"
                         }
+                        .type = type3
                       }
-                      Ast::Id {
+                      .right = Ast::Id {
                         .value = "y"
                       }
+                      .type = type1
                     }
                     .right = Ast::Dot {
-                      .type = type1
-                      Ast::Dot {
-                        .type = type3
-                        Ast::Id {
+                      .left = Ast::Dot {
+                        .left = Ast::Id {
                           .value = "self"
                           .type = type5
                         }
-                        Ast::Id {
+                        .right = Ast::Id {
                           .value = "p0"
                         }
+                        .type = type3
                       }
-                      Ast::Id {
+                      .right = Ast::Id {
                         .value = "y"
                       }
+                      .type = type1
                     }
                     .type = type1
                   }

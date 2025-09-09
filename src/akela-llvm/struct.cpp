@@ -56,8 +56,8 @@ namespace Akela_llvm {
 
     bool DotIsTypeContextPointer(Ake_Ast* n)
     {
-        if (n->parent->kind == Ake_ast_type_dot) {
-            Ake_Ast* p0 = Ake_AstGet(n->parent, 0);
+        if (n->parent->kind == AKE_AST_DOT) {
+            Ake_Ast* p0 = n->parent->data.dot.left;
             if (p0 == n) {
                 return true;
             }
@@ -79,13 +79,13 @@ namespace Akela_llvm {
 
     Value* Handle_dot(Jit_data* jd, Ake_Ast* n)
     {
-        Ake_Ast* left = Ake_AstGet(n, 0);
+        Ake_Ast* left = n->data.dot.left;
         Ake_Type* left_type = left->type;
         assert(left_type);
         assert(left_type->kind == AKE_TYPE_STRUCT);
         Value* struct_value = Dispatch(jd, left);
 
-        Ake_Ast* right = Ake_AstGet(n, 1);
+        Ake_Ast* right = n->data.dot.right;
         Ake_TypeField* tf = left_type->data.fields.head;
         //auto struct_type = (StructType*)left_tu->data.fields.backend_type;
         StructType* struct_type = GetStructTypeFromType(jd, left_type);

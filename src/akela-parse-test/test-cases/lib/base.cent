@@ -317,6 +317,13 @@ variant Ast::Power {
     }
 }
 
+variant Ast::Dot {
+    properties {
+        left: Ast
+        right: Ast
+    }
+}
+
 element AstList {
     children {
         Ast
