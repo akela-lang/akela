@@ -324,6 +324,12 @@ variant Ast::Dot {
     }
 }
 
+variant Ast::Struct {
+    children {
+        Ast
+    }
+}
+
 element AstList {
     children {
         Ast

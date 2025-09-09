@@ -800,7 +800,7 @@ Ake_Type* Ake_StructToType(Ake_Ast* n)
     Ake_TypeCreate(&type);
     Ake_TypeSet(type, AKE_TYPE_STRUCT);
     Zinc_string_add_string(&type->name, &n->struct_value);
-    Ake_Ast* dec = n->head;
+    Ake_Ast* dec = n->data._struct_.list.head;
     while (dec) {
         Ake_TypeField* tf = NULL;
         Ake_TypeFieldCreate(&tf);

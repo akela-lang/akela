@@ -38,7 +38,7 @@
   * type [x]
   * power [x]
   * dot [x]
-  * struct []
+  * struct [x]
   * return []
   * eseq []
   * prototype []

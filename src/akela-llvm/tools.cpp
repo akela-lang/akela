@@ -400,7 +400,7 @@ namespace Akela_llvm {
             return Handle_identifier(jd, n);
         }
 
-        if (n->kind == Ake_ast_type_struct) {
+        if (n->kind == AKE_AST_STRUCT) {
             return Handle_struct(jd, n);
         }
 

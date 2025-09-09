@@ -11,7 +11,7 @@ namespace Akela_llvm {
     {
         std::vector<Type*> type_list;
         Zinc_string_finish(&n->struct_value);
-        struct Ake_Ast* element_dec = n->head;
+        struct Ake_Ast* element_dec = n->data._struct_.list.head;
         while (element_dec) {
             Ake_Ast* element_type_node = element_dec->data.declaration.type_node;
             Ake_Type* element_type = element_type_node->type;

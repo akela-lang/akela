@@ -434,7 +434,7 @@ Ake_Ast* Ake_parse_struct(struct Ake_parse_state* ps)
 {
 	Ake_Ast* n = NULL;
     Ake_AstCreate(&n);
-    n->kind = Ake_ast_type_struct;
+	Ake_AstSet(n, AKE_AST_STRUCT);
 
     Ake_token* st = NULL;
 	if (!Ake_match(ps, Ake_token_struct, "expected struct", &st, n)) {
@@ -455,7 +455,7 @@ Ake_Ast* Ake_parse_struct(struct Ake_parse_state* ps)
     a = Ake_parse_declaration(ps, false, false, true, false);
 
 	if (a) {
-        Ake_AstAdd(n, a);
+		Ake_AstListAdd(&n->data._struct_.list, a);
 	}
 
 	while (true) {
@@ -470,7 +470,7 @@ Ake_Ast* Ake_parse_struct(struct Ake_parse_state* ps)
         b = Ake_parse_declaration(ps, false, false, true, false);
 
 		if (b) {
-            Ake_AstAdd(n, b);
+			Ake_AstListAdd(&n->data._struct_.list, b);
 		}
 	}
 
