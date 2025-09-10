@@ -41,7 +41,7 @@
   * struct [x]
   * return [x]
   * eseq []
-  * prototype []
+  * prototype [x]
   * extern []
   * struct literal []
   * struct literal field []

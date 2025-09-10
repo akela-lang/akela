@@ -30,44 +30,44 @@ Ake_Ast* Ake_parse_else(struct Ake_parse_state* ps);
 
 /*
 * factor -> id(cseq) | number | string | id | + factor | - factor | (expr)
-*		  | ! parse_factor | array_literal | function(dseq) stmts end
+*          | ! parse_factor | array_literal | function(dseq) stmts end
 * note: type system should catch incompatible sign or not factors
 */
 Ake_Ast* Ake_parse_factor(struct Ake_parse_state* ps)
 {
-	Ake_Ast* n = NULL;
+    Ake_Ast* n = NULL;
 
     struct Ake_token* t0;
-	t0 = Ake_get_lookahead(ps);
+    t0 = Ake_get_lookahead(ps);
     assert(t0);
 
-	if (t0->type == Ake_token_fn) {
+    if (t0->type == Ake_token_fn) {
         n = Ake_parse_function(ps, false);
 
     } else if (t0->type == Ake_token_if) {
         n = Ake_parse_if(ps);
 
-	} else if (t0->type == Ake_token_not) {
-		n = Ake_parse_not(ps);
+    } else if (t0->type == Ake_token_not) {
+        n = Ake_parse_not(ps);
 
-	} else if (t0->type == Ake_token_number || t0->type == Ake_token_string || t0->type == Ake_token_boolean) {
-		n = Ake_parse_literal(ps);
+    } else if (t0->type == Ake_token_number || t0->type == Ake_token_string || t0->type == Ake_token_boolean) {
+        n = Ake_parse_literal(ps);
 
-	} else if (t0->type == Ake_token_id) {
-		n = Ake_parse_id(ps);
+    } else if (t0->type == Ake_token_id) {
+        n = Ake_parse_id(ps);
 
-	} else if (t0->type == Ake_token_plus || t0->type == Ake_token_minus) {
-		n = Ake_parse_sign(ps);
+    } else if (t0->type == Ake_token_plus || t0->type == Ake_token_minus) {
+        n = Ake_parse_sign(ps);
 
-	} else if (t0->type == Ake_token_left_square_bracket) {
-		n = Ake_parse_array_literal(ps);
+    } else if (t0->type == Ake_token_left_square_bracket) {
+        n = Ake_parse_array_literal(ps);
 
-	} else if (t0->type == Ake_token_left_paren) {
-		n = Ake_parse_parenthesis(ps);
+    } else if (t0->type == Ake_token_left_paren) {
+        n = Ake_parse_parenthesis(ps);
 
     }
 
-	return n;
+    return n;
 }
 
 Ake_Ast* Ake_parse_function(struct Ake_parse_state* ps, bool is_method)
@@ -107,14 +107,14 @@ Ake_Ast* Ake_parse_function(struct Ake_parse_state* ps, bool is_method)
     Ake_end_environment(ps->st);
 
     struct Ake_token* end = NULL;
-	if (!Ake_match(ps, Ake_token_end, "expected end", &end, n)) {
+    if (!Ake_match(ps, Ake_token_end, "expected end", &end, n)) {
         /* test case: test_parse_anonymous_function_expected_end */
         n->has_error = true;
     }
 
     if (!n->has_error) {
         /* check return type */
-        Ake_Ast* dret = Ake_AstGet(proto, 2);
+        Ake_Ast* dret = proto->data.prototype.ret;
         if (!Ake_check_return_type(ps, proto, stmts_node, &dret->loc)) {
             n->has_error = true;
         }
@@ -122,7 +122,7 @@ Ake_Ast* Ake_parse_function(struct Ake_parse_state* ps, bool is_method)
 
     Ake_UpdateSymbolFunction(ps->st, n);
 
-	return n;
+    return n;
 }
 
 /* NOLINTNEXTLINE(misc-no-recursion) */
@@ -293,103 +293,103 @@ Ake_Ast* Ake_parse_else(struct Ake_parse_state* ps)
 
 Ake_Ast* Ake_parse_not(struct Ake_parse_state* ps)
 {
-	Ake_Ast* n = NULL;
+    Ake_Ast* n = NULL;
     Ake_AstCreate(&n);
     Ake_AstSet(n, AKE_AST_NOT);
 
     struct Ake_token* not = NULL;
-	if (!Ake_match(ps, Ake_token_not, "expecting not", &not, n)) {
+    if (!Ake_match(ps, Ake_token_not, "expecting not", &not, n)) {
         /* test case: no test case needed */
         n->has_error = true;
     }
 
     Ake_consume_newline(ps, n);
 
-	Ake_Ast* a = NULL;
-	a = Ake_parse_expr(ps);
+    Ake_Ast* a = NULL;
+    a = Ake_parse_expr(ps);
 
-	if (!a) {
+    if (!a) {
         struct Zinc_location a_loc = Ake_get_location(ps);
-		Zinc_error_list_set(ps->el, &a_loc, "expected parse_factor after !");
-		/* test case: test_parse_not_error_expected_factor */
+        Zinc_error_list_set(ps->el, &a_loc, "expected parse_factor after !");
+        /* test case: test_parse_not_error_expected_factor */
         n->has_error = true;
-	} else {
-	    n->data._not_.right = a;
-	    Ake_AstAdd2(n, a);
-	}
+    } else {
+        n->data._not_.right = a;
+        Ake_AstAdd2(n, a);
+    }
 
-	if (!n->has_error) {
-		assert(a);
-		Ake_Type* type = a->type;
-		if (!type) {
-			Zinc_error_list_set(ps->el, &not->loc, "! operator used on parse_factor with no value");
-			/* test case: test_parse_not_error_no_value */
+    if (!n->has_error) {
+        assert(a);
+        Ake_Type* type = a->type;
+        if (!type) {
+            Zinc_error_list_set(ps->el, &not->loc, "! operator used on parse_factor with no value");
+            /* test case: test_parse_not_error_no_value */
             n->has_error = true;
-		} else {
-			if (type->kind != AKE_TYPE_BOOLEAN) {
-				Zinc_error_list_set(ps->el, &not->loc, "not operator used on non-boolean");
-				/* test case: test_parse_not_error_not_boolean */
+        } else {
+            if (type->kind != AKE_TYPE_BOOLEAN) {
+                Zinc_error_list_set(ps->el, &not->loc, "not operator used on non-boolean");
+                /* test case: test_parse_not_error_not_boolean */
                 n->has_error = true;
-			} else {
-				n->type = Ake_TypeClone(type);
-			}
-		}
-	}
+            } else {
+                n->type = Ake_TypeClone(type);
+            }
+        }
+    }
 
-	return n;
+    return n;
 }
 
 Ake_Ast* Ake_parse_literal(struct Ake_parse_state* ps)
 {
-	Ake_Ast* n = NULL;
-	char* type_name = NULL;
+    Ake_Ast* n = NULL;
+    char* type_name = NULL;
     Ake_AstCreate(&n);
 
-	struct Ake_token* t0 = Ake_get_lookahead(ps);
+    struct Ake_token* t0 = Ake_get_lookahead(ps);
 
-	struct Ake_token* x = NULL;
-	if (!Ake_match(ps, t0->type, "expecting number, bool, or string", &x, n)) {
+    struct Ake_token* x = NULL;
+    if (!Ake_match(ps, t0->type, "expecting number, bool, or string", &x, n)) {
         /* test case: no test case needed */
         n->has_error = true;
     }
 
     bool is_string = false;
-	if (!n->has_error) {
-		#pragma warning(suppress:6011)
-		if (x->type == Ake_token_number) {
-		    Ake_AstSet(n, AKE_AST_NUMBER);
-			if (x->is_integer) {
-			    if (ps->context.is_subscript) {
-			        type_name = "Nat64";
-			        Zinc_string_copy(&x->value, &n->data.number.value);
-			    } else {
-			        type_name = "Int32";
-			        Zinc_string_copy(&x->value, &n->data.number.value);
-			    }
-			} else if (x->is_float) {
-				type_name = "Real64";
-			    Zinc_string_copy(&x->value, &n->data.number.value);
-			}
-		} else if (x->type == Ake_token_string) {
-		    Ake_AstSet(n, AKE_AST_STRING);
-			type_name = "Nat8";
+    if (!n->has_error) {
+        #pragma warning(suppress:6011)
+        if (x->type == Ake_token_number) {
+            Ake_AstSet(n, AKE_AST_NUMBER);
+            if (x->is_integer) {
+                if (ps->context.is_subscript) {
+                    type_name = "Nat64";
+                    Zinc_string_copy(&x->value, &n->data.number.value);
+                } else {
+                    type_name = "Int32";
+                    Zinc_string_copy(&x->value, &n->data.number.value);
+                }
+            } else if (x->is_float) {
+                type_name = "Real64";
+                Zinc_string_copy(&x->value, &n->data.number.value);
+            }
+        } else if (x->type == Ake_token_string) {
+            Ake_AstSet(n, AKE_AST_STRING);
+            type_name = "Nat8";
             is_string = true;
-		    Zinc_string_copy(&x->value, &n->data.string.value);
-		} else if (x->type == Ake_token_boolean) {
-		    Ake_AstSet(n, AKE_AST_BOOLEAN);
-			type_name = "Bool";
-		    Zinc_string_copy(&x->value, &n->data.boolean.value);
-		} else {
+            Zinc_string_copy(&x->value, &n->data.string.value);
+        } else if (x->type == Ake_token_boolean) {
+            Ake_AstSet(n, AKE_AST_BOOLEAN);
+            type_name = "Bool";
+            Zinc_string_copy(&x->value, &n->data.boolean.value);
+        } else {
             assert(false);
         }
-	}
+    }
 
-	if (!n->has_error) {
-		assert(type_name);
+    if (!n->has_error) {
+        assert(type_name);
         struct Zinc_string bf;
         Zinc_string_init(&bf);
         Zinc_string_add_str(&bf, type_name);
-	    size_t seq = Ake_get_current_seq(ps);
+        size_t seq = Ake_get_current_seq(ps);
         Ake_symbol* sym = Ake_EnvironmentGet(ps->st->top, &bf);
         assert(sym);
         if (sym->kind != AKE_SYMBOL_TYPE) {
@@ -409,9 +409,9 @@ Ake_Ast* Ake_parse_literal(struct Ake_parse_state* ps)
         } else {
             n->type = Ake_TypeClone(sym->td);
         }
-	}
+    }
 
-	return n;
+    return n;
 }
 
 Ake_Ast* Ake_parse_id(Ake_parse_state* ps)
@@ -599,15 +599,15 @@ void Ake_parse_struct_literal_elements(
 
 Ake_Ast* Ake_parse_sign(struct Ake_parse_state* ps)
 {
-	Ake_Ast* n = NULL;
+    Ake_Ast* n = NULL;
 
     Ake_AstCreate(&n);
     Ake_AstSet(n, AKE_AST_SIGN);
 
-	struct Ake_token* t0 = Ake_get_lookahead(ps);
+    struct Ake_token* t0 = Ake_get_lookahead(ps);
 
-	struct Ake_token* sign = NULL;
-	if (!Ake_match(ps, t0->type, "expecting unary plus or minus", &sign, n)) {
+    struct Ake_token* sign = NULL;
+    if (!Ake_match(ps, t0->type, "expecting unary plus or minus", &sign, n)) {
         /* test case: no test case needed */
         assert(false && "not possible");
     }
@@ -628,31 +628,31 @@ Ake_Ast* Ake_parse_sign(struct Ake_parse_state* ps)
 
     Ake_consume_newline(ps, n);
 
-	Ake_Ast* right = NULL;
+    Ake_Ast* right = NULL;
     right = Ake_parse_complex_operators(ps);
 
-	if (!right) {
+    if (!right) {
         struct Zinc_location right_loc = Ake_get_location(ps);
-		Zinc_error_list_set(ps->el, &right_loc, "expected parse_factor after sign");
+        Zinc_error_list_set(ps->el, &right_loc, "expected parse_factor after sign");
         n->has_error = true;
-	} else {
-	    n->data.sign.right = right;
-	    Ake_AstAdd2(n, right);
-	}
+    } else {
+        n->data.sign.right = right;
+        Ake_AstAdd2(n, right);
+    }
 
-	if (!n->has_error) {
-		assert(right);
-		Ake_Type* type = right->type;
-		if (!type) {
-			Zinc_error_list_set(ps->el, &sign->loc, "negative operator was used on expression with no value");
-			/* test case: test_parse_sign_error */
+    if (!n->has_error) {
+        assert(right);
+        Ake_Type* type = right->type;
+        if (!type) {
+            Zinc_error_list_set(ps->el, &sign->loc, "negative operator was used on expression with no value");
+            /* test case: test_parse_sign_error */
             n->has_error = true;
-		} else {
-			n->type = Ake_TypeClone(type);
-		}
-	}
+        } else {
+            n->type = Ake_TypeClone(type);
+        }
+    }
 
-	return n;
+    return n;
 }
 
 /*
@@ -660,7 +660,7 @@ Ake_Ast* Ake_parse_sign(struct Ake_parse_state* ps)
 */
 Ake_Ast* Ake_parse_array_literal(struct Ake_parse_state* ps)
 {
-	Ake_Ast* n = NULL;
+    Ake_Ast* n = NULL;
     Ake_AstCreate(&n);
     Ake_AstSet(n, AKE_AST_ARRAY_LITERAL);
 
@@ -716,63 +716,63 @@ Ake_Ast* Ake_parse_array_literal(struct Ake_parse_state* ps)
         }
     }
 
-	return n;
+    return n;
 }
 
 /* aseq -> expr aseq' | e */
 /* aseq' = , expr aseq' | e */
 void Ake_parse_aseq(struct Ake_parse_state* ps, Ake_Ast* parent)
 {
-	Ake_Ast* a = NULL;
+    Ake_Ast* a = NULL;
     a = Ake_parse_expr(ps);
 
-	if (a) {
+    if (a) {
         Ake_AstListAdd(&parent->data.array_literal.list, a);
 
-		while (true) {
-			struct Ake_token* t0 = Ake_get_lookahead(ps);
-			if (!t0 || t0->type != Ake_token_comma) {
-				break;
-			}
+        while (true) {
+            struct Ake_token* t0 = Ake_get_lookahead(ps);
+            if (!t0 || t0->type != Ake_token_comma) {
+                break;
+            }
 
-			struct Ake_token* comma = NULL;
-			if (!Ake_match(ps, Ake_token_comma, "expecting comma", &comma, parent)) {
+            struct Ake_token* comma = NULL;
+            if (!Ake_match(ps, Ake_token_comma, "expecting comma", &comma, parent)) {
                 /* test case: no test case needed */
                 parent->has_error = true;
             }
 
             Ake_consume_newline(ps, parent);
 
-			a = Ake_parse_expr(ps);
+            a = Ake_parse_expr(ps);
 
-			if (!a) {
+            if (!a) {
                 struct Zinc_location a_loc = Ake_get_location(ps);
-				Zinc_error_list_set(ps->el, &a_loc, "expected expr after comma");
+                Zinc_error_list_set(ps->el, &a_loc, "expected expr after comma");
                 parent->has_error = true;
-				/* test cases: test_parse_array_literal_error_expected_expr */
-				break;
-			}
+                /* test cases: test_parse_array_literal_error_expected_expr */
+                break;
+            }
 
             Ake_AstListAdd(&parent->data.array_literal.list, a);
-		}
-	}
+        }
+    }
 }
 
 Ake_Ast* Ake_parse_parenthesis(struct Ake_parse_state* ps)
 {
-	Ake_Ast* n = NULL;
+    Ake_Ast* n = NULL;
     Ake_AstCreate(&n);
     Ake_AstSet(n, AKE_AST_PARENTHESIS);
 
-	struct Ake_token* lp = NULL;
-	if (!Ake_match(ps, Ake_token_left_paren, "expecting left parenthesis", &lp, n)) {
+    struct Ake_token* lp = NULL;
+    if (!Ake_match(ps, Ake_token_left_paren, "expecting left parenthesis", &lp, n)) {
         /* test case: no test case needed */
         n->has_error = true;
     }
 
     Ake_consume_newline(ps, n);
 
-	Ake_Ast* a = NULL;
+    Ake_Ast* a = NULL;
     a = Ake_parse_expr(ps);
 
     if (a) {
@@ -780,30 +780,30 @@ Ake_Ast* Ake_parse_parenthesis(struct Ake_parse_state* ps)
         Ake_AstAdd2(n, a);
     }
 
-	if (!a) {
+    if (!a) {
         struct Zinc_location a_loc = Ake_get_location(ps);
-		Zinc_error_list_set(ps->el, &a_loc, "empty parenthesis");
+        Zinc_error_list_set(ps->el, &a_loc, "empty parenthesis");
         n->has_error = true;
-		/* test case: test_parse_paren_error_empty */
-	}
+        /* test case: test_parse_paren_error_empty */
+    }
 
     Ake_consume_newline(ps, n);
 
     struct Ake_token* rp = NULL;
-	if (!Ake_match(ps, Ake_token_right_paren, "expected right parenthesis", &rp, n)) {
+    if (!Ake_match(ps, Ake_token_right_paren, "expected right parenthesis", &rp, n)) {
         n->has_error = true;
     }
 
-	if (!n->has_error) {
-		assert(a);
-		Ake_Type* type = a->type;
-		if (!type) {
-			Zinc_error_list_set(ps->el, &a->loc, "parenthesis on expression that has no value");
+    if (!n->has_error) {
+        assert(a);
+        Ake_Type* type = a->type;
+        if (!type) {
+            Zinc_error_list_set(ps->el, &a->loc, "parenthesis on expression that has no value");
             n->has_error = true;
-		} else {
-			n->type = Ake_TypeClone(type);
-		}
-	}
+        } else {
+            n->type = Ake_TypeClone(type);
+        }
+    }
 
-	return n;
+    return n;
 }

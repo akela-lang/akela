@@ -336,6 +336,14 @@ variant Ast::Return {
     }
 }
 
+variant Ast::Prototype {
+    properties {
+        id: Ast
+        dseq: Ast
+        ret: Ast
+    }
+}
+
 element AstList {
     children {
         Ast

@@ -12,7 +12,7 @@ namespace Akela_llvm {
         Ake_UpdateSymbolExtern(&jd->st, n);
         FunctionType* func_type = Get_function_type(jd, n->type);
         Ake_Ast *proto = Ake_AstGet(n, 0);
-        Ake_Ast *id = Ake_AstGet(proto, 0);
+        Ake_Ast *id = proto->data.prototype.id;
         Zinc_string_finish(&id->data.id.value);
         Function* f = Function::Create(func_type, GlobalValue::ExternalLinkage, id->data.id.value.buf, *jd->TheModule);
 
@@ -31,7 +31,7 @@ namespace Akela_llvm {
     {
         FunctionType* func_type = Get_function_type(jd, n->type);
         Ake_Ast *proto = n->data.function.proto;
-        Ake_Ast *id = Ake_AstGet(proto, 0);
+        Ake_Ast *id = proto->data.prototype.id;
         Zinc_string_finish(&id->data.id.value);
         Function* f = Function::Create(func_type,
                                        GlobalValue::ExternalLinkage,
@@ -43,7 +43,7 @@ namespace Akela_llvm {
         Ake_begin_environment(&jd->st);
         Ake_UpdateSymbolPrototype(&jd->st, n);
 
-        Ake_Ast* dseq = Ake_AstGet(proto, 1);
+        Ake_Ast* dseq = proto->data.prototype.dseq;
         Ake_Ast* dec = dseq->data.dseq.list.head;
         int i = 0;
         while (dec) {

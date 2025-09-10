@@ -379,6 +379,19 @@ void Ake_ast_cent_print(Ake_Ast* n, size_t level, bool is_property, Ake_TypeSlot
                 printf(".expr = ");
                 Ake_ast_cent_print(n->data._return_.expr, level, true, slots);
                 break;
+            case AKE_AST_PROTOTYPE:
+                Ake_indent_print(level);
+                printf(".id = ");
+                Ake_ast_cent_print(n->data.prototype.id, level, true, slots);
+
+                Ake_indent_print(level);
+                printf(".dseq = ");
+                Ake_ast_cent_print(n->data.prototype.dseq, level, true, slots);
+
+                Ake_indent_print(level);
+                printf(".ret = ");
+                Ake_ast_cent_print(n->data.prototype.ret, level, true, slots);
+                break;
             default:
                 p = n->head;
                 while (p) {
@@ -568,7 +581,7 @@ char* Ake_ast_cent_name(Ake_AstKind type)
         return "Ast::Return";
     }
 
-    if (type == Ake_ast_type_prototype) {
+    if (type == AKE_AST_PROTOTYPE) {
         return "Ast::Prototype";
     }
 

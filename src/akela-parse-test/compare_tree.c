@@ -630,6 +630,16 @@ bool Apt_compare_ast(Zinc_test* top_test, Zinc_test* case_test, Ake_Ast* n, Cent
             value2 = Cent_value_get_str(value, "expr");
             Apt_compare_ast(top_test, case_test, n->data._return_.expr, value2);
             break;
+        case AKE_AST_PROTOTYPE:
+            value2 = Cent_value_get_str(value, "id");
+            Apt_compare_ast(top_test, case_test, n->data.prototype.id, value2);
+
+            value2 = Cent_value_get_str(value, "dseq");
+            Apt_compare_ast(top_test, case_test, n->data.prototype.dseq, value2);
+
+            value2 = Cent_value_get_str(value, "ret");
+            Apt_compare_ast(top_test, case_test, n->data.prototype.ret, value2);
+            break;
         default:
             Cent_value* value_prop = Cent_value_get_str(value, "value");
             if (Apt_has_value(n)) {

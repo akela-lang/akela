@@ -664,10 +664,10 @@ Ast::Stmts {
   Ast::Extern {
     .type = type0
     Ast::Prototype {
-      Ast::Id {
+      .id = Ast::Id {
         .value = "pow"
       }
-      Ast::Dseq {
+      .dseq = Ast::Dseq {
         Ast::Declaration {
           .id_node = Ast::Id {
           }
@@ -683,7 +683,7 @@ Ast::Stmts {
           }
         }
       }
-      Ast::Dret {
+      .ret = Ast::Dret {
         .node = Ast::Type {
           .type = type1
         }
@@ -693,10 +693,10 @@ Ast::Stmts {
   Ast::Extern {
     .type = type2
     Ast::Prototype {
-      Ast::Id {
+      .id = Ast::Id {
         .value = "sqrt"
       }
-      Ast::Dseq {
+      .dseq = Ast::Dseq {
         Ast::Declaration {
           .id_node = Ast::Id {
           }
@@ -705,7 +705,7 @@ Ast::Stmts {
           }
         }
       }
-      Ast::Dret {
+      .ret = Ast::Dret {
         .node = Ast::Type {
           .type = type1
         }
@@ -753,10 +753,10 @@ Ast::Stmts {
   Ast::Impl {
     Ast::Function {
       .proto = Ast::Prototype {
-        Ast::Id {
+        .id = Ast::Id {
           .value = "length"
         }
-        Ast::Dseq {
+        .dseq = Ast::Dseq {
           Ast::Declaration {
             .id_node = Ast::Id {
               .value = "self"
@@ -766,7 +766,7 @@ Ast::Stmts {
             }
           }
         }
-        Ast::Dret {
+        .ret = Ast::Dret {
           .node = Ast::Type {
             .type = type1
           }

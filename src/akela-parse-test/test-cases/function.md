@@ -35,12 +35,12 @@ Ast::Stmts {
   .type = type0
   Ast::Function {
     .proto = Ast::Prototype {
-      Ast::Id {
+      .id = Ast::Id {
         .value = "foo"
       }
-      Ast::Dseq {
+      .dseq = Ast::Dseq {
       }
-      Ast::Dret {
+      .ret = Ast::Dret {
       }
     }
     .body = Ast::Stmts {
@@ -122,10 +122,10 @@ Ast::Stmts {
   .type = type0
   Ast::Function {
     .proto = Ast::Prototype {
-      Ast::Id {
+      .id = Ast::Id {
         .value = "foo"
       }
-      Ast::Dseq {
+      .dseq = Ast::Dseq {
         Ast::Declaration {
           .id_node = Ast::Id {
             .value = "x"
@@ -135,7 +135,7 @@ Ast::Stmts {
           }
         }
       }
-      Ast::Dret {
+      .ret = Ast::Dret {
       }
     }
     .body = Ast::Stmts {
@@ -212,10 +212,10 @@ Ast::Stmts {
   .type = type0
   Ast::Function {
     .proto = Ast::Prototype {
-      Ast::Id {
+      .id = Ast::Id {
         .value = "foo"
       }
-      Ast::Dseq {
+      .dseq = Ast::Dseq {
         Ast::Declaration {
           .id_node = Ast::Id {
             .value = "x"
@@ -233,7 +233,7 @@ Ast::Stmts {
           }
         }
       }
-      Ast::Dret {
+      .ret = Ast::Dret {
       }
     }
     .body = Ast::Stmts {
@@ -321,10 +321,10 @@ Ast::Stmts {
   .type = type0
   Ast::Function {
     .proto = Ast::Prototype {
-      Ast::Id {
+      .id = Ast::Id {
         .value = "foo"
       }
-      Ast::Dseq {
+      .dseq = Ast::Dseq {
         Ast::Declaration {
           .id_node = Ast::Id {
             .value = "x"
@@ -350,7 +350,7 @@ Ast::Stmts {
           }
         }
       }
-      Ast::Dret {
+      .ret = Ast::Dret {
         .node = Ast::Type {
           .type = type1
         }
@@ -566,10 +566,10 @@ Ast::Stmts {
   .type = type0
   Ast::Function {
     .proto = Ast::Prototype {
-      Ast::Id {
+      .id = Ast::Id {
         .value = "foo"
       }
-      Ast::Dseq {
+      .dseq = Ast::Dseq {
         Ast::Declaration {
           .id_node = Ast::Id {
             .value = "a"
@@ -587,7 +587,7 @@ Ast::Stmts {
           }
         }
       }
-      Ast::Dret {
+      .ret = Ast::Dret {
         .node = Ast::Type {
           .type = type1
         }
@@ -634,12 +634,12 @@ Ast::Stmts {
   .type = type0
   Ast::Function {
     .proto = Ast::Prototype {
-      Ast::Id {
+      .id = Ast::Id {
         .value = "foo"
       }
-      Ast::Dseq {
+      .dseq = Ast::Dseq {
       }
-      Ast::Dret {
+      .ret = Ast::Dret {
         .node = Ast::Type {
           .type = type1
         }
@@ -765,10 +765,10 @@ Ast::Stmts {
     }
     Ast::Function {
       .proto = Ast::Prototype {
-        Ast::Id {
+        .id = Ast::Id {
           .value = "__anonymous_function_0"
         }
-        Ast::Dseq {
+        .dseq = Ast::Dseq {
           Ast::Declaration {
             .id_node = Ast::Id {
               .value = "x"
@@ -794,7 +794,7 @@ Ast::Stmts {
             }
           }
         }
-        Ast::Dret {
+        .ret = Ast::Dret {
         }
       }
       .body = Ast::Stmts {
@@ -913,10 +913,10 @@ Ast::Stmts {
     }
     Ast::Function {
       .proto = Ast::Prototype {
-        Ast::Id {
+        .id = Ast::Id {
           .value = "__anonymous_function_0"
         }
-        Ast::Dseq {
+        .dseq = Ast::Dseq {
           Ast::Declaration {
             .id_node = Ast::Id {
               .value = "x"
@@ -942,7 +942,7 @@ Ast::Stmts {
             }
           }
         }
-        Ast::Dret {
+        .ret = Ast::Dret {
           .node = Ast::Type {
             .type = type2
           }
@@ -1120,10 +1120,10 @@ Ast::Stmts {
     }
     Ast::Function {
       .proto = Ast::Prototype {
-        Ast::Id {
+        .id = Ast::Id {
           .value = "__anonymous_function_0"
         }
-        Ast::Dseq {
+        .dseq = Ast::Dseq {
           Ast::Declaration {
             .id_node = Ast::Id {
               .value = "a"
@@ -1133,7 +1133,7 @@ Ast::Stmts {
             }
           }
         }
-        Ast::Dret {
+        .ret = Ast::Dret {
           .node = Ast::Type {
             .type = type2
           }
@@ -1227,12 +1227,12 @@ const type1 = Type::Integer {
 Ast::Stmts {
   Ast::Function {
     .proto = Ast::Prototype {
-      Ast::Id {
+      .id = Ast::Id {
         .value = "foo"
       }
-      Ast::Dseq {
+      .dseq = Ast::Dseq {
       }
-      Ast::Dret {
+      .ret = Ast::Dret {
       }
     }
     .body = Ast::Stmts {
@@ -1283,12 +1283,12 @@ Ast::Stmts {
   .type = type0
   Ast::Function {
     .proto = Ast::Prototype {
-      Ast::Id {
+      .id = Ast::Id {
         .value = "foo"
       }
-      Ast::Dseq {
+      .dseq = Ast::Dseq {
       }
-      Ast::Dret {
+      .ret = Ast::Dret {
         .node = Ast::Type {
           .type = type0
         }
@@ -1376,10 +1376,10 @@ const type1 = Type::Integer {
 Ast::Stmts {
   Ast::Function {
     .proto = Ast::Prototype {
-      Ast::Id {
+      .id = Ast::Id {
         .value = "foo"
       }
-      Ast::Dseq {
+      .dseq = Ast::Dseq {
         Ast::Declaration {
           .id_node = Ast::Id {
             .value = "arg1"
@@ -1389,7 +1389,7 @@ Ast::Stmts {
           }
         }
       }
-      Ast::Dret {
+      .ret = Ast::Dret {
       }
     }
     .body = Ast::Stmts {
@@ -1466,10 +1466,10 @@ Ast::Stmts {
   .type = type0
   Ast::Function {
     .proto = Ast::Prototype {
-      Ast::Id {
+      .id = Ast::Id {
         .value = "foo"
       }
-      Ast::Dseq {
+      .dseq = Ast::Dseq {
         Ast::Declaration {
           .id_node = Ast::Id {
             .value = "arg1"
@@ -1487,7 +1487,7 @@ Ast::Stmts {
           }
         }
       }
-      Ast::Dret {
+      .ret = Ast::Dret {
         .node = Ast::Type {
           .type = type0
         }
@@ -1603,10 +1603,10 @@ Ast::Stmts {
   .type = type0
   Ast::Function {
     .proto = Ast::Prototype {
-      Ast::Id {
+      .id = Ast::Id {
         .value = "foo"
       }
-      Ast::Dseq {
+      .dseq = Ast::Dseq {
         Ast::Declaration {
           .id_node = Ast::Id {
             .value = "arg0"
@@ -1632,7 +1632,7 @@ Ast::Stmts {
           }
         }
       }
-      Ast::Dret {
+      .ret = Ast::Dret {
         .node = Ast::Type {
           .type = type0
         }
@@ -1930,10 +1930,10 @@ Ast::Stmts {
   .type = type0
   Ast::Function {
     .proto = Ast::Prototype {
-      Ast::Id {
+      .id = Ast::Id {
         .value = "__anonymous_function_0"
       }
-      Ast::Dseq {
+      .dseq = Ast::Dseq {
         Ast::Declaration {
           .id_node = Ast::Id {
             .value = "a"
@@ -1959,7 +1959,7 @@ Ast::Stmts {
           }
         }
       }
-      Ast::Dret {
+      .ret = Ast::Dret {
         .node = Ast::Type {
           .type = type1
         }
@@ -2129,10 +2129,10 @@ Ast::Stmts {
   .type = type0
   Ast::Function {
     .proto = Ast::Prototype {
-      Ast::Id {
+      .id = Ast::Id {
         .value = "foo"
       }
-      Ast::Dseq {
+      .dseq = Ast::Dseq {
         Ast::Declaration {
           .id_node = Ast::Id {
             .value = "a"
@@ -2150,7 +2150,7 @@ Ast::Stmts {
           }
         }
       }
-      Ast::Dret {
+      .ret = Ast::Dret {
         .node = Ast::Type {
           .type = type0
         }
@@ -2227,10 +2227,10 @@ Ast::Stmts {
   Ast::Extern {
     .type = type0
     Ast::Prototype {
-      Ast::Id {
+      .id = Ast::Id {
         .value = "foo"
       }
-      Ast::Dseq {
+      .dseq = Ast::Dseq {
         Ast::Declaration {
           .id_node = Ast::Id {
             .value = "a"
@@ -2240,7 +2240,7 @@ Ast::Stmts {
           }
         }
       }
-      Ast::Dret {
+      .ret = Ast::Dret {
       }
     }
   }

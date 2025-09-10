@@ -32,78 +32,78 @@ Ake_Ast* Ake_parse_assignment(struct Ake_parse_state* ps);
 /* NOLINTNEXTLINE(misc-no-recursion) */
 Ake_Ast* Ake_parse_stmts(Ake_parse_state* ps)
 {
-	Ake_Ast* n = NULL;
-	Ake_Ast* last = NULL;
+    Ake_Ast* n = NULL;
+    Ake_Ast* last = NULL;
 
-	struct Ake_environment* saved = NULL;
-	struct Ake_environment* env = NULL;
+    struct Ake_environment* saved = NULL;
+    struct Ake_environment* env = NULL;
 
-	Ake_AstCreate(&n);
-	Ake_AstSet(n, AKE_AST_STMTS);
+    Ake_AstCreate(&n);
+    Ake_AstSet(n, AKE_AST_STMTS);
 
     Ake_begin_environment(ps->st);
 
-	Ake_Ast* a = NULL;
-	a = Ake_parse_stmt(ps);
+    Ake_Ast* a = NULL;
+    a = Ake_parse_stmt(ps);
 
-	if (a) {
-		Ake_AstListAdd(&n->data.stmts.list, a);
+    if (a) {
+        Ake_AstListAdd(&n->data.stmts.list, a);
         Ake_AstAdd2(n, a);
-		last = a;
-	}
+        last = a;
+    }
 
-	while (true) {
-		bool has_separator = false;
-		Ake_parse_separator(ps, n, &has_separator);
+    while (true) {
+        bool has_separator = false;
+        Ake_parse_separator(ps, n, &has_separator);
 
-		if (!has_separator) {
-			break;
-		}
+        if (!has_separator) {
+            break;
+        }
 
-		Ake_Ast* b = NULL;
-		b = Ake_parse_stmt(ps);
+        Ake_Ast* b = NULL;
+        b = Ake_parse_stmt(ps);
 
-		if (b) {
-			Ake_AstListAdd(&n->data.stmts.list, b);
+        if (b) {
+            Ake_AstListAdd(&n->data.stmts.list, b);
             Ake_AstAdd2(n, b);
-			last = b;
-		}
-	}
+            last = b;
+        }
+    }
 
     Ake_end_environment(ps->st);
 
-	if (!n->has_error) {
-		if (last) {
-			if (last->type) {
+    if (!n->has_error) {
+        if (last) {
+            if (last->type) {
                 n->type = Ake_TypeClone(last->type);
-			}
-		}
-	}
+            }
+        }
+    }
 
-	return n;
+    return n;
 }
 
 /**
 * @brief stmt -> id = expr
-*		| function id (dseq) parse_stmts end
+*        | function id (dseq) parse_stmts end
 *       | expr
 *       | e
 */
 /* NOLINTNEXTLINE(misc-no-recursion) */
 Ake_Ast* Ake_parse_stmt(struct Ake_parse_state* ps)
 {
-	Ake_Ast* n = NULL;
+    Ake_Ast* n = NULL;
 
     struct Ake_token* t0 = Ake_get_lookahead(ps);
     assert(t0);
 
-	if (t0->type == Ake_token_while) {
-		n = Ake_parse_while(ps);
-	} else if (t0->type == Ake_token_for) {
-		n = Ake_parse_for(ps);
-	} else if (t0->type == Ake_token_struct) {
-		n = Ake_parse_struct(ps);
-	} else if (t0->type == Ake_token_return) {
+    if (t0->type == Ake_token_while) {
+        n = Ake_parse_while(ps);
+    } else if (t0->type == Ake_token_for) {
+        n = Ake_parse_for(ps);
+    } else if (t0->type == Ake_token_struct) {
+        n = Ake_parse_struct(ps);
+    } else if (t0->type == Ake_token_return) {
         n = Ake_parse_return(ps);
     } else if (t0->type == Ake_token_const || t0->type == Ake_token_var) {
         n = Ake_parse_let(ps);
@@ -111,9 +111,9 @@ Ake_Ast* Ake_parse_stmt(struct Ake_parse_state* ps)
         n = Ake_parse_extern(ps);
     } else if (t0->type == Ake_token_impl) {
         n = Ake_parse_impl(ps);
-	} else {
+    } else {
         n = Ake_parse_assignment(ps);
-	}
+    }
 
     return n;
 }
@@ -145,11 +145,11 @@ Ake_Ast* Ake_parse_extern(struct Ake_parse_state* ps)
     }
 
     if (!n->has_error) {
-        Ake_Ast* id_node = Ake_AstGet(proto, 0);
+        Ake_Ast* id_node = proto->data.prototype.id;
         Zinc_string_list_add_bf(ps->extern_list, &id_node->data.id.value);
     }
 
-	Ake_UpdateSymbolExtern(ps->st, n);
+    Ake_UpdateSymbolExtern(ps->st, n);
 
     return n;
 }
@@ -157,53 +157,53 @@ Ake_Ast* Ake_parse_extern(struct Ake_parse_state* ps)
 /* NOLINTNEXTLINE(misc-no-recursion) */
 Ake_Ast* Ake_parse_while(struct Ake_parse_state* ps)
 {
-	Ake_Ast* n = NULL;
+    Ake_Ast* n = NULL;
     Ake_AstCreate(&n);
-	Ake_AstSet(n, AKE_AST_WHILE);
+    Ake_AstSet(n, AKE_AST_WHILE);
 
-	struct Ake_token* whl = NULL;
-	if (!Ake_match(ps, Ake_token_while, "expecting while", &whl, n)) {
+    struct Ake_token* whl = NULL;
+    if (!Ake_match(ps, Ake_token_while, "expecting while", &whl, n)) {
         n->has_error = true;
     }
 
-	Ake_Ast* a = NULL;
+    Ake_Ast* a = NULL;
     a = Ake_parse_expr(ps);
 
     if (a) {
-    	n->data._while_.cond = a;
+        n->data._while_.cond = a;
         Ake_AstAdd2(n, a);
     } else {
         struct Zinc_location a_loc = Ake_get_location(ps);
-		Zinc_error_list_set(ps->el, &a_loc, "expected expression after while");
+        Zinc_error_list_set(ps->el, &a_loc, "expected expression after while");
         n->has_error = true;
-		/* test case: test_parse_while_error_expected_expression */
-	}
+        /* test case: test_parse_while_error_expected_expression */
+    }
 
-	Ake_Ast* b = NULL;
+    Ake_Ast* b = NULL;
     b = Ake_parse_stmts(ps);
 
     if (b) {
-    	n->data._while_.body = b;
+        n->data._while_.body = b;
         Ake_AstAdd2(n, b);
     }
 
-	struct Ake_token* end = NULL;
-	if (!Ake_match(ps, Ake_token_end, "expected end", &end, n)) {
+    struct Ake_token* end = NULL;
+    if (!Ake_match(ps, Ake_token_end, "expected end", &end, n)) {
         n->has_error = true;
         /* test case: test_parse_while_error_expected_end */
     }
 
-	return n;
+    return n;
 }
 
 /* NOLINTNEXTLINE(misc-no-recursion) */
 Ake_Ast* Ake_parse_for(struct Ake_parse_state* ps)
 {
-	Ake_Ast* n = NULL;
+    Ake_Ast* n = NULL;
     Ake_AstCreate(&n);
 
-	struct Ake_token* f = NULL;
-	if (!Ake_match(ps, Ake_token_for, "expected for", &f, n)) {
+    struct Ake_token* f = NULL;
+    if (!Ake_match(ps, Ake_token_for, "expected for", &f, n)) {
         /* test case: test cases not needed */
         n->has_error = true;
     }
@@ -212,219 +212,219 @@ Ake_Ast* Ake_parse_for(struct Ake_parse_state* ps)
 
     Ake_consume_newline(ps, n);
 
-	Ake_Ast* dec = NULL;
+    Ake_Ast* dec = NULL;
     dec = Ake_parse_declaration(ps, false, false, true, true);
 
     Ake_consume_newline(ps, n);
 
-	struct Ake_token* t0 = Ake_get_lookahead(ps);
+    struct Ake_token* t0 = Ake_get_lookahead(ps);
 
-	if (t0 && t0->type == Ake_token_equal) {
+    if (t0 && t0->type == Ake_token_equal) {
         if (n->kind == AKE_AST_NONE) {
-        	Ake_AstSet(n, AKE_AST_FOR_RANGE);
+            Ake_AstSet(n, AKE_AST_FOR_RANGE);
         }
 
-		if (dec) {
-			n->data.for_range.dec = dec;
-			Ake_AstAdd2(n, dec);
-		} else {
-			Zinc_error_list_set(ps->el, &n->loc, "expected declaration");
-			n->has_error = true;
-		}
-
-		Ake_parse_for_range(ps, n);
-
-	} else if (t0 && t0->type == Ake_token_in) {
-        if (n->kind == AKE_AST_NONE) {
-        	Ake_AstSet(n, AKE_AST_FOR_ITERATION);
+        if (dec) {
+            n->data.for_range.dec = dec;
+            Ake_AstAdd2(n, dec);
+        } else {
+            Zinc_error_list_set(ps->el, &n->loc, "expected declaration");
+            n->has_error = true;
         }
-		if (dec) {
-			n->data.for_iteration.dec = dec;
-			Ake_AstAdd2(n, dec);
-		}
-		Ake_parse_for_iteration(ps, n);
 
-	} else {
-		if (dec) {
-			Ake_AstDestroy(dec);
-		}
-		struct Zinc_location loc_error = Ake_get_location(ps);
-		Zinc_error_list_set(ps->el, &loc_error, "expected '=' or 'in' after for element declaration");
+        Ake_parse_for_range(ps, n);
+
+    } else if (t0 && t0->type == Ake_token_in) {
+        if (n->kind == AKE_AST_NONE) {
+            Ake_AstSet(n, AKE_AST_FOR_ITERATION);
+        }
+        if (dec) {
+            n->data.for_iteration.dec = dec;
+            Ake_AstAdd2(n, dec);
+        }
+        Ake_parse_for_iteration(ps, n);
+
+    } else {
+        if (dec) {
+            Ake_AstDestroy(dec);
+        }
+        struct Zinc_location loc_error = Ake_get_location(ps);
+        Zinc_error_list_set(ps->el, &loc_error, "expected '=' or 'in' after for element declaration");
         n->has_error = true;
-		/* test case: test_parse_for_error_after_declaration */
-	}
+        /* test case: test_parse_for_error_after_declaration */
+    }
 
-	Ake_UpdateSymbolFor(ps->st, n);
+    Ake_UpdateSymbolFor(ps->st, n);
 
-	Ake_Ast* c = NULL;
+    Ake_Ast* c = NULL;
     c = Ake_parse_stmts(ps);
 
-	struct Ake_token* end = NULL;
-	if (!Ake_match(ps, Ake_token_end, "expected end", &end, n)) {
+    struct Ake_token* end = NULL;
+    if (!Ake_match(ps, Ake_token_end, "expected end", &end, n)) {
         /* test case: test_parse_for_error_expected_end */
         n->has_error = true;
     }
 
     if (c) {
-    	if (n->kind == AKE_AST_FOR_RANGE) {
-    		n->data.for_range.body = c;
-    		Ake_AstAdd2(n, c);
-    	} else if (n->kind == AKE_AST_FOR_ITERATION){
-    		n->data.for_iteration.body = c;
-    		Ake_AstAdd2(n, c);
-    	} else {
-    		Ake_AstDestroy(c);
-    	}
+        if (n->kind == AKE_AST_FOR_RANGE) {
+            n->data.for_range.body = c;
+            Ake_AstAdd2(n, c);
+        } else if (n->kind == AKE_AST_FOR_ITERATION){
+            n->data.for_iteration.body = c;
+            Ake_AstAdd2(n, c);
+        } else {
+            Ake_AstDestroy(c);
+        }
     }
 
     Ake_end_environment(ps->st);
 
-	return n;
+    return n;
 }
 
 /* for_range -> for id = expr:expr stmts end */
 void Ake_parse_for_range(struct Ake_parse_state* ps, Ake_Ast* parent)
 {
-	struct Ake_token* equal = NULL;
-	if (!Ake_match(ps, Ake_token_equal, "expected equal", &equal, parent)) {
+    struct Ake_token* equal = NULL;
+    if (!Ake_match(ps, Ake_token_equal, "expected equal", &equal, parent)) {
         /* test case: no test case needed */
         parent->has_error = true;
     }
 
     Ake_consume_newline(ps, parent);
 
-	/* start expr */
-	Ake_Ast* a = NULL;
+    /* start expr */
+    Ake_Ast* a = NULL;
     a = Ake_parse_expr(ps);
 
-	if (!a) {
+    if (!a) {
         struct Zinc_location a_loc = Ake_get_location(ps);
-		Zinc_error_list_set(ps->el, &a_loc, "expected range start");
+        Zinc_error_list_set(ps->el, &a_loc, "expected range start");
         parent->has_error = true;
-		/* test case: test_parse_for_error_expected_range_start */
-	}
+        /* test case: test_parse_for_error_expected_range_start */
+    }
 
     Ake_consume_newline(ps, parent);
 
-	struct Ake_token* colon = NULL;
-	if (!Ake_match(ps, Ake_token_colon, "expected colon", &colon, parent)) {
+    struct Ake_token* colon = NULL;
+    if (!Ake_match(ps, Ake_token_colon, "expected colon", &colon, parent)) {
         /* test case: test_parse_for_error_expected_colon */
         parent->has_error = true;
     }
 
     Ake_consume_newline(ps, parent);
 
-	/* end expr */
-	Ake_Ast* b = NULL;
+    /* end expr */
+    Ake_Ast* b = NULL;
     b = Ake_parse_expr(ps);
 
-	if (!b) {
+    if (!b) {
         struct Zinc_location b_loc = Ake_get_location(ps);
-		Zinc_error_list_set(ps->el, &b_loc, "expected range end");
+        Zinc_error_list_set(ps->el, &b_loc, "expected range end");
         parent->has_error = true;
-		/* test case: test_parse_for_error_expected_range_end */
-	}
+        /* test case: test_parse_for_error_expected_range_end */
+    }
 
-	if (a) {
-		parent->data.for_range.start = a;
+    if (a) {
+        parent->data.for_range.start = a;
         Ake_AstAdd2(parent, a);
     }
     if (b) {
-    	parent->data.for_range.end = b;
+        parent->data.for_range.end = b;
         Ake_AstAdd2(parent, b);
-	}
+    }
 
-	if (!parent->has_error) {
-		assert(a);
-		if (!a->type) {
-			Zinc_error_list_set(ps->el, &a->loc, "start range expression has no value");
+    if (!parent->has_error) {
+        assert(a);
+        if (!a->type) {
+            Zinc_error_list_set(ps->el, &a->loc, "start range expression has no value");
             parent->has_error = true;
-			/* test case: test_parse_for_range_error_start_no_value */
-		} else {
-			assert(a->type);
-			if (!Ake_is_numeric(a->type)) {
-				Zinc_error_list_set(ps->el, &a->loc, "start range expression is not numeric");
+            /* test case: test_parse_for_range_error_start_no_value */
+        } else {
+            assert(a->type);
+            if (!Ake_is_numeric(a->type)) {
+                Zinc_error_list_set(ps->el, &a->loc, "start range expression is not numeric");
                 parent->has_error = true;
-				/* test case: test_parse_for_range_error_start_not_numeric */
-			}
-		}
+                /* test case: test_parse_for_range_error_start_not_numeric */
+            }
+        }
 
-		assert(b);
-		if (!b->type) {
-			Zinc_error_list_set(ps->el, &b->loc, "end range expression has no value");
+        assert(b);
+        if (!b->type) {
+            Zinc_error_list_set(ps->el, &b->loc, "end range expression has no value");
             parent->has_error = true;
-			/* test case: test_parse_for_range_error_end_no_value */
-		} else {
-			if (!Ake_is_numeric(b->type)) {
-				Zinc_error_list_set(ps->el, &b->loc, "end range expression is not numeric");
+            /* test case: test_parse_for_range_error_end_no_value */
+        } else {
+            if (!Ake_is_numeric(b->type)) {
+                Zinc_error_list_set(ps->el, &b->loc, "end range expression is not numeric");
                 parent->has_error = true;
-				/* test case: test_parse_for_range_error_end_not_numeric */
-			}
-		}
-	}
+                /* test case: test_parse_for_range_error_end_not_numeric */
+            }
+        }
+    }
 }
 
 /* for_iteration -> for id in expr stmts end */
 void Ake_parse_for_iteration(struct Ake_parse_state* ps, Ake_Ast* parent)
 {
-	struct Ake_token* in = NULL;
-	if (!Ake_match(ps, Ake_token_in, "expecting in", &in, parent)) {
+    struct Ake_token* in = NULL;
+    if (!Ake_match(ps, Ake_token_in, "expecting in", &in, parent)) {
         /* test case: no test case necessary */
         parent->has_error = true;
     }
 
     Ake_consume_newline(ps, parent);
 
-	/* expr */
-	Ake_Ast* list = NULL;
+    /* expr */
+    Ake_Ast* list = NULL;
     list = Ake_parse_expr(ps);
 
-	if (!list) {
+    if (!list) {
         struct Zinc_location list_loc = Ake_get_location(ps);
-		Zinc_error_list_set(ps->el, &list_loc, "expected for iteration expression");
+        Zinc_error_list_set(ps->el, &list_loc, "expected for iteration expression");
         parent->has_error = true;
         /* test case: test_parse_for_error_expected_iteration_expression */
-	}
+    }
 
     if (list) {
-    	parent->data.for_iteration.iterator = list;
+        parent->data.for_iteration.iterator = list;
         Ake_AstAdd(parent, list);
     }
 
-	if (!parent->has_error) {
-		Ake_Ast* element = parent->data.for_iteration.dec;
-		Ake_Ast* element_type_node = element->data.declaration.type_node;
+    if (!parent->has_error) {
+        Ake_Ast* element = parent->data.for_iteration.dec;
+        Ake_Ast* element_type_node = element->data.declaration.type_node;
 
-		Ake_Type* list_type = list->type;
+        Ake_Type* list_type = list->type;
 
-		if (!list_type) {
-			Zinc_error_list_set(ps->el, &list->loc, "iteration expression has no value");
+        if (!list_type) {
+            Zinc_error_list_set(ps->el, &list->loc, "iteration expression has no value");
             parent->has_error = true;
-			/* test case: test_parse_for_iteration_error_no_value */
-		} else if (
-			list_type->kind != AKE_TYPE_ARRAY
-			&& list_type->kind != AKE_TYPE_SLICE) {
-			Zinc_error_list_set(ps->el, &list->loc, "iteration expression is not an array or slice");
+            /* test case: test_parse_for_iteration_error_no_value */
+        } else if (
+            list_type->kind != AKE_TYPE_ARRAY
+            && list_type->kind != AKE_TYPE_SLICE) {
+            Zinc_error_list_set(ps->el, &list->loc, "iteration expression is not an array or slice");
             parent->has_error = true;
-			/* test case: test_parse_for_iteration_error_no_child_element */
-		} else {
+            /* test case: test_parse_for_iteration_error_no_child_element */
+        } else {
             Ake_Type* element_type2 = NULL;
-			if (list_type->kind == AKE_TYPE_ARRAY) {
-				element_type2 = Ake_TypeClone(list_type->data.array.type);
-			} else if (list_type->kind == AKE_TYPE_SLICE) {
-				element_type2 = Ake_TypeClone(list_type->data.slice.type);
-			} else {
-				assert(false && "expected array or slice");
-			}
-			if (!Ake_TypeMatch(element_type2, element_type_node->type, NULL)) {
+            if (list_type->kind == AKE_TYPE_ARRAY) {
+                element_type2 = Ake_TypeClone(list_type->data.array.type);
+            } else if (list_type->kind == AKE_TYPE_SLICE) {
+                element_type2 = Ake_TypeClone(list_type->data.slice.type);
+            } else {
+                assert(false && "expected array or slice");
+            }
+            if (!Ake_TypeMatch(element_type2, element_type_node->type, NULL)) {
                 parent->has_error = true;
-				Zinc_error_list_set(ps->el, &list->loc, "cannot cast list element");
-				/* test case: test_parse_for_iteration_error_cannot_cast */
-			}
+                Zinc_error_list_set(ps->el, &list->loc, "cannot cast list element");
+                /* test case: test_parse_for_iteration_error_cannot_cast */
+            }
             Ake_TypeDestroy(element_type2);
-			free(element_type2);
-		}
-	}
+            free(element_type2);
+        }
+    }
 }
 
 /* parse_struct -> struct id struct_stmts end */
@@ -432,18 +432,18 @@ void Ake_parse_for_iteration(struct Ake_parse_state* ps, Ake_Ast* parent)
 /* struct_stmts' -> separator declaration | e */
 Ake_Ast* Ake_parse_struct(struct Ake_parse_state* ps)
 {
-	Ake_Ast* n = NULL;
+    Ake_Ast* n = NULL;
     Ake_AstCreate(&n);
-	Ake_AstSet(n, AKE_AST_STRUCT);
+    Ake_AstSet(n, AKE_AST_STRUCT);
 
     Ake_token* st = NULL;
-	if (!Ake_match(ps, Ake_token_struct, "expected struct", &st, n)) {
+    if (!Ake_match(ps, Ake_token_struct, "expected struct", &st, n)) {
         /* test case: no test case needed */
         assert(false);
     }
 
-	struct Ake_token* id = NULL;
-	if (!Ake_match(ps, Ake_token_id, "expected identifier", &id, n)) {
+    struct Ake_token* id = NULL;
+    if (!Ake_match(ps, Ake_token_id, "expected identifier", &id, n)) {
         /* test case: test_parse_struct_error_expected_identifier */
         n->has_error = true;
     }
@@ -451,97 +451,97 @@ Ake_Ast* Ake_parse_struct(struct Ake_parse_state* ps)
         Zinc_string_copy(&id->value, &n->struct_value);
     }
 
-	Ake_Ast* a = NULL;
+    Ake_Ast* a = NULL;
     a = Ake_parse_declaration(ps, false, false, true, false);
 
-	if (a) {
-		Ake_AstListAdd(&n->data._struct_.list, a);
-	}
+    if (a) {
+        Ake_AstListAdd(&n->data._struct_.list, a);
+    }
 
-	while (true) {
-		bool has_separator;
-		Ake_parse_separator(ps, n, &has_separator);
+    while (true) {
+        bool has_separator;
+        Ake_parse_separator(ps, n, &has_separator);
 
-		if (!has_separator) {
-			break;
-		}
+        if (!has_separator) {
+            break;
+        }
 
-		Ake_Ast* b = NULL;
+        Ake_Ast* b = NULL;
         b = Ake_parse_declaration(ps, false, false, true, false);
 
-		if (b) {
-			Ake_AstListAdd(&n->data._struct_.list, b);
-		}
-	}
+        if (b) {
+            Ake_AstListAdd(&n->data._struct_.list, b);
+        }
+    }
 
-	struct Ake_token* end = NULL;
-	if (!Ake_match(ps, Ake_token_end, "expected end", &end, n)) {
+    struct Ake_token* end = NULL;
+    if (!Ake_match(ps, Ake_token_end, "expected end", &end, n)) {
         /* test case: test_parse_struct_error_expected_end */
         n->has_error = true;
     }
 
-	if (!n->has_error) {
-		Ake_symbol* search = Ake_EnvironmentGetLocal(ps->st->top, &id->value);
-		if (search) {
-			Zinc_string_finish(&id->value);
-			Zinc_error_list_set(ps->el, &id->loc, "duplicate variable in scope: %s", id->value.buf);
+    if (!n->has_error) {
+        Ake_symbol* search = Ake_EnvironmentGetLocal(ps->st->top, &id->value);
+        if (search) {
+            Zinc_string_finish(&id->value);
+            Zinc_error_list_set(ps->el, &id->loc, "duplicate variable in scope: %s", id->value.buf);
             /* test case: test_parse_struct_error_duplicate */
             n->has_error = true;
-		} else {
-		}
-	}
+        } else {
+        }
+    }
 
-	Ake_UpdateSymbolStruct(ps->st, n);
+    Ake_UpdateSymbolStruct(ps->st, n);
 
-	return n;
+    return n;
 }
 
 /* parse_return -> return expr | return */
 Ake_Ast* Ake_parse_return(struct Ake_parse_state* ps)
 {
-	Ake_Ast* n = NULL;
+    Ake_Ast* n = NULL;
     Ake_AstCreate(&n);
-	Ake_AstSet(n, AKE_AST_RETURN);
+    Ake_AstSet(n, AKE_AST_RETURN);
 
-	struct Ake_token* ret = NULL;
-	if (!Ake_match(ps, Ake_token_return, "expected return", &ret, n)) {
+    struct Ake_token* ret = NULL;
+    if (!Ake_match(ps, Ake_token_return, "expected return", &ret, n)) {
         assert(false);
         /* test case: no test case needed */
     }
 
-	Ake_Ast* a = NULL;
+    Ake_Ast* a = NULL;
     a = Ake_parse_expr(ps);
 
-	if (a) {
-		n->data._return_.expr = a;
+    if (a) {
+        n->data._return_.expr = a;
         Ake_AstAdd2(n, a);
-	}
+    }
 
-	if (!n->has_error) {
-		if (a) {
-			if (!a->type) {
-				Zinc_error_list_set(ps->el, &a->loc, "return expression has no value");
-				/* test case: test_parse_return_error_no_value */
+    if (!n->has_error) {
+        if (a) {
+            if (!a->type) {
+                Zinc_error_list_set(ps->el, &a->loc, "return expression has no value");
+                /* test case: test_parse_return_error_no_value */
                 n->has_error = true;
-			} else {
-				n->type = Ake_TypeClone(a->type);
-				Ake_Ast* fd = Ake_get_current_function(ps->st);
-				if (!fd) {
-					Zinc_error_list_set(ps->el, &ret->loc, "return statement outside of function");
-					/* test case: test_parse_return_error_outside_of_function */
+            } else {
+                n->type = Ake_TypeClone(a->type);
+                Ake_Ast* fd = Ake_get_current_function(ps->st);
+                if (!fd) {
+                    Zinc_error_list_set(ps->el, &ret->loc, "return statement outside of function");
+                    /* test case: test_parse_return_error_outside_of_function */
                     n->has_error = true;
-				} else {
+                } else {
                     Ake_Ast* proto = fd->data.function.proto;
                     if (!Ake_check_return_type(ps, proto, n, &ret->loc)) {
                         /* test case: test_parse_return_error_type_does_not_match */
                         n->has_error = true;
                     }
-				}
-			}
-		}
-	}
+                }
+            }
+        }
+    }
 
-	return n;
+    return n;
 }
 
 /* parse_let = let let_lseq :: type | let let_lseq :: type = let_rseq */
@@ -550,34 +550,34 @@ Ake_Ast* Ake_parse_let(struct Ake_parse_state* ps)
     Ake_Ast* n = NULL;
     Ake_AstCreate(&n);
 
-	Ake_get_lookahead(ps);
-	if (ps->lookahead->type == Ake_token_const) {
-		Ake_token* t = NULL;
-		if (!Ake_match(ps, Ake_token_const, "expected const", &t, n)) {
-			assert(false && "expected const");
-		}
-		n->kind = Ake_ast_type_const;
-	} else if (ps->lookahead->type == Ake_token_var) {
-		Ake_token* t = NULL;
-		if (!Ake_match(ps, Ake_token_var, "expected var", &t, n)) {
-			assert(false && "expected var");;
-		}
-		n->kind = Ake_ast_type_var;
-	} else {
-		assert(false && "expected const or var");
-	}
+    Ake_get_lookahead(ps);
+    if (ps->lookahead->type == Ake_token_const) {
+        Ake_token* t = NULL;
+        if (!Ake_match(ps, Ake_token_const, "expected const", &t, n)) {
+            assert(false && "expected const");
+        }
+        n->kind = Ake_ast_type_const;
+    } else if (ps->lookahead->type == Ake_token_var) {
+        Ake_token* t = NULL;
+        if (!Ake_match(ps, Ake_token_var, "expected var", &t, n)) {
+            assert(false && "expected var");;
+        }
+        n->kind = Ake_ast_type_var;
+    } else {
+        assert(false && "expected const or var");
+    }
 
     Ake_consume_newline(ps, n);
 
-	Ake_token* id = NULL;
-	Ake_match(ps, Ake_token_id, "expected id", &id, n);
+    Ake_token* id = NULL;
+    Ake_match(ps, Ake_token_id, "expected id", &id, n);
 
-	Ake_Ast* id_node = NULL;
-	Ake_AstCreate(&id_node);
-	Ake_AstSet(id_node, AKE_AST_ID);
-	if (id) {
-		Zinc_string_add_string(&id_node->data.id.value, &id->value);
-	}
+    Ake_Ast* id_node = NULL;
+    Ake_AstCreate(&id_node);
+    Ake_AstSet(id_node, AKE_AST_ID);
+    if (id) {
+        Zinc_string_add_string(&id_node->data.id.value, &id->value);
+    }
     Ake_AstAdd(n, id_node);
 
     Ake_consume_newline(ps, n);
@@ -591,11 +591,11 @@ Ake_Ast* Ake_parse_let(struct Ake_parse_state* ps)
 
     Ake_Ast* type_node = NULL;
     type_node = Ake_parse_type(ps);
-	if (type_node && !type_node->type) {
-		Zinc_location loc = ps->lookahead->loc;
-		Zinc_error_list_set(ps->el, &loc, "expected type identifier or fn");
-		n->has_error = true;
-	}
+    if (type_node && !type_node->type) {
+        Zinc_location loc = ps->lookahead->loc;
+        Zinc_error_list_set(ps->el, &loc, "expected type identifier or fn");
+        n->has_error = true;
+    }
     if (type_node) {
         Ake_AstAdd(n, type_node);
     } else {
@@ -628,10 +628,10 @@ Ake_Ast* Ake_parse_let(struct Ake_parse_state* ps)
             n->has_error = true;
         }
 
-    	if (b && b->type == NULL) {
-    		Zinc_error_list_set(ps->el, &b->loc, "cannot assign with operand that has no value");
-    		n->has_error = true;
-    	}
+        if (b && b->type == NULL) {
+            Zinc_error_list_set(ps->el, &b->loc, "cannot assign with operand that has no value");
+            n->has_error = true;
+        }
 
         if (!n->has_error) {
             bool cast = false;
@@ -646,7 +646,7 @@ Ake_Ast* Ake_parse_let(struct Ake_parse_state* ps)
         }
     }
 
-	Ake_UpdateSymbolLet(ps->st, n);
+    Ake_UpdateSymbolLet(ps->st, n);
 
     return n;
 }
@@ -722,60 +722,60 @@ Ake_Ast* Ake_parse_impl(struct Ake_parse_state* ps)
 /* NOLINTNEXTLINE(misc-no-recursion) */
 Ake_Ast* Ake_parse_assignment(struct Ake_parse_state* ps)
 {
-	Ake_Ast* n = NULL;
-	Ake_Ast* a = NULL;
-	Ake_Ast* b = NULL;
-	a = Ake_parse_expr(ps);
+    Ake_Ast* n = NULL;
+    Ake_Ast* a = NULL;
+    Ake_Ast* b = NULL;
+    a = Ake_parse_expr(ps);
 
-	if (!a) {
-		return NULL;
-	}
+    if (!a) {
+        return NULL;
+    }
 
-	Ake_token* t0 = Ake_get_lookahead(ps);
-	if (t0->type == Ake_token_equal) {
-		Ake_AstCreate(&n);
-		Ake_AstSet(n, AKE_AST_ASSIGN);
-		n->data.assign.left = a;
-		Ake_AstAdd2(n, a);
+    Ake_token* t0 = Ake_get_lookahead(ps);
+    if (t0->type == Ake_token_equal) {
+        Ake_AstCreate(&n);
+        Ake_AstSet(n, AKE_AST_ASSIGN);
+        n->data.assign.left = a;
+        Ake_AstAdd2(n, a);
 
-		Ake_token *equal = NULL;
-		if (!Ake_match(ps, Ake_token_equal, "expecting assign operator", &equal, n)) {
-			/* test case: no test case needed */
-			assert(false && "not possible");
-		}
+        Ake_token *equal = NULL;
+        if (!Ake_match(ps, Ake_token_equal, "expecting assign operator", &equal, n)) {
+            /* test case: no test case needed */
+            assert(false && "not possible");
+        }
 
-		Ake_consume_newline(ps, n);
+        Ake_consume_newline(ps, n);
 
-		b = Ake_parse_expr(ps);
-		if (!b) {
-			Zinc_error_list_set(ps->el, &ps->lookahead->loc, "expected expression");
-			n->has_error = true;
-		} else {
-			n->data.assign.right = b;
-			Ake_AstAdd2(n, b);
-		}
-	} else {
-		n = a;
-	}
+        b = Ake_parse_expr(ps);
+        if (!b) {
+            Zinc_error_list_set(ps->el, &ps->lookahead->loc, "expected expression");
+            n->has_error = true;
+        } else {
+            n->data.assign.right = b;
+            Ake_AstAdd2(n, b);
+        }
+    } else {
+        n = a;
+    }
 
-	if (n && n->kind == AKE_AST_ASSIGN && !n->has_error) {
-		if (!Ake_check_lvalue(ps, a, &n->loc)) {
-			n->has_error = true;
-		}
+    if (n && n->kind == AKE_AST_ASSIGN && !n->has_error) {
+        if (!Ake_check_lvalue(ps, a, &n->loc)) {
+            n->has_error = true;
+        }
 
-		if (!b->type) {
-			Zinc_error_list_set(ps->el, &b->loc, "r-value does not have a type");
-			n->has_error = true;
-		}
+        if (!b->type) {
+            Zinc_error_list_set(ps->el, &b->loc, "r-value does not have a type");
+            n->has_error = true;
+        }
 
-		bool cast = false;
-		if (!Ake_TypeMatch(a->type, b->type, &cast)) {
-			Zinc_error_list_set(ps->el, &b->loc, "values in assignment not compatible");
-			n->has_error = true;
-		}
+        bool cast = false;
+        if (!Ake_TypeMatch(a->type, b->type, &cast)) {
+            Zinc_error_list_set(ps->el, &b->loc, "values in assignment not compatible");
+            n->has_error = true;
+        }
 
-		Ake_Override_rhs(a->type, b);
-	}
+        Ake_Override_rhs(a->type, b);
+    }
 
-	return n;
+    return n;
 }

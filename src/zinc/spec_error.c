@@ -96,8 +96,8 @@ void Zinc_spec_error_list_print(Zinc_spec_error_list* list)
         Zinc_string_finish(&e->message);
         fprintf(
             stderr,
-            "(%zu,%zu)\n"
-            "(%zu,%zu)\n"
+            "\t(%zu,%zu)\n"
+            "\t(%zu,%zu)\n"
             "\t%s\n",
             e->loc1.line,
             e->loc1.col,

@@ -206,6 +206,11 @@ namespace Akela_llvm {
             case AKE_AST_RETURN:
                 Check_subscript(jd, n->data._return_.expr);
                 break;
+            case AKE_AST_PROTOTYPE:
+                Check_subscript(jd, n->data.prototype.id);
+                Check_subscript(jd, n->data.prototype.dseq);
+                Check_subscript(jd, n->data.prototype.ret);
+                break;
             default:
                 p = n->head;
                 while (p) {

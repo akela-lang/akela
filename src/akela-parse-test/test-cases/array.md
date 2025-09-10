@@ -782,10 +782,10 @@ Ast::Stmts {
   .type = type0
   Ast::Function {
     .proto = Ast::Prototype {
-      Ast::Id {
+      .id = Ast::Id {
         .value = "foo"
       }
-      Ast::Dseq {
+      .dseq = Ast::Dseq {
         Ast::Declaration {
           .id_node = Ast::Id {
             .value = "a"
@@ -811,7 +811,7 @@ Ast::Stmts {
           }
         }
       }
-      Ast::Dret {
+      .ret = Ast::Dret {
         .node = Ast::Type {
           .type = type0
         }
