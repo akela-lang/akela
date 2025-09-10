@@ -53,7 +53,7 @@ typedef enum Ake_AstKind {
 	AKE_AST_POWER,
 	AKE_AST_DOT,
 	AKE_AST_STRUCT,
-	Ake_ast_type_return,
+	AKE_AST_RETURN,
     Ake_ast_type_prototype,
     Ake_ast_type_extern,
     Ake_ast_type_struct_literal,
@@ -107,7 +107,7 @@ static char const* Ast_type_name(Ake_AstKind kind)
     name[AKE_AST_POWER] = "power";
     name[AKE_AST_DOT] = "dot";
     name[AKE_AST_STRUCT] = "struct";
-    name[Ake_ast_type_return] = "return";
+    name[AKE_AST_RETURN] = "return";
     name[Ake_ast_type_prototype] = "prototype";
     name[Ake_ast_type_extern] = "extern";
     name[Ake_ast_type_struct_literal] = "struct-literal";
@@ -175,6 +175,7 @@ typedef struct Ake_Ast {
 		struct { Ake_Ast* left; Ake_Ast* right; } power;
 		struct { Ake_Ast* left; Ake_Ast* right; } dot;
 		struct { Ake_AstList list; } _struct_ ;
+		struct { Ake_Ast* expr; } _return_;
 	} data;
 	Ake_Type* type;
     Zinc_location loc;

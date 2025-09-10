@@ -203,6 +203,9 @@ namespace Akela_llvm {
                     p = p->next;
                 }
                 break;
+            case AKE_AST_RETURN:
+                Check_subscript(jd, n->data._return_.expr);
+                break;
             default:
                 p = n->head;
                 while (p) {

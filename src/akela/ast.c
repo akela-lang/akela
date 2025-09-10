@@ -211,6 +211,10 @@ void Ake_AstSet(Ake_Ast* n, Ake_AstKind kind)
 			Ake_AstListInit(&n->data._struct_.list, n);
 			n->is_set = true;
 			break;
+		case AKE_AST_RETURN:
+			n->data._return_.expr = NULL;
+			n->is_set = true;
+			break;
 		default:
 			break;
 	}
@@ -256,6 +260,7 @@ void Ake_AstValidate(Ake_Ast* n)
 		case AKE_AST_POWER:
 		case AKE_AST_DOT:
 		case AKE_AST_STRUCT:
+		case AKE_AST_RETURN:
 			assert(n->is_set);
 			break;
 		default:
@@ -410,6 +415,9 @@ void Ake_AstDestroy(Ake_Ast* n)
     			break;
     		case AKE_AST_STRUCT:
     			Ake_AstListDestroy(&n->data._struct_.list);
+    			break;
+    		case AKE_AST_RETURN:
+    			Ake_AstDestroy(n->data._return_.expr);
     			break;
         	default:
     			p = n->head;
@@ -649,6 +657,9 @@ void Ake_AstCopy(Ake_Ast* src, Ake_Ast* dest)
 				Ake_AstListAdd(&dest->data._struct_.list, Ake_AstClone(p));
 				p = p->next;
 			}
+			break;
+		case AKE_AST_RETURN:
+			dest->data._return_.expr = Ake_AstClone(src->data._return_.expr);
 			break;
 		default:
 			break;
@@ -1029,6 +1040,11 @@ bool Ake_AstMatch(Ake_Ast* a, Ake_Ast* b)
 					}
 					a2 = a2->next;
 					b2 = b2->next;
+				}
+				break;
+			case AKE_AST_RETURN:
+				if (!Ake_AstMatch(a->data._return_.expr, b->data._return_.expr)) {
+					return false;
 				}
 				break;
 			default:

@@ -648,11 +648,11 @@ Ast::Stmts {
     .body = Ast::Stmts {
       .type = type1
       Ast::Return {
-        .type = type1
-        Ast::Number {
+        .expr = Ast::Number {
           .value = "1"
           .type = type1
         }
+        .type = type1
       }
     }
     .type = type0

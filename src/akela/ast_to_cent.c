@@ -374,6 +374,11 @@ void Ake_ast_cent_print(Ake_Ast* n, size_t level, bool is_property, Ake_TypeSlot
                     p = p->next;
                 }
                 break;
+            case AKE_AST_RETURN:
+                Ake_indent_print(level);
+                printf(".expr = ");
+                Ake_ast_cent_print(n->data._return_.expr, level, true, slots);
+                break;
             default:
                 p = n->head;
                 while (p) {
@@ -559,7 +564,7 @@ char* Ake_ast_cent_name(Ake_AstKind type)
         return "Ast::Struct";
     }
 
-    if (type == Ake_ast_type_return) {
+    if (type == AKE_AST_RETURN) {
         return "Ast::Return";
     }
 

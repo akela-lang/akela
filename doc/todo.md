@@ -39,7 +39,7 @@
   * power [x]
   * dot [x]
   * struct [x]
-  * return []
+  * return [x]
   * eseq []
   * prototype []
   * extern []

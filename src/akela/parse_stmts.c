@@ -501,7 +501,7 @@ Ake_Ast* Ake_parse_return(struct Ake_parse_state* ps)
 {
 	Ake_Ast* n = NULL;
     Ake_AstCreate(&n);
-    n->kind = Ake_ast_type_return;
+	Ake_AstSet(n, AKE_AST_RETURN);
 
 	struct Ake_token* ret = NULL;
 	if (!Ake_match(ps, Ake_token_return, "expected return", &ret, n)) {
@@ -513,7 +513,8 @@ Ake_Ast* Ake_parse_return(struct Ake_parse_state* ps)
     a = Ake_parse_expr(ps);
 
 	if (a) {
-        Ake_AstAdd(n, a);
+		n->data._return_.expr = a;
+        Ake_AstAdd2(n, a);
 	}
 
 	if (!n->has_error) {

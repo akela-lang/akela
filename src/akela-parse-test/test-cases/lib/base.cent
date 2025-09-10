@@ -330,6 +330,12 @@ variant Ast::Struct {
     }
 }
 
+variant Ast::Return {
+    properties {
+        expr: Ast
+    }
+}
+
 element AstList {
     children {
         Ast
