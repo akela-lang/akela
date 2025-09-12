@@ -11,7 +11,7 @@ namespace Akela_llvm {
     {
         Ake_UpdateSymbolExtern(&jd->st, n);
         FunctionType* func_type = Get_function_type(jd, n->type);
-        Ake_Ast *proto = Ake_AstGet(n, 0);
+        Ake_Ast *proto = n->data._extern_.proto;
         Ake_Ast *id = proto->data.prototype.id;
         Zinc_string_finish(&id->data.id.value);
         Function* f = Function::Create(func_type, GlobalValue::ExternalLinkage, id->data.id.value.buf, *jd->TheModule);

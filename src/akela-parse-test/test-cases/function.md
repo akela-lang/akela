@@ -2225,8 +2225,7 @@ const type1 = Type::Integer {
 }
 Ast::Stmts {
   Ast::Extern {
-    .type = type0
-    Ast::Prototype {
+    .proto = Ast::Prototype {
       .id = Ast::Id {
         .value = "foo"
       }
@@ -2243,6 +2242,7 @@ Ast::Stmts {
       .ret = Ast::Dret {
       }
     }
+    .type = type0
   }
   Ast::Call {
     .func = Ast::Id {

@@ -122,7 +122,7 @@ Ake_Ast* Ake_parse_extern(struct Ake_parse_state* ps)
 {
     Ake_Ast* n = NULL;
     Ake_AstCreate(&n);
-    n->kind = Ake_ast_type_extern;
+    Ake_AstSet(n, AKE_AST_EXTERN);
 
     struct Ake_token* ext = NULL;
     if (!Ake_match(ps, Ake_token_extern, "expected extern", &ext, n)) {
@@ -134,7 +134,8 @@ Ake_Ast* Ake_parse_extern(struct Ake_parse_state* ps)
     bool has_id;
     proto = Ake_parse_prototype(ps, false, true, false, false, &has_id);
     if (proto) {
-        Ake_AstAdd(n, proto);
+        n->data._extern_.proto = proto;
+        Ake_AstAdd2(n, proto);
         Ake_Type* type = Ake_proto2type_use(ps, proto);
         n->type = type;
     }

@@ -211,6 +211,9 @@ namespace Akela_llvm {
                 Check_subscript(jd, n->data.prototype.dseq);
                 Check_subscript(jd, n->data.prototype.ret);
                 break;
+            case AKE_AST_EXTERN:
+                Check_subscript(jd, n->data._extern_.proto);
+                break;
             default:
                 p = n->head;
                 while (p) {

@@ -356,7 +356,7 @@ namespace Akela_llvm {
             return Handle_stmts(jd, n);
         }
 
-        if (n->kind == Ake_ast_type_extern) {
+        if (n->kind == AKE_AST_EXTERN) {
             return Handle_extern(jd, n);
         }
 

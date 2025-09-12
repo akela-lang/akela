@@ -392,6 +392,11 @@ void Ake_ast_cent_print(Ake_Ast* n, size_t level, bool is_property, Ake_TypeSlot
                 printf(".ret = ");
                 Ake_ast_cent_print(n->data.prototype.ret, level, true, slots);
                 break;
+            case AKE_AST_EXTERN:
+                Ake_indent_print(level);
+                printf(".proto = ");
+                Ake_ast_cent_print(n->data._extern_.proto, level, true, slots);
+                break;
             default:
                 p = n->head;
                 while (p) {
@@ -585,7 +590,7 @@ char* Ake_ast_cent_name(Ake_AstKind type)
         return "Ast::Prototype";
     }
 
-    if (type == Ake_ast_type_extern) {
+    if (type == AKE_AST_EXTERN) {
         return "Ast::Extern";
     }
 

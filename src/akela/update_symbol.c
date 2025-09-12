@@ -6,7 +6,7 @@
 void Ake_UpdateSymbolExtern(Ake_symbol_table* st, Ake_Ast* n)
 {
     if (!n->has_error) {
-        Ake_Ast* proto = Ake_AstGet(n, 0);
+        Ake_Ast* proto = n->data._extern_.proto;
         if (proto) {
             Ake_Ast *id_node = proto->data.prototype.id;
             struct Ake_Symbol *new_sym = NULL;

@@ -221,6 +221,10 @@ void Ake_AstSet(Ake_Ast* n, Ake_AstKind kind)
             n->data.prototype.ret = NULL;
             n->is_set = true;
             break;
+        case AKE_AST_EXTERN:
+            n->data._extern_.proto = NULL;
+            n->is_set = true;
+            break;
         default:
             break;
     }
@@ -268,6 +272,7 @@ void Ake_AstValidate(Ake_Ast* n)
         case AKE_AST_STRUCT:
         case AKE_AST_RETURN:
         case AKE_AST_PROTOTYPE:
+        case AKE_AST_EXTERN:
             assert(n->is_set);
             break;
         default:
@@ -430,6 +435,9 @@ void Ake_AstDestroy(Ake_Ast* n)
                 Ake_AstDestroy(n->data.prototype.id);
                 Ake_AstDestroy(n->data.prototype.dseq);
                 Ake_AstDestroy(n->data.prototype.ret);
+                break;
+            case AKE_AST_EXTERN:
+                Ake_AstDestroy(n->data._extern_.proto);
                 break;
             default:
                 p = n->head;
@@ -677,6 +685,9 @@ void Ake_AstCopy(Ake_Ast* src, Ake_Ast* dest)
             dest->data.prototype.id = Ake_AstClone(src->data.prototype.id);
             dest->data.prototype.dseq = Ake_AstClone(src->data.prototype.dseq);
             dest->data.prototype.ret = Ake_AstClone(src->data.prototype.ret);
+            break;
+        case AKE_AST_EXTERN:
+            dest->data._extern_.proto = Ake_AstClone(src->data._extern_.proto);
             break;
         default:
             break;
@@ -1072,6 +1083,11 @@ bool Ake_AstMatch(Ake_Ast* a, Ake_Ast* b)
                     return false;
                 }
                 if (!Ake_AstMatch(a->data.prototype.ret, b->data.prototype.ret)) {
+                    return false;
+                }
+                break;
+            case AKE_AST_EXTERN:
+                if (!Ake_AstMatch(a->data._extern_.proto, b->data._extern_.proto)) {
                     return false;
                 }
                 break;

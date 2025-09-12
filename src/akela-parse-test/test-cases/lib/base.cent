@@ -344,6 +344,12 @@ variant Ast::Prototype {
     }
 }
 
+variant Ast::Extern {
+    properties {
+        proto: Ast
+    }
+}
+
 element AstList {
     children {
         Ast

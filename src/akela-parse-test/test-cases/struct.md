@@ -662,8 +662,7 @@ const type6 = Type::Integer {
 }
 Ast::Stmts {
   Ast::Extern {
-    .type = type0
-    Ast::Prototype {
+    .proto = Ast::Prototype {
       .id = Ast::Id {
         .value = "pow"
       }
@@ -689,10 +688,10 @@ Ast::Stmts {
         }
       }
     }
+    .type = type0
   }
   Ast::Extern {
-    .type = type2
-    Ast::Prototype {
+    .proto = Ast::Prototype {
       .id = Ast::Id {
         .value = "sqrt"
       }
@@ -711,6 +710,7 @@ Ast::Stmts {
         }
       }
     }
+    .type = type2
   }
   Ast::Struct {
     .value = "Point"
