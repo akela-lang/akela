@@ -471,6 +471,209 @@ Error {
 ```
 
 ## Test
+struct struct 
+```cent
+Test {
+}
+```
+
+```akela
+struct Point
+    x: Real64
+    y: Real64
+end
+struct Line
+    p0: Point
+    p1: Point
+end
+const line: Line = Line
+    p0: Point
+        x: 0
+        y: 1
+    end
+    p1: Point
+        x: 2
+        y: 3
+    end
+end
+```
+
+```cent
+use lib::base::*
+const type0 = Type::Real {
+  .name = "Real64"
+  .bit_count = 64
+}
+const type1 = Type::Struct {
+  .name = "Point"
+  TypeField {
+    .name = "x"
+    .type = Type::Real {
+      .name = "Real64"
+      .bit_count = 64
+    }
+  }
+  TypeField {
+    .name = "y"
+    .type = Type::Real {
+      .name = "Real64"
+      .bit_count = 64
+    }
+  }
+}
+const type2 = Type::Struct {
+  .name = "Line"
+  TypeField {
+    .name = "p0"
+    .type = Type::Struct {
+      .name = "Point"
+      TypeField {
+        .name = "x"
+        .type = Type::Real {
+          .name = "Real64"
+          .bit_count = 64
+        }
+      }
+      TypeField {
+        .name = "y"
+        .type = Type::Real {
+          .name = "Real64"
+          .bit_count = 64
+        }
+      }
+    }
+  }
+  TypeField {
+    .name = "p1"
+    .type = Type::Struct {
+      .name = "Point"
+      TypeField {
+        .name = "x"
+        .type = Type::Real {
+          .name = "Real64"
+          .bit_count = 64
+        }
+      }
+      TypeField {
+        .name = "y"
+        .type = Type::Real {
+          .name = "Real64"
+          .bit_count = 64
+        }
+      }
+    }
+  }
+}
+const type3 = Type::Integer {
+  .name = "Int32"
+  .bit_count = 32
+}
+Ast::Stmts {
+  Ast::Struct {
+    .value = "Point"
+    Ast::Declaration {
+      .id_node = Ast::Id {
+        .value = "x"
+      }
+      .type_node = Ast::Type {
+        .type = type0
+      }
+    }
+    Ast::Declaration {
+      .id_node = Ast::Id {
+        .value = "y"
+      }
+      .type_node = Ast::Type {
+        .type = type0
+      }
+    }
+  }
+  Ast::Struct {
+    .value = "Line"
+    Ast::Declaration {
+      .id_node = Ast::Id {
+        .value = "p0"
+      }
+      .type_node = Ast::Type {
+        .type = type1
+      }
+    }
+    Ast::Declaration {
+      .id_node = Ast::Id {
+        .value = "p1"
+      }
+      .type_node = Ast::Type {
+        .type = type1
+      }
+    }
+  }
+  Ast::Const {
+    Ast::Id {
+      .value = "line"
+    }
+    Ast::Type {
+      .type = type2
+    }
+    Ast::StructLiteral {
+      Ast::StructLiteralField {
+        Ast::Id {
+          .value = "p0"
+        }
+        Ast::StructLiteral {
+          Ast::StructLiteralField {
+            Ast::Id {
+              .value = "x"
+            }
+            Ast::Number {
+              .value = "0"
+              .type = type3
+            }
+          }
+          Ast::StructLiteralField {
+            Ast::Id {
+              .value = "y"
+            }
+            Ast::Number {
+              .value = "1"
+              .type = type3
+            }
+          }
+          .type = type1
+        }
+      }
+      Ast::StructLiteralField {
+        Ast::Id {
+          .value = "p1"
+        }
+        Ast::StructLiteral {
+          Ast::StructLiteralField {
+            Ast::Id {
+              .value = "x"
+            }
+            Ast::Number {
+              .value = "2"
+              .type = type3
+            }
+          }
+          Ast::StructLiteralField {
+            Ast::Id {
+              .value = "y"
+            }
+            Ast::Number {
+              .value = "3"
+              .type = type3
+            }
+          }
+          .type = type1
+        }
+      }
+      .type = type2
+    }
+  }
+}
+```
+
+## Test
 struct impl
 
 ```cent

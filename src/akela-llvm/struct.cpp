@@ -135,7 +135,7 @@ namespace Akela_llvm {
         }
         Zinc_string_destroy(&bf);
         size_t i = 0;
-        Ake_Ast* field = n->head;
+        Ake_Ast* field = n->data.struct_literal.fields.head;
         while (field) {
             Ake_Ast* id = Ake_AstGet(field, 0);
             Ake_Ast* expr = Ake_AstGet(field, 1);
@@ -166,7 +166,7 @@ namespace Akela_llvm {
         StructType* t = GetStructTypeFromType(jd, n->type);
 
         size_t i = 0;
-        Ake_Ast* field = n->head;
+        Ake_Ast* field = n->data.struct_literal.fields.head;
         while (field) {
             Ake_Ast* id = Ake_AstGet(field, 0);
             Ake_Ast* expr = Ake_AstGet(field, 1);

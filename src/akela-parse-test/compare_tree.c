@@ -644,6 +644,21 @@ bool Apt_compare_ast(Zinc_test* top_test, Zinc_test* case_test, Ake_Ast* n, Cent
             value2 = Cent_value_get_str(value, "proto");
             Apt_compare_ast(top_test, case_test, n->data._extern_.proto, value2);
             break;
+        case AKE_AST_STRUCT_LITERAL:
+            if (value->type == Cent_value_type_dag) {
+                value2 = value->data.dag.head;
+                p = n->data.struct_literal.fields.head;
+                while (p || value2) {
+                    Apt_compare_ast(top_test, case_test, p, value2);
+                    if (p) {
+                        p = p->next;
+                    }
+                    if (value2) {
+                        value2 = value2->next;
+                    }
+                }
+            }
+            break;
         default:
             Cent_value* value_prop = Cent_value_get_str(value, "value");
             if (Apt_has_value(n)) {

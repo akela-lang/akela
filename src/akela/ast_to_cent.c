@@ -19,7 +19,8 @@ void Ake_tree_print(Ake_Ast* n, Zinc_string* initial_line)
     Ake_TypeSlots slots;
     Ake_TypeSlotsInit(&slots);
 
-    Ake_TypeSlotsScan(&slots, n);
+    Ake_AstVisit(n, (Ake_AstVisitFunction)Ake_TypeSlotsVisit, NULL, &slots);
+
     Ake_print_types(&slots);
     Ake_ast_cent_print(n, 0, false, &slots);
 
@@ -73,9 +74,11 @@ void Ake_ast_cent_print(Ake_Ast* n, size_t level, bool is_property, Ake_TypeSlot
             case AKE_AST_NUMBER:
                 Ake_indent_print(level);
                 printf(".value = \"%s\"\n", Zinc_string_c_str(&n->data.number.value));
+                break;
             case AKE_AST_STRING:
                 Ake_indent_print(level);
                 printf(".value = \"%s\"\n", Zinc_string_c_str(&n->data.string.value));
+                break;
             case AKE_AST_ASSIGN:
                 if (n->data.assign.left) {
                     Ake_indent_print(level);
@@ -315,7 +318,7 @@ void Ake_ast_cent_print(Ake_Ast* n, size_t level, bool is_property, Ake_TypeSlot
                 break;
             case AKE_AST_DECLARATION:
                 Ake_indent_print(level);
-                printf("id_node = ");
+                printf(".id_node = ");
                 Ake_ast_cent_print(n->data.declaration.id_node,  level, true, slots);
 
                 Ake_indent_print(level);
@@ -396,6 +399,13 @@ void Ake_ast_cent_print(Ake_Ast* n, size_t level, bool is_property, Ake_TypeSlot
                 Ake_indent_print(level);
                 printf(".proto = ");
                 Ake_ast_cent_print(n->data._extern_.proto, level, true, slots);
+                break;
+            case AKE_AST_STRUCT_LITERAL:
+                p = n->data.struct_literal.fields.head;
+                while (p) {
+                    Ake_ast_cent_print(p, level, false, slots);
+                    p = p->next;
+                }
                 break;
             default:
                 p = n->head;
@@ -594,7 +604,7 @@ char* Ake_ast_cent_name(Ake_AstKind type)
         return "Ast::Extern";
     }
 
-    if (type == Ake_ast_type_struct_literal) {
+    if (type == AKE_AST_STRUCT_LITERAL) {
         return "Ast::StructLiteral";
     }
 

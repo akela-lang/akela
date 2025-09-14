@@ -56,7 +56,7 @@ typedef enum Ake_AstKind {
     AKE_AST_RETURN,
     AKE_AST_PROTOTYPE,
     AKE_AST_EXTERN,
-    Ake_ast_type_struct_literal,
+    AKE_AST_STRUCT_LITERAL,
     Ake_ast_type_struct_literal_field,
     Ake_ast_type_ellipsis,
     Ake_ast_type_impl,
@@ -110,7 +110,7 @@ static char const* Ast_type_name(Ake_AstKind kind)
     name[AKE_AST_RETURN] = "return";
     name[AKE_AST_PROTOTYPE] = "prototype";
     name[AKE_AST_EXTERN] = "extern";
-    name[Ake_ast_type_struct_literal] = "struct-literal";
+    name[AKE_AST_STRUCT_LITERAL] = "struct-literal";
     name[Ake_ast_type_struct_literal_field] = "struct-literal-field";
     name[Ake_ast_type_ellipsis] = "ellipsis";
     name[Ake_ast_type_impl] = "impl";
@@ -178,6 +178,7 @@ typedef struct Ake_Ast {
         struct { Ake_Ast* expr; } _return_;
         struct { Ake_Ast* id; Ake_Ast* dseq; Ake_Ast* ret; } prototype;
         struct { Ake_Ast* proto; } _extern_;
+        struct { Ake_AstList fields; } struct_literal;
     } data;
     Ake_Type* type;
     Zinc_location loc;
@@ -207,6 +208,9 @@ extern "C" {
     AKELA_API Ake_Ast* Ake_AstClone(Ake_Ast* n);
     AKELA_API bool Ake_AstMatch(Ake_Ast* a, Ake_Ast* b);
     AKELA_API size_t Ake_AstCountChildren(Ake_Ast* n);
+
+    typedef void (*Ake_AstVisitFunction)(Ake_Ast* n, void* data);
+    AKELA_API void Ake_AstVisit(Ake_Ast* n, Ake_AstVisitFunction pre, Ake_AstVisitFunction post, void* data);
 
     AKELA_API void Ake_AstListInit(Ake_AstList* list, Ake_Ast* parent);
     AKELA_API void Ake_AstListCreate(Ake_AstList** list, Ake_Ast* parent);

@@ -42,7 +42,7 @@
   * return [x]
   * prototype [x]
   * extern [x]
-  * struct literal []
+  * struct literal [x]
   * struct literal field []
   * ellipsis []
   * impl []

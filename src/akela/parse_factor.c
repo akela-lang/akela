@@ -437,7 +437,7 @@ Ake_Ast* Ake_parse_id(Ake_parse_state* ps)
 
         Ake_consume_newline(ps, n);
 
-        n->kind = Ake_ast_type_struct_literal;
+        Ake_AstSet(n, AKE_AST_STRUCT_LITERAL);
         n->type = Ake_TypeClone(sym->td);
 
         Ake_parse_struct_literal_elements(ps, n, sym->td);
@@ -502,7 +502,7 @@ void Ake_find_missing_fields(Ake_parse_state* ps, Ake_Type* type, Ake_Ast* n) {
     Ake_TypeField *tf = type->data.fields.head;
     while (tf) {
         bool found = false;
-        Ake_Ast *field = n->head;
+        Ake_Ast *field = n->data.struct_literal.fields.head;
         while (field) {
             Ake_Ast *id2 = Ake_AstGet(field, 0);
             if (Zinc_string_compare(&id2->data.id.value, &tf->name)) {
@@ -536,7 +536,7 @@ void Ake_parse_struct_literal_elements(
         Ake_Ast* field = NULL;
         Ake_AstCreate(&field);
         field->kind = Ake_ast_type_struct_literal_field;
-        Ake_AstAdd(parent, field);
+        Ake_AstListAdd(&parent->data.struct_literal.fields, field);
 
         Ake_struct_field_result sfr = Ake_get_struct_field(type, &name->value);
         if (!sfr.found) {

@@ -214,6 +214,13 @@ namespace Akela_llvm {
             case AKE_AST_EXTERN:
                 Check_subscript(jd, n->data._extern_.proto);
                 break;
+            case AKE_AST_STRUCT_LITERAL:
+                p = n->data.struct_literal.fields.head;
+                while (p) {
+                    Check_subscript(jd, p);
+                    p = p->next;
+                }
+                break;
             default:
                 p = n->head;
                 while (p) {
