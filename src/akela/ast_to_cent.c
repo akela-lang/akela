@@ -407,6 +407,15 @@ void Ake_ast_cent_print(Ake_Ast* n, size_t level, bool is_property, Ake_TypeSlot
                     p = p->next;
                 }
                 break;
+            case AKE_AST_STRUCT_LITERAL_FIELD:
+                Ake_indent_print(level);
+                printf(".id = ");
+                Ake_ast_cent_print(n->data.struct_literal_field.id, level, true, slots);
+
+                Ake_indent_print(level);
+                printf(".expr = ");
+                Ake_ast_cent_print(n->data.struct_literal_field.expr, level, true, slots);
+                break;
             default:
                 p = n->head;
                 while (p) {
@@ -608,7 +617,7 @@ char* Ake_ast_cent_name(Ake_AstKind type)
         return "Ast::StructLiteral";
     }
 
-    if (type == Ake_ast_type_struct_literal_field) {
+    if (type == AKE_AST_STRUCT_LITERAL_FIELD) {
         return "Ast::StructLiteralField";
     }
 

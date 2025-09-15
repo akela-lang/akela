@@ -57,7 +57,7 @@ typedef enum Ake_AstKind {
     AKE_AST_PROTOTYPE,
     AKE_AST_EXTERN,
     AKE_AST_STRUCT_LITERAL,
-    Ake_ast_type_struct_literal_field,
+    AKE_AST_STRUCT_LITERAL_FIELD,
     Ake_ast_type_ellipsis,
     Ake_ast_type_impl,
     Ake_ast_type_const,
@@ -111,7 +111,7 @@ static char const* Ast_type_name(Ake_AstKind kind)
     name[AKE_AST_PROTOTYPE] = "prototype";
     name[AKE_AST_EXTERN] = "extern";
     name[AKE_AST_STRUCT_LITERAL] = "struct-literal";
-    name[Ake_ast_type_struct_literal_field] = "struct-literal-field";
+    name[AKE_AST_STRUCT_LITERAL_FIELD] = "struct-literal-field";
     name[Ake_ast_type_ellipsis] = "ellipsis";
     name[Ake_ast_type_impl] = "impl";
     name[Ake_ast_type_const] = "const";
@@ -179,6 +179,7 @@ typedef struct Ake_Ast {
         struct { Ake_Ast* id; Ake_Ast* dseq; Ake_Ast* ret; } prototype;
         struct { Ake_Ast* proto; } _extern_;
         struct { Ake_AstList fields; } struct_literal;
+        struct { Ake_Ast* id; Ake_Ast* expr; } struct_literal_field;
     } data;
     Ake_Type* type;
     Zinc_location loc;

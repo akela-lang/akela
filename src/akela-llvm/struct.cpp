@@ -137,8 +137,8 @@ namespace Akela_llvm {
         size_t i = 0;
         Ake_Ast* field = n->data.struct_literal.fields.head;
         while (field) {
-            Ake_Ast* id = Ake_AstGet(field, 0);
-            Ake_Ast* expr = Ake_AstGet(field, 1);
+            Ake_Ast* id = field->data.struct_literal_field.id;
+            Ake_Ast* expr = field->data.struct_literal_field.expr;
 
             Zinc_string_finish(&id->data.id.value);
             Value* gep_value = jd->Builder->CreateStructGEP(t, value, i, id->data.id.value.buf);
@@ -168,8 +168,8 @@ namespace Akela_llvm {
         size_t i = 0;
         Ake_Ast* field = n->data.struct_literal.fields.head;
         while (field) {
-            Ake_Ast* id = Ake_AstGet(field, 0);
-            Ake_Ast* expr = Ake_AstGet(field, 1);
+            Ake_Ast* id = field->data.struct_literal_field.id;
+            Ake_Ast* expr = field->data.struct_literal_field.expr;
 
             Zinc_string_finish(&id->data.id.value);
             Value* gep_value = jd->Builder->CreateStructGEP(t, ptr, i, id->data.id.value.buf);

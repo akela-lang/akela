@@ -659,6 +659,13 @@ bool Apt_compare_ast(Zinc_test* top_test, Zinc_test* case_test, Ake_Ast* n, Cent
                 }
             }
             break;
+        case AKE_AST_STRUCT_LITERAL_FIELD:
+            value2 = Cent_value_get_str(value, "id");
+            Apt_compare_ast(top_test, case_test, n->data.struct_literal_field.id, value2);
+
+            value2 = Cent_value_get_str(value, "expr");
+            Apt_compare_ast(top_test, case_test, n->data.struct_literal_field.expr, value2);
+            break;
         default:
             Cent_value* value_prop = Cent_value_get_str(value, "value");
             if (Apt_has_value(n)) {

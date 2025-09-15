@@ -504,7 +504,7 @@ void Ake_find_missing_fields(Ake_parse_state* ps, Ake_Type* type, Ake_Ast* n) {
         bool found = false;
         Ake_Ast *field = n->data.struct_literal.fields.head;
         while (field) {
-            Ake_Ast *id2 = Ake_AstGet(field, 0);
+            Ake_Ast *id2 = field->data.struct_literal_field.id;
             if (Zinc_string_compare(&id2->data.id.value, &tf->name)) {
                 found = true;
                 break;
@@ -535,7 +535,7 @@ void Ake_parse_struct_literal_elements(
 
         Ake_Ast* field = NULL;
         Ake_AstCreate(&field);
-        field->kind = Ake_ast_type_struct_literal_field;
+        Ake_AstSet(field, AKE_AST_STRUCT_LITERAL_FIELD);
         Ake_AstListAdd(&parent->data.struct_literal.fields, field);
 
         Ake_struct_field_result sfr = Ake_get_struct_field(type, &name->value);
@@ -548,7 +548,8 @@ void Ake_parse_struct_literal_elements(
         Ake_AstCreate(&id);
         Ake_AstSet(id, AKE_AST_ID);
         Zinc_string_copy(&name->value, &id->data.id.value);
-        Ake_AstAdd(field, id);
+        field->data.struct_literal_field.id = id;
+        Ake_AstAdd2(field, id);
 
         struct Ake_token* colon = NULL;
         if (!Ake_match(ps, Ake_token_colon, "expected a colon", &colon, parent)) {
@@ -558,7 +559,8 @@ void Ake_parse_struct_literal_elements(
 
         struct Ake_Ast* expr = Ake_parse_expr(ps);
         if (expr) {
-            Ake_AstAdd(field, expr);
+            field->data.struct_literal_field.expr = expr;
+            Ake_AstAdd2(field, expr);
 
             if (!parent->has_error) {
                 bool cast = false;

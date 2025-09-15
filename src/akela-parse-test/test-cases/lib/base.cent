@@ -350,6 +350,19 @@ variant Ast::Extern {
     }
 }
 
+variant Ast::StructLiteral {
+    children {
+        Ast
+    }
+}
+
+variant Ast::StructLiteralField {
+    properties {
+        id: Ast
+        expr: Ast
+    }
+}
+
 element AstList {
     children {
         Ast

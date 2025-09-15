@@ -266,28 +266,28 @@ Ast::Stmts {
     Ast::StructLiteral {
       .type = type2
       Ast::StructLiteralField {
-        Ast::Id {
+        .id = Ast::Id {
           .value = "first_name"
         }
-        Ast::String {
+        .expr = Ast::String {
           .value = "John"
           .type = type3
         }
       }
       Ast::StructLiteralField {
-        Ast::Id {
+        .id = Ast::Id {
           .value = "last_name"
         }
-        Ast::String {
+        .expr = Ast::String {
           .value = "Smith"
           .type = type4
         }
       }
       Ast::StructLiteralField {
-        Ast::Id {
+        .id = Ast::Id {
           .value = "age"
         }
-        Ast::Number {
+        .expr = Ast::Number {
           .value = "35"
           .type = type1
         }
@@ -616,24 +616,24 @@ Ast::Stmts {
     }
     Ast::StructLiteral {
       Ast::StructLiteralField {
-        Ast::Id {
+        .id = Ast::Id {
           .value = "p0"
         }
-        Ast::StructLiteral {
+        .expr = Ast::StructLiteral {
           Ast::StructLiteralField {
-            Ast::Id {
+            .id = Ast::Id {
               .value = "x"
             }
-            Ast::Number {
+            .expr = Ast::Number {
               .value = "0"
               .type = type3
             }
           }
           Ast::StructLiteralField {
-            Ast::Id {
+            .id = Ast::Id {
               .value = "y"
             }
-            Ast::Number {
+            .expr = Ast::Number {
               .value = "1"
               .type = type3
             }
@@ -642,24 +642,24 @@ Ast::Stmts {
         }
       }
       Ast::StructLiteralField {
-        Ast::Id {
+        .id = Ast::Id {
           .value = "p1"
         }
-        Ast::StructLiteral {
+        .expr = Ast::StructLiteral {
           Ast::StructLiteralField {
-            Ast::Id {
+            .id = Ast::Id {
               .value = "x"
             }
-            Ast::Number {
+            .expr = Ast::Number {
               .value = "2"
               .type = type3
             }
           }
           Ast::StructLiteralField {
-            Ast::Id {
+            .id = Ast::Id {
               .value = "y"
             }
-            Ast::Number {
+            .expr = Ast::Number {
               .value = "3"
               .type = type3
             }

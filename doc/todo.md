@@ -43,7 +43,7 @@
   * prototype [x]
   * extern [x]
   * struct literal [x]
-  * struct literal field []
+  * struct literal field [x]
   * ellipsis []
   * impl []
   * self []
@@ -62,6 +62,8 @@
   * dret []
   * declaration []
 * remove id node from dot
+  * dot []
+  * struct field []
 * test case for const array changed
 * convert Cent_value to Ake_Ast
 * match stack output with Ake_AstMatch

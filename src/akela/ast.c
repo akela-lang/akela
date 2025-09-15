@@ -229,6 +229,10 @@ void Ake_AstSet(Ake_Ast* n, Ake_AstKind kind)
             Ake_AstListInit(&n->data.struct_literal.fields, n);
             n->is_set = true;
             break;
+        case AKE_AST_STRUCT_LITERAL_FIELD:
+            n->data.struct_literal_field.id = NULL;
+            n->data.struct_literal_field.expr = NULL;
+            n->is_set = true;
         default:
             break;
     }
@@ -278,6 +282,7 @@ void Ake_AstValidate(Ake_Ast* n)
         case AKE_AST_PROTOTYPE:
         case AKE_AST_EXTERN:
         case AKE_AST_STRUCT_LITERAL:
+        case AKE_AST_STRUCT_LITERAL_FIELD:
             assert(n->is_set);
             break;
         default:
@@ -446,6 +451,10 @@ void Ake_AstDestroy(Ake_Ast* n)
                 break;
             case AKE_AST_STRUCT_LITERAL:
                 Ake_AstListDestroy(&n->data.struct_literal.fields);
+                break;
+            case AKE_AST_STRUCT_LITERAL_FIELD:
+                Ake_AstDestroy(n->data.struct_literal_field.id);
+                Ake_AstDestroy(n->data.struct_literal_field.expr);
                 break;
             default:
                 p = n->head;
@@ -703,6 +712,10 @@ void Ake_AstCopy(Ake_Ast* src, Ake_Ast* dest)
                 Ake_AstListAdd(&dest->data.struct_literal.fields, Ake_AstClone(p));
                 p = p->next;
             }
+            break;
+        case AKE_AST_STRUCT_LITERAL_FIELD:
+            dest->data.struct_literal_field.id = Ake_AstClone(src->data.struct_literal_field.id);
+            dest->data.struct_literal_field.expr = Ake_AstClone(src->data.struct_literal_field.expr);
             break;
         default:
             break;
@@ -1123,6 +1136,14 @@ bool Ake_AstMatch(Ake_Ast* a, Ake_Ast* b)
                     b2 = b2->next;
                 }
                 break;
+            case AKE_AST_STRUCT_LITERAL_FIELD:
+                if (!Ake_AstMatch(a->data.struct_literal_field.id, b->data.struct_literal_field.id)) {
+                    return false;
+                }
+                if (!Ake_AstMatch(a->data.struct_literal_field.expr, b->data.struct_literal_field.expr)) {
+                    return false;
+                }
+                break;
             default:
                 if (!Zinc_string_compare(&a->struct_value, &b->struct_value)) {
                     return false;
@@ -1359,6 +1380,10 @@ void Ake_AstVisit(Ake_Ast* n, Ake_AstVisitFunction pre, Ake_AstVisitFunction pos
                 Ake_AstVisit(p, pre, post, data);
                 p = p->next;
             }
+            break;
+        case AKE_AST_STRUCT_LITERAL_FIELD:
+            Ake_AstVisit(n->data.struct_literal_field.id, pre, post, data);
+            Ake_AstVisit(n->data.struct_literal_field.expr, pre, post, data);
             break;
         default:
             p = n->head;
