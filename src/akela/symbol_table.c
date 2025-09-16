@@ -79,7 +79,6 @@ void Ake_symbol_table_init_reserved(Ake_symbol_table* st)
     Ake_symbol_table_add_reserved_word(st, "extern", Ake_token_extern);
     Ake_symbol_table_add_reserved_word(st, "const", Ake_token_const);
 	Ake_symbol_table_add_reserved_word(st, "var", Ake_token_var);
-    Ake_symbol_table_add_reserved_word(st, "impl", Ake_token_impl);
 }
 
 void Ake_symbol_table_init_builtin_types(Ake_symbol_table* st)

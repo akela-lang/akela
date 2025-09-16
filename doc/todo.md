@@ -45,7 +45,6 @@
   * struct literal [x]
   * struct literal field [x]
   * ellipsis []
-  * impl []
   * self []
   * const []
   * var []

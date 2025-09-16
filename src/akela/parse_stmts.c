@@ -109,8 +109,6 @@ Ake_Ast* Ake_parse_stmt(struct Ake_parse_state* ps)
         n = Ake_parse_let(ps);
     } else if (t0->type == Ake_token_extern) {
         n = Ake_parse_extern(ps);
-    } else if (t0->type == Ake_token_impl) {
-        n = Ake_parse_impl(ps);
     } else {
         n = Ake_parse_assignment(ps);
     }
@@ -648,72 +646,6 @@ Ake_Ast* Ake_parse_let(struct Ake_parse_state* ps)
     }
 
     Ake_UpdateSymbolLet(ps->st, n);
-
-    return n;
-}
-
-Ake_Ast* Ake_parse_impl(struct Ake_parse_state* ps)
-{
-    Ake_Ast* n = NULL;
-    Ake_AstCreate(&n);
-    n->kind = Ake_ast_type_impl;
-
-    struct Ake_token* imp = NULL;
-    if (!Ake_match(ps, Ake_token_impl, "expected impl", &imp, n)) {
-        /* test case: no test case needed */
-        assert(false);
-    }
-
-    struct Ake_token* id = NULL;
-    if (!Ake_match(ps, Ake_token_id, "expected identifier", &id, n)) {
-        n->has_error = true;
-    }
-
-    Ake_consume_newline(ps, n);
-
-    Ake_Type* struct_type = NULL;
-    if (id) {
-        Ake_symbol* sym = Ake_EnvironmentGet(ps->st->top, &id->value);
-        if (sym->kind == AKE_SYMBOL_TYPE) {
-            if (sym->td->kind == AKE_TYPE_STRUCT) {
-                struct_type = sym->td;
-            }
-        }
-    }
-
-    while (true) {
-        struct Ake_token* t = Ake_get_lookahead(ps);
-        if (t->type == Ake_token_fn) {
-            Ake_Ast* func = Ake_parse_function(ps, true);
-            Ake_AstAdd(n, func);
-
-            struct Ake_token* t2 = Ake_get_lookahead(ps);
-            if (t2->type == Ake_token_end) {
-                struct Ake_token* end = NULL;
-                if (!Ake_match(ps, Ake_token_end, "expected end", &end, n)) {
-                    assert(false);
-                }
-                break;
-            } else {
-                bool has_sep;
-                Ake_parse_separator(ps, n, &has_sep);
-                if (!has_sep) {
-                    Zinc_error_list_set(ps->el, &t->loc, "expected separator");
-                    n->has_error = true;
-                }
-            }
-        } else if (t->type == Ake_token_end) {
-            struct Ake_token* end = NULL;
-            if (!Ake_match(ps, Ake_token_end, "expected end", &end, n)) {
-                assert(false);
-            }
-            break;
-        } else {
-            Zinc_error_list_set(ps->el, &t->loc, "expected fn or end");
-            n->has_error = true;
-            break;
-        }
-    }
 
     return n;
 }

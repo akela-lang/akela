@@ -58,7 +58,6 @@ typedef enum Ake_token_enum {
     Ake_token_arrow,
     Ake_token_ellipsis,
     Ake_token_range,
-    Ake_token_impl,
     Ake_token_count     /* keep at the end */
 } Ake_token_enum;
 
@@ -119,7 +118,6 @@ static char const* Ake_token_name(Ake_token_enum type)
     name[Ake_token_arrow] = "arrow";
     name[Ake_token_ellipsis] = "ellipsis";
     name[Ake_token_range] = "range";
-    name[Ake_token_impl] = "impl";
 
     if (type >= 0 && type <= Ake_token_count) {
         return name[type];

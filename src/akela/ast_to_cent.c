@@ -625,10 +625,6 @@ char* Ake_ast_cent_name(Ake_AstKind type)
         return "Ast::Ellipsis";
     }
 
-    if (type == Ake_ast_type_impl) {
-        return "Ast::Impl";
-    }
-
     if (type == Ake_ast_type_const) {
         return "Ast::Const";
     }
