@@ -41,6 +41,8 @@ void AkeUnit_AstAdd(Zinc_test* test)
 	Zinc_expect_int_equal(test, b->kind, AKE_AST_NONE, "number");
 
     Ake_AstDestroy(n);
+	Ake_AstDestroy(a);
+	Ake_AstDestroy(b);
 }
 
 void AkeUnit_AstListAdd(Zinc_test* test)

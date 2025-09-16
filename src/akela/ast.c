@@ -289,9 +289,7 @@ void Ake_AstValidate(Ake_Ast* n)
             break;
     }
 }
-
-/* NOLINTNEXTLINE(misc-no-recursion) */
-void Ake_AstDestroy(Ake_Ast* n)
+void Ake_AstDestroyFunction(Ake_Ast* n, void* unused)
 {
     if (n) {
         Ake_AstValidate(n);
@@ -302,8 +300,6 @@ void Ake_AstDestroy(Ake_Ast* n)
                 Zinc_string_destroy(&n->data.id.value);
                 break;
             case AKE_AST_SIGN:
-                Ake_AstDestroy(n->data.sign.op);
-                Ake_AstDestroy(n->data.sign.right);
                 break;
             case AKE_AST_NUMBER:
                 Zinc_string_destroy(&n->data.number.value);
@@ -312,168 +308,99 @@ void Ake_AstDestroy(Ake_Ast* n)
                 Zinc_string_destroy(&n->data.string.value);
                 break;
             case AKE_AST_ASSIGN:
-                Ake_AstDestroy(n->data.assign.left);
-                Ake_AstDestroy(n->data.assign.right);
                 break;
             case AKE_AST_PLUS:
-                Ake_AstDestroy(n->data.plus.left);
-                Ake_AstDestroy(n->data.plus.right);
                 break;
             case AKE_AST_MINUS:
-                Ake_AstDestroy(n->data.minus.left);
-                Ake_AstDestroy(n->data.minus.right);
                 break;
             case AKE_AST_MULT:
-                Ake_AstDestroy(n->data.mult.left);
-                Ake_AstDestroy(n->data.mult.right);
                 break;
             case AKE_AST_DIVIDE:
-                Ake_AstDestroy(n->data.divide.left);
-                Ake_AstDestroy(n->data.divide.right);
                 break;
             case AKE_AST_STMTS:
-                Ake_AstListDestroy(&n->data.stmts.list);
                 break;
             case AKE_AST_FUNCTION:
-                Ake_AstDestroy(n->data.function.proto);
-                Ake_AstDestroy(n->data.function.body);
                 break;
             case AKE_AST_DSEQ:
-                Ake_AstListDestroy(&n->data.dseq.list);
                 break;
             case AKE_AST_DRET:
-                Ake_AstDestroy(n->data.dret.node);
                 break;
             case AKE_AST_CALL:
-                Ake_AstDestroy(n->data.call.func);
-                Ake_AstListDestroy(&n->data.call.args);
                 break;
             case AKE_AST_IF:
-                Ake_AstListDestroy(&n->data._if_.branches);
                 break;
             case AKE_AST_COND_BRANCH:
-                Ake_AstDestroy(n->data.cond_branch.cond);
-                Ake_AstDestroy(n->data.cond_branch.body);
                 break;
             case AKE_AST_DEFAULT_BRANCH:
-                Ake_AstDestroy(n->data.default_branch.body);
                 break;
             case AKE_AST_EQUALITY:
-                Ake_AstDestroy(n->data.equality.left);
-                Ake_AstDestroy(n->data.equality.right);
                 break;
             case AKE_AST_NOT_EQUAL:
-                Ake_AstDestroy(n->data.not_equal.left);
-                Ake_AstDestroy(n->data.not_equal.right);
                 break;
             case AKE_AST_LESS_THAN:
-                Ake_AstDestroy(n->data.less_than.left);
-                Ake_AstDestroy(n->data.less_than.right);
                 break;
             case AKE_AST_LESS_THAN_OR_EQUAL:
-                Ake_AstDestroy(n->data.less_than_or_equal.left);
-                Ake_AstDestroy(n->data.less_than_or_equal.right);
                 break;
             case AKE_AST_GREATER_THAN:
-                Ake_AstDestroy(n->data.greater_than.left);
-                Ake_AstDestroy(n->data.greater_than.right);
                 break;
             case AKE_AST_GREATER_THAN_OR_EQUAL:
-                Ake_AstDestroy(n->data.greater_than_or_equal.left);
-                Ake_AstDestroy(n->data.greater_than_or_equal.right);
                 break;
             case AKE_AST_NOT:
-                Ake_AstDestroy(n->data._not_.right);
                 break;
             case AKE_AST_AND:
-                Ake_AstDestroy(n->data._and_.left);
-                Ake_AstDestroy(n->data._and_.right);
                 break;
             case AKE_AST_OR:
-                Ake_AstDestroy(n->data._or_.left);
-                Ake_AstDestroy(n->data._or_.right);
                 break;
             case AKE_AST_WHILE:
-                Ake_AstDestroy(n->data._while_.cond);
-                Ake_AstDestroy(n->data._while_.body);
                 break;
             case AKE_AST_FOR_RANGE:
-                Ake_AstDestroy(n->data.for_range.dec);
-                Ake_AstDestroy(n->data.for_range.start);
-                Ake_AstDestroy(n->data.for_range.end);
-                Ake_AstDestroy(n->data.for_range.body);
                 break;
             case AKE_AST_FOR_ITERATION:
-                Ake_AstDestroy(n->data.for_iteration.dec);
-                Ake_AstDestroy(n->data.for_iteration.iterator);
-                Ake_AstDestroy(n->data.for_iteration.body);
                 break;
             case AKE_AST_DECLARATION:
-                Ake_AstDestroy(n->data.declaration.id_node);
-                Ake_AstDestroy(n->data.declaration.type_node);
                 break;
             case AKE_AST_ARRAY_LITERAL:
-                Ake_AstListDestroy(&n->data.array_literal.list);
                 break;
             case AKE_AST_ARRAY_SUBSCRIPT:
-                Ake_AstDestroy(n->data.array_subscript.array);
-                Ake_AstDestroy(n->data.array_subscript.index);
                 break;
             case AKE_AST_BOOLEAN:
                 Zinc_string_destroy(&n->data.boolean.value);
                 break;
             case AKE_AST_PARENTHESIS:
-                Ake_AstDestroy(n->data.parenthesis.expr);
                 break;
             case AKE_AST_TYPE:
                 break;
             case AKE_AST_POWER:
-                Ake_AstDestroy(n->data.power.left);
-                Ake_AstDestroy(n->data.power.right);
                 break;
             case AKE_AST_DOT:
-                Ake_AstDestroy(n->data.dot.left);
-                Ake_AstDestroy(n->data.dot.right);
                 break;
             case AKE_AST_STRUCT:
-                Ake_AstListDestroy(&n->data._struct_.list);
                 break;
             case AKE_AST_RETURN:
-                Ake_AstDestroy(n->data._return_.expr);
                 break;
             case AKE_AST_PROTOTYPE:
-                Ake_AstDestroy(n->data.prototype.id);
-                Ake_AstDestroy(n->data.prototype.dseq);
-                Ake_AstDestroy(n->data.prototype.ret);
                 break;
             case AKE_AST_EXTERN:
-                Ake_AstDestroy(n->data._extern_.proto);
                 break;
             case AKE_AST_STRUCT_LITERAL:
-                Ake_AstListDestroy(&n->data.struct_literal.fields);
                 break;
             case AKE_AST_STRUCT_LITERAL_FIELD:
-                Ake_AstDestroy(n->data.struct_literal_field.id);
-                Ake_AstDestroy(n->data.struct_literal_field.expr);
                 break;
             default:
-                p = n->head;
-                while (p) {
-                    Ake_Ast* temp = p;
-                    p = p->next;
-                    Ake_AstDestroy(temp);
-                }
                 break;
         }
 
         Zinc_string_destroy(&n->struct_value);
         Ake_TypeDestroy(n->type);
         free(n->type);
-
         Ake_token_list_destroy(&n->token_list);
-
         free(n);
     }
+}
+
+void Ake_AstDestroy(Ake_Ast* n)
+{
+    Ake_AstVisit(n, NULL, Ake_AstDestroyFunction, NULL);
 }
 
 void Ake_AstAdd(Ake_Ast* p, Ake_Ast* c)
@@ -1236,8 +1163,9 @@ void Ake_AstVisit(Ake_Ast* n, Ake_AstVisitFunction pre, Ake_AstVisitFunction pos
         case AKE_AST_STMTS:
             p = n->data.stmts.list.head;
             while (p) {
-                Ake_AstVisit(p, pre, post, data);
+                Ake_Ast* temp = p;
                 p = p->next;
+                Ake_AstVisit(temp, pre, post, data);
             }
             break;
         case AKE_AST_FUNCTION:
@@ -1247,8 +1175,9 @@ void Ake_AstVisit(Ake_Ast* n, Ake_AstVisitFunction pre, Ake_AstVisitFunction pos
         case AKE_AST_DSEQ:
             p = n->data.dseq.list.head;
             while (p) {
-                Ake_AstVisit(p, pre, post, data);
+                Ake_Ast* temp = p;
                 p = p->next;
+                Ake_AstVisit(temp, pre, post, data);
             }
             break;
         case AKE_AST_DRET:
@@ -1258,15 +1187,17 @@ void Ake_AstVisit(Ake_Ast* n, Ake_AstVisitFunction pre, Ake_AstVisitFunction pos
             Ake_AstVisit(n->data.call.func, pre, post, data);
             p = n->data.call.args.head;
             while (p) {
-                Ake_AstVisit(p, pre, post, data);
+                Ake_Ast* temp = p;
                 p = p->next;
+                Ake_AstVisit(temp, pre, post, data);
             }
             break;
         case AKE_AST_IF:
             p = n->data._if_.branches.head;
             while (p) {
-                Ake_AstVisit(p, pre, post, data);
+                Ake_Ast* temp = p;
                 p = p->next;
+                Ake_AstVisit(temp, pre, post, data);
             }
             break;
         case AKE_AST_COND_BRANCH:
@@ -1333,8 +1264,9 @@ void Ake_AstVisit(Ake_Ast* n, Ake_AstVisitFunction pre, Ake_AstVisitFunction pos
         case AKE_AST_ARRAY_LITERAL:
             p = n->data.array_literal.list.head;
             while (p) {
-                Ake_AstVisit(p, pre, post, data);
+                Ake_Ast* temp = p;
                 p = p->next;
+                Ake_AstVisit(temp, pre, post, data);
             }
             break;
         case AKE_AST_ARRAY_SUBSCRIPT:
@@ -1359,8 +1291,9 @@ void Ake_AstVisit(Ake_Ast* n, Ake_AstVisitFunction pre, Ake_AstVisitFunction pos
         case AKE_AST_STRUCT:
             p = n->data._struct_.list.head;
             while (p) {
-                Ake_AstVisit(p, pre, post, data);
+                Ake_Ast* temp = p;
                 p = p->next;
+                Ake_AstVisit(temp, pre, post, data);
             }
             break;
         case AKE_AST_RETURN:
@@ -1377,8 +1310,9 @@ void Ake_AstVisit(Ake_Ast* n, Ake_AstVisitFunction pre, Ake_AstVisitFunction pos
         case AKE_AST_STRUCT_LITERAL:
             p = n->data.struct_literal.fields.head;
             while (p) {
-                Ake_AstVisit(p, pre, post, data);
+                Ake_Ast* temp = p;
                 p = p->next;
+                Ake_AstVisit(temp, pre, post, data);
             }
             break;
         case AKE_AST_STRUCT_LITERAL_FIELD:
@@ -1388,8 +1322,9 @@ void Ake_AstVisit(Ake_Ast* n, Ake_AstVisitFunction pre, Ake_AstVisitFunction pos
         default:
             p = n->head;
             while (p) {
-                Ake_AstVisit(p, pre, post, data);
+                Ake_Ast* temp = p;
                 p = p->next;
+                Ake_AstVisit(temp, pre, post, data);
             }
             break;
     }
