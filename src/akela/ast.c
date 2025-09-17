@@ -233,6 +233,9 @@ void Ake_AstSet(Ake_Ast* n, Ake_AstKind kind)
             n->data.struct_literal_field.id = NULL;
             n->data.struct_literal_field.expr = NULL;
             n->is_set = true;
+            break;
+        case AKE_AST_ELLIPSIS:
+            break;
         default:
             break;
     }
@@ -283,6 +286,7 @@ void Ake_AstValidate(Ake_Ast* n)
         case AKE_AST_EXTERN:
         case AKE_AST_STRUCT_LITERAL:
         case AKE_AST_STRUCT_LITERAL_FIELD:
+        case AKE_AST_ELLIPSIS:
             assert(n->is_set);
             break;
         default:
@@ -385,6 +389,8 @@ void Ake_AstDestroyFunction(Ake_Ast* n, void* unused)
             case AKE_AST_STRUCT_LITERAL:
                 break;
             case AKE_AST_STRUCT_LITERAL_FIELD:
+                break;
+            case AKE_AST_ELLIPSIS:
                 break;
             default:
                 break;
@@ -643,6 +649,8 @@ void Ake_AstCopy(Ake_Ast* src, Ake_Ast* dest)
         case AKE_AST_STRUCT_LITERAL_FIELD:
             dest->data.struct_literal_field.id = Ake_AstClone(src->data.struct_literal_field.id);
             dest->data.struct_literal_field.expr = Ake_AstClone(src->data.struct_literal_field.expr);
+            break;
+        case AKE_AST_ELLIPSIS:
             break;
         default:
             break;
@@ -1071,6 +1079,8 @@ bool Ake_AstMatch(Ake_Ast* a, Ake_Ast* b)
                     return false;
                 }
                 break;
+            case AKE_AST_ELLIPSIS:
+                break;
             default:
                 if (!Zinc_string_compare(&a->struct_value, &b->struct_value)) {
                     return false;
@@ -1318,6 +1328,8 @@ void Ake_AstVisit(Ake_Ast* n, Ake_AstVisitFunction pre, Ake_AstVisitFunction pos
         case AKE_AST_STRUCT_LITERAL_FIELD:
             Ake_AstVisit(n->data.struct_literal_field.id, pre, post, data);
             Ake_AstVisit(n->data.struct_literal_field.expr, pre, post, data);
+            break;
+        case AKE_AST_ELLIPSIS:
             break;
         default:
             p = n->head;

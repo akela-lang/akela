@@ -58,7 +58,7 @@ typedef enum Ake_AstKind {
     AKE_AST_EXTERN,
     AKE_AST_STRUCT_LITERAL,
     AKE_AST_STRUCT_LITERAL_FIELD,
-    Ake_ast_type_ellipsis,
+    AKE_AST_ELLIPSIS,
     Ake_ast_type_const,
     Ake_ast_type_var,
     AKE_AST_COUNT        /* keep at end */
@@ -111,7 +111,7 @@ static char const* Ast_type_name(Ake_AstKind kind)
     name[AKE_AST_EXTERN] = "extern";
     name[AKE_AST_STRUCT_LITERAL] = "struct-literal";
     name[AKE_AST_STRUCT_LITERAL_FIELD] = "struct-literal-field";
-    name[Ake_ast_type_ellipsis] = "ellipsis";
+    name[AKE_AST_ELLIPSIS] = "ellipsis";
     name[Ake_ast_type_const] = "const";
     name[Ake_ast_type_var] = "var";
 

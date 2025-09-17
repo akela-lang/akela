@@ -416,6 +416,8 @@ void Ake_ast_cent_print(Ake_Ast* n, size_t level, bool is_property, Ake_TypeSlot
                 printf(".expr = ");
                 Ake_ast_cent_print(n->data.struct_literal_field.expr, level, true, slots);
                 break;
+            case AKE_AST_ELLIPSIS:
+                break;
             default:
                 p = n->head;
                 while (p) {
@@ -621,7 +623,7 @@ char* Ake_ast_cent_name(Ake_AstKind type)
         return "Ast::StructLiteralField";
     }
 
-    if (type == Ake_ast_type_ellipsis) {
+    if (type == AKE_AST_ELLIPSIS) {
         return "Ast::Ellipsis";
     }
 

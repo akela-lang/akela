@@ -207,8 +207,8 @@ Ake_Ast* Ake_parse_dseq(
             if (is_extern) {
                 Ake_Ast* ellipsis = NULL;
                 Ake_AstCreate(&ellipsis);
-                ellipsis->kind = Ake_ast_type_ellipsis;
-                Ake_AstAdd(n, ellipsis);
+                Ake_AstSet(ellipsis, AKE_AST_ELLIPSIS);
+                Ake_AstListAdd(&n->data.dseq.list, ellipsis);
                 break;
             } else {
                 Zinc_error_list_set(ps->el, &eps->loc,
@@ -609,7 +609,7 @@ Ake_Type* Ake_Type_use_add_proto(
             Ake_TypeParamCreate(&tp);
             Zinc_string_add_string(&tp->name, &id_node->data.id.value);
 
-            if (dec->kind == Ake_ast_type_ellipsis) {
+            if (dec->kind == AKE_AST_ELLIPSIS) {
                 tp->kind = AKE_TYPE_PARAM_ELLIPSIS;
             } else {
                 tp->type = Ake_TypeClone(type_node->type);
