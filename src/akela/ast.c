@@ -236,6 +236,18 @@ void Ake_AstSet(Ake_Ast* n, Ake_AstKind kind)
             break;
         case AKE_AST_ELLIPSIS:
             break;
+        case AKE_AST_CONST:
+            n->data._const_.id = NULL;
+            n->data._const_.type_node = NULL;
+            n->data._const_.expr = NULL;
+            n->is_set = true;
+            break;
+        case AKE_AST_VAR:
+            n->data.var.id = NULL;
+            n->data.var.type_node = NULL;
+            n->data.var.expr = NULL;
+            n->is_set = true;
+            break;
         default:
             break;
     }
@@ -287,6 +299,8 @@ void Ake_AstValidate(Ake_Ast* n)
         case AKE_AST_STRUCT_LITERAL:
         case AKE_AST_STRUCT_LITERAL_FIELD:
         case AKE_AST_ELLIPSIS:
+        case AKE_AST_CONST:
+        case AKE_AST_VAR:
             assert(n->is_set);
             break;
         default:
@@ -391,6 +405,10 @@ void Ake_AstDestroyFunction(Ake_Ast* n, void* unused)
             case AKE_AST_STRUCT_LITERAL_FIELD:
                 break;
             case AKE_AST_ELLIPSIS:
+                break;
+            case AKE_AST_CONST:
+                break;
+            case AKE_AST_VAR:
                 break;
             default:
                 break;
@@ -651,6 +669,16 @@ void Ake_AstCopy(Ake_Ast* src, Ake_Ast* dest)
             dest->data.struct_literal_field.expr = Ake_AstClone(src->data.struct_literal_field.expr);
             break;
         case AKE_AST_ELLIPSIS:
+            break;
+        case AKE_AST_CONST:
+            dest->data._const_.id = Ake_AstClone(src->data._const_.id);
+            dest->data._const_.type_node = Ake_AstClone(src->data._const_.type_node);
+            dest->data._const_.expr = Ake_AstClone(src->data._const_.expr);
+            break;
+        case AKE_AST_VAR:
+            dest->data.var.id = Ake_AstClone(src->data.var.id);
+            dest->data.var.type_node = Ake_AstClone(src->data.var.type_node);
+            dest->data.var.expr = Ake_AstClone(src->data.var.expr);
             break;
         default:
             break;
@@ -1081,6 +1109,28 @@ bool Ake_AstMatch(Ake_Ast* a, Ake_Ast* b)
                 break;
             case AKE_AST_ELLIPSIS:
                 break;
+            case AKE_AST_CONST:
+                if (!Ake_AstMatch(a->data._const_.id, b->data._const_.id)) {
+                    return false;
+                }
+                if (!Ake_AstMatch(a->data._const_.type_node, b->data._const_.type_node)) {
+                    return false;
+                }
+                if (!Ake_AstMatch(a->data._const_.expr, b->data._const_.expr)) {
+                    return false;
+                }
+                break;
+            case AKE_AST_VAR:
+                if (!Ake_AstMatch(a->data.var.id, b->data.var.id)) {
+                    return false;
+                }
+                if (!Ake_AstMatch(a->data.var.type_node, b->data.var.type_node)) {
+                    return false;
+                }
+                if (!Ake_AstMatch(a->data.var.expr, b->data.var.expr)) {
+                    return false;
+                }
+                break;
             default:
                 if (!Zinc_string_compare(&a->struct_value, &b->struct_value)) {
                     return false;
@@ -1330,6 +1380,16 @@ void Ake_AstVisit(Ake_Ast* n, Ake_AstVisitFunction pre, Ake_AstVisitFunction pos
             Ake_AstVisit(n->data.struct_literal_field.expr, pre, post, data);
             break;
         case AKE_AST_ELLIPSIS:
+            break;
+        case AKE_AST_CONST:
+            Ake_AstVisit(n->data._const_.id, pre, post, data);
+            Ake_AstVisit(n->data._const_.type_node, pre, post, data);
+            Ake_AstVisit(n->data._const_.expr, pre, post, data);
+            break;
+        case AKE_AST_VAR:
+            Ake_AstVisit(n->data.var.id, pre, post, data);
+            Ake_AstVisit(n->data.var.type_node, pre, post, data);
+            Ake_AstVisit(n->data.var.expr, pre, post, data);
             break;
         default:
             p = n->head;

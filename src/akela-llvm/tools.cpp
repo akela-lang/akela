@@ -364,7 +364,7 @@ namespace Akela_llvm {
             return Handle_if(jd, n);
         }
 
-        if (n->kind == Ake_ast_type_const || n->kind == Ake_ast_type_var) {
+        if (n->kind == AKE_AST_CONST || n->kind == AKE_AST_VAR) {
             return Handle_let(jd, n);
         }
 

@@ -95,25 +95,25 @@ Ast::Stmts {
       .body = Ast::Stmts {
         .type = type0
         Ast::Const {
-          Ast::Id {
+          .id = Ast::Id {
             .value = "x"
           }
-          Ast::Type {
+          .type_node = Ast::Type {
             .type = type0
           }
-          Ast::Number {
+          .expr = Ast::Number {
             .value = "0"
             .type = type0
           }
         }
         Ast::Const {
-          Ast::Id {
+          .id = Ast::Id {
             .value = "y"
           }
-          Ast::Type {
+          .type_node = Ast::Type {
             .type = type0
           }
-          Ast::Number {
+          .expr = Ast::Number {
             .value = "1"
             .type = type0
           }
@@ -178,25 +178,25 @@ const type1 = Type::Boolean {
 }
 Ast::Stmts {
   Ast::Const {
-    Ast::Id {
+    .id = Ast::Id {
       .value = "x"
     }
-    Ast::Type {
+    .type_node = Ast::Type {
       .type = type0
     }
-    Ast::Number {
+    .expr = Ast::Number {
       .value = "0"
       .type = type0
     }
   }
   Ast::Const {
-    Ast::Id {
+    .id = Ast::Id {
       .value = "y"
     }
-    Ast::Type {
+    .type_node = Ast::Type {
       .type = type0
     }
-    Ast::Number {
+    .expr = Ast::Number {
       .value = "1"
       .type = type0
     }
@@ -290,25 +290,25 @@ const type1 = Type::Boolean {
 }
 Ast::Stmts {
   Ast::Const {
-    Ast::Id {
+    .id = Ast::Id {
       .value = "x"
     }
-    Ast::Type {
+    .type_node = Ast::Type {
       .type = type0
     }
-    Ast::Number {
+    .expr = Ast::Number {
       .value = "0"
       .type = type0
     }
   }
   Ast::Const {
-    Ast::Id {
+    .id = Ast::Id {
       .value = "y"
     }
-    Ast::Type {
+    .type_node = Ast::Type {
       .type = type0
     }
-    Ast::Number {
+    .expr = Ast::Number {
       .value = "1"
       .type = type0
     }
@@ -417,25 +417,25 @@ const type1 = Type::Boolean {
 Ast::Stmts {
   .type = type0
   Ast::Const {
-    Ast::Id {
+    .id = Ast::Id {
       .value = "x"
     }
-    Ast::Type {
+    .type_node = Ast::Type {
       .type = type0
     }
-    Ast::Number {
+    .expr = Ast::Number {
       .value = "0"
       .type = type0
     }
   }
   Ast::Const {
-    Ast::Id {
+    .id = Ast::Id {
       .value = "y"
     }
-    Ast::Type {
+    .type_node = Ast::Type {
       .type = type0
     }
-    Ast::Number {
+    .expr = Ast::Number {
       .value = "1"
       .type = type0
     }
@@ -507,25 +507,25 @@ const type1 = Type::Boolean {
 Ast::Stmts {
   .type = type0
   Ast::Const {
-    Ast::Id {
+    .id = Ast::Id {
       .value = "x"
     }
-    Ast::Type {
+    .type_node = Ast::Type {
       .type = type0
     }
-    Ast::Number {
+    .expr = Ast::Number {
       .value = "0"
       .type = type0
     }
   }
   Ast::Const {
-    Ast::Id {
+    .id = Ast::Id {
       .value = "y"
     }
-    Ast::Type {
+    .type_node = Ast::Type {
       .type = type0
     }
-    Ast::Number {
+    .expr = Ast::Number {
       .value = "1"
       .type = type0
     }

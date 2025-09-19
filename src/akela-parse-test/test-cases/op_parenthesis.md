@@ -12,10 +12,6 @@ paren add
 ```cent
 use lib::base::*
 Test {
-  .solo = false
-  .mute = false
-  .snapshot = false
-  .has_error = false
 }
 ```
 
@@ -33,13 +29,13 @@ const type0 = Type::Integer {
 Ast::Stmts {
   .type = type0
   Ast::Const {
-    Ast::Id {
+    .id = Ast::Id {
       .value = "speed"
     }
-    Ast::Type {
+    .type_node = Ast::Type {
       .type = type0
     }
-    Ast::Number {
+    .expr = Ast::Number {
       .value = "105"
       .type = type0
     }
@@ -88,13 +84,13 @@ const type0 = Type::Integer {
 Ast::Stmts {
   .type = type0
   Ast::Const {
-    Ast::Id {
+    .id = Ast::Id {
       .value = "speed"
     }
-    Ast::Type {
+    .type_node = Ast::Type {
       .type = type0
     }
-    Ast::Number {
+    .expr = Ast::Number {
       .value = "105"
       .type = type0
     }
@@ -143,13 +139,13 @@ const type0 = Type::Integer {
 Ast::Stmts {
   .type = type0
   Ast::Const {
-    Ast::Id {
+    .id = Ast::Id {
       .value = "speed"
     }
-    Ast::Type {
+    .type_node = Ast::Type {
       .type = type0
     }
-    Ast::Number {
+    .expr = Ast::Number {
       .value = "105"
       .type = type0
     }

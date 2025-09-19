@@ -418,6 +418,32 @@ void Ake_ast_cent_print(Ake_Ast* n, size_t level, bool is_property, Ake_TypeSlot
                 break;
             case AKE_AST_ELLIPSIS:
                 break;
+            case AKE_AST_CONST:
+                Ake_indent_print(level);
+                printf(".id = ");
+                Ake_ast_cent_print(n->data._const_.id, level, true, slots);
+
+                Ake_indent_print(level);
+                printf(".type_node = ");
+                Ake_ast_cent_print(n->data._const_.type_node, level, true, slots);
+
+                Ake_indent_print(level);
+                printf(".expr = ");
+                Ake_ast_cent_print(n->data._const_.expr, level, true, slots);
+                break;
+            case AKE_AST_VAR:
+                Ake_indent_print(level);
+                printf(".id = ");
+                Ake_ast_cent_print(n->data.var.id, level, true, slots);
+
+                Ake_indent_print(level);
+                printf(".type_node = ");
+                Ake_ast_cent_print(n->data.var.type_node, level, true, slots);
+
+                Ake_indent_print(level);
+                printf(".expr = ");
+                Ake_ast_cent_print(n->data.var.expr, level, true, slots);
+                break;
             default:
                 p = n->head;
                 while (p) {
@@ -627,11 +653,11 @@ char* Ake_ast_cent_name(Ake_AstKind type)
         return "Ast::Ellipsis";
     }
 
-    if (type == Ake_ast_type_const) {
+    if (type == AKE_AST_CONST) {
         return "Ast::Const";
     }
 
-    if (type == Ake_ast_type_var) {
+    if (type == AKE_AST_VAR) {
         return "Ast::Var";
     }
 

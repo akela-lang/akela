@@ -282,10 +282,10 @@ const type0 = Type::Integer {
 }
 Ast::Stmts {
   Ast::Const {
-    Ast::Id {
+    .id = Ast::Id {
       .value = "a"
     }
-    Ast::Type {
+    .type_node = Ast::Type {
       .type = type0
     }
   }

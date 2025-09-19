@@ -109,10 +109,10 @@ Ast::Stmts {
     }
   }
   Ast::Var {
-    Ast::Id {
+    .id = Ast::Id {
       .value = "p"
     }
-    Ast::Type {
+    .type_node = Ast::Type {
       .type = type2
     }
   }
@@ -257,13 +257,13 @@ Ast::Stmts {
     }
   }
   Ast::Const {
-    Ast::Id {
+    .id = Ast::Id {
       .value = "p"
     }
-    Ast::Type {
+    .type_node = Ast::Type {
       .type = type2
     }
-    Ast::StructLiteral {
+    .expr = Ast::StructLiteral {
       .type = type2
       Ast::StructLiteralField {
         .id = Ast::Id {
@@ -608,13 +608,13 @@ Ast::Stmts {
     }
   }
   Ast::Const {
-    Ast::Id {
+    .id = Ast::Id {
       .value = "line"
     }
-    Ast::Type {
+    .type_node = Ast::Type {
       .type = type2
     }
-    Ast::StructLiteral {
+    .expr = Ast::StructLiteral {
       Ast::StructLiteralField {
         .id = Ast::Id {
           .value = "p0"

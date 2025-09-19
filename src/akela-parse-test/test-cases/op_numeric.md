@@ -12,10 +12,6 @@ add
 ```cent
 use lib::base::*
 Test {
-  .solo = false
-  .mute = false
-  .snapshot = false
-  .has_error = false
 }
 ```
 
@@ -32,13 +28,13 @@ const type0 = Type::Integer {
 Ast::Stmts {
   .type = type0
   Ast::Var {
-    Ast::Id {
+    .id = Ast::Id {
       .value = "speed"
     }
-    Ast::Type {
+    .type_node = Ast::Type {
       .type = type0
     }
-    Ast::Number {
+    .expr = Ast::Number {
       .value = "100"
       .type = type0
     }
@@ -264,13 +260,13 @@ const type0 = Type::Integer {
 Ast::Stmts {
   .type = type0
   Ast::Var {
-    Ast::Id {
+    .id = Ast::Id {
       .value = "speed"
     }
-    Ast::Type {
+    .type_node = Ast::Type {
       .type = type0
     }
-    Ast::Number {
+    .expr = Ast::Number {
       .value = "100"
       .type = type0
     }
@@ -317,10 +313,10 @@ const type0 = Type::Integer {
 Ast::Stmts {
   .type = type0
   Ast::Const {
-    Ast::Id {
+    .id = Ast::Id {
       .value = "speed"
     }
-    Ast::Type {
+    .type_node = Ast::Type {
       .type = type0
     }
   }
@@ -370,13 +366,13 @@ const type0 = Type::Integer {
 Ast::Stmts {
   .type = type0
   Ast::Const {
-    Ast::Id {
+    .id = Ast::Id {
       .value = "delta"
     }
-    Ast::Type {
+    .type_node = Ast::Type {
       .type = type0
     }
-    Ast::Number {
+    .expr = Ast::Number {
       .value = "3"
       .type = type0
     }
@@ -401,10 +397,6 @@ sub positive
 ```cent
 use lib::base::*
 Test {
-  .solo = false
-  .mute = false
-  .snapshot = false
-  .has_error = false
 }
 ```
 
@@ -422,13 +414,13 @@ const type0 = Type::Integer {
 Ast::Stmts {
   .type = type0
   Ast::Const {
-    Ast::Id {
+    .id = Ast::Id {
       .value = "speed"
     }
-    Ast::Type {
+    .type_node = Ast::Type {
       .type = type0
     }
-    Ast::Number {
+    .expr = Ast::Number {
       .value = "100"
       .type = type0
     }
@@ -458,10 +450,6 @@ sub negative
 ```cent
 use lib::base::*
 Test {
-  .solo = false
-  .mute = false
-  .snapshot = false
-  .has_error = false
 }
 ```
 
@@ -479,13 +467,13 @@ const type0 = Type::Integer {
 Ast::Stmts {
   .type = type0
   Ast::Const {
-    Ast::Id {
+    .id = Ast::Id {
       .value = "speed"
     }
-    Ast::Type {
+    .type_node = Ast::Type {
       .type = type0
     }
-    Ast::Number {
+    .expr = Ast::Number {
       .value = "100"
       .type = type0
     }
@@ -708,13 +696,13 @@ const type0 = Type::Integer {
 Ast::Stmts {
   .type = type0
   Ast::Const {
-    Ast::Id {
+    .id = Ast::Id {
       .value = "speed"
     }
-    Ast::Type {
+    .type_node = Ast::Type {
       .type = type0
     }
-    Ast::Number {
+    .expr = Ast::Number {
       .value = "50"
       .type = type0
     }
@@ -765,13 +753,13 @@ const type0 = Type::Integer {
 Ast::Stmts {
   .type = type0
   Ast::Const {
-    Ast::Id {
+    .id = Ast::Id {
       .value = "speed"
     }
-    Ast::Type {
+    .type_node = Ast::Type {
       .type = type0
     }
-    Ast::Number {
+    .expr = Ast::Number {
       .value = "50"
       .type = type0
     }

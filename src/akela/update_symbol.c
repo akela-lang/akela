@@ -55,9 +55,10 @@ void Ake_UpdateSymbolStruct(Ake_symbol_table* st, Ake_Ast* n)
 void Ake_UpdateSymbolLet(Ake_symbol_table* st, Ake_Ast* n)
 {
     if (!n->has_error) {
-        Ake_Ast* id_node = Ake_AstGet(n, 0);
-        Ake_Ast* type_node = Ake_AstGet(n, 1);
-        Ake_declare_type(st, type_node, id_node, n->kind == Ake_ast_type_const);
+        Ake_Let* data = &n->data._const_;
+        Ake_Ast* id_node = data->id;
+        Ake_Ast* type_node = data->type_node;
+        Ake_declare_type(st, type_node, id_node, n->kind == AKE_AST_CONST);
     }
 }
 

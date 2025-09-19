@@ -38,13 +38,13 @@ const type1 = Type::Real {
 Ast::Stmts {
   .type = type0
   Ast::Var {
-    Ast::Id {
+    .id = Ast::Id {
       .value = "count"
     }
-    Ast::Type {
+    .type_node = Ast::Type {
       .type = type0
     }
-    Ast::Number {
+    .expr = Ast::Number {
       .value = "5"
       .type = type0
     }

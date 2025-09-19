@@ -46,13 +46,13 @@ Ast::Stmts {
     .body = Ast::Stmts {
       .type = type1
       Ast::Const {
-        Ast::Id {
+        .id = Ast::Id {
           .value = "x"
         }
-        Ast::Type {
+        .type_node = Ast::Type {
           .type = type1
         }
-        Ast::Number {
+        .expr = Ast::Number {
           .value = "10"
           .type = type1
         }
@@ -757,13 +757,13 @@ const type2 = Type::Integer {
 }
 Ast::Stmts {
   Ast::Const {
-    Ast::Id {
+    .id = Ast::Id {
       .value = "a"
     }
-    Ast::Type {
+    .type_node = Ast::Type {
       .type = type0
     }
-    Ast::Function {
+    .expr = Ast::Function {
       .proto = Ast::Prototype {
         .id = Ast::Id {
           .value = "__anonymous_function_0"
@@ -905,13 +905,13 @@ const type2 = Type::Integer {
 }
 Ast::Stmts {
   Ast::Var {
-    Ast::Id {
+    .id = Ast::Id {
       .value = "a"
     }
-    Ast::Type {
+    .type_node = Ast::Type {
       .type = type0
     }
-    Ast::Function {
+    .expr = Ast::Function {
       .proto = Ast::Prototype {
         .id = Ast::Id {
           .value = "__anonymous_function_0"
@@ -1112,13 +1112,13 @@ const type2 = Type::Integer {
 }
 Ast::Stmts {
   Ast::Var {
-    Ast::Id {
+    .id = Ast::Id {
       .value = "foo"
     }
-    Ast::Type {
+    .type_node = Ast::Type {
       .type = type0
     }
-    Ast::Function {
+    .expr = Ast::Function {
       .proto = Ast::Prototype {
         .id = Ast::Id {
           .value = "__anonymous_function_0"
@@ -1503,25 +1503,25 @@ Ast::Stmts {
     .type = type1
   }
   Ast::Const {
-    Ast::Id {
+    .id = Ast::Id {
       .value = "x"
     }
-    Ast::Type {
+    .type_node = Ast::Type {
       .type = type0
     }
-    Ast::Number {
+    .expr = Ast::Number {
       .value = "1"
       .type = type0
     }
   }
   Ast::Const {
-    Ast::Id {
+    .id = Ast::Id {
       .value = "y"
     }
-    Ast::Type {
+    .type_node = Ast::Type {
       .type = type0
     }
-    Ast::Number {
+    .expr = Ast::Number {
       .value = "2"
       .type = type0
     }
@@ -1648,25 +1648,25 @@ Ast::Stmts {
     .type = type1
   }
   Ast::Const {
-    Ast::Id {
+    .id = Ast::Id {
       .value = "x"
     }
-    Ast::Type {
+    .type_node = Ast::Type {
       .type = type0
     }
-    Ast::Number {
+    .expr = Ast::Number {
       .value = "1"
       .type = type0
     }
   }
   Ast::Const {
-    Ast::Id {
+    .id = Ast::Id {
       .value = "y"
     }
-    Ast::Type {
+    .type_node = Ast::Type {
       .type = type0
     }
-    Ast::Number {
+    .expr = Ast::Number {
       .value = "2"
       .type = type0
     }

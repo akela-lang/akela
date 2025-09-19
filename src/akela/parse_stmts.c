@@ -555,13 +555,13 @@ Ake_Ast* Ake_parse_let(struct Ake_parse_state* ps)
         if (!Ake_match(ps, Ake_token_const, "expected const", &t, n)) {
             assert(false && "expected const");
         }
-        n->kind = Ake_ast_type_const;
+        Ake_AstSet(n, AKE_AST_CONST);
     } else if (ps->lookahead->type == Ake_token_var) {
         Ake_token* t = NULL;
         if (!Ake_match(ps, Ake_token_var, "expected var", &t, n)) {
             assert(false && "expected var");;
         }
-        n->kind = Ake_ast_type_var;
+        Ake_AstSet(n, AKE_AST_VAR);
     } else {
         assert(false && "expected const or var");
     }
@@ -577,7 +577,10 @@ Ake_Ast* Ake_parse_let(struct Ake_parse_state* ps)
     if (id) {
         Zinc_string_add_string(&id_node->data.id.value, &id->value);
     }
-    Ake_AstAdd(n, id_node);
+    /* data is _const_ or var */
+    Ake_Let* data = &n->data._const_;
+    data->id = id_node;
+    Ake_AstAdd2(n, id_node);
 
     Ake_consume_newline(ps, n);
 
@@ -596,7 +599,8 @@ Ake_Ast* Ake_parse_let(struct Ake_parse_state* ps)
         n->has_error = true;
     }
     if (type_node) {
-        Ake_AstAdd(n, type_node);
+        data->type_node = type_node;
+        Ake_AstAdd2(n, type_node);
     } else {
         struct Zinc_location type_use_loc = Ake_get_location(ps);
         Zinc_error_list_set(ps->el, &type_use_loc, "expected type");
@@ -620,7 +624,8 @@ Ake_Ast* Ake_parse_let(struct Ake_parse_state* ps)
         b = Ake_parse_expr(ps);
 
         if (b) {
-            Ake_AstAdd(n, b);
+            data->expr = b;
+            Ake_AstAdd2(n, b);
         } else {
             struct Zinc_location b_loc = Ake_get_location(ps);
             Zinc_error_list_set(ps->el, &b_loc, "expected expression");

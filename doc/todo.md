@@ -44,10 +44,10 @@
   * extern [x]
   * struct literal [x]
   * struct literal field [x]
-  * ellipsis []
-  * self []
-  * const []
-  * var []
+  * ellipsis [x]
+  * const [x]
+  * var [x]
+* get rid of struct_value
 * add checking of symbols to UpdateSymbol functions
   * stmts
     * struct []

@@ -53,25 +53,25 @@ const type0 = Type::Integer {
 Ast::Stmts {
   .type = type0
   Ast::Const {
-    Ast::Id {
+    .id = Ast::Id {
       .value = "i"
     }
-    Ast::Type {
+    .type_node = Ast::Type {
       .type = type0
     }
-    Ast::Number {
+    .expr = Ast::Number {
       .value = "0"
       .type = type0
     }
   }
   Ast::Const {
-    Ast::Id {
+    .id = Ast::Id {
       .value = "x"
     }
-    Ast::Type {
+    .type_node = Ast::Type {
       .type = type0
     }
-    Ast::Number {
+    .expr = Ast::Number {
       .value = "20"
       .type = type0
     }
@@ -124,13 +124,13 @@ const type0 = Type::Integer {
 Ast::Stmts {
   .type = type0
   Ast::Const {
-    Ast::Id {
+    .id = Ast::Id {
       .value = "x"
     }
-    Ast::Type {
+    .type_node = Ast::Type {
       .type = type0
     }
-    Ast::Number {
+    .expr = Ast::Number {
       .value = "0"
       .type = type0
     }
@@ -186,37 +186,37 @@ const type0 = Type::Integer {
 Ast::Stmts {
   .type = type0
   Ast::Const {
-    Ast::Id {
+    .id = Ast::Id {
       .value = "x"
     }
-    Ast::Type {
+    .type_node = Ast::Type {
       .type = type0
     }
-    Ast::Number {
+    .expr = Ast::Number {
       .value = "0"
       .type = type0
     }
   }
   Ast::Const {
-    Ast::Id {
+    .id = Ast::Id {
       .value = "y"
     }
-    Ast::Type {
+    .type_node = Ast::Type {
       .type = type0
     }
-    Ast::Number {
+    .expr = Ast::Number {
       .value = "1"
       .type = type0
     }
   }
   Ast::Const {
-    Ast::Id {
+    .id = Ast::Id {
       .value = "z"
     }
-    Ast::Type {
+    .type_node = Ast::Type {
       .type = type0
     }
-    Ast::Number {
+    .expr = Ast::Number {
       .value = "2"
       .type = type0
     }
@@ -283,37 +283,37 @@ const type0 = Type::Integer {
 Ast::Stmts {
   .type = type0
   Ast::Const {
-    Ast::Id {
+    .id = Ast::Id {
       .value = "x"
     }
-    Ast::Type {
+    .type_node = Ast::Type {
       .type = type0
     }
-    Ast::Number {
+    .expr = Ast::Number {
       .value = "0"
       .type = type0
     }
   }
   Ast::Const {
-    Ast::Id {
+    .id = Ast::Id {
       .value = "y"
     }
-    Ast::Type {
+    .type_node = Ast::Type {
       .type = type0
     }
-    Ast::Number {
+    .expr = Ast::Number {
       .value = "1"
       .type = type0
     }
   }
   Ast::Const {
-    Ast::Id {
+    .id = Ast::Id {
       .value = "z"
     }
-    Ast::Type {
+    .type_node = Ast::Type {
       .type = type0
     }
-    Ast::Number {
+    .expr = Ast::Number {
       .value = "2"
       .type = type0
     }

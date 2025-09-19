@@ -33,13 +33,13 @@ const type0 = Type::Integer {
 Ast::Stmts {
   .type = type0
   Ast::Const {
-    Ast::Id {
+    .id = Ast::Id {
       .value = "a"
     }
-    Ast::Type {
+    .type_node = Ast::Type {
       .type = type0
     }
-    Ast::Number {
+    .expr = Ast::Number {
       .value = "105"
       .type = type0
     }
@@ -57,10 +57,6 @@ Natural
 ```cent
 use lib::base::*
 Test {
-  .solo = false
-  .mute = false
-  .snapshot = false
-  .has_error = false
 }
 ```
 
@@ -78,13 +74,13 @@ const type0 = Type::Natural {
 Ast::Stmts {
   .type = type0
   Ast::Const {
-    Ast::Id {
+    .id = Ast::Id {
       .value = "a"
     }
-    Ast::Type {
+    .type_node = Ast::Type {
       .type = type0
     }
-    Ast::Number {
+    .expr = Ast::Number {
       .value = "241"
       .type = type0
     }
@@ -123,13 +119,13 @@ const type0 = Type::Real {
 Ast::Stmts {
   .type = type0
   Ast::Const {
-    Ast::Id {
+    .id = Ast::Id {
       .value = "a"
     }
-    Ast::Type {
+    .type_node = Ast::Type {
       .type = type0
     }
-    Ast::Number {
+    .expr = Ast::Number {
       .value = "1.5"
       .type = type0
     }
@@ -170,13 +166,13 @@ const type0 = Type::Array {
 }
 Ast::Stmts {
   Ast::Var {
-    Ast::Id {
+    .id = Ast::Id {
       .value = "a"
     }
-    Ast::Type {
+    .type_node = Ast::Type {
       .type = type0
     }
-    Ast::String {
+    .expr = Ast::String {
       .value = "hello"
       .type = type0
     }
@@ -316,10 +312,10 @@ const type0 = Type::Integer {
 }
 Ast::Stmts {
   Ast::Var {
-    Ast::Id {
+    .id = Ast::Id {
       .value = "a"
     }
-    Ast::Type {
+    .type_node = Ast::Type {
       .type = type0
     }
   }
@@ -385,13 +381,13 @@ const type0 = Type::Integer {
 Ast::Stmts {
   .type = type0
   Ast::Const {
-    Ast::Id {
+    .id = Ast::Id {
       .value = "x"
     }
-    Ast::Type {
+    .type_node = Ast::Type {
       .type = type0
     }
-    Ast::Number {
+    .expr = Ast::Number {
       .value = "1"
       .type = type0
     }
@@ -425,13 +421,13 @@ const type0 = Type::Integer {
 Ast::Stmts {
   .type = type0
   Ast::Const {
-    Ast::Id {
+    .id = Ast::Id {
       .value = "_x10"
     }
-    Ast::Type {
+    .type_node = Ast::Type {
       .type = type0
     }
-    Ast::Number {
+    .expr = Ast::Number {
       .value = "1"
       .type = type0
     }
@@ -465,13 +461,13 @@ const type0 = Type::Integer {
 Ast::Stmts {
   .type = type0
   Ast::Const {
-    Ast::Id {
+    .id = Ast::Id {
       .value = "a2"
     }
-    Ast::Type {
+    .type_node = Ast::Type {
       .type = type0
     }
-    Ast::Number {
+    .expr = Ast::Number {
       .value = "1"
       .type = type0
     }
@@ -505,13 +501,13 @@ const type0 = Type::Integer {
 Ast::Stmts {
   .type = type0
   Ast::Const {
-    Ast::Id {
+    .id = Ast::Id {
       .value = "αβγ"
     }
-    Ast::Type {
+    .type_node = Ast::Type {
       .type = type0
     }
-    Ast::Number {
+    .expr = Ast::Number {
       .value = "1"
       .type = type0
     }
@@ -570,13 +566,13 @@ const type0 = Type::Integer {
 }
 Ast::Stmts {
   Ast::Const {
-    Ast::Id {
+    .id = Ast::Id {
       .value = "x"
     }
-    Ast::Type {
+    .type_node = Ast::Type {
       .type = type0
     }
-    Ast::Number {
+    .expr = Ast::Number {
       .value = "1"
       .type = type0
     }
@@ -608,13 +604,13 @@ const type0 = Type::Integer {
 }
 Ast::Stmts {
   Ast::Var {
-    Ast::Id {
+    .id = Ast::Id {
       .value = "x"
     }
-    Ast::Type {
+    .type_node = Ast::Type {
       .type = type0
     }
-    Ast::Number {
+    .expr = Ast::Number {
       .value = "1"
       .type = type0
     }
@@ -642,10 +638,10 @@ const type0 = Type::Integer {
 }
 Ast::Stmts {
   Ast::Var {
-    Ast::Id {
+    .id = Ast::Id {
       .value = "a"
     }
-    Ast::Type {
+    .type_node = Ast::Type {
       .type = type0
     }
   }
@@ -683,10 +679,10 @@ const type0 = Type::Integer {
 }
 Ast::Stmts {
   Ast::Var {
-    Ast::Id {
+    .id = Ast::Id {
       .value = "a"
     }
-    Ast::Type {
+    .type_node = Ast::Type {
       .type = type0
     }
   }
@@ -730,13 +726,13 @@ const type0 = Type::Integer {
 }
 Ast::Stmts {
   Ast::Const {
-    Ast::Id {
+    .id = Ast::Id {
       .value = "a"
     }
-    Ast::Type {
+    .type_node = Ast::Type {
       .type = type0
     }
-    Ast::Number {
+    .expr = Ast::Number {
       .value = "0"
       .type = type0
     }
@@ -764,13 +760,13 @@ const type0 = Type::Integer {
 }
 Ast::Stmts {
   Ast::Const {
-    Ast::Id {
+    .id = Ast::Id {
       .value = "a"
     }
-    Ast::Type {
+    .type_node = Ast::Type {
       .type = type0
     }
-    Ast::Number {
+    .expr = Ast::Number {
       .value = "1"
       .type = type0
     }
@@ -822,13 +818,13 @@ const type0 = Type::Integer {
 Ast::Stmts {
   .type = type0
   Ast::Var {
-    Ast::Id {
+    .id = Ast::Id {
       .value = "x"
     }
-    Ast::Type {
+    .type_node = Ast::Type {
       .type = type0
     }
-    Ast::Number {
+    .expr = Ast::Number {
       .value = "10"
       .type = type0
     }

@@ -12,10 +12,6 @@ and
 ```cent
 use lib::base::*
 Test {
-  .solo = false
-  .mute = false
-  .snapshot = false
-  .has_error = false
 }
 ```
 
@@ -33,25 +29,25 @@ const type0 = Type::Boolean {
 Ast::Stmts {
   .type = type0
   Ast::Const {
-    Ast::Id {
+    .id = Ast::Id {
       .value = "a"
     }
-    Ast::Type {
+    .type_node = Ast::Type {
       .type = type0
     }
-    Ast::Boolean {
+    .expr = Ast::Boolean {
       .value = "true"
       .type = type0
     }
   }
   Ast::Const {
-    Ast::Id {
+    .id = Ast::Id {
       .value = "b"
     }
-    Ast::Type {
+    .type_node = Ast::Type {
       .type = type0
     }
-    Ast::Boolean {
+    .expr = Ast::Boolean {
       .value = "false"
       .type = type0
     }
@@ -97,25 +93,25 @@ const type0 = Type::Boolean {
 Ast::Stmts {
   .type = type0
   Ast::Const {
-    Ast::Id {
+    .id = Ast::Id {
       .value = "a"
     }
-    Ast::Type {
+    .type_node = Ast::Type {
       .type = type0
     }
-    Ast::Boolean {
+    .expr = Ast::Boolean {
       .value = "true"
       .type = type0
     }
   }
   Ast::Const {
-    Ast::Id {
+    .id = Ast::Id {
       .value = "b"
     }
-    Ast::Type {
+    .type_node = Ast::Type {
       .type = type0
     }
-    Ast::Boolean {
+    .expr = Ast::Boolean {
       .value = "false"
       .type = type0
     }
@@ -140,10 +136,6 @@ or or
 ```cent
 use lib::base::*
 Test {
-  .solo = false
-  .mute = false
-  .snapshot = false
-  .has_error = false
 }
 ```
 
@@ -376,13 +368,13 @@ const type0 = Type::Boolean {
 Ast::Stmts {
   .type = type0
   Ast::Const {
-    Ast::Id {
+    .id = Ast::Id {
       .value = "a"
     }
-    Ast::Type {
+    .type_node = Ast::Type {
       .type = type0
     }
-    Ast::Boolean {
+    .expr = Ast::Boolean {
       .value = "true"
       .type = type0
     }

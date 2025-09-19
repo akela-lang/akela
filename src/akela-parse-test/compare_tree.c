@@ -668,6 +668,26 @@ bool Apt_compare_ast(Zinc_test* top_test, Zinc_test* case_test, Ake_Ast* n, Cent
             break;
         case AKE_AST_ELLIPSIS:
             break;
+        case AKE_AST_CONST:
+            value2 = Cent_value_get_str(value, "id");
+            Apt_compare_ast(top_test, case_test, n->data._const_.id, value2);
+
+            value2 = Cent_value_get_str(value, "type_node");
+            Apt_compare_ast(top_test, case_test, n->data._const_.type_node, value2);
+
+            value2 = Cent_value_get_str(value, "expr");
+            Apt_compare_ast(top_test, case_test, n->data._const_.expr, value2);
+            break;
+        case AKE_AST_VAR:
+            value2 = Cent_value_get_str(value, "id");
+            Apt_compare_ast(top_test, case_test, n->data.var.id, value2);
+
+            value2 = Cent_value_get_str(value, "type_node");
+            Apt_compare_ast(top_test, case_test, n->data.var.type_node, value2);
+
+            value2 = Cent_value_get_str(value, "expr");
+            Apt_compare_ast(top_test, case_test, n->data.var.expr, value2);
+            break;
         default:
             Cent_value* value_prop = Cent_value_get_str(value, "value");
             if (Apt_has_value(n)) {

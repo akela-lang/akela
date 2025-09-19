@@ -362,6 +362,22 @@ variant Ast::StructLiteralField {
     }
 }
 
+variant Ast::Const {
+    properties {
+        id: Ast
+        type_node: Ast
+        expr: Ast
+    }
+}
+
+variant Ast::Var {
+    properties {
+        id: Ast
+        type_node: Ast
+        expr: Ast
+    }
+}
+
 element AstList {
     children {
         Ast

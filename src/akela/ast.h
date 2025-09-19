@@ -59,8 +59,8 @@ typedef enum Ake_AstKind {
     AKE_AST_STRUCT_LITERAL,
     AKE_AST_STRUCT_LITERAL_FIELD,
     AKE_AST_ELLIPSIS,
-    Ake_ast_type_const,
-    Ake_ast_type_var,
+    AKE_AST_CONST,
+    AKE_AST_VAR,
     AKE_AST_COUNT        /* keep at end */
 } Ake_AstKind;
 
@@ -112,8 +112,8 @@ static char const* Ast_type_name(Ake_AstKind kind)
     name[AKE_AST_STRUCT_LITERAL] = "struct-literal";
     name[AKE_AST_STRUCT_LITERAL_FIELD] = "struct-literal-field";
     name[AKE_AST_ELLIPSIS] = "ellipsis";
-    name[Ake_ast_type_const] = "const";
-    name[Ake_ast_type_var] = "var";
+    name[AKE_AST_CONST] = "const";
+    name[AKE_AST_VAR] = "var";
 
     if (kind >= 0 && kind < AKE_AST_COUNT) {
         return name[kind];
@@ -128,6 +128,13 @@ struct Ake_AstList {
     Ake_Ast* parent;
     Zinc_location loc;
     bool has_error;
+};
+
+typedef struct Ake_Let Ake_Let;
+struct Ake_Let {
+    Ake_Ast* id;
+    Ake_Ast* type_node;
+    Ake_Ast* expr;
 };
 
 typedef struct Ake_AstList Ake_AstList;
@@ -169,7 +176,6 @@ typedef struct Ake_Ast {
         struct { Ake_Ast* array; Ake_Ast* index; } array_subscript;
         struct { Zinc_string value; } boolean;
         struct { Ake_Ast* expr; } parenthesis;
-        struct { } type;
         struct { Ake_Ast* left; Ake_Ast* right; } power;
         struct { Ake_Ast* left; Ake_Ast* right; } dot;
         struct { Ake_AstList list; } _struct_ ;
@@ -178,6 +184,8 @@ typedef struct Ake_Ast {
         struct { Ake_Ast* proto; } _extern_;
         struct { Ake_AstList fields; } struct_literal;
         struct { Ake_Ast* id; Ake_Ast* expr; } struct_literal_field;
+        struct Ake_Let _const_;
+        struct Ake_Let var;
     } data;
     Ake_Type* type;
     Zinc_location loc;

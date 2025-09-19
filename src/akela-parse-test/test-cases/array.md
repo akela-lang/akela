@@ -12,10 +12,6 @@ array subscript
 ```cent
 use lib::base::*
 Test {
-  .solo = false
-  .mute = false
-  .snapshot = false
-  .has_error = false
 }
 ```
 
@@ -45,13 +41,13 @@ const type2 = Type::Natural {
 Ast::Stmts {
   .type = type0
   Ast::Const {
-    Ast::Id {
+    .id = Ast::Id {
       .value = "a"
     }
-    Ast::Type {
+    .type_node = Ast::Type {
       .type = type1
     }
-    Ast::ArrayLiteral {
+    .expr = Ast::ArrayLiteral {
       .type = type1
       Ast::Number {
         .value = "0"
@@ -144,13 +140,13 @@ const type3 = Type::Natural {
 Ast::Stmts {
   .type = type0
   Ast::Const {
-    Ast::Id {
+    .id = Ast::Id {
       .value = "a"
     }
-    Ast::Type {
+    .type_node = Ast::Type {
       .type = type1
     }
-    Ast::ArrayLiteral {
+    .expr = Ast::ArrayLiteral {
       .type = type1
       Ast::ArrayLiteral {
         .type = type2
@@ -226,10 +222,6 @@ array subscript 3
 ```cent
 use lib::base::*
 Test {
-  .solo = false
-  .mute = false
-  .snapshot = false
-  .has_error = false
 }
 ```
 
@@ -260,13 +252,13 @@ const type2 = Type::Natural {
 Ast::Stmts {
   .type = type0
   Ast::Const {
-    Ast::Id {
+    .id = Ast::Id {
       .value = "a"
     }
-    Ast::Type {
+    .type_node = Ast::Type {
       .type = type1
     }
-    Ast::ArrayLiteral {
+    .expr = Ast::ArrayLiteral {
       .type = type1
       Ast::Number {
         .value = "0"
@@ -287,13 +279,13 @@ Ast::Stmts {
     }
   }
   Ast::Const {
-    Ast::Id {
+    .id = Ast::Id {
       .value = "b"
     }
-    Ast::Type {
+    .type_node = Ast::Type {
       .type = type2
     }
-    Ast::Number {
+    .expr = Ast::Number {
       .value = "1"
       .type = type2
     }
@@ -391,13 +383,13 @@ const type4 = Type::Natural {
 Ast::Stmts {
   .type = type0
   Ast::Const {
-    Ast::Id {
+    .id = Ast::Id {
       .value = "x"
     }
-    Ast::Type {
+    .type_node = Ast::Type {
       .type = type1
     }
-    Ast::ArrayLiteral {
+    .expr = Ast::ArrayLiteral {
       .type = type1
       Ast::ArrayLiteral {
         .type = type2
@@ -611,9 +603,6 @@ array subscript (error expected right square bracket)
 ```cent
 use lib::base::*
 Test {
-  .solo = false
-  .mute = false
-  .snapshot = false
   .has_error = true
 }
 ```
@@ -674,13 +663,13 @@ const type2 = Type::Natural {
 Ast::Stmts {
   .type = type0
   Ast::Const {
-    Ast::Id {
+    .id = Ast::Id {
       .value = "a"
     }
-    Ast::Type {
+    .type_node = Ast::Type {
       .type = type1
     }
-    Ast::ArrayLiteral {
+    .expr = Ast::ArrayLiteral {
       .type = type1
       Ast::Number {
         .value = "100"
@@ -884,13 +873,13 @@ const type2 = Type::Natural {
 Ast::Stmts {
   .type = type0
   Ast::Const {
-    Ast::Id {
+    .id = Ast::Id {
       .value = "a"
     }
-    Ast::Type {
+    .type_node = Ast::Type {
       .type = type1
     }
-    Ast::ArrayLiteral {
+    .expr = Ast::ArrayLiteral {
       .type = type1
       Ast::Number {
         .value = "0"
@@ -1310,13 +1299,13 @@ const type2 = Type::Natural {
 Ast::Stmts {
   .type = type0
   Ast::Const {
-    Ast::Id {
+    .id = Ast::Id {
       .value = "a"
     }
-    Ast::Type {
+    .type_node = Ast::Type {
       .type = type1
     }
-    Ast::ArrayLiteral {
+    .expr = Ast::ArrayLiteral {
       .type = type1
       Ast::Number {
         .value = "1"

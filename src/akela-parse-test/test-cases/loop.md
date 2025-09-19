@@ -166,13 +166,13 @@ const type1 = Type::Integer {
 }
 Ast::Stmts {
   Ast::Const {
-    Ast::Id {
+    .id = Ast::Id {
       .value = "list"
     }
-    Ast::Type {
+    .type_node = Ast::Type {
       .type = type0
     }
-    Ast::ArrayLiteral {
+    .expr = Ast::ArrayLiteral {
       .type = type0
       Ast::Number {
         .value = "1"
@@ -623,13 +623,13 @@ const type1 = Type::Integer {
 }
 Ast::Stmts {
   Ast::Const {
-    Ast::Id {
+    .id = Ast::Id {
       .value = "v"
     }
-    Ast::Type {
+    .type_node = Ast::Type {
       .type = type0
     }
-    Ast::ArrayLiteral {
+    .expr = Ast::ArrayLiteral {
       .type = type0
       Ast::Number {
         .value = "1"

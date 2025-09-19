@@ -13,9 +13,10 @@ namespace Akela_llvm {
     {
         Ake_UpdateSymbolLet(&jd->st, n);
 
-        Ake_Ast* lhs = Ake_AstGet(n, 0);
-        Ake_Ast* type_node = Ake_AstGet(n, 1);
-        Ake_Ast* rhs = Ake_AstGet(n, 2);
+        Ake_Let* data = &n->data._const_;
+        Ake_Ast* lhs = data->id;
+        Ake_Ast* type_node = data->type_node;
+        Ake_Ast* rhs = data->expr;
         Ake_Type* type = type_node->type;
         Ake_Environment* env = jd->st.top;
         Ake_symbol* sym = Ake_EnvironmentGet(env, &lhs->data.id.value);
@@ -178,10 +179,11 @@ namespace Akela_llvm {
         std::vector<size_t> index;
         Type *t = Get_type(jd, n->type);
         Value* ptr;
-        if (n->parent->kind == Ake_ast_type_const || n->parent->kind == Ake_ast_type_var) {
+        if (n->parent->kind == AKE_AST_CONST || n->parent->kind == AKE_AST_VAR) {
             Ake_Environment* env = jd->st.top;
-            Ake_Ast* lhs =  Ake_AstGet(n->parent, 0);
-            Ake_Ast* type_node = Ake_AstGet(n->parent, 1);
+            Ake_Let* data = &n->parent->data._const_;
+            Ake_Ast* lhs =  data->id;
+            Ake_Ast* type_node = data->type_node;
             Ake_symbol* sym = Ake_EnvironmentGet(env, &lhs->data.id.value);
             ptr = (Value*)sym->value;
         } else {

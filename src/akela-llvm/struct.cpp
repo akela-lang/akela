@@ -124,10 +124,11 @@ namespace Akela_llvm {
         Zinc_string_add_str(&bf, ".tmp");
         Zinc_string_finish(&bf);
         Value* value;
-        if (n->parent->kind == Ake_ast_type_const || n->parent->kind == Ake_ast_type_var) {
+        if (n->parent->kind == AKE_AST_CONST || n->parent->kind == AKE_AST_VAR) {
             Ake_Environment* env = jd->st.top;
-            Ake_Ast* lhs =  Ake_AstGet(n->parent, 0);
-            Ake_Ast* type_node = Ake_AstGet(n->parent, 1);
+            Ake_Let* data = &n->parent->data._const_;
+            Ake_Ast* lhs =  data->id;
+            Ake_Ast* type_node = data->type_node;
             Ake_symbol* sym = Ake_EnvironmentGet(env, &lhs->data.id.value);
             value = (Value*)sym->value;
         } else {
