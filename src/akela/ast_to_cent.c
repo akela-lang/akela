@@ -443,11 +443,7 @@ void Ake_ast_cent_print(Ake_Ast* n, size_t level, bool is_property, Ake_TypeSlot
                 Ake_ast_cent_print(n->data.var.expr, level, true, slots);
                 break;
             default:
-                p = n->head;
-                while (p) {
-                    Ake_ast_cent_print(p, level, false, slots);
-                    p = p->next;
-                }
+                assert(false && "invalid AST");
                 break;
         }
 

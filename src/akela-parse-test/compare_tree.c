@@ -674,24 +674,7 @@ bool Apt_compare_ast(Zinc_test* top_test, Zinc_test* case_test, Ake_Ast* n, Cent
             Apt_compare_ast(top_test, case_test, n->data.var.expr, value2);
             break;
         default:
-            /* children */
-            Ake_Ast* n2 = NULL;
-            value2 = NULL;
-
-            n2 = n->head;
-            if (value->type == Cent_value_type_dag) {
-                value2 = value->data.dag.head;
-            }
-
-            while (n2 || value2) {
-                pass = Apt_compare_ast(top_test, case_test, n2, value2) && pass;
-                if (n2) {
-                    n2 = n2->next;
-                }
-                if (value2) {
-                    value2 = value2->next;
-                }
-            }
+            assert(false && "invalid AST kind");
             break;
     }
 

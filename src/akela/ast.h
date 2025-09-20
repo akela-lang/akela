@@ -183,15 +183,13 @@ typedef struct Ake_Ast {
         struct { Ake_Ast* proto; } _extern_;
         struct { Ake_AstList fields; } struct_literal;
         struct { Ake_Ast* id; Ake_Ast* expr; } struct_literal_field;
-        struct Ake_Let _const_;
-        struct Ake_Let var;
+        Ake_Let _const_;
+        Ake_Let var;
     } data;
     Ake_Type* type;
     Zinc_location loc;
     Ake_Ast* next;
     Ake_Ast* prev;
-    Ake_Ast* head;
-    Ake_Ast* tail;
     Ake_Ast* parent;
     bool has_error;
     bool is_set;
@@ -207,9 +205,7 @@ extern "C" {
     AKELA_API void Ake_AstSet(Ake_Ast* n, Ake_AstKind kind);
     AKELA_API void Ake_AstValidate(Ake_Ast* n);
     AKELA_API void Ake_AstDestroy(Ake_Ast* n);
-    AKELA_API void Ake_AstAdd(Ake_Ast* p, Ake_Ast* c);
     AKELA_API void Ake_AstAdd2(Ake_Ast* p, Ake_Ast* c);
-    AKELA_API Ake_Ast* Ake_AstGet(Ake_Ast* p, size_t pos);
     AKELA_API void Ake_AstCopy(Ake_Ast* src, Ake_Ast* dest);
     AKELA_API Ake_Ast* Ake_AstClone(Ake_Ast* n);
     AKELA_API bool Ake_AstMatch(Ake_Ast* a, Ake_Ast* b);

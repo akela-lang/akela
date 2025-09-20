@@ -387,7 +387,7 @@ void Ake_parse_for_iteration(struct Ake_parse_state* ps, Ake_Ast* parent)
 
     if (list) {
         parent->data.for_iteration.iterator = list;
-        Ake_AstAdd(parent, list);
+        Ake_AstAdd2(parent, list);
     }
 
     if (!parent->has_error) {

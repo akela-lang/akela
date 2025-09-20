@@ -20,8 +20,6 @@ void Ake_AstInit(Ake_Ast* n)
     Zinc_location_init(&n->loc);
     n->next = NULL;
     n->prev = NULL;
-    n->head = NULL;
-    n->tail = NULL;
     n->parent = NULL;
     n->has_error = false;
     n->is_set = false;
@@ -427,26 +425,6 @@ void Ake_AstDestroy(Ake_Ast* n)
     Ake_AstVisit(n, NULL, Ake_AstDestroyFunction, NULL);
 }
 
-void Ake_AstAdd(Ake_Ast* p, Ake_Ast* c)
-{
-    Ake_AstValidate(p);
-    Ake_AstValidate(c);
-
-    if (p->head && p->tail) {
-        p->tail->next = c;
-        c->prev = p->tail;
-        p->tail = c;
-    } else {
-        p->head = c;
-        p->tail = c;
-    }
-    Zinc_location_combine(&p->loc, &c->loc);
-    c->parent = p;
-    if (c->has_error) {
-        p->has_error = true;
-    }
-}
-
 void Ake_AstAdd2(Ake_Ast* p, Ake_Ast* c)
 {
     Ake_AstValidate(p);
@@ -457,20 +435,6 @@ void Ake_AstAdd2(Ake_Ast* p, Ake_Ast* c)
     if (c->has_error) {
         p->has_error = true;
     }
-}
-
-Ake_Ast* Ake_AstGet(Ake_Ast* p, size_t pos)
-{
-    Ake_AstValidate(p);
-
-    int i = 0;
-    for (Ake_Ast* n = p->head; n; n = n->next) {
-        if (i == pos) {
-            return n;
-        }
-        i++;
-    }
-    return NULL;
 }
 
 /* NOLINTNEXTLINE(misc-no-recursion) */
@@ -697,14 +661,6 @@ Ake_Ast* Ake_AstClone(Ake_Ast* n)
     if (n) {
         Ake_AstCreate(&copy);
         Ake_AstCopy(n, copy);
-
-        Ake_Ast* p = n->head;
-        while (p) {
-            Ake_Ast* p_copy = NULL;
-            p_copy = Ake_AstClone(p);
-            Ake_AstAdd(copy, p_copy);
-            p = p->next;
-        }
     }
 
     return copy;
@@ -1137,20 +1093,12 @@ bool Ake_AstMatch(Ake_Ast* a, Ake_Ast* b)
                 }
                 break;
             default:
-                if (!Ake_TypeMatch(a->type, b->type, NULL)) {
-                    return false;
-                }
-
-                Ake_Ast* c = a->head;
-                Ake_Ast* d = b->head;
-                do {
-                    if (!Ake_AstMatch(c, d)) {
-                        return false;
-                    }
-                    if (c) c = c->next;
-                    if (d) d = d->next;
-                } while (c || d);
+                assert(false && "invalid AST");
                 break;
+        }
+
+        if (!Ake_TypeMatch(a->type, b->type, NULL)) {
+            return false;
         }
 
     } else if (!a && !b) {
@@ -1159,22 +1107,8 @@ bool Ake_AstMatch(Ake_Ast* a, Ake_Ast* b)
         return false;
     }
 
+
     return true;
-}
-
-size_t Ake_AstCountChildren(Ake_Ast* n)
-{
-    size_t count = 0;
-    if (n) {
-        Ake_AstValidate(n);
-        Ake_Ast* p = n->head;
-        while (p) {
-            count++;
-            p = p->next;
-        }
-    }
-
-    return count;
 }
 
 void Ake_AstVisit(Ake_Ast* n, Ake_AstVisitFunction pre, Ake_AstVisitFunction post, void* data)
@@ -1393,12 +1327,7 @@ void Ake_AstVisit(Ake_Ast* n, Ake_AstVisitFunction pre, Ake_AstVisitFunction pos
             Ake_AstVisit(n->data.var.expr, pre, post, data);
             break;
         default:
-            p = n->head;
-            while (p) {
-                Ake_Ast* temp = p;
-                p = p->next;
-                Ake_AstVisit(temp, pre, post, data);
-            }
+            assert(false && "invalid AST");
             break;
     }
 

@@ -221,7 +221,7 @@ Ake_Ast* Ake_parse_comparison(struct Ake_parse_state* ps)
         		n->data.greater_than_or_equal.left = left;
         		Ake_AstAdd2(n, left);
         	} else {
-        		Ake_AstAdd(n, left);
+        		assert(false && "unreachable");
         	}
         }
 
@@ -245,7 +245,7 @@ Ake_Ast* Ake_parse_comparison(struct Ake_parse_state* ps)
         		n->data.greater_than_or_equal.right = b;
         		Ake_AstAdd2(n, b);
         	} else {
-        		Ake_AstAdd(n, b);
+        		assert(false && "unreachable");
         	}
         }
 
