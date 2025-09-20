@@ -201,24 +201,6 @@ void Apt_case_run(Zinc_test* case_test)
     }
 }
 
-bool Apt_has_value(Ake_Ast* n)
-{
-    if (n->struct_value.size > 0) {
-        return true;
-    }
-
-    return false;
-}
-
-Zinc_string* Apt_get_value(Ake_Ast* n)
-{
-    if (n->struct_value.size > 0) {
-        return &n->struct_value;
-    }
-
-    return NULL;
-}
-
 /* NOLINTNEXTLINE(misc-no-recursion) */
 bool Apt_compare_ast(Zinc_test* top_test, Zinc_test* case_test, Ake_Ast* n, Cent_value* value)
 {
@@ -610,6 +592,9 @@ bool Apt_compare_ast(Zinc_test* top_test, Zinc_test* case_test, Ake_Ast* n, Cent
             Apt_compare_ast(top_test, case_test, n->data.dot.right, value2);
             break;
         case AKE_AST_STRUCT:
+            value2 = Cent_value_get_str(value, "name");
+            Apt_compare_value_string(case_test, n, &n->data._struct_.name, value2);
+
             if (value->type == Cent_value_type_dag) {
                 value2 = value->data.dag.head;
             } else {
@@ -689,39 +674,6 @@ bool Apt_compare_ast(Zinc_test* top_test, Zinc_test* case_test, Ake_Ast* n, Cent
             Apt_compare_ast(top_test, case_test, n->data.var.expr, value2);
             break;
         default:
-            Cent_value* value_prop = Cent_value_get_str(value, "value");
-            if (Apt_has_value(n)) {
-                if (!value_prop) {
-                    Zinc_expect_failed(case_test);
-                    Zinc_spec_error_list_set(
-                        &case_data->spec_errors,
-                        case_test,
-                        &n->loc,
-                        &value_n->loc,
-                        "value not expected");
-                    pass = false;
-                } else {
-                    Zinc_expect_passed(case_test);
-                    assert(value_prop->type == Cent_value_type_string);
-                    if (!Zinc_string_compare(Apt_get_value(n), &value_prop->data.string)) {
-                        Cent_ast* prop_n = value_prop->n;
-                        Zinc_spec_error_list_set(
-                            &case_data->spec_errors,
-                            case_test,
-                            &n->loc,
-                            &prop_n->loc,
-                            "AST values do not match (%bf) (%bf)",
-                            Apt_get_value(n),
-                            &value_prop->data.string);
-                        pass = false;
-                    } else {
-                        Zinc_expect_passed(case_test);
-                    }
-                }
-            } else {
-                Zinc_expect_passed(case_test);
-            }
-
             /* children */
             Ake_Ast* n2 = NULL;
             value2 = NULL;

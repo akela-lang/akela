@@ -140,7 +140,6 @@ struct Ake_Let {
 typedef struct Ake_AstList Ake_AstList;
 typedef struct Ake_Ast {
     Ake_AstKind kind;
-    Zinc_string struct_value;
     union {
         struct { Zinc_string value; } id;
         struct { Ake_Ast* op; Ake_Ast* right; } sign;
@@ -178,7 +177,7 @@ typedef struct Ake_Ast {
         struct { Ake_Ast* expr; } parenthesis;
         struct { Ake_Ast* left; Ake_Ast* right; } power;
         struct { Ake_Ast* left; Ake_Ast* right; } dot;
-        struct { Ake_AstList list; } _struct_ ;
+        struct { Zinc_string name; Ake_AstList list; } _struct_ ;
         struct { Ake_Ast* expr; } _return_;
         struct { Ake_Ast* id; Ake_Ast* dseq; Ake_Ast* ret; } prototype;
         struct { Ake_Ast* proto; } _extern_;

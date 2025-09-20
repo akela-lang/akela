@@ -447,7 +447,7 @@ Ake_Ast* Ake_parse_struct(struct Ake_parse_state* ps)
         n->has_error = true;
     }
     if (id) {
-        Zinc_string_copy(&id->value, &n->struct_value);
+        Zinc_string_copy(&id->value, &n->data._struct_.name);
     }
 
     Ake_Ast* a = NULL;

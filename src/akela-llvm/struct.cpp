@@ -10,7 +10,6 @@ namespace Akela_llvm {
     StructType* GetStructTypeFromNode(Jit_data* jd, Ake_Ast* n)
     {
         std::vector<Type*> type_list;
-        Zinc_string_finish(&n->struct_value);
         struct Ake_Ast* element_dec = n->data._struct_.list.head;
         while (element_dec) {
             Ake_Ast* element_type_node = element_dec->data.declaration.type_node;
@@ -25,7 +24,7 @@ namespace Akela_llvm {
         return StructType::create(
             *jd->TheContext,
             type_list,
-            Zinc_string_c_str(&n->struct_value));
+            Zinc_string_c_str(&n->data._struct_.name));
     }
 
     StructType* GetStructTypeFromType(Jit_data* jd, Ake_Type* td)
@@ -50,7 +49,7 @@ namespace Akela_llvm {
         StructType* struct_type = GetStructTypeFromNode(jd, n);
         Ake_Environment* env = jd->st.top;
         Ake_UpdateSymbolStruct(&jd->st, n);
-        Ake_symbol* sym = Ake_EnvironmentGet(env, &n->struct_value);
+        Ake_symbol* sym = Ake_EnvironmentGet(env, &n->data._struct_.name);
         return nullptr;
     }
 

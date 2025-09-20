@@ -50,11 +50,6 @@ void Ake_ast_cent_print(Ake_Ast* n, size_t level, bool is_property, Ake_TypeSlot
 
         level++;
 
-        if (n->struct_value.size > 0) {
-            Ake_indent_print(level);
-            printf(".value = \"%s\"\n", Zinc_string_c_str(&n->struct_value));
-        }
-
         Ake_Ast* p = NULL;
 
         switch (n->kind) {
@@ -371,6 +366,9 @@ void Ake_ast_cent_print(Ake_Ast* n, size_t level, bool is_property, Ake_TypeSlot
                 Ake_ast_cent_print(n->data.dot.right, level, true, slots);
                 break;
             case AKE_AST_STRUCT:
+                Ake_indent_print(level);
+                printf(".name = %s\n", Zinc_string_c_str(&n->data._struct_.name));
+
                 p = n->data._struct_.list.head;
                 while (p) {
                     Ake_ast_cent_print(p, level, false, slots);

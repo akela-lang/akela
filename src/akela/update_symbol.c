@@ -48,7 +48,7 @@ void Ake_UpdateSymbolStruct(Ake_symbol_table* st, Ake_Ast* n)
         Ake_SymbolCreate(&sym);
         sym->kind = AKE_SYMBOL_TYPE;
         sym->td = type;
-        Ake_EnvironmentAdd(st->top, &n->struct_value, sym);
+        Ake_EnvironmentAdd(st->top, &n->data._struct_.name, sym);
     }
 }
 

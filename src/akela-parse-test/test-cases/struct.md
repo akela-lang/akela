@@ -82,7 +82,7 @@ const type3 = Type::Array {
 Ast::Stmts {
   .type = type0
   Ast::Struct {
-    .value = "Person"
+    .name = "Person"
     Ast::Declaration {
       .id_node = Ast::Id {
         .value = "firstName"
@@ -230,7 +230,7 @@ const type4 = Type::Array {
 }
 Ast::Stmts {
   Ast::Struct {
-    .value = "Person"
+    .name = "Person"
     Ast::Declaration {
       .id_node = Ast::Id {
         .value = "first_name"
@@ -570,7 +570,7 @@ const type3 = Type::Integer {
 }
 Ast::Stmts {
   Ast::Struct {
-    .value = "Point"
+    .name = "Point"
     Ast::Declaration {
       .id_node = Ast::Id {
         .value = "x"
@@ -589,7 +589,7 @@ Ast::Stmts {
     }
   }
   Ast::Struct {
-    .value = "Line"
+    .name = "Line"
     Ast::Declaration {
       .id_node = Ast::Id {
         .value = "p0"

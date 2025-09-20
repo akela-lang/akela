@@ -16,7 +16,6 @@ void Ake_AstCreate(Ake_Ast** n)
 void Ake_AstInit(Ake_Ast* n)
 {
     n->kind = AKE_AST_NONE;
-    Zinc_string_init(&n->struct_value);
     n->type = NULL;
     Zinc_location_init(&n->loc);
     n->next = NULL;
@@ -208,6 +207,7 @@ void Ake_AstSet(Ake_Ast* n, Ake_AstKind kind)
             n->is_set = true;
             break;
         case AKE_AST_STRUCT:
+            Zinc_string_init(&n->data._struct_.name);
             Ake_AstListInit(&n->data._struct_.list, n);
             n->is_set = true;
             break;
@@ -393,6 +393,7 @@ void Ake_AstDestroyFunction(Ake_Ast* n, void* unused)
             case AKE_AST_DOT:
                 break;
             case AKE_AST_STRUCT:
+                Zinc_string_destroy(&n->data._struct_.name);
                 break;
             case AKE_AST_RETURN:
                 break;
@@ -414,7 +415,6 @@ void Ake_AstDestroyFunction(Ake_Ast* n, void* unused)
                 break;
         }
 
-        Zinc_string_destroy(&n->struct_value);
         Ake_TypeDestroy(n->type);
         free(n->type);
         Ake_token_list_destroy(&n->token_list);
@@ -640,6 +640,8 @@ void Ake_AstCopy(Ake_Ast* src, Ake_Ast* dest)
             dest->data.dot.right = Ake_AstClone(src->data.dot.right);
             break;
         case AKE_AST_STRUCT:
+            Zinc_string_add_string(&dest->data._struct_.name, &src->data._struct_.name);
+
             p = src->data._struct_.list.head;
             while (p) {
                 Ake_AstListAdd(&dest->data._struct_.list, Ake_AstClone(p));
@@ -683,7 +685,6 @@ void Ake_AstCopy(Ake_Ast* src, Ake_Ast* dest)
         default:
             break;
     }
-    Zinc_string_copy(&src->struct_value, &dest->struct_value);
 }
 
 /* NOLINTNEXTLINE(misc-no-recursion) */
@@ -1045,6 +1046,10 @@ bool Ake_AstMatch(Ake_Ast* a, Ake_Ast* b)
                 }
                 break;
             case AKE_AST_STRUCT:
+                if (!Zinc_string_compare(&a->data._struct_.name, &b->data._struct_.name)) {
+                    return false;
+                }
+
                 a2 = a->data._struct_.list.head;
                 b2 = b->data._struct_.list.head;
                 while (a2 || b2) {
@@ -1132,10 +1137,6 @@ bool Ake_AstMatch(Ake_Ast* a, Ake_Ast* b)
                 }
                 break;
             default:
-                if (!Zinc_string_compare(&a->struct_value, &b->struct_value)) {
-                    return false;
-                }
-
                 if (!Ake_TypeMatch(a->type, b->type, NULL)) {
                     return false;
                 }

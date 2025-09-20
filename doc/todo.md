@@ -47,6 +47,8 @@
   * ellipsis [x]
   * const [x]
   * var [x]
+* compare type in Ake_AstMatch
+* get rid of head and tail
 * get rid of struct_value
 * add checking of symbols to UpdateSymbol functions
   * stmts
